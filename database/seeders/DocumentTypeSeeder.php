@@ -1,0 +1,156 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+
+class DocumentTypeSeeder extends Seeder
+{
+    /**
+     * Run the database seeds.
+     */
+    public function run(): void
+    {
+        $documentTypes = [
+            [
+                'cod_sunat' => 1,
+                'description' => 'FACTURA',
+                'abbreviation' => 'FAC',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'cod_sunat' => 2,
+                'description' => 'RECIBO POR HONORARIO',
+                'abbreviation' => 'RH',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'cod_sunat' => 3,
+                'description' => 'BOLETA DE VENTA',
+                'abbreviation' => 'BOL',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'cod_sunat' => 4,
+                'description' => 'LIQUIDACION DE COMPRA',
+                'abbreviation' => 'LIQ',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'cod_sunat' => 5,
+                'description' => 'BOLETO AEREO',
+                'abbreviation' => 'BA',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'cod_sunat' => 6,
+                'description' => 'CARTA PORTE AEREO',
+                'abbreviation' => 'CPA',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'cod_sunat' => 7,
+                'description' => 'NOTA DE CREDITO',
+                'abbreviation' => 'N/C',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'description' => 'NOTA DE DEBITO',
+                'cod_sunat' => 8,
+                'abbreviation' => 'N/D',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'description' => 'GUIA DE REMISION',
+                'cod_sunat' => 9,
+                'abbreviation' => 'G/R',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'description' => 'RECIBO DE ARRENDAMIENTO',
+                'cod_sunat' => 10,
+                'abbreviation' => 'RA',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'description' => 'POLIZA BOLSA VALORES',
+                'cod_sunat' => 11,
+                'abbreviation' => 'PBV',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'description' => 'LETRA DE CAMBIO',
+                'cod_sunat' => 31,
+                'abbreviation' => 'LET',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'description' => 'TRANSFERENCIA',
+                'cod_sunat' => 53,
+                'abbreviation' => 'TRA',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'description' => 'NOTA DE CRED. X DEVO',
+                'cod_sunat' => 54,
+                'abbreviation' => 'N/C',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ],
+            [
+                'description' => 'GUIA DE INGRESO INTERNA',
+                'cod_sunat' => 60,
+                'abbreviation' => 'G/I',
+                'st_sales' => true,
+                'st_purchases' => true,
+                'st_collections' => true,
+                'status' => 1
+            ]
+        ];
+
+        DB::table('document_types')->insert($documentTypes);
+    }
+}

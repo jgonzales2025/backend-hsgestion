@@ -13,7 +13,8 @@ class AuthUserResource extends JsonResource
         return [
             'id'          => $this->resource->getId(),
             'username'    => $this->resource->getUsername(),
-            'role'       => $this->resource->getRole()
+            'role'       => $this->resource->getRole(),
+            'assignments' => $this->resource->getAssignments() ?? []
         ];
 
     }

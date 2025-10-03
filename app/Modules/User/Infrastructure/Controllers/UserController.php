@@ -8,9 +8,13 @@ use App\Modules\User\Application\UseCases\CreateUserUseCase;
 use App\Modules\User\Application\UseCases\FindAllUsersUseCase;
 use App\Modules\User\Application\UseCases\FindAllUserUseNameCase;
 use App\Modules\User\Application\UseCases\GetUserByIdUseCase;
+use App\Modules\User\Infrastructure\Model\EloquentUser;
 use App\Modules\User\Infrastructure\Persistence\EloquentUserRepository;
 use App\Modules\User\Infrastructure\Requests\StoreUserRequest;
 use App\Modules\User\Infrastructure\Resources\UserResource;
+use App\Modules\UserAssignment\Application\DTOs\UserAssignmentDTO;
+use App\Modules\UserAssignment\Application\UseCases\CreateUserAssignmentUseCase;
+use App\Modules\UserAssignment\Infrastructure\Persistence\EloquentUserAssignmentRepository;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
@@ -28,7 +32,27 @@ class UserController extends Controller
         $userUseCase = new CreateUserUseCase($this->userRepository);
         $user = $userUseCase->execute($userDTO);
 
-        return response()->json($user, 201);
+        $eloquentUser = EloquentUser::find($user->getId());
+        $eloquentUser->assignRole($request->role_id);
+
+        $assignmentDTO = new UserAssignmentDTO([
+            'user_id' => $user->getId(),
+            'assignments' => $request->assignments,
+            'status' => $request->status
+        ]);
+
+        $assignmentRepository = new EloquentUserAssignmentRepository();
+        $assignmentUseCase = new CreateUserAssignmentUseCase($assignmentRepository);
+        $assignmentUseCase->execute($assignmentDTO);
+
+        $userWithRole = $this->userRepository->findById($user->getId());
+
+        return response()->json([
+            'message' => 'Usuario creado exitosamente',
+            'user' => new UserResource($userWithRole)
+        ], 201);
+
+
     }
 
     public function show($id): array|JsonResponse

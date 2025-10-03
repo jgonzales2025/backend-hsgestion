@@ -2,7 +2,9 @@
 
 namespace App\Modules\User\Infrastructure\Model;
 
+use App\Modules\UserAssignment\Infrastructure\Models\EloquentUserAssignment;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -19,8 +21,6 @@ class EloquentUser extends Authenticatable implements JWTSubject
 
     protected $hidden = ['password', 'remember_token'];
 
-    protected $appends = ['status_name'];
-
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -31,4 +31,8 @@ class EloquentUser extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function assignments(): HasMany
+    {
+        return $this->hasMany(EloquentUserAssignment::class, 'user_id');
+    }
 }

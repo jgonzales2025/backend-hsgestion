@@ -22,7 +22,10 @@ class DatabaseSeeder extends Seeder
             PaymentTypeSeeder::class,
             PaymentMethodSeeder::class,
             DocumentTypeSeeder::class,
-            CustomerDocumentTypeSeeder::class
+            CustomerDocumentTypeSeeder::class,
+            RolePermissionSeeder::class,
+            MenuSeeder::class,
+            UserSeeder::class,
         ]);
     }
 }

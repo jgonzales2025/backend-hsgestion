@@ -23,7 +23,40 @@ class AuthController extends Controller
 
     public function me()
     {
-        return response()->json(Auth::guard('api')->user());
+        $eloquentUser = Auth::guard('api')->user();
+
+        if (!$eloquentUser) {
+            return response()->json(['error' => 'No autenticado'], 401);
+        }
+
+        $eloquentUser->load(['roles', 'assignments']);
+
+        $assignments = $eloquentUser->assignments->map(function ($assignment) {
+            return [
+                'id' => $assignment->id,
+                'company_id' => $assignment->company_id,
+                'company_name' => $assignment->company?->company_name,
+                'branch_id' => $assignment->branch_id,
+                'branch_name' => $assignment->branch?->name,
+                'status' => ($assignment->status) == 1 ? 'Activo' : 'Inactivo',
+            ];
+        })->toArray();
+
+        $user = new User(
+            id: $eloquentUser->id,
+            username: $eloquentUser->username,
+            firstname: $eloquentUser->firstname,
+            lastname: $eloquentUser->lastname,
+            password: $eloquentUser->password,
+            status: $eloquentUser->status,
+            role: $eloquentUser->roles->first()?->name,
+            assignments: $assignments
+        );
+
+        return response()->json([
+            'user' => new AuthUserResource($user)
+        ]);
+
     }
 
     public function logout()
@@ -41,6 +74,17 @@ class AuthController extends Controller
     {
         $eloquentUser = Auth::guard('api')->user();
 
+        $eloquentUser->load(['roles', 'assignments']);
+
+        $assignments = $eloquentUser->assignments->map(function ($assignment) {
+            return [
+                'id' => $assignment->id,
+                'company_id' => $assignment->company_id,
+                'branch_id' => $assignment->branch_id,
+                'status' => $assignment->status,
+            ];
+        })->toArray();
+
         $user = new User(
             id: $eloquentUser->id,
             username: $eloquentUser->username,
@@ -49,6 +93,7 @@ class AuthController extends Controller
             password: $eloquentUser->password,
             status: $eloquentUser->status,
             role: $eloquentUser->roles->first()?->name,
+            assignments: $assignments
         );
 
 

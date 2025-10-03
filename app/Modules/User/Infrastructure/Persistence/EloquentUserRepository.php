@@ -16,7 +16,7 @@ class EloquentUserRepository implements UserRepositoryInterface
             'firstname' => $user->getFirstname(),
             'lastname' => $user->getLastname(),
             'password' => $user->getPassword(),
-            'status' => $user->getStatus(),
+            'status' => $user->getStatus()
         ]);
 
         return new User(
@@ -26,17 +26,30 @@ class EloquentUserRepository implements UserRepositoryInterface
             lastname: $eloquentUser->lastname,
             password: $eloquentUser->password,
             status: $eloquentUser->status,
-            role: $eloquentUser->getRoleId(),
+            role: null,
+            assignments: null
         );
     }
 
     public function findById(int $id): ?User
     {
-        $user = EloquentUser::with('roles')->find($id);
+        $user = EloquentUser::with('roles', 'assignments')->find($id);
 
         if (!$user) {
             return null;
         }
+
+        $assignments = $user->assignments->map(function ($assignment) {
+            return [
+                'id' => $assignment->id,
+                'company_id' => $assignment->company_id,
+                'company_name' => $assignment->company?->company_name,
+                'branch_id' => $assignment->branch_id,
+                'branch_name' => $assignment->branch?->name,
+                'status' => ($assignment->status) == 1 ? 'Activo' : 'Inactivo',
+            ];
+        })->toArray();
+
 
         return new User(
             id: $user->id,
@@ -45,7 +58,8 @@ class EloquentUserRepository implements UserRepositoryInterface
             lastname: $user->lastname,
             password: $user->password,
             status: $user->status,
-            role: $user->roles->pluck('name'),
+            role: $user->roles->first()?->name,
+            assignments: $assignments
         );
     }
 
@@ -72,13 +86,22 @@ class EloquentUserRepository implements UserRepositoryInterface
 
     public function findAllUsers(): array
     {
-        $users = EloquentUser::with('roles')->get();
+        $users = EloquentUser::with('roles', 'assignments')->get();
 
         if ($users->isEmpty()) {
             return [];
         }
 
         return $users->map(function ($user) {
+            $assignments = $user->assignments->map(function ($assignment) {
+                return [
+                    'id' => $assignment->id,
+                    'company_id' => $assignment->company_id,
+                    'branch_id' => $assignment->branch_id,
+                    'status' => $assignment->status,
+                ];
+            })->toArray();
+
             return new User(
                 id: $user->id,
                 username: $user->username,
@@ -87,6 +110,7 @@ class EloquentUserRepository implements UserRepositoryInterface
                 password: $user->password,
                 status: $user->status,
                 role: $user->roles->first()?->name,
+                assignments: $assignments
             );
         })->toArray();
     }

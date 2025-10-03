@@ -22,9 +22,10 @@ class CreateUserUseCase
             username: $userDTO->username,
             firstname: $userDTO->firstname,
             lastname: $userDTO->lastname,
-            roleId: $userDTO->roleId,
             password: $userDTO->password,
             status: $userDTO->status,
+            role: $userDTO->role,
+            assignments: null
         );
 
         return $this->userRepository->save($user);

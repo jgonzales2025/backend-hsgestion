@@ -16,5 +16,14 @@ Route::get('/roles', [RoleController::class, 'index']);
 Route::get('/usernames', [UserController::class, 'findAllUserName']);
 
 Route::get('/users', [UserController::class, 'findAllUsers']);
+Route::post('/users', [UserController::class, 'store']);
+Route::get('/users/{id}', [UserController::class, 'show']);
 
 Route::get('/companies', [CompanyController::class, 'index']);
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('/me', [AuthController::class, 'me']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+});
+

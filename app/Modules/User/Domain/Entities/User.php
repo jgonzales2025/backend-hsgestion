@@ -13,7 +13,8 @@ class User
     private string $lastname;
     private string $password;
     private int $status;
-    private string $role;
+    private string|null $role;
+    private array|null $assignments;
 
     /**
      * @param int $id
@@ -22,9 +23,10 @@ class User
      * @param string $lastname
      * @param string $password
      * @param int $status
-     * @param string $role
+     * @param string|null $role
+     * @param array|null $assignments
      */
-    public function __construct(int $id, string $username, string $firstname, string $lastname, string $password, int $status, string $role)
+    public function __construct(int $id, string $username, string $firstname, string $lastname, string $password, int $status, string|null $role, array|null $assignments)
     {
         $this->id = $id;
         $this->username = $username;
@@ -33,6 +35,7 @@ class User
         $this->password = password_hash($password, PASSWORD_BCRYPT);
         $this->status = $status;
         $this->role = $role;
+        $this->assignments = $assignments;
     }
 
     public function getId(): int { return $this->id; }
@@ -41,7 +44,9 @@ class User
     public function getLastname(): string { return $this->lastname; }
     public function getPassword(): string { return $this->password; }
     public function getStatus(): string { return $this->status; }
-    public function getRole(): string { return $this->role; }
+    public function getRole(): string|null { return $this->role; }
+    public function getAssignments(): ?array { return $this->assignments; }
+
 
     // --- Perfil básico
     public function updateUser(string $firstname, string $lastname): void {

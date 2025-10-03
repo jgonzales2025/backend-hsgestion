@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\PaymentMethod\Infrastructure\Controllers\PaymentMethodController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Modules\User\Infrastructure\Controllers\UserController;
@@ -20,6 +21,8 @@ Route::post('/users', [UserController::class, 'store']);
 Route::get('/users/{id}', [UserController::class, 'show']);
 
 Route::get('/companies', [CompanyController::class, 'index']);
+
+Route::get('/payment-methods', [PaymentMethodController::class, 'findAllPaymentMethods']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

@@ -3,6 +3,7 @@
 namespace App\Modules\User\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserMenuPermission;
 use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\User\Application\DTOs\UserDTO;
 use App\Modules\User\Application\UseCases\CreateUserUseCase;
@@ -154,7 +155,19 @@ class UserController extends Controller
             $eloquentUser = EloquentUser::find($id);
             $eloquentUser->syncRoles([$request->role_id]); // Reemplaza el rol actual
 
-            // 3. Actualizar las asignaciones
+            // 3. Actualizar permisos personalizados
+            UserMenuPermission::where('user_id', $id)->delete();
+
+            if ($request->has('custom_permissions')) {
+                foreach ($request->custom_permissions as $permission) {
+                    \App\Models\UserMenuPermission::create([
+                        'user_id' => $id,
+                        'menu_id' => $permission['menu_id'],
+                    ]);
+                }
+            }
+
+            // 4. Actualizar las asignaciones
             $assignmentDTO = new UserAssignmentDTO([
                 'user_id' => $id,
                 'assignments' => $request->assignments,
@@ -165,7 +178,7 @@ class UserController extends Controller
             $updateAssignmentUseCase = new UpdateUserAssignmentUseCase($assignmentRepository);
             $updateAssignmentUseCase->execute($assignmentDTO);
 
-            // 4. Obtener el usuario actualizado
+            // 5. Obtener el usuario actualizado
             $userUpdated = $this->userRepository->findById($id);
 
             return response()->json([

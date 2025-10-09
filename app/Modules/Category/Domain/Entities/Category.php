@@ -6,9 +6,9 @@ class Category
 {
     private int $id;
     private string $name;
-    private string $status;
+    private int $status;
 
-    public function __construct(int $id, string $name, string $status)
+    public function __construct(int $id, string $name, int $status)
     {
         $this->id = $id;
         $this->name = $name;
@@ -17,5 +17,5 @@ class Category
 
     public function getId(): int { return $this->id; }
     public function getName(): string { return $this->name; }
-    public function getStatus(): string { return $this->status; }
+    public function getStatus(): int { return $this->status; }
 }

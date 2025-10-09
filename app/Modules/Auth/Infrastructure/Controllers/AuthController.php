@@ -101,13 +101,14 @@ class AuthController extends Controller
             assignments: $assignments
         );
 
+        $menusData = $this->userMenuService->getUserMenusWithRestricted($eloquentUser);
 
         return response()->json([
             'access_token' => $token,
             'token_type'   => 'bearer',
             'expires_in'   => Auth::guard('api')->factory()->getTTL() * 60,
             'user' => new AuthUserResource($user),
-            'menus' => $this->userMenuService->getUserMenus($eloquentUser)
+            'menus' => $menusData['accessible']
         ]);
     }
 }

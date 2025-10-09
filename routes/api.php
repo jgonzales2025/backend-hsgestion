@@ -14,6 +14,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\CustomerDocumentTypeController;
 use App\Modules\SubCategory\Infrastructure\Controllers\SubCategoryController;
+use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -72,6 +73,12 @@ Route::get('transport-companies',[TransportCompanyController::class, 'index']);
 Route::post('transport-companies',[TransportCompanyController::class, 'store']);
 Route::get('transport-companies/{id}',[TransportCompanyController::class, 'show']);
 Route::put('transport-companies/{id}',[TransportCompanyController::class, 'update']);
+
+// PercentageIGV - Porcentaje de IGV
+Route::get('percentage-igv',[PercentageIGVController::class, 'index']);
+Route::post('percentage-igv',[PercentageIGVController::class, 'store']);
+Route::get('percentage-igv/{id}',[PercentageIGVController::class, 'show']);
+Route::put('percentage-igv/{id}',[PercentageIGVController::class, 'update']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

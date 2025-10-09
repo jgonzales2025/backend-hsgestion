@@ -7,6 +7,8 @@ use App\Modules\Category\Infrastructure\Persistence\EloquentCategoryRepository;
 use App\Modules\Menu\Domain\Interfaces\MenuRepositoryInterface;
 use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\Menu\Infrastructure\Persistence\EloquentMenuRepository;
+use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface;
+use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRepository;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\SubCategory\Infrastructure\Persistence\EloquentSubCategoryRepository;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
@@ -28,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransportCompanyRepositoryInterface::class, EloquentTransportCompanyRepository::class);
         $this->app->bind(CategoryRepositoryInterface::class, EloquentCategoryRepository::class);
         $this->app->bind(SubCategoryRepositoryInterface::class, EloquentSubCategoryRepository::class);
+        $this->app->bind(PercentageIGVRepositoryInterface::class, EloquentPercentageIGVRepository::class);
     }
 
     /**

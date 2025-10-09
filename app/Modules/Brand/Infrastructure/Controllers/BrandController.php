@@ -1,0 +1,72 @@
+<?php
+
+namespace App\Modules\Brand\Infrastructure\Controllers;
+
+use App\Modules\Brand\Application\DTOs\BrandDTO;
+use App\Modules\Brand\Application\UseCases\CreateBrandUseCase;
+use App\Modules\Brand\Application\UseCases\FindAllBrandUseCases;
+use App\Modules\Brand\Application\UseCases\FindByIdBrandUseCase;
+use App\Modules\Brand\Application\UseCases\UpdateBrandUseCase;
+use App\Modules\Brand\Infrastructure\Persistence\EloquentBrandRepository;
+use App\Modules\Brand\Infrastructure\Requests\StoreBrandRequest;
+use App\Modules\Brand\Infrastructure\Requests\UpdateBrandRequest;
+use App\Modules\Brand\Infrastructure\Resources\BrandResource;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class BrandController
+{
+    protected $brandRepository;
+
+    public function __construct()
+    {
+        $this->brandRepository = new EloquentBrandRepository();
+    }
+
+    public function index(): array
+    {
+        $brandUseCase = new FindAllBrandUseCases($this->brandRepository);
+        $brands = $brandUseCase->execute();
+        return BrandResource::collection($brands)->resolve();
+    }
+
+    public function store(StoreBrandRequest $request)
+    {
+        $brandDTO = new BrandDTO($request->validated());
+        $brandUseCase = new CreateBrandUseCase($this->brandRepository);
+        $brand = $brandUseCase->execute($brandDTO);
+
+        return response()->json(
+            (new BrandResource($brand))->resolve(),
+            201
+        );
+    }
+
+    public function show($id): JsonResponse
+    {
+        $brandUseCase = new FindByIdBrandUseCase($this->brandRepository);
+        $brand = $brandUseCase->execute($id);
+
+        return response()->json(
+            (new BrandResource($brand))->resolve(),
+            200
+        );
+    }
+
+    public function update(UpdateBrandRequest $request, $id): JsonResponse
+    {
+        $userDTO = new BrandDTO([
+            'id' => $id,
+            'name' => $request->name,
+            'status' => $request->status
+        ]);
+
+        $brandUseCase = new UpdateBrandUseCase($this->brandRepository);
+        $brandUpdated = $brandUseCase->execute($id, $userDTO);
+
+        return response()->json(
+            (new BrandResource($brandUpdated))->resolve(),
+            200
+        );
+    }
+}

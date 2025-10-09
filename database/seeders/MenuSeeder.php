@@ -407,10 +407,10 @@ class MenuSeeder extends Seeder
         ]);
 
         Menu::create([
-            'name' => 'reportes_lista_saldo_costo',
-            'label' => 'Lista de artículos con saldo y costo',
-            'route' => '/reportes/lista-saldo-costo',
-            'permission' => 'reportes.lista_saldo_costo',
+            'name' => 'reportes_lista_articulos_valorizado',
+            'label' => 'Lista de artículos con saldo valorizado',
+            'route' => '/reportes/lista-articulos-valorizado',
+            'permission' => 'reportes.lista_articulos_valorizado',
             'parent_id' => $reporte->id,
             'order' => 9,
             'status' => 1,
@@ -440,12 +440,23 @@ class MenuSeeder extends Seeder
         ]);
 
         Menu::create([
+            'name' => 'reportes_registro_ventas',
+            'label' => 'Registro de Ventas',
+            'route' => '/reportes/registro-ventas',
+            'permission' => 'reportes.registro_ventas',
+            'parent_id' => $reporte->id,
+            'order' => 12,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
+        Menu::create([
             'name' => 'reportes_lista_precios',
             'label' => 'Lista de Precios',
             'route' => '/reportes/lista-precios',
             'permission' => 'reportes.lista_precios',
             'parent_id' => $reporte->id,
-            'order' => 12,
+            'order' => 13,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -456,7 +467,7 @@ class MenuSeeder extends Seeder
             'route' => '/reportes/lista-grupos',
             'permission' => 'reportes.lista_grupos',
             'parent_id' => $reporte->id,
-            'order' => 13,
+            'order' => 14,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -467,7 +478,7 @@ class MenuSeeder extends Seeder
             'route' => '/reportes/ventas-compras-item',
             'permission' => 'reportes.ventas_compras_item',
             'parent_id' => $reporte->id,
-            'order' => 14,
+            'order' => 15,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -478,7 +489,7 @@ class MenuSeeder extends Seeder
             'route' => '/reportes/caja-diario-mensual',
             'permission' => 'reportes.caja_diario_mensual',
             'parent_id' => $reporte->id,
-            'order' => 15,
+            'order' => 16,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -489,7 +500,7 @@ class MenuSeeder extends Seeder
             'route' => '/reportes/documentos-venta',
             'permission' => 'reportes.documentos_venta',
             'parent_id' => $reporte->id,
-            'order' => 16,
+            'order' => 17,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -500,7 +511,7 @@ class MenuSeeder extends Seeder
             'route' => '/reportes/consulta-cobranzas',
             'permission' => 'reportes.consulta_cobranzas',
             'parent_id' => $reporte->id,
-            'order' => 17,
+            'order' => 18,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -511,7 +522,7 @@ class MenuSeeder extends Seeder
             'route' => '/reportes/consulta-proformas',
             'permission' => 'reportes.consulta_proformas',
             'parent_id' => $reporte->id,
-            'order' => 18,
+            'order' => 19,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -522,7 +533,7 @@ class MenuSeeder extends Seeder
             'route' => '/reportes/informe-facturacion',
             'permission' => 'reportes.informe_facturacion',
             'parent_id' => $reporte->id,
-            'order' => 19,
+            'order' => 20,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -533,7 +544,7 @@ class MenuSeeder extends Seeder
             'route' => '/reportes/indice-clientes-vendedor',
             'permission' => 'reportes.indice_clientes_vendedor',
             'parent_id' => $reporte->id,
-            'order' => 20,
+            'order' => 21,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -544,7 +555,7 @@ class MenuSeeder extends Seeder
             'route' => '/reportes/pendientes-clientes',
             'permission' => 'reportes.pendientes_clientes',
             'parent_id' => $reporte->id,
-            'order' => 21,
+            'order' => 22,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -555,7 +566,7 @@ class MenuSeeder extends Seeder
             'route' => '/reportes/consulta-en-linea',
             'permission' => 'reportes.consulta_en_linea',
             'parent_id' => $reporte->id,
-            'order' => 22,
+            'order' => 23,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -566,18 +577,18 @@ class MenuSeeder extends Seeder
             'route' => '/reportes/consulta-dni-reniec',
             'permission' => 'reportes.consulta_dni_reniec',
             'parent_id' => $reporte->id,
-            'order' => 23,
+            'order' => 24,
             'status' => 1,
             'type' => 'item',
         ]);
 
         Menu::create([
-            'name' => 'reportes_registro_clientes',
-            'label' => 'Registro de Clientes',
-            'route' => '/reportes/registro-clientes',
-            'permission' => 'reportes.registro_clientes',
+            'name' => 'reportes_registro_compras',
+            'label' => 'Registro de Compras',
+            'route' => '/reportes/registro-compras',
+            'permission' => 'reportes.registro_compras',
             'parent_id' => $reporte->id,
-            'order' => 24,
+            'order' => 25,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -588,7 +599,7 @@ class MenuSeeder extends Seeder
             'route' => '/reportes/series-clientes',
             'permission' => 'reportes.series_clientes',
             'parent_id' => $reporte->id,
-            'order' => 25,
+            'order' => 26,
             'status' => 1,
             'type' => 'item',
         ]);

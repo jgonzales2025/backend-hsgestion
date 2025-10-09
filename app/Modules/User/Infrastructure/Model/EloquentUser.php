@@ -2,8 +2,10 @@
 
 namespace App\Modules\User\Infrastructure\Model;
 
+use App\Modules\Menu\Infrastructure\Models\EloquentMenu;
 use App\Modules\UserAssignment\Infrastructure\Models\EloquentUserAssignment;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Spatie\Permission\Traits\HasRoles;
@@ -35,4 +37,5 @@ class EloquentUser extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(EloquentUserAssignment::class, 'user_id');
     }
+
 }

@@ -16,7 +16,7 @@ class UserDTO
         $this->firstname = $data['firstname'];
         $this->lastname = $data['lastname'];
         $this->role = $data['role_id'];
-        $this->password = $data['password'];
+        $this->password = $data['password'] ?? null;
         $this->status = $data['status'];
     }
 }

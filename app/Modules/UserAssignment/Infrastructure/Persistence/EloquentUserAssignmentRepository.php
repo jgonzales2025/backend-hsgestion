@@ -30,8 +30,21 @@ class EloquentUserAssignmentRepository implements UserAssignmentRepositoryInterf
             );
         }
 
-
         return $userAssignment;
-
     }
+
+    public function updateUserAssignments(int $userId, array $assignments, int $status): array
+    {
+        // Eliminar las asignaciones anteriores
+        $this->deleteUserAssignments($userId);
+
+        // Crear las nuevas asignaciones
+        return $this->createUserAssignment($userId, $assignments, $status);
+    }
+
+    public function deleteUserAssignments(int $userId): void
+    {
+        EloquentUserAssignment::where('user_id', $userId)->delete();
+    }
+
 }

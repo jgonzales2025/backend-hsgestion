@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MenuResource;
 use App\Models\Menu;
 use Illuminate\Http\Request;
 
@@ -100,16 +101,11 @@ class MenuController extends Controller
      */
     public function index()
     {
-        $menus = Menu::with(['children', 'parent', 'roles'])
+        $menus = Menu::with(['children'])
             ->main()
             ->ordered()
             ->get();
 
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'menus' => $menus
-            ]
-        ]);
+        return response()->json((MenuResource::collection($menus)->resolve()));
     }
 }

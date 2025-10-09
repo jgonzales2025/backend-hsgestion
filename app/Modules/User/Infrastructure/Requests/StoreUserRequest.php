@@ -3,6 +3,7 @@
 namespace App\Modules\User\Infrastructure\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 
 class StoreUserRequest extends FormRequest
 {
@@ -18,15 +19,32 @@ class StoreUserRequest extends FormRequest
             'firstname' => 'required|string|max:30',
             'lastname' => 'required|string|max:60',
             'password' => 'required|string|confirmed|min:8',
-            'status' => 'required|integer',
+            'status' => 'required|integer|in:0,1',
             'role_id' => 'required|integer|exists:roles,id',
 
             //Assignments
             'assignments' => 'required|array|min:1',
             'assignments.*.company_id' => 'required|integer|exists:companies,id',
-            'assignments.*.branch_id' => 'required|integer|exists:branches,id'
+            'assignments.*.branch_id' => 'required|integer|exists:branches,id',
+
+            'custom_permissions' => 'nullable|array',
+            'custom_permissions.*.menu_id' => 'required|exists:menus,id',
         ];
     }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $assignments = $this->input('assignments', []);
+
+            $companyIds = collect($assignments)->pluck('company_id');
+
+            if ($companyIds->count() !== $companyIds->unique()->count()) {
+                $validator->errors()->add('assignments', 'Cada usuario solo puede tener asignado una sucursal por empresa.');
+            }
+        });
+    }
+
 
     public function messages(): array
     {

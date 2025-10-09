@@ -65,7 +65,25 @@ class EloquentUserRepository implements UserRepositoryInterface
 
     public function update(User $user): void
     {
-        // TODO: Implement update() method.
+        $eloquentUser = EloquentUser::find($user->getId());
+
+        if (!$eloquentUser) {
+            throw new \Exception("Usuario no encontrado");
+        }
+
+        $data = [
+            'username' => $user->getUsername(),
+            'firstname' => $user->getFirstname(),
+            'lastname' => $user->getLastname(),
+            'status' => $user->getStatus(),
+        ];
+
+        if ($user->getPassword() && $user->getPassword() !== $eloquentUser->password) {
+            $data['password'] = $user->getPassword();
+        }
+
+        $eloquentUser->update($data);
+
     }
 
     public function delete(User $user): void
@@ -87,6 +105,72 @@ class EloquentUserRepository implements UserRepositoryInterface
     public function findAllUsers(): array
     {
         $users = EloquentUser::with('roles', 'assignments')->get();
+
+        if ($users->isEmpty()) {
+            return [];
+        }
+
+        return $users->map(function ($user) {
+            $assignments = $user->assignments->map(function ($assignment) {
+                return [
+                    'id' => $assignment->id,
+                    'company_id' => $assignment->company_id,
+                    'branch_id' => $assignment->branch_id,
+                    'status' => $assignment->status,
+                ];
+            })->toArray();
+
+            return new User(
+                id: $user->id,
+                username: $user->username,
+                firstname: $user->firstname,
+                lastname: $user->lastname,
+                password: $user->password,
+                status: $user->status,
+                role: $user->roles->first()?->name,
+                assignments: $assignments
+            );
+        })->toArray();
+    }
+
+    public function findAllUsersByVendedor(): array
+    {
+        $users = EloquentUser::whereHas('roles', function ($query) {
+            $query->where('name', 'Vendedor');
+        })->with('roles', 'assignments')->get();
+
+        if ($users->isEmpty()) {
+            return [];
+        }
+
+        return $users->map(function ($user) {
+            $assignments = $user->assignments->map(function ($assignment) {
+                return [
+                    'id' => $assignment->id,
+                    'company_id' => $assignment->company_id,
+                    'branch_id' => $assignment->branch_id,
+                    'status' => $assignment->status,
+                ];
+            })->toArray();
+
+            return new User(
+                id: $user->id,
+                username: $user->username,
+                firstname: $user->firstname,
+                lastname: $user->lastname,
+                password: $user->password,
+                status: $user->status,
+                role: $user->roles->first()?->name,
+                assignments: $assignments
+            );
+        })->toArray();
+    }
+
+    public function findAllUsersByAlmacen(): array
+    {
+        $users = EloquentUser::whereHas('roles', function ($query) {
+            $query->where('name', 'Almacenero');
+        })->with('roles', 'assignments')->get();
 
         if ($users->isEmpty()) {
             return [];

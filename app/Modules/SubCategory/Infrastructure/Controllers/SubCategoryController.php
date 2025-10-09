@@ -13,6 +13,7 @@ use App\Modules\SubCategory\Infrastructure\Requests\StoreSubCategoryRequest;
 use App\Modules\SubCategory\Infrastructure\Requests\UpdateSubCategoryRequest;
 use App\Modules\SubCategory\Infrastructure\Resources\SubCategoryResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class SubCategoryController extends Controller
 {

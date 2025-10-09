@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
 use App\Modules\Category\Infrastructure\Persistence\EloquentCategoryRepository;
+use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInterface;
+use App\Modules\MeasurementUnit\Infrastructure\Persistence\EloquentMeasurementUnitRepository;
 use App\Modules\Menu\Domain\Interfaces\MenuRepositoryInterface;
 use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\Menu\Infrastructure\Persistence\EloquentMenuRepository;
@@ -31,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CategoryRepositoryInterface::class, EloquentCategoryRepository::class);
         $this->app->bind(SubCategoryRepositoryInterface::class, EloquentSubCategoryRepository::class);
         $this->app->bind(PercentageIGVRepositoryInterface::class, EloquentPercentageIGVRepository::class);
+        $this->app->bind(MeasurementUnitRepositoryInterface::class, EloquentMeasurementUnitRepository::class);
     }
 
     /**

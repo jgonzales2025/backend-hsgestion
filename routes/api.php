@@ -4,6 +4,7 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\MenuController;
 use App\Modules\Brand\Infrastructure\Controllers\BrandController;
 use App\Modules\Category\Infrastructure\Controllers\CategoryController;
+use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
 use App\Modules\TransportCompany\Infrastructure\Controllers\TransportCompanyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -79,6 +80,12 @@ Route::get('percentage-igv',[PercentageIGVController::class, 'index']);
 Route::post('percentage-igv',[PercentageIGVController::class, 'store']);
 Route::get('percentage-igv/{id}',[PercentageIGVController::class, 'show']);
 Route::put('percentage-igv/{id}',[PercentageIGVController::class, 'update']);
+
+// MeasurementUnits - Unidades de medida
+Route::get('measurement-units', [MeasurementUnitController::class, 'index']);
+Route::post('measurement-units', [MeasurementUnitController::class, 'store']);
+Route::get('measurement-units/{id}', [MeasurementUnitController::class, 'show']);
+Route::put('measurement-units/{id}', [MeasurementUnitController::class, 'update']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

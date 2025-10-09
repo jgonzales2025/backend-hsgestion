@@ -19,7 +19,7 @@ class EloquentSubCategoryRepository implements SubCategoryRepositoryInterface
                 name: $subCategory->name,
                 category_id: $subCategory->category_id,
                 category_name: $subCategory->category->name,
-                status: $subCategory->category
+                status: $subCategory->status
             );
         })->toArray();
     }

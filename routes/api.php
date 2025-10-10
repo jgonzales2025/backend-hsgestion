@@ -20,6 +20,7 @@ use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController
 use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
 use App\Modules\CustomerDocumentType\Infrastructure\Controllers\CustomerDocumentTypeController;
 use App\Modules\Branch\Infrastructure\Controllers\BranchController;
+use App\Modules\CustomerPhone\Infrastructure\Controllers\CustomerPhoneController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -27,6 +28,7 @@ Route::get('/roles', [RoleController::class, 'index']);
 Route::get('/roles/{id}', [RoleController::class, 'show']);
 Route::get('/permissions', [RoleController::class, 'indexPermissions']);
 Route::post('/roles', [RoleController::class, 'store']);
+Route::put('/roles/{id}', [RoleController::class, 'update']);
 
 Route::get('/usernames', [UserController::class, 'findAllUserName']);
 
@@ -110,6 +112,9 @@ Route::get('customer-types', [CustomerTypeController::class, 'index']);
 // Customers - Clientes
 Route::get('customers', [CustomerController::class, 'index']);
 Route::post('customers', [CustomerController::class, 'store']);
+
+// Customer phones - Telefonos de clientes
+Route::get('customer-phones', [CustomerPhoneController::class, 'index']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

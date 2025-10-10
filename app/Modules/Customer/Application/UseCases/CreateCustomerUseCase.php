@@ -20,7 +20,10 @@ class CreateCustomerUseCase
         $customer = new Customer(
             id: 0,
             record_type_id: $customerDTO->record_type_id,
+            record_type_name: null,
             customer_document_type_id: $customerDTO->customer_document_type_id,
+            customer_document_type_name: null,
+            customer_document_type_abbreviation: null,
             document_number: $customerDTO->document_number,
             company_name: $customerDTO->company_name,
             name: $customerDTO->name,

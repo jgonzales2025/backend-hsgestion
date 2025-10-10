@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreRoleRequest extends FormRequest
+class UpdateRoleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,10 +22,11 @@ class StoreRoleRequest extends FormRequest
      */
     public function rules(): array
     {
+        $roleId = $this->route('id');
         return [
-            'name' => 'required|string|unique:roles,name',
-            'menus' => 'required|array',
-            'menus.*' => 'integer|exists:menus,id'
+            'name' =>['required', 'string', Rule::unique('roles', 'name')->ignore($roleId)],
+            'menus' => 'nullable|array',
+            'menus.*' => 'exists:menus,id'
         ];
     }
 
@@ -34,7 +36,6 @@ class StoreRoleRequest extends FormRequest
             'name.required' => 'El nombre del rol es obligatorio.',
             'name.string' => 'El nombre del rol debe ser una cadena de texto.',
             'name.unique' => 'Este nombre de rol ya existe.',
-            'menus.required' => 'Debe seleccionar al menos un menú.',
             'menus.array' => 'Los menús deben ser un arreglo válido.',
             'menus.*.integer' => 'Cada menú debe ser un número entero.',
             'menus.*.exists' => 'Uno o más menús seleccionados no son válidos.'

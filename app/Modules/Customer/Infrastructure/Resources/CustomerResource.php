@@ -10,8 +10,15 @@ class CustomerResource extends JsonResource
     {
         return [
             'id' => $this->resource->getId(),
-            'record_type_id' => $this->resource->getRecordTypeId(),
-            'customer_document_type_id' => $this->resource->getCustomerDocumentTypeId(),
+            'record_type' => [
+                'id' => $this->resource->getRecordTypeId(),
+                'name' => $this->resource->getRecordTypeName()
+            ],
+            'customer_document_type' => [
+                'id' => $this->resource->getCustomerDocumentTypeId(),
+                'name' => $this->resource->getCustomerDocumentTypeName(),
+                'abbreviation' => $this->resource->getCustomerDocumentTypeAbbreviation(),
+            ],
             'document_number' => $this->resource->getDocumentNumber(),
             'company_name' => $this->resource->getCompanyName(),
             'name' => $this->resource->getName(),

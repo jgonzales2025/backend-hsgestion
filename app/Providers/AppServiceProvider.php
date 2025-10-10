@@ -10,6 +10,8 @@ use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\Customer\Infrastructure\Persistence\EloquentCustomerRepository;
 use App\Modules\CustomerDocumentType\Domain\Interfaces\CustomerDocumentTypeRepositoryInterface;
 use App\Modules\CustomerDocumentType\Infrastructure\Persistence\EloquentCustomerDocumentTypeRepository;
+use App\Modules\CustomerPhone\Domain\Interfaces\CustomerPhoneRepositoryInterface;
+use App\Modules\CustomerPhone\Infrastructure\Persistence\EloquentCustomerPhoneRepository;
 use App\Modules\CustomerType\Domain\Interfaces\CustomerTypeRepositoryInterface;
 use App\Modules\CustomerType\Infrastructure\Persistence\EloquentCustomerTypeRepository;
 use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInterface;
@@ -48,7 +50,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CustomerDocumentTypeRepositoryInterface::class, EloquentCustomerDocumentTypeRepository::class);
             $this->app->bind(RecordTypeRepositoryInterface::class, EloquentBranchRepository::class);
         $this->app->bind(BranchRepositoryInterface::class, EloquentBranchRepository::class);
-        
+        $this->app->bind(CustomerPhoneRepositoryInterface::class, EloquentCustomerPhoneRepository::class);
+
     }
 
     /**

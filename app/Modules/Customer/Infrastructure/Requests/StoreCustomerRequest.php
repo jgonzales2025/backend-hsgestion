@@ -26,6 +26,9 @@ class StoreCustomerRequest extends FormRequest
             'contact' => 'nullable|string|max:100',
             'is_withholding_applicable' => 'required|boolean',
             'status' => 'required|integer',
+
+            'phones' => 'required|array|min:1',
+            'phones.*.phone' => 'required|string',
         ];
     }
 }

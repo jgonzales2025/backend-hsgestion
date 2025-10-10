@@ -284,10 +284,10 @@ class MenuSeeder extends Seeder
         ]);
 
         Menu::create([
-            'name' => 'estadisticas_ventas_vendedor',
+            'name' => 'estadisticas_ventas_por_vendedor',
             'label' => 'Ventas de Artículos x Vendedor',
             'route' => '/estadisticas/ventas-vendedor',
-            'permission' => 'estadisticas.ventas_vendedor',
+            'permission' => 'estadisticas.ventas_por_vendedor',
             'parent_id' => $estadistica->id,
             'order' => 11,
             'status' => 1,

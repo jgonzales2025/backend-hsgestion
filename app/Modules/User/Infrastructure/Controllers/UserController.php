@@ -80,24 +80,37 @@ class UserController extends Controller
 
         $eloquentUser = EloquentUser::find($user->getId());
 
-        $menusData = $this->userMenuService->getUserMenusWithRestricted($eloquentUser);
-
         // Obtener permisos personalizados del usuario
         $customPermissions = \App\Models\UserMenuPermission::where('user_id', $id)
-            ->select(['user_id', 'menu_id'])
-            ->with(['menu:id,label'])
-            ->with('menu:id,label')
-            ->get()
-            ->map(function ($permission) {
-                return [
-                    'menu_id' => $permission->menu_id,
-                    'menu_label' => $permission->menu->label
-                ];
-            });
+            ->pluck('menu_id')
+            ->toArray();
+
+        // Obtener el rol del usuario
+        $role = $eloquentUser->roles->first();
+
+        // Formatear las asignaciones
+        $assignments = collect($user->getAssignments())->map(function ($assignment) {
+            return [
+                'id' => $assignment['id'],
+                'company_id' => $assignment['company_id'],
+                'company_name' => $assignment['company_name'],
+                'branch_id' => $assignment['branch_id'],
+                'branch_name' => $assignment['branch_name'],
+                'status' => $assignment['status'] == 1 ? 'Activo' : 'Inactivo'
+            ];
+        })->toArray();
 
         return response()->json([
-            'user' => new UserResource($user),
-            'custom_permissions' => $customPermissions
+            'id' => $user->getId(),
+            'username' => $user->getUsername(),
+            'firstname' => $user->getFirstname(),
+            'lastname' => $user->getLastname(),
+            'role_id' => $role ? $role->id : null,
+            'role_name' => $role ? $role->name : null,
+            'status' => $user->getStatus() == 1 ? 'Activo' : 'Inactivo',
+            'has_custom_permissions' => count($customPermissions) > 0,
+            'custom_permissions' => $customPermissions,
+            'assignments' => $assignments
         ]);
     }
 
@@ -136,6 +149,16 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, $id): JsonResponse
     {
         try {
+            $data = $request->validated();
+
+            // Hashear la contraseña si se envió desde el frontend
+            if (!empty($data['password'])) {
+                $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
+            } else {
+                // Si no se envió, eliminar del array para que no se actualice
+                unset($data['password']);
+            }
+
             // 1. Actualizar el usuario
             $userDTO = new UserDTO(array_merge(
                 $request->validated(),

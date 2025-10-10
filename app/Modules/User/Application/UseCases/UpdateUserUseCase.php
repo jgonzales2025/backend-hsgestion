@@ -29,7 +29,7 @@ class UpdateUserUseCase
             username: $userDTO->username,
             firstname: $userDTO->firstname,
             lastname: $userDTO->lastname,
-            password: $userDTO->password ?? $existingUser->getPassword(), // Mantener password actual si no se envió uno nuevo
+            password: $userDTO->password ?? $existingUser->getPassword(),
             status: $userDTO->status,
             role: $userDTO->role,
             assignments: null

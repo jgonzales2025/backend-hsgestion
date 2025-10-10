@@ -4,6 +4,12 @@ namespace App\Providers;
 
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
 use App\Modules\Category\Infrastructure\Persistence\EloquentCategoryRepository;
+use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\Customer\Infrastructure\Persistence\EloquentCustomerRepository;
+use App\Modules\CustomerDocumentType\Domain\Interfaces\CustomerDocumentTypeRepositoryInterface;
+use App\Modules\CustomerDocumentType\Infrastructure\Persistence\EloquentCustomerDocumentTypeRepository;
+use App\Modules\CustomerType\Domain\Interfaces\CustomerTypeRepositoryInterface;
+use App\Modules\CustomerType\Infrastructure\Persistence\EloquentCustomerTypeRepository;
 use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInterface;
 use App\Modules\MeasurementUnit\Infrastructure\Persistence\EloquentMeasurementUnitRepository;
 use App\Modules\Menu\Domain\Interfaces\MenuRepositoryInterface;
@@ -34,6 +40,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SubCategoryRepositoryInterface::class, EloquentSubCategoryRepository::class);
         $this->app->bind(PercentageIGVRepositoryInterface::class, EloquentPercentageIGVRepository::class);
         $this->app->bind(MeasurementUnitRepositoryInterface::class, EloquentMeasurementUnitRepository::class);
+        $this->app->bind(CustomerTypeRepositoryInterface::class, EloquentCustomerTypeRepository::class);
+        $this->app->bind(CustomerRepositoryInterface::class, EloquentCustomerRepository::class);
+        $this->app->bind(CustomerDocumentTypeRepositoryInterface::class, EloquentCustomerDocumentTypeRepository::class);
     }
 
     /**

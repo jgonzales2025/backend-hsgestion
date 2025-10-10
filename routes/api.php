@@ -1,11 +1,12 @@
 <?php
 
-use App\Http\Controllers\BranchController;
+
 use App\Http\Controllers\MenuController;
 use App\Modules\Brand\Infrastructure\Controllers\BrandController;
 use App\Modules\Category\Infrastructure\Controllers\CategoryController;
 use App\Modules\Customer\Infrastructure\Controllers\CustomerController;
 use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
+use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
 use App\Modules\TransportCompany\Infrastructure\Controllers\TransportCompanyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +19,7 @@ use App\Modules\SubCategory\Infrastructure\Controllers\SubCategoryController;
 use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
 use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
 use App\Modules\CustomerDocumentType\Infrastructure\Controllers\CustomerDocumentTypeController;
+use App\Modules\Branch\Infrastructure\Controllers\BranchController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -32,16 +34,16 @@ Route::get('/companies', [CompanyController::class, 'index']);
 Route::get('/companies/{id}', [CompanyController::class, 'show']);
 Route::get('/companies-user', [CompanyController::class, 'indexByUser']);
 
-// Route::get('/branches', [BranchController::class, 'index']);
+
 
 //recordType
 Route::get('/recordType', [RecordTypeController::class, 'index']);
 
 
 //branches
-Route::get('/branches', [BranchInfraController::class, 'index']);
-Route::get('/branches/{id}', [BranchInfraController::class, 'show']);
-Route::put('/branches/{id}', [BranchInfraController::class, 'update']);
+Route::get('/branches', [BranchController::class, 'index']);
+Route::get('/branches/{id}', [BranchController::class, 'show']);
+Route::put('/branches/{id}', [BranchController::class, 'update']);
 
 
 

@@ -51,8 +51,11 @@ class StoreUserRequest extends FormRequest
         return [
             'username.required' => 'El usuario es obligatorio',
             'username.unique' => 'El usuario ya existe',
+            'username.max' => 'El usuario no debe exceder los 20 caracteres',
             'firstname.required' => 'El nombre es obligatorio',
             'lastname.required' => 'El apellido es obligatorio',
+            'firstname.max' => 'El nombre no debe exceder los 30 caracteres',
+            'lastname.max' => 'El apellido no debe exceder los 60 caracteres',
             'password.required' => 'La contraseña es obligatoria',
             'password.confirmed' => 'Las contraseñas no coinciden',
             'password.min' => 'La contraseña debe tener al menos 8 caracteres',

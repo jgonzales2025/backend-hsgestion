@@ -11,7 +11,7 @@ class SubCategoryResource extends JsonResource
         return [
             'id' => $this->resource->getId(),
             'name' => $this->resource->getName(),
-            'category' => $this->resource->getCategoryId(),
+            'category_id' => $this->resource->getCategoryId(),
             'category_name' => $this->resource->getCategoryName(),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo'
         ];

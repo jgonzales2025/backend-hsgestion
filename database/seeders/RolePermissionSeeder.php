@@ -100,6 +100,7 @@ class RolePermissionSeeder extends Seeder
             'tablas.tipos_cambio',
             'tablas.bloquear_meses',
             'tablas.porcentajes_igv',
+            'tablas.unidad_medida',
             'tablas.usuarios',
             'tablas.roles',
 
@@ -244,6 +245,7 @@ class RolePermissionSeeder extends Seeder
             ['role_id' => $admin->id, 'menu_id' => 96],
             ['role_id' => $admin->id, 'menu_id' => 97],
             ['role_id' => $admin->id, 'menu_id' => 98],
+            ['role_id' => $admin->id, 'menu_id' => 99],
         ]);
 
         // Gerente
@@ -333,6 +335,7 @@ class RolePermissionSeeder extends Seeder
             'almacen.orden_ensamble',
             'reportes.toma_inventario',
             'reportes.lista_articulos_valorizado',
+            'tablas.unidad_medida'
         ]);
 
         DB::table('menu_role')->insert([

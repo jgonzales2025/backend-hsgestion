@@ -101,6 +101,19 @@ class UserMenuService
                     }
                 }
 
+                // CAMBIO CLAVE: Incluir el padre SI tiene al menos un hijo accesible
+                if (!empty($accessibleChildren)) {
+                    $accessible[] = [
+                        'id' => $menu->id,
+                        'label' => $menu->label,
+                        'icon' => $menu->icon,
+                        'route' => $menu->route,
+                        'order' => $menu->order,
+                        'status' => $menu->status,
+                        'children' => $accessibleChildren
+                    ];
+                }
+
                 // Si el padre tiene acceso Y tiene hijos accesibles
                 if ($hasParentAccess && !empty($accessibleChildren)) {
                     $accessible[] = [
@@ -169,12 +182,13 @@ class UserMenuService
 
     private function hasMenuAccess($menu, $user, $customPermissions)
     {
-        // Si tiene permiso personalizado, ese tiene prioridad
-        if (isset($customPermissions[$menu->id])) {
-            return $customPermissions[$menu->id] === 'grant';
+        // Si el usuario tiene permisos personalizados configurados
+        if ($customPermissions->isNotEmpty()) {
+            // Verificar si el menú está en los permisos personalizados
+            return $customPermissions->contains($menu->id);
         }
 
-        // Si no, usa el permiso del rol
+        // Si no tiene permisos personalizados, usar los permisos del rol
         return !$menu->permission || $user->can($menu->permission);
     }
 

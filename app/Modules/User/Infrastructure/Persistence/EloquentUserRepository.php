@@ -15,7 +15,7 @@ class EloquentUserRepository implements UserRepositoryInterface
             'username' => $user->getUsername(),
             'firstname' => $user->getFirstname(),
             'lastname' => $user->getLastname(),
-            'password' => $user->getPassword(),
+            'password' => password_hash($user->getPassword(), PASSWORD_BCRYPT),
             'status' => $user->getStatus()
         ]);
 
@@ -78,8 +78,10 @@ class EloquentUserRepository implements UserRepositoryInterface
             'status' => $user->getStatus(),
         ];
 
-        if ($user->getPassword() && $user->getPassword() !== $eloquentUser->password) {
-            $data['password'] = $user->getPassword();
+        if ($user->getPassword() !== null
+            && $user->getPassword() !== $eloquentUser->password
+            && !str_starts_with($user->getPassword(), '$2y$')) {
+            $data['password'] = password_hash($user->getPassword(), PASSWORD_BCRYPT);
         }
 
         $eloquentUser->update($data);
@@ -93,13 +95,18 @@ class EloquentUserRepository implements UserRepositoryInterface
 
     public function findAllUserName(): array
     {
-        $users = EloquentUser::with('roles')->get();
+        $users = EloquentUser::with('roles')->where('status', 1)->get();
 
         if ($users->isEmpty()) {
             return [];
         }
 
-        return $users->pluck('username')->toArray();
+        return $users->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'username' => $user->username
+            ];
+        })->toArray();
     }
 
     public function findAllUsers(): array

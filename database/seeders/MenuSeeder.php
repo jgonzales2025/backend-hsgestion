@@ -284,10 +284,10 @@ class MenuSeeder extends Seeder
         ]);
 
         Menu::create([
-            'name' => 'estadisticas_ventas_vendedor',
+            'name' => 'estadisticas_ventas_por_vendedor',
             'label' => 'Ventas de Artículos x Vendedor',
             'route' => '/estadisticas/ventas-vendedor',
-            'permission' => 'estadisticas.ventas_vendedor',
+            'permission' => 'estadisticas.ventas_por_vendedor',
             'parent_id' => $estadistica->id,
             'order' => 11,
             'status' => 1,
@@ -851,12 +851,23 @@ class MenuSeeder extends Seeder
         ]);
 
         Menu::create([
+            'name' => 'tablas_unidad_medida',
+            'label' => 'Unidades de medida',
+            'route' => '/tablas/unidad-medida',
+            'permission' => 'tablas.unidad_medida',
+            'parent_id' => $tabla->id,
+            'order' => 14,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
+        Menu::create([
             'name' => 'tablas_usuarios',
             'label' => 'Mantenimiento de Usuarios',
             'route' => '/tablas/usuarios',
             'permission' => 'tablas.usuarios',
             'parent_id' => $tabla->id,
-            'order' => 14,
+            'order' => 15,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -867,7 +878,7 @@ class MenuSeeder extends Seeder
             'route' => '/tablas/roles',
             'permission' => 'tablas.roles',
             'parent_id' => $tabla->id,
-            'order' => 15,
+            'order' => 16,
             'status' => 1,
             'type' => 'item',
         ]);

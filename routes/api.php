@@ -4,7 +4,8 @@ use App\Http\Controllers\BranchController;
 use App\Http\Controllers\MenuController;
 use App\Modules\Brand\Infrastructure\Controllers\BrandController;
 use App\Modules\Category\Infrastructure\Controllers\CategoryController;
-use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
+use App\Modules\Customer\Infrastructure\Controllers\CustomerController;
+use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
 use App\Modules\TransportCompany\Infrastructure\Controllers\TransportCompanyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -13,15 +14,17 @@ use App\Modules\Auth\Infrastructure\Controllers\AuthController;
 use App\Modules\Driver\Infrastructure\Controllers\DriverController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\CustomerDocumentTypeController;
 use App\Modules\SubCategory\Infrastructure\Controllers\SubCategoryController;
-use App\Modules\Branch\Infrastructure\Controllers\BranchController as BranchInfraController;
+use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
+use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
+use App\Modules\CustomerDocumentType\Infrastructure\Controllers\CustomerDocumentTypeController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/roles', [RoleController::class, 'index']);
 Route::get('/roles/{id}', [RoleController::class, 'show']);
 Route::get('/permissions', [RoleController::class, 'indexPermissions']);
+Route::post('/roles', [RoleController::class, 'store']);
 
 Route::get('/usernames', [UserController::class, 'findAllUserName']);
 
@@ -85,6 +88,25 @@ Route::get('transport-companies',[TransportCompanyController::class, 'index']);
 Route::post('transport-companies',[TransportCompanyController::class, 'store']);
 Route::get('transport-companies/{id}',[TransportCompanyController::class, 'show']);
 Route::put('transport-companies/{id}',[TransportCompanyController::class, 'update']);
+
+// PercentageIGV - Porcentaje de IGV
+Route::get('percentage-igv',[PercentageIGVController::class, 'index']);
+Route::post('percentage-igv',[PercentageIGVController::class, 'store']);
+Route::get('percentage-igv/{id}',[PercentageIGVController::class, 'show']);
+Route::put('percentage-igv/{id}',[PercentageIGVController::class, 'update']);
+
+// MeasurementUnits - Unidades de medida
+Route::get('measurement-units', [MeasurementUnitController::class, 'index']);
+Route::post('measurement-units', [MeasurementUnitController::class, 'store']);
+Route::get('measurement-units/{id}', [MeasurementUnitController::class, 'show']);
+Route::put('measurement-units/{id}', [MeasurementUnitController::class, 'update']);
+
+// Customer types - Tipos de clientes
+Route::get('customer-types', [CustomerTypeController::class, 'index']);
+
+// Customers - Clientes
+Route::get('customers', [CustomerController::class, 'index']);
+Route::post('customers', [CustomerController::class, 'store']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

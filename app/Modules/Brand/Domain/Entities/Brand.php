@@ -6,9 +6,9 @@ class Brand
 {
     private int $id;
     private string $name;
-    private string $status;
+    private int $status;
 
-    public function __construct(int $id, string $name, bool $status)
+    public function __construct(int $id, string $name, int $status)
     {
         $this->id = $id;
         $this->name = $name;
@@ -23,7 +23,7 @@ class Brand
         return $this->name;
     }
 
-    public function getStatus(): bool {
+    public function getStatus(): int {
         return $this->status;
     }
 }

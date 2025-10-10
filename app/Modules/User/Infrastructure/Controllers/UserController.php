@@ -3,6 +3,7 @@
 namespace App\Modules\User\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\UserMenuPermission;
 use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\User\Application\DTOs\UserDTO;
 use App\Modules\User\Application\UseCases\CreateUserUseCase;
@@ -79,24 +80,37 @@ class UserController extends Controller
 
         $eloquentUser = EloquentUser::find($user->getId());
 
-        $menusData = $this->userMenuService->getUserMenusWithRestricted($eloquentUser);
-
         // Obtener permisos personalizados del usuario
         $customPermissions = \App\Models\UserMenuPermission::where('user_id', $id)
-            ->select(['user_id', 'menu_id'])
-            ->with(['menu:id,label'])
-            ->with('menu:id,label')
-            ->get()
-            ->map(function ($permission) {
-                return [
-                    'menu_id' => $permission->menu_id,
-                    'menu_label' => $permission->menu->label
-                ];
-            });
+            ->pluck('menu_id')
+            ->toArray();
+
+        // Obtener el rol del usuario
+        $role = $eloquentUser->roles->first();
+
+        // Formatear las asignaciones
+        $assignments = collect($user->getAssignments())->map(function ($assignment) {
+            return [
+                'id' => $assignment['id'],
+                'company_id' => $assignment['company_id'],
+                'company_name' => $assignment['company_name'],
+                'branch_id' => $assignment['branch_id'],
+                'branch_name' => $assignment['branch_name'],
+                'status' => $assignment['status'] == 1 ? 'Activo' : 'Inactivo'
+            ];
+        })->toArray();
 
         return response()->json([
-            'user' => new UserResource($user),
-            'custom_permissions' => $customPermissions
+            'id' => $user->getId(),
+            'username' => $user->getUsername(),
+            'firstname' => $user->getFirstname(),
+            'lastname' => $user->getLastname(),
+            'role_id' => $role ? $role->id : null,
+            'role_name' => $role ? $role->name : null,
+            'status' => $user->getStatus() == 1 ? 'Activo' : 'Inactivo',
+            'has_custom_permissions' => count($customPermissions) > 0,
+            'custom_permissions' => $customPermissions,
+            'assignments' => $assignments
         ]);
     }
 
@@ -135,6 +149,16 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, $id): JsonResponse
     {
         try {
+            $data = $request->validated();
+
+            // Hashear la contraseña si se envió desde el frontend
+            if (!empty($data['password'])) {
+                $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
+            } else {
+                // Si no se envió, eliminar del array para que no se actualice
+                unset($data['password']);
+            }
+
             // 1. Actualizar el usuario
             $userDTO = new UserDTO(array_merge(
                 $request->validated(),
@@ -154,7 +178,19 @@ class UserController extends Controller
             $eloquentUser = EloquentUser::find($id);
             $eloquentUser->syncRoles([$request->role_id]); // Reemplaza el rol actual
 
-            // 3. Actualizar las asignaciones
+            // 3. Actualizar permisos personalizados
+            UserMenuPermission::where('user_id', $id)->delete();
+
+            if ($request->has('custom_permissions')) {
+                foreach ($request->custom_permissions as $permission) {
+                    \App\Models\UserMenuPermission::create([
+                        'user_id' => $id,
+                        'menu_id' => $permission['menu_id'],
+                    ]);
+                }
+            }
+
+            // 4. Actualizar las asignaciones
             $assignmentDTO = new UserAssignmentDTO([
                 'user_id' => $id,
                 'assignments' => $request->assignments,
@@ -165,7 +201,7 @@ class UserController extends Controller
             $updateAssignmentUseCase = new UpdateUserAssignmentUseCase($assignmentRepository);
             $updateAssignmentUseCase->execute($assignmentDTO);
 
-            // 4. Obtener el usuario actualizado
+            // 5. Obtener el usuario actualizado
             $userUpdated = $this->userRepository->findById($id);
 
             return response()->json([

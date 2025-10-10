@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreRoleRequest;
 use App\Http\Resources\RoleResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,6 +16,38 @@ class RoleController extends Controller
     {
         $roles = Role::all();
         return response()->json($roles);
+    }
+
+    public function store(StoreRoleRequest $request)
+    {
+        $validatedData = $request->validated();
+
+        $role = \App\Models\Role::create([
+            'name' => $validatedData['name'],
+            'guard_name' => 'api'
+        ]);
+
+        // Asociar menús al rol
+        $role->menus()->sync($validatedData['menus']);
+
+        // Obtener los permisos de los menús seleccionados
+        $menus = \App\Models\Menu::whereIn('id', $validatedData['menus'])
+            ->whereNotNull('permission')
+            ->pluck('permission')
+            ->toArray();
+
+        // Asignar los permisos al rol
+        if (!empty($menus)) {
+            $role->syncPermissions($menus);
+        }
+
+        $role->load(['menus', 'permissions']);
+
+        return response()->json([
+            'role' => $role,
+            'menus' => $role->menus,
+            'permissions' => $role->permissions
+        ], 201);
     }
 
     public function show($id)

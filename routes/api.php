@@ -40,6 +40,7 @@ Route::get('/companies-user', [CompanyController::class, 'indexByUser']);
 Route::get('/recordType', [RecordTypeController::class, 'index']);
 
 
+
 //branches
 Route::get('/branches', [BranchController::class, 'index']);
 Route::get('/branches/{id}', [BranchController::class, 'show']);

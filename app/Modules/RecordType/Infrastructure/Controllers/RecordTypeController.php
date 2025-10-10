@@ -7,7 +7,7 @@ use App\Modules\RecordType\Application\UseCases\CreateRecordTypeUseCase;
 use App\Modules\RecordType\Application\UseCases\FindAllRecordTypesUserCases;
 use App\Modules\RecordType\Application\UseCases\FindByIdRecordTypeUseCase;
 use App\Modules\RecordType\Application\UseCases\UpdateRecordTypeUseCase;
-use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
+use App\Modules\RecordType\Infrastructure\Persistence\EloquentRecordTypeRepository;
 use App\Modules\RecordType\Infrastructure\Requests\StoreRecordTypeRequest;
 use App\Modules\RecordType\Infrastructure\Requests\UpdateRecordTypeRquest;
 use App\Modules\RecordType\Infrastructure\Resources\RecordTypeResource;
@@ -15,8 +15,8 @@ use Illuminate\Http\JsonResponse;
 
 class RecordTypeController extends Controller {
     protected $recordTypeRepository;
-    public function __construct(RecordTypeRepositoryInterface $recordTypeRepository){
-        $this->recordTypeRepository =  $recordTypeRepository;
+    public function __construct(){
+        $this->recordTypeRepository = new  EloquentRecordTypeRepository();
     }
 
     public function index():array

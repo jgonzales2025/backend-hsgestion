@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Models;
+namespace App\Modules\Branch\Infrastructure\Models;
 
+use App\Models\Company;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Branch extends Model
+class EloquentBranch extends Model
 {
+     protected $table = 'branches'; 
     protected $fillable = ['cia_id', 'name', 'address', 'email', 'start_date', 'serie', 'status'];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -17,3 +19,4 @@ class Branch extends Model
 
     }
 }
+

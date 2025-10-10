@@ -25,8 +25,8 @@ class DriverController extends Controller
 
     public function index(): array
     {
-        $driverUseCase = new FindAllDriversUseCases($this->driverRepository);
-        $drivers = $driverUseCase->execute();
+        $branchUseCase = new FindAllDriversUseCases($this->driverRepository);
+        $drivers = $branchUseCase->execute();
 
         return DriverResource::collection($drivers)->resolve();
     }

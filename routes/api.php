@@ -32,7 +32,18 @@ Route::get('/companies', [CompanyController::class, 'index']);
 Route::get('/companies/{id}', [CompanyController::class, 'show']);
 Route::get('/companies-user', [CompanyController::class, 'indexByUser']);
 
-Route::get('/branches', [BranchController::class, 'index']);
+// Route::get('/branches', [BranchController::class, 'index']);
+
+//recordType
+Route::get('/recordType', [RecordTypeController::class, 'index']);
+
+
+//branches
+Route::get('/branches', [BranchInfraController::class, 'index']);
+Route::get('/branches/{id}', [BranchInfraController::class, 'show']);
+Route::put('/branches/{id}', [BranchInfraController::class, 'update']);
+
+
 
 Route::get('/menus', [MenuController::class, 'index']);
 

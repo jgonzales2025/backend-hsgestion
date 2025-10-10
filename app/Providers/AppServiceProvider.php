@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\Branch\Infrastructure\Persistence\EloquentBranchRepository;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
 use App\Modules\Category\Infrastructure\Persistence\EloquentCategoryRepository;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;

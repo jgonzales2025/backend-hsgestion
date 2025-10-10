@@ -2,6 +2,7 @@
 
 namespace App\Modules\Customer\Infrastructure\Models;
 
+use App\Modules\CustomerDocumentType\Infrastructure\Models\EloquentCustomerDocumentType;
 use App\Modules\CustomerType\Infrastructure\Models\EloquentCustomerType;
 use App\Modules\RecordType\Infrastructure\Models\EloquentRecordType;
 use Illuminate\Database\Eloquent\Model;
@@ -36,5 +37,10 @@ class EloquentCustomer extends Model
     public function recordType(): BelongsTo
     {
         return $this->belongsTo(EloquentRecordType::class, 'record_type_id');
+    }
+
+    public function customerDocumentType(): BelongsTo
+    {
+        return $this->belongsTo(EloquentCustomerDocumentType::class, 'customer_document_type_id');
     }
 }

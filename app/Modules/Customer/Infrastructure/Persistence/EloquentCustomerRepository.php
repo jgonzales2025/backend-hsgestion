@@ -17,7 +17,10 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
             return new Customer(
                 id: $customer->id,
                 record_type_id: $customer->record_type_id,
+                record_type_name: $customer->recordType->name,
                 customer_document_type_id: $customer->customer_document_type_id,
+                customer_document_type_name: $customer->customerDocumentType->description,
+                customer_document_type_abbreviation: $customer->customerDocumentType->abbreviation,
                 document_number: $customer->document_number,
                 company_name: $customer->company_name,
                 name: $customer->name,
@@ -53,7 +56,10 @@ class EloquentCustomerRepository implements CustomerRepositoryInterface
         return new Customer(
             id: $eloquentCustomer->id,
             record_type_id: $eloquentCustomer->record_type_id,
+            record_type_name: $eloquentCustomer->recordType->name,
             customer_document_type_id: $eloquentCustomer->customer_document_type_id,
+            customer_document_type_name: $eloquentCustomer->customerDocumentType->description,
+            customer_document_type_abbreviation: $eloquentCustomer->customerDocumentType->abbreviation,
             document_number: $eloquentCustomer->document_number,
             company_name: $eloquentCustomer->company_name,
             name: $eloquentCustomer->name,

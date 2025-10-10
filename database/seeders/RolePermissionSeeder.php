@@ -58,6 +58,7 @@ class RolePermissionSeeder extends Seeder
             'reportes.inventario_vs_saldo_fecha',
             'reportes.toma_inventario',
             'reportes.compras_costo_cero',
+            'reportes.saldos_articulos',
             'reportes.lista_articulos_valorizado',
             'reportes.consulta_entradas_salidas',
             'reportes.consulta_registro_documentos',

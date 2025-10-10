@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRoleRequest;
+use App\Http\Requests\UpdateRoleRequest;
 use App\Http\Resources\RoleResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -106,5 +107,27 @@ class RoleController extends Controller
     {
         $permissions = Permission::all();
         return response()->json($permissions);
+    }
+
+    public function update(UpdateRoleRequest $request, $id)
+    {
+        $validatedData = $request->validated();
+
+        $role = \App\Models\Role::where('guard_name', 'api')->findOrFail($id);
+
+        $role->update([
+            'name' => $validatedData['name'],
+            'guard_name' => 'api'
+        ]);
+
+        // Sincronizar menús
+        if (isset($validatedData['menus'])) {
+            $role->menus()->sync($validatedData['menus']);
+        }
+
+        return response()->json([
+            'message' => 'Rol actualizado exitosamente',
+            'role' => $role->load('menus')
+        ]);
     }
 }

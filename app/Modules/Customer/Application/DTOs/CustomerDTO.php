@@ -12,7 +12,6 @@ class CustomerDTO
     public $lastname;
     public $second_lastname;
     public $customer_type_id;
-    public $customer_type_name;
     public $fax;
     public $contact;
     public $is_withholding_applicable;
@@ -23,14 +22,13 @@ class CustomerDTO
         $this->record_type_id = $data['record_type_id'];
         $this->customer_document_type_id = $data['customer_document_type_id'];
         $this->document_number = $data['document_number'];
-        $this->company_name = $data['company_name'];
-        $this->name = $data['name'];
-        $this->lastname = $data['lastname'];
-        $this->second_lastname = $data['second_lastname'];
+        $this->company_name = $data['company_name'] ?? null;
+        $this->name = $data['name'] ?? null;
+        $this->lastname = $data['lastname'] ?? null;
+        $this->second_lastname = $data['second_lastname'] ?? null;
         $this->customer_type_id = $data['customer_type_id'];
-        $this->customer_type_name = $data['customer_type_name'];
-        $this->fax = $data['fax'];
-        $this->contact = $data['contact'];
+        $this->fax = $data['fax'] ?? null;
+        $this->contact = $data['contact'] ?? null;
         $this->is_withholding_applicable = $data['is_withholding_applicable'];
         $this->status = $data['status'];
     }

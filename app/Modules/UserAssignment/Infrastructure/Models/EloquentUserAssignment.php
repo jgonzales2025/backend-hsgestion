@@ -2,10 +2,8 @@
 
 namespace App\Modules\UserAssignment\Infrastructure\Models;
 
-use App\Modules\Branch\Domain\Entities\Branch;
-use App\Modules\Company\Domain\Entities\Company;
-use App\Models\Company;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
+use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,7 +28,7 @@ class EloquentUserAssignment extends Model
 
     public function company(): BelongsTo
     {
-        return $this->belongsTo(Company::class, 'company_id');
+        return $this->belongsTo(EloquentCompany::class, 'company_id');
     }
 
 }

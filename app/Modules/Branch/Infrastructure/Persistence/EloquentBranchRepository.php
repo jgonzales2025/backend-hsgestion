@@ -6,6 +6,7 @@ use App\Modules\Branch\Domain\Entities\Branch;
 
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
+use Illuminate\Support\Facades\Log;
 
 
 class EloquentBranchRepository implements BranchRepositoryInterface
@@ -26,31 +27,34 @@ class EloquentBranchRepository implements BranchRepositoryInterface
             email: $branch->email,
             start_date: $branch->start_date,
             serie: $branch->serie,
-            status: $branch->status
+            status: $branch->status,
+             phones: $branch->phones ? $branch->phones->pluck('phone')->toArray() : []
         ))->toArray();
     }
 
-    public function findById(int $id): ?Branch
-    {
-           $branch = EloquentBranch::with('company')->find($id);
-           if (!$branch) {
-              return null;
-           }
-                   return new Branch(
-               id: $branch->id,
-            cia_id: $branch->cia_id,
-            name: $branch->name,
-            address: $branch->address,
-            email: $branch->email,
-            start_date: $branch->start_date,
-            serie: $branch->serie,
-            status: $branch->status
-        );
-       
-    }
-      public function findByCiaId(int $cia_id): array
+  public function findById(int $id): ?Branch
 {
-    $branches = EloquentBranch::with('company')
+    $branch = EloquentBranch::with('company','phones')->find($id);
+    if (!$branch) {
+        return null;
+    }
+       Log::info('Buscando branch con ID: ' . $branch);
+    return new Branch(
+        id: $branch->id,
+        cia_id: $branch->cia_id,
+        name: $branch->name,
+        address: $branch->address,
+        email: $branch->email,
+        start_date: $branch->start_date,
+        serie: $branch->serie,
+        status: $branch->status,
+        phones: $branch->phones ? $branch->phones->pluck('phone')->toArray() : []
+    );
+}
+
+public function findByCiaId(int $cia_id): array
+{
+    $branches = EloquentBranch::with('company', 'phones') // 
         ->where('cia_id', $cia_id)
         ->get();
 
@@ -67,28 +71,45 @@ class EloquentBranchRepository implements BranchRepositoryInterface
             email: $branch->email,
             start_date: $branch->start_date,
             serie: $branch->serie,
-            status: $branch->status
+            status: $branch->status,
+            phones: $branch->phones ? $branch->phones->pluck('phone')->toArray() : []
         );
     })->all();
 }
-       public function update(Branch $branch): void
-    {
-        $eloquentDriver = EloquentBranch::find($branch->getId());
 
-        if (!$eloquentDriver) {
-            throw new \Exception(" no encontrado branch");
-        }
+public function update(Branch $branch): void
+{
+    $eloquentBranch = EloquentBranch::find($branch->getId());
 
-        $eloquentDriver->update([
-            'cia_id'=> $branch->getCia_id(),
-            'name'=> $branch->getName(),
-            'address'=> $branch->getAddress(),
-            'email'=> $branch->getEmail(),
-            'start_date'=> $branch->getStart_date(),
-            'serie'=> $branch->getSerie(),
-            'status'=> $branch->getStatus()
-        ]);
+    if (!$eloquentBranch) {
+        throw new \Exception("Branch no encontrado");
     }
+
+    // 🔹 Actualiza los datos principales
+    $eloquentBranch->update([
+        'cia_id'     => $branch->getCia_id() ?? $eloquentBranch->cia_id,
+        'name'       => $branch->getName(),
+        'address'    => $branch->getAddress(),
+        'email'      => $branch->getEmail(),
+        'start_date' => $branch->getStart_date(),
+        'serie'      => $branch->getSerie(),
+        'status'     => $branch->getStatus(),
+    ]);
+
+    // 🔹 Si se enviaron teléfonos, reemplaza los existentes
+    if (!empty($branch->getPhones())) {
+        // Borra los teléfonos anteriores
+        $eloquentBranch->phones()->delete();
+
+        // Inserta los nuevos
+        foreach ($branch->getPhones() as $phone) {
+            if (!empty($phone)) {
+                $eloquentBranch->phones()->create(['phone' => $phone]);
+            }
+        }
+    }
+}
+
 
 }
 

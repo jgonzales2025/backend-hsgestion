@@ -52,6 +52,43 @@ class BranchSeeder extends Seeder
             ],
         ];
 
+        $branchephones = [
+            [
+                'branch_id' => 1,
+                'phone' => 963852741
+            ],
+            [
+                'branch_id' => 1,
+                'phone' => 968574120
+            ],
+              [
+                'branch_id' => 2,
+                'phone' => 963852741
+            ],
+            [
+                'branch_id' => 2,
+                'phone' => 968574120
+            ],
+              [
+                'branch_id' => 3,
+                'phone' => 963852741
+            ],
+            [
+                'branch_id' => 3,
+                'phone' => 968574120
+            ],
+              [
+                'branch_id' => 4,
+                'phone' => 963852741
+            ],
+            [
+                'branch_id' => 4,
+                'phone' => 968574120
+            ],
+
+        ];
+
         DB::table('branches')->insert($branches);
+        DB::table('branch_phones')->insert($branchephones);
     }
 }

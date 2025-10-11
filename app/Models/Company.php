@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\UserAssignment\Infrastructure\Models\EloquentUserAssignment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -14,7 +15,7 @@ class Company extends Model
 
     public function branches(): HasMany
     {
-        return $this->hasMany(Branch::class, 'cia_id');
+        return $this->hasMany(EloquentBranch::class, 'cia_id');
     }
 
     public function assignments(): HasMany

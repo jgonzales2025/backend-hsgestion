@@ -39,6 +39,7 @@ class UserController extends Controller
 
         $eloquentUser = EloquentUser::find($user->getId());
         $eloquentUser->assignRole($request->role_id);
+        $eloquentUser->load('roles.menus');
 
         if ($request->has('custom_permissions')) {
             foreach ($request->custom_permissions as $permission) {

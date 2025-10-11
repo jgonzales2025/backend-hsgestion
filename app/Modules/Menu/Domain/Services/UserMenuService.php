@@ -57,51 +57,87 @@ class UserMenuService
         })->values();
     }
 
-    public function getUserMenusWithRestricted(Authenticatable $user)
+    public function getUserMenusWithRestricted(Authenticatable $user, $customRole = null)
     {
-        $menus = Menu::active()
-            ->main()
-            ->ordered()
-            ->with(['children' => function ($query) {
-                $query->active()->ordered();
+        if (!$customRole) {
+            // Consulta directa a la tabla pivot SIN usar relaciones cacheadas
+            $userRoleId = \DB::table('model_has_roles')
+                ->where('model_type', get_class($user))
+                ->where('model_id', $user->id)
+                ->value('role_id');
+
+            if (!$userRoleId) {
+                return [
+                    'accessible' => [],
+                    'restricted' => []
+                ];
+            }
+
+            // Consulta fresca con los menús
+            $customRole = \App\Models\Role::with(['menus' => function($query) {
+                $query->where('status', 1)->orderBy('order');
             }])
+                ->where('id', $userRoleId)
+                ->first();
+        }
+
+        if (!$customRole || !$customRole->menus) {
+            return [
+                'accessible' => [],
+                'restricted' => []
+            ];
+        }
+
+        $roleMenus = $customRole->menus;
+        $roleMenuIds = $roleMenus->pluck('id');
+
+        // Consulta fresca de permisos personalizados
+        $customPermissions = \DB::table('user_menu_permissions')
+            ->where('user_id', $user->id)
+            ->pluck('menu_id');
+
+        // Obtener menús padres (del conjunto de menús del rol)
+        $parentMenus = $roleMenus->whereNull('parent_id')->sortBy('order');
+
+        // Incluir padres cuyos hijos están en el rol
+        $childrenParentIds = $roleMenus->whereNotNull('parent_id')->pluck('parent_id')->unique();
+        $additionalParents = Menu::whereIn('id', $childrenParentIds)
+            ->whereNotIn('id', $roleMenuIds)
+            ->where('status', 1)
+            ->orderBy('order')
             ->get();
 
-        $customPermissions = \App\Models\UserMenuPermission::where('user_id', $user->id)
-            ->pluck('menu_id');
+        $allParents = $parentMenus->merge($additionalParents)->sortBy('order')->unique('id');
 
         $accessible = [];
         $restricted = [];
 
-        foreach ($menus as $menu) {
+        foreach ($allParents as $menu) {
             $hasParentAccess = $this->hasMenuAccess($menu, $user, $customPermissions);
 
-            if ($menu->children->isNotEmpty()) {
+            // Obtener solo los hijos que están en el rol
+            $children = $roleMenus->where('parent_id', $menu->id)->sortBy('order');
+
+            if ($children->isNotEmpty()) {
                 $accessibleChildren = [];
                 $restrictedChildren = [];
 
-                // Separar hijos accesibles de restringidos
-                foreach ($menu->children as $child) {
+                foreach ($children as $child) {
+                    $childData = [
+                        'id' => $child->id,
+                        'label' => $child->label,
+                        'route' => $child->route,
+                        'order' => $child->order,
+                        'status' => $child->status
+                    ];
+
                     if ($this->hasMenuAccess($child, $user, $customPermissions)) {
-                        $accessibleChildren[] = [
-                            'id' => $child->id,
-                            'label' => $child->label,
-                            'route' => $child->route,
-                            'order' => $child->order,
-                            'status' => $child->status
-                        ];
+                        $accessibleChildren[] = $childData;
                     } else {
-                        $restrictedChildren[] = [
-                            'id' => $child->id,
-                            'label' => $child->label,
-                            'route' => $child->route,
-                            'order' => $child->order,
-                            'status' => $child->status
-                        ];
+                        $restrictedChildren[] = $childData;
                     }
                 }
 
-                // CAMBIO CLAVE: Incluir el padre SI tiene al menos un hijo accesible
                 if (!empty($accessibleChildren)) {
                     $accessible[] = [
                         'id' => $menu->id,
@@ -114,20 +150,6 @@ class UserMenuService
                     ];
                 }
 
-                // Si el padre tiene acceso Y tiene hijos accesibles
-                if ($hasParentAccess && !empty($accessibleChildren)) {
-                    $accessible[] = [
-                        'id' => $menu->id,
-                        'label' => $menu->label,
-                        'icon' => $menu->icon,
-                        'route' => $menu->route,
-                        'order' => $menu->order,
-                        'status' => $menu->status,
-                        'children' => $accessibleChildren
-                    ];
-                }
-
-                // Agregar hijos restringidos a la lista de restringidos
                 if (!empty($restrictedChildren)) {
                     $restricted[] = [
                         'id' => $menu->id,
@@ -139,24 +161,7 @@ class UserMenuService
                         'children' => $restrictedChildren
                     ];
                 }
-
-                // Si el padre NO tiene acceso, agregar todo a restringidos
-                if (!$hasParentAccess) {
-                    $allChildren = array_merge($accessibleChildren, $restrictedChildren);
-                    if (!empty($allChildren)) {
-                        $restricted[] = [
-                            'id' => $menu->id,
-                            'label' => $menu->label,
-                            'icon' => $menu->icon,
-                            'route' => $menu->route,
-                            'order' => $menu->order,
-                            'status' => $menu->status,
-                            'children' => $allChildren
-                        ];
-                    }
-                }
             } else {
-                // Menús sin hijos
                 $menuData = [
                     'id' => $menu->id,
                     'label' => $menu->label,

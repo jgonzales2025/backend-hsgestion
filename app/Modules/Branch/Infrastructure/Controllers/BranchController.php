@@ -31,7 +31,7 @@ class BranchController extends Controller
         return BranchResource::collection($branches)->resolve();
     }
 
-    public function show(int $id): JsonResponse 
+  public function showID(int $id): JsonResponse 
     {
         $branchUseCase = new FindByIdBranchUseCase($this->branchRepository);
         $branch = $branchUseCase->execute($id);
@@ -41,6 +41,20 @@ class BranchController extends Controller
             200
         );
     }
+
+public function show(int $cia_id): JsonResponse
+{
+    $branches = $this->branchRepository->findByCiaId($cia_id);
+
+    if (empty($branches)) {
+        return response()->json(['error' => 'Branches not found'], 404);
+    }
+
+    return response()->json(
+        BranchResource::collection($branches),
+        200
+    );
+}
     public function update(UpdateBranchRequest $request, int $id): JsonResponse
     {
         $branchDTO = new BranchDTO(array_merge(

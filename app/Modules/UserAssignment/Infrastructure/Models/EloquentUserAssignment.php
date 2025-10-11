@@ -2,6 +2,8 @@
 
 namespace App\Modules\UserAssignment\Infrastructure\Models;
 
+use App\Modules\Branch\Domain\Entities\Branch;
+use App\Modules\Company\Domain\Entities\Company;
 use App\Models\Company;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\User\Infrastructure\Model\EloquentUser;

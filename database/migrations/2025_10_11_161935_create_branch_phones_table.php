@@ -19,7 +19,7 @@ return new class extends Migration
                   ->onDelete('cascade');   // elimina los teléfonos si se borra la sucursal
 
             // Campo teléfono
-            $table->string('phone', 20);
+            $table->string('phone', 12);
 
             $table->timestamps();
         });

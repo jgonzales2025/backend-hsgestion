@@ -48,6 +48,29 @@ class EloquentBranchRepository implements BranchRepositoryInterface
         );
        
     }
+      public function findByCiaId(int $cia_id): array
+{
+    $branches = EloquentBranch::with('company')
+        ->where('cia_id', $cia_id)
+        ->get();
+
+    if ($branches->isEmpty()) {
+        return [];
+    }
+
+    return $branches->map(function ($branch) {
+        return new Branch(
+            id: $branch->id,
+            cia_id: $branch->cia_id,
+            name: $branch->name,
+            address: $branch->address,
+            email: $branch->email,
+            start_date: $branch->start_date,
+            serie: $branch->serie,
+            status: $branch->status
+        );
+    })->all();
+}
        public function update(Branch $branch): void
     {
         $eloquentDriver = EloquentBranch::find($branch->getId());

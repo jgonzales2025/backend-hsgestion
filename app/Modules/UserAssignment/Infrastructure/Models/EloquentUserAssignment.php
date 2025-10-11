@@ -2,8 +2,8 @@
 
 namespace App\Modules\UserAssignment\Infrastructure\Models;
 
-use App\Models\Branch;
-use App\Models\Company;
+use App\Modules\Branch\Domain\Entities\Branch;
+use App\Modules\Company\Domain\Entities\Company;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

@@ -10,6 +10,9 @@ class BranchDTO {
     public $serie;
     public $status;
 
+     // 🔹 Nuevo campo opcional
+    public $phones;
+
     public function __construct(array $data)
     {
         $this->cia_id = $data['cia_id'] ?? null;
@@ -19,5 +22,7 @@ class BranchDTO {
         $this->start_date = $data['start_date'] ?? null;
         $this->serie = $data['serie'] ?? null;
         $this->status = $data['status'] ?? null;
+
+        $this->phones = $data['phones'] ?? [];
     }
 }

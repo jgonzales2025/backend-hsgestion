@@ -3,8 +3,10 @@
 namespace App\Modules\Branch\Infrastructure\Models;
 
 use App\Models\Company;
+use App\Modules\BranchPhone\Infrastructure\Model\EloquentBranchPhone;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EloquentBranch extends Model
 {
@@ -17,6 +19,12 @@ class EloquentBranch extends Model
     {
         return $this->belongsTo(Company::class, 'cia_id');
 
+    }
+
+      // 🔹 Relación con los teléfonos (opcional)
+    public function phones(): HasMany
+    {
+        return $this->hasMany(EloquentBranchPhone::class, 'branch_id');
     }
 }
 

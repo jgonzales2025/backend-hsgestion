@@ -22,6 +22,8 @@ class UpdateBranchRequest extends FormRequest
             'start_date' => 'sometimes|string|max:10',
             'serie' => 'sometimes|string|max:10',
             'status' => 'sometimes|integer',
+             'phones' => 'sometimes|array',
+            'phones.*' => 'string|max:15' // cada número de teléfono
         ];
     }
 }

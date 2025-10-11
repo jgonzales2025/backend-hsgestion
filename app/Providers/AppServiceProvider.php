@@ -10,10 +10,14 @@ use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\Customer\Infrastructure\Persistence\EloquentCustomerRepository;
 use App\Modules\CustomerDocumentType\Domain\Interfaces\CustomerDocumentTypeRepositoryInterface;
 use App\Modules\CustomerDocumentType\Infrastructure\Persistence\EloquentCustomerDocumentTypeRepository;
+use App\Modules\CustomerEmail\Domain\Interfaces\CustomerEmailRepositoryInterface;
+use App\Modules\CustomerEmail\Infrastructure\Persistence\EloquentCustomerEmailRepository;
 use App\Modules\CustomerPhone\Domain\Interfaces\CustomerPhoneRepositoryInterface;
 use App\Modules\CustomerPhone\Infrastructure\Persistence\EloquentCustomerPhoneRepository;
 use App\Modules\CustomerType\Domain\Interfaces\CustomerTypeRepositoryInterface;
 use App\Modules\CustomerType\Infrastructure\Persistence\EloquentCustomerTypeRepository;
+use App\Modules\Departments\Domain\Interfaces\DepartmentRepositoryInterface;
+use App\Modules\Departments\Infrastructure\Persistence\EloquentDepartmentRepository;
 use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInterface;
 use App\Modules\MeasurementUnit\Infrastructure\Persistence\EloquentMeasurementUnitRepository;
 use App\Modules\Menu\Domain\Interfaces\MenuRepositoryInterface;
@@ -21,6 +25,8 @@ use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\Menu\Infrastructure\Persistence\EloquentMenuRepository;
 use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface;
 use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRepository;
+use App\Modules\Provinces\Domain\Interfaces\ProvinceRepositoryInterface;
+use App\Modules\Provinces\Infrastructure\Persistence\EloquentProvinceRepository;
 use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\SubCategory\Infrastructure\Persistence\EloquentSubCategoryRepository;
@@ -51,6 +57,9 @@ class AppServiceProvider extends ServiceProvider
             $this->app->bind(RecordTypeRepositoryInterface::class, EloquentBranchRepository::class);
         $this->app->bind(BranchRepositoryInterface::class, EloquentBranchRepository::class);
         $this->app->bind(CustomerPhoneRepositoryInterface::class, EloquentCustomerPhoneRepository::class);
+        $this->app->bind(CustomerEmailRepositoryInterface::class, EloquentCustomerEmailRepository::class);
+        $this->app->bind(DepartmentRepositoryInterface::class, EloquentDepartmentRepository::class);
+        $this->app->bind(ProvinceRepositoryInterface::class, EloquentProvinceRepository::class);;
 
     }
 

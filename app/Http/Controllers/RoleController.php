@@ -53,20 +53,27 @@ class RoleController extends Controller
 
     public function show($id)
     {
-        $role = \App\Models\Role::with(['menus' => function ($query) {
-            $query->where('parent_id', null)
-                ->where('status', 1)
-                ->orderBy('order')
-                ->with(['children' => function ($q) {
-                    $q->where('status', 1)->orderBy('order');
-                }]);
-        }])->find($id);
+        $role = \App\Models\Role::with('menus')->find($id);
 
         if (!$role) {
             return response()->json(['message' => 'Role not found'], 404);
         }
 
-        $formattedMenus = $role->menus->map(function ($menu) {
+        // Obtener IDs de menús asociados al rol
+        $roleMenuIds = $role->menus->pluck('id')->toArray();
+
+        // Obtener solo los menús padres que están asociados al rol O tienen hijos asociados
+        $parentMenus = $role->menus->where('parent_id', null)->sortBy('order');
+
+        // También incluir padres cuyos hijos están asociados (aunque el padre no lo esté)
+        $childrenParentIds = $role->menus->whereNotNull('parent_id')->pluck('parent_id')->unique();
+        $additionalParents = \App\Models\Menu::whereIn('id', $childrenParentIds)
+            ->whereNotIn('id', $roleMenuIds)
+            ->get();
+
+        $allParents = $parentMenus->merge($additionalParents)->sortBy('order')->unique('id');
+
+        $formattedMenus = $allParents->map(function ($menu) use ($role, $roleMenuIds) {
             $formattedMenu = [
                 'id' => $menu->id,
                 'label' => $menu->label,
@@ -76,8 +83,11 @@ class RoleController extends Controller
                 'status' => $menu->status
             ];
 
-            if ($menu->children->isNotEmpty()) {
-                $formattedMenu['children'] = $menu->children->map(function ($child) {
+            // Obtener solo los hijos asociados al rol
+            $children = $role->menus->where('parent_id', $menu->id)->sortBy('order');
+
+            if ($children->isNotEmpty()) {
+                $formattedMenu['children'] = $children->map(function ($child) {
                     return [
                         'id' => $child->id,
                         'label' => $child->label,
@@ -91,10 +101,12 @@ class RoleController extends Controller
             return $formattedMenu;
         })->values();
 
-        // Extraer todos los IDs de children de todos los menús
-        $allChildrenIds = $role->menus->flatMap(function ($menu) {
-            return $menu->children->pluck('id');
-        })->values()->toArray();
+        // Extraer solo los IDs de children asociados al rol
+        $allChildrenIds = $role->menus
+            ->whereNotNull('parent_id')
+            ->pluck('id')
+            ->values()
+            ->toArray();
 
         return response()->json([
             'role' => new RoleResource($role),

@@ -5,6 +5,7 @@ use App\Http\Controllers\MenuController;
 use App\Modules\Brand\Infrastructure\Controllers\BrandController;
 use App\Modules\Category\Infrastructure\Controllers\CategoryController;
 use App\Modules\Customer\Infrastructure\Controllers\CustomerController;
+use App\Modules\Departments\Infrastructure\Controllers\DepartmentController;
 use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
 use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
 use App\Modules\TransportCompany\Infrastructure\Controllers\TransportCompanyController;
@@ -21,6 +22,7 @@ use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
 use App\Modules\CustomerDocumentType\Infrastructure\Controllers\CustomerDocumentTypeController;
 use App\Modules\Branch\Infrastructure\Controllers\BranchController;
 use App\Modules\CustomerPhone\Infrastructure\Controllers\CustomerPhoneController;
+use App\Modules\Provinces\Infrastructure\Controllers\ProvinceController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -115,6 +117,10 @@ Route::post('customers', [CustomerController::class, 'store']);
 
 // Customer phones - Telefonos de clientes
 Route::get('customer-phones', [CustomerPhoneController::class, 'index']);
+
+// UBIGEO
+Route::get('departments', [DepartmentController::class, 'index']);
+Route::get('provinces/{id}', [ProvinceController::class, 'index']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

@@ -77,9 +77,36 @@ class AuthController extends Controller
     {
         $eloquentUser = Auth::guard('api')->user();
 
-        $eloquentUser->load(['roles', 'assignments.company', 'assignments.branch']);
+        // IMPORTANTE: Refrescar el usuario desde la BD para evitar caché
+        $eloquentUser->refresh();
 
-        $assignments = $eloquentUser->assignments->where('company_id', $cia_id)->map(function ($assignment) {
+        // Cargar relaciones necesarias
+        $eloquentUser->load(['assignments.company', 'assignments.branch']);
+
+        // Obtener el rol directamente desde la BD SIN usar la relación cacheada
+        $userRoleId = \DB::table('model_has_roles')
+            ->where('model_type', get_class($eloquentUser))
+            ->where('model_id', $eloquentUser->id)
+            ->value('role_id');
+
+        $customRole = null;
+
+        if ($userRoleId) {
+            // Consulta fresca directamente desde la tabla de roles
+            $customRole = \App\Models\Role::with(['menus' => function($query) {
+                $query->where('status', 1)->orderBy('order');
+            }])
+                ->where('id', $userRoleId)
+                ->first();
+
+            $roleName = $customRole?->name;
+        } else {
+            $roleName = null;
+        }
+
+        $assignments = $eloquentUser->assignments->when($cia_id, function ($query) use ($cia_id) {
+            return $query->where('company_id', $cia_id);
+        })->map(function ($assignment) {
             return [
                 'id' => $assignment->id,
                 'company_id' => $assignment->company_id,
@@ -97,11 +124,12 @@ class AuthController extends Controller
             lastname: $eloquentUser->lastname,
             password: $eloquentUser->password,
             status: $eloquentUser->status,
-            role: $eloquentUser->roles->first()?->name,
+            role: $roleName,
             assignments: $assignments
         );
 
-        $menusData = $this->userMenuService->getUserMenusWithRestricted($eloquentUser);
+        // Pasar el rol recién cargado
+        $menusData = $this->userMenuService->getUserMenusWithRestricted($eloquentUser, $customRole);
 
         return response()->json([
             'access_token' => $token,

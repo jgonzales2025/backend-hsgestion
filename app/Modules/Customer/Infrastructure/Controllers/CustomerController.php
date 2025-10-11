@@ -10,6 +10,10 @@ use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\Customer\Infrastructure\Persistence\EloquentCustomerRepository;
 use App\Modules\Customer\Infrastructure\Requests\StoreCustomerRequest;
 use App\Modules\Customer\Infrastructure\Resources\CustomerResource;
+use App\Modules\CustomerEmail\Application\DTOs\CustomerEmailDTO;
+use App\Modules\CustomerEmail\Application\UseCases\CreateCustomerEmailUseCase;
+use App\Modules\CustomerEmail\Domain\Interfaces\CustomerEmailRepositoryInterface;
+use App\Modules\CustomerEmail\Infrastructure\Resources\CustomerEmailResource;
 use App\Modules\CustomerPhone\Application\DTOs\CustomerPhoneDTO;
 use App\Modules\CustomerPhone\Application\UseCases\CreateCustomerPhoneUseCase;
 use App\Modules\CustomerPhone\Domain\Interfaces\CustomerPhoneRepositoryInterface;
@@ -21,7 +25,8 @@ class CustomerController extends Controller
 
     public function __construct(
         private readonly CustomerRepositoryInterface $customerRepository,
-        private readonly CustomerPhoneRepositoryInterface $customerPhoneRepository
+        private readonly CustomerPhoneRepositoryInterface $customerPhoneRepository,
+        private readonly CustomerEmailRepositoryInterface $customerEmailRepository,
     ){}
 
     public function index(): array
@@ -53,9 +58,23 @@ class CustomerController extends Controller
             $phones[] = $createPhoneUseCase->execute($customerPhoneDTO);
         }
 
+        // Crear los emails con foreach
+        $createEmailUseCase = new CreateCustomerEmailUseCase($this->customerEmailRepository);
+
+        $emails = [];
+        foreach ($validatedData['emails'] as $emailData) {
+            $customerEmailDTO = new CustomerEmailDTO([
+                'email' => $emailData['email'],
+                'customer_id' => $customer->getId(),
+                'status' => 1
+            ]);
+            $emails[] = $createEmailUseCase->execute($customerEmailDTO);
+        }
+
         return response()->json([
             'customer' => (new CustomerResource($customer))->resolve(),
             'phones' => CustomerPhoneResource::collection($phones)->resolve(),
+            'emails' => CustomerEmailResource::collection($emails)->resolve(),
         ], 201);
     }
 }

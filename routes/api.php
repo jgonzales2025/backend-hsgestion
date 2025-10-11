@@ -22,6 +22,7 @@ use App\Modules\Ubigeo\Departments\Infrastructure\Controllers\DepartmentControll
 use App\Modules\Ubigeo\Provinces\Infrastructure\Controllers\ProvinceController;
 use App\Modules\User\Infrastructure\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Modules\Ubigeo\Districts\Infrastructure\Controllers\DistrictController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -121,7 +122,7 @@ Route::get('customer-phones', [CustomerPhoneController::class, 'index']);
 // UBIGEO
 Route::get('departments', [DepartmentController::class, 'index']);
 Route::get('provinces/{id}', [ProvinceController::class, 'index']);
-Route::get('districts/{coddep}/{codpro}', [ProvinceController::class, 'districts']);
+Route::get('districts/{coddep}/{codpro}', [DistrictController::class, 'index']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

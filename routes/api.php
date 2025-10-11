@@ -2,27 +2,26 @@
 
 
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\RoleController;
+use App\Modules\Auth\Infrastructure\Controllers\AuthController;
+use App\Modules\Branch\Infrastructure\Controllers\BranchController;
 use App\Modules\Brand\Infrastructure\Controllers\BrandController;
 use App\Modules\Category\Infrastructure\Controllers\CategoryController;
 use App\Modules\Company\Infrastructure\Controllers\CompanyController;
 use App\Modules\Customer\Infrastructure\Controllers\CustomerController;
-use App\Modules\Departments\Infrastructure\Controllers\DepartmentController;
-use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
-use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
-use App\Modules\TransportCompany\Infrastructure\Controllers\TransportCompanyController;
-use Illuminate\Support\Facades\Route;
-use App\Modules\User\Infrastructure\Controllers\UserController;
-use App\Modules\Auth\Infrastructure\Controllers\AuthController;
-use App\Modules\Driver\Infrastructure\Controllers\DriverController;
-use App\Http\Controllers\RoleController;
-
-use App\Modules\SubCategory\Infrastructure\Controllers\SubCategoryController;
-use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
-use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
 use App\Modules\CustomerDocumentType\Infrastructure\Controllers\CustomerDocumentTypeController;
-use App\Modules\Branch\Infrastructure\Controllers\BranchController;
 use App\Modules\CustomerPhone\Infrastructure\Controllers\CustomerPhoneController;
-use App\Modules\Provinces\Infrastructure\Controllers\ProvinceController;
+use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
+use App\Modules\Driver\Infrastructure\Controllers\DriverController;
+use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
+use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
+use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
+use App\Modules\SubCategory\Infrastructure\Controllers\SubCategoryController;
+use App\Modules\TransportCompany\Infrastructure\Controllers\TransportCompanyController;
+use App\Modules\Ubigeo\Departments\Infrastructure\Controllers\DepartmentController;
+use App\Modules\Ubigeo\Provinces\Infrastructure\Controllers\ProvinceController;
+use App\Modules\User\Infrastructure\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -122,6 +121,7 @@ Route::get('customer-phones', [CustomerPhoneController::class, 'index']);
 // UBIGEO
 Route::get('departments', [DepartmentController::class, 'index']);
 Route::get('provinces/{id}', [ProvinceController::class, 'index']);
+Route::get('districts/{coddep}/{codpro}', [ProvinceController::class, 'districts']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

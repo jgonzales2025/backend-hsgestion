@@ -2,6 +2,7 @@
 
 namespace App\Modules\User\Infrastructure\Model;
 
+use App\Models\Role;
 use App\Modules\Menu\Infrastructure\Models\EloquentMenu;
 use App\Modules\UserAssignment\Infrastructure\Models\EloquentUserAssignment;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -36,6 +37,17 @@ class EloquentUser extends Authenticatable implements JWTSubject
     public function assignments(): HasMany
     {
         return $this->hasMany(EloquentUserAssignment::class, 'user_id');
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->morphToMany(
+            Role::class,
+            'model',
+            config('permission.table_names.model_has_roles'),
+            config('permission.column_names.model_morph_key'),
+            'role_id'
+        );
     }
 
 }

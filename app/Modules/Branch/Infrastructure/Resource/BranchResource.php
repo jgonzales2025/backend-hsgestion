@@ -18,6 +18,8 @@ class BranchResource extends JsonResource
             'id' => $this->resource->getId(),
             'cia_id' => $this->resource->getCia_id(),
             'name' => $this->resource->getName(),
+             'email' => $this->resource->getEmail(),
+              'serie' => $this->resource->getSerie(),
             'address' => $this->resource->getAddress(),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             'phones'   => $this->resource->getPhones() ?? [],

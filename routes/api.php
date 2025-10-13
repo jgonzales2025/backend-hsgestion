@@ -8,6 +8,7 @@ use App\Modules\Company\Infrastructure\Controllers\CompanyController;
 use App\Modules\Customer\Infrastructure\Controllers\CustomerController;
 use App\Modules\Departments\Infrastructure\Controllers\DepartmentController;
 use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
+use App\Modules\PaymentType\Infrastructure\Controllers\PaymentTypeController;
 use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
 use App\Modules\TransportCompany\Infrastructure\Controllers\TransportCompanyController;
 use Illuminate\Support\Facades\Route;
@@ -122,6 +123,10 @@ Route::get('customer-phones', [CustomerPhoneController::class, 'index']);
 // UBIGEO
 Route::get('departments', [DepartmentController::class, 'index']);
 Route::get('provinces/{id}', [ProvinceController::class, 'index']);
+
+//PaymentType
+Route::get('paymentType', [PaymentTypeController::class,'index']);
+Route::get('paymentType/{id}', [PaymentTypeController::class,'show']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

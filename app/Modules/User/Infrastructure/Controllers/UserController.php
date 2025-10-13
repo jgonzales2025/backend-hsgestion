@@ -48,6 +48,16 @@ class UserController extends Controller
                     'menu_id' => $permission['menu_id'],
                 ]);
             }
+        } else {
+            $role = $eloquentUser->roles->first();
+            if ($role && $role->menus) {
+                foreach ($role->menus as $menu) {
+                    UserMenuPermission::create([
+                        'user_id' => $user->getId(),
+                        'menu_id' => $menu->id,
+                    ]);
+                }
+            }
         }
 
         $assignmentDTO = new UserAssignmentDTO([
@@ -156,7 +166,6 @@ class UserController extends Controller
             if (!empty($data['password'])) {
                 $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
             } else {
-                // Si no se envió, eliminar del array para que no se actualice
                 unset($data['password']);
             }
 
@@ -177,21 +186,35 @@ class UserController extends Controller
 
             // 2. Actualizar el rol
             $eloquentUser = EloquentUser::find($id);
-            $eloquentUser->syncRoles([$request->role_id]); // Reemplaza el rol actual
+            $eloquentUser->syncRoles([$request->role_id]);
 
-            // 3. Actualizar permisos personalizados
+            // 3. Limpiar permisos existentes
             UserMenuPermission::where('user_id', $id)->delete();
 
+            // 4. Agregar menús del rol asignado
+            $eloquentUser->load('roles.menus');
+            $role = $eloquentUser->roles->first();
+
+            if ($role && $role->menus) {
+                foreach ($role->menus as $menu) {
+                    UserMenuPermission::create([
+                        'user_id' => $id,
+                        'menu_id' => $menu->id,
+                    ]);
+                }
+            }
+
+            // 5. Agregar permisos personalizados adicionales
             if ($request->has('custom_permissions')) {
                 foreach ($request->custom_permissions as $permission) {
-                    \App\Models\UserMenuPermission::create([
+                    UserMenuPermission::create([
                         'user_id' => $id,
                         'menu_id' => $permission['menu_id'],
                     ]);
                 }
             }
 
-            // 4. Actualizar las asignaciones
+            // 6. Actualizar las asignaciones
             $assignmentDTO = new UserAssignmentDTO([
                 'user_id' => $id,
                 'assignments' => $request->assignments,
@@ -202,7 +225,7 @@ class UserController extends Controller
             $updateAssignmentUseCase = new UpdateUserAssignmentUseCase($assignmentRepository);
             $updateAssignmentUseCase->execute($assignmentDTO);
 
-            // 5. Obtener el usuario actualizado
+            // 7. Obtener el usuario actualizado
             $userUpdated = $this->userRepository->findById($id);
 
             return response()->json([

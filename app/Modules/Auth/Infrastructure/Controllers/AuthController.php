@@ -76,30 +76,21 @@ class AuthController extends Controller
     protected function respondWithToken($token, $cia_id)
     {
         $eloquentUser = Auth::guard('api')->user();
-
-        // IMPORTANTE: Refrescar el usuario desde la BD para evitar caché
         $eloquentUser->refresh();
-
-        // Cargar relaciones necesarias
         $eloquentUser->load(['assignments.company', 'assignments.branch']);
 
-        // Obtener el rol directamente desde la BD SIN usar la relación cacheada
         $userRoleId = \DB::table('model_has_roles')
             ->where('model_type', get_class($eloquentUser))
             ->where('model_id', $eloquentUser->id)
             ->value('role_id');
 
         $customRole = null;
+        $roleMenuIds = [];
 
         if ($userRoleId) {
-            // Consulta fresca directamente desde la tabla de roles
-            $customRole = \App\Models\Role::with(['menus' => function($query) {
-                $query->where('status', 1)->orderBy('order');
-            }])
-                ->where('id', $userRoleId)
-                ->first();
-
+            $customRole = \App\Models\Role::with('menus')->where('id', $userRoleId)->first();
             $roleName = $customRole?->name;
+            $roleMenuIds = $customRole?->menus->pluck('id')->toArray() ?? [];
         } else {
             $roleName = null;
         }
@@ -128,15 +119,63 @@ class AuthController extends Controller
             assignments: $assignments
         );
 
-        // Pasar el rol recién cargado
-        $menusData = $this->userMenuService->getUserMenusWithRestricted($eloquentUser, $customRole);
+        // Obtener IDs de menús del usuario
+        $userMenuIds = \DB::table('user_menu_permissions')
+            ->where('user_id', $eloquentUser->id)
+            ->pluck('menu_id')
+            ->toArray();
+
+        // Obtener todos los menús con sus padres si existen
+        $allMenus = \App\Models\Menu::whereIn('id', $userMenuIds)
+            ->orWhereIn('id', function($query) use ($userMenuIds) {
+                $query->select('parent_id')
+                    ->from('menus')
+                    ->whereIn('id', $userMenuIds)
+                    ->whereNotNull('parent_id');
+            })
+            ->where('status', 1)
+            ->orderBy('order')
+            ->get();
+
+        // Identificar permisos personalizados
+        $customPermissionIds = array_diff($userMenuIds, $roleMenuIds);
+
+        // Construir estructura jerárquica
+        $parentMenus = $allMenus->whereNull('parent_id')->values();
+
+        $formattedMenus = $parentMenus->map(function ($menu) use ($allMenus) {
+            $menuArray = [
+                'id' => $menu->id,
+                'label' => $menu->label,
+                'icon' => $menu->icon,
+                'route' => $menu->route,
+                'order' => $menu->order,
+                'status' => $menu->status,
+            ];
+
+            $children = $allMenus->where('parent_id', $menu->id)->sortBy('order')->values();
+
+            if ($children->isNotEmpty()) {
+                $menuArray['children'] = $children->map(function ($child) {
+                    return [
+                        'id' => $child->id,
+                        'label' => $child->label,
+                        'route' => $child->route,
+                        'order' => $child->order,
+                        'status' => $child->status,
+                    ];
+                })->values()->toArray();
+            }
+
+            return $menuArray;
+        })->values();
 
         return response()->json([
             'access_token' => $token,
             'token_type'   => 'bearer',
             'expires_in'   => Auth::guard('api')->factory()->getTTL() * 60,
             'user' => new AuthUserResource($user),
-            'menus' => $menusData['accessible']
+            'menus' => $formattedMenus
         ]);
     }
 }

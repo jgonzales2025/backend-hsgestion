@@ -20,4 +20,18 @@ class EloquentDepartmentRepository implements DepartmentRepositoryInterface
             );
         })->toArray();
     }
+
+    public function findById(int $coddep): ?Department
+    {
+        $department = EloquentDepartment::where('coddep', $coddep)->first();
+
+        if (!$department) {
+            return null;
+        }
+
+        return new Department(
+            coddep: $department->coddep,
+            nomdep: $department->nomdep,
+        );
+    }
 }

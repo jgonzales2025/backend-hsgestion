@@ -8,7 +8,7 @@ use App\Modules\Ubigeo\Provinces\Domain\Entities\Province;
 
 class CustomerAddress
 {
-    private int $id;
+    private ?int $id;
     private int $customerId;
     private string $address;
     private Department $department;
@@ -16,7 +16,7 @@ class CustomerAddress
     private District $district;
     private int $status;
 
-    public function __construct(int $id, int $customerId, string $address, Department $department, Province $province, District $district, int $status)
+    public function __construct(?int $id, int $customerId, string $address, Department $department, Province $province, District $district, int $status)
     {
         $this->id = $id;
         $this->customerId = $customerId;
@@ -27,7 +27,7 @@ class CustomerAddress
         $this->status = $status;
     }
 
-    public function getId(): int { return $this->id; }
+    public function getId(): int|null { return $this->id; }
     public function getCustomerId(): int { return $this->customerId; }
     public function getAddress(): string { return $this->address; }
     public function getDepartment(): Department { return $this->department; }

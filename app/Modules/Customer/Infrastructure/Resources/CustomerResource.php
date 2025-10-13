@@ -2,6 +2,9 @@
 
 namespace App\Modules\Customer\Infrastructure\Resources;
 
+use App\Modules\CustomerAddress\Infrastructure\Resources\CustomerAddressResource;
+use App\Modules\CustomerEmail\Infrastructure\Resources\CustomerEmailResource;
+use App\Modules\CustomerPhone\Infrastructure\Resources\CustomerPhoneResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CustomerResource extends JsonResource
@@ -32,6 +35,9 @@ class CustomerResource extends JsonResource
             'contact' => $this->resource->getContact(),
             'is_withholding_applicable' => $this->resource->isWithholdingApplicable(),
             'status' => $this->resource->getStatus(),
+            'phones' => CustomerPhoneResource::collection($this->resource->getPhones()),
+            'emails' => CustomerEmailResource::collection($this->resource->getEmails()),
+            'addresses' => CustomerAddressResource::collection($this->resource->getAddresses()),
         ];
     }
 }

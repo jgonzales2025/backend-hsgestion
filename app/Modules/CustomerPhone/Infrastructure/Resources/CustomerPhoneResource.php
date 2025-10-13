@@ -11,7 +11,6 @@ class CustomerPhoneResource extends JsonResource
         return [
             'id' => $this->resource->getId(),
             'phone' => $this->resource->getPhone(),
-            'customer_id' => $this->resource->getCustomerId(),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
         ];
     }

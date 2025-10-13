@@ -10,7 +10,7 @@ class DepartmentResource extends JsonResource
     {
         return [
             'coddep' => $this->resource->getCoddep(),
-            'nomdep' => $this->resource->getNomdep()
+            'nomdep' => $this->resource->getNomdep(),
         ];
     }
 }

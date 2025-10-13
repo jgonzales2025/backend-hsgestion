@@ -14,6 +14,7 @@ use App\Modules\CustomerPhone\Infrastructure\Controllers\CustomerPhoneController
 use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
 use App\Modules\Driver\Infrastructure\Controllers\DriverController;
 use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
+use App\Modules\PaymentType\Infrastructure\Controllers\PaymentTypeController;
 use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
 use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
 use App\Modules\SubCategory\Infrastructure\Controllers\SubCategoryController;
@@ -123,6 +124,10 @@ Route::get('customer-phones', [CustomerPhoneController::class, 'index']);
 Route::get('departments', [DepartmentController::class, 'index']);
 Route::get('provinces/{id}', [ProvinceController::class, 'index']);
 Route::get('districts/{coddep}/{codpro}', [DistrictController::class, 'index']);
+
+//PaymentType
+Route::get('paymentType', [PaymentTypeController::class,'index']);
+Route::get('paymentType/{id}', [PaymentTypeController::class,'show']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

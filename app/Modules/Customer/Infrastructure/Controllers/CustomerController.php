@@ -10,6 +10,10 @@ use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\Customer\Infrastructure\Persistence\EloquentCustomerRepository;
 use App\Modules\Customer\Infrastructure\Requests\StoreCustomerRequest;
 use App\Modules\Customer\Infrastructure\Resources\CustomerResource;
+use App\Modules\CustomerAddress\Application\DTOs\CustomerAddressDTO;
+use App\Modules\CustomerAddress\Application\UseCases\CreateCustomerAddressUseCase;
+use App\Modules\CustomerAddress\Domain\Interfaces\CustomerAddressRepositoryInterface;
+use App\Modules\CustomerAddress\Infrastructure\Resources\CustomerAddressResource;
 use App\Modules\CustomerEmail\Application\DTOs\CustomerEmailDTO;
 use App\Modules\CustomerEmail\Application\UseCases\CreateCustomerEmailUseCase;
 use App\Modules\CustomerEmail\Domain\Interfaces\CustomerEmailRepositoryInterface;
@@ -18,6 +22,9 @@ use App\Modules\CustomerPhone\Application\DTOs\CustomerPhoneDTO;
 use App\Modules\CustomerPhone\Application\UseCases\CreateCustomerPhoneUseCase;
 use App\Modules\CustomerPhone\Domain\Interfaces\CustomerPhoneRepositoryInterface;
 use App\Modules\CustomerPhone\Infrastructure\Resources\CustomerPhoneResource;
+use App\Modules\Ubigeo\Departments\Domain\Interfaces\DepartmentRepositoryInterface;
+use App\Modules\Ubigeo\Districts\Domain\Interfaces\DistrictRepositoryInterface;
+use App\Modules\Ubigeo\Provinces\Domain\Interfaces\ProvinceRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
 class CustomerController extends Controller
@@ -27,6 +34,10 @@ class CustomerController extends Controller
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CustomerPhoneRepositoryInterface $customerPhoneRepository,
         private readonly CustomerEmailRepositoryInterface $customerEmailRepository,
+        private readonly CustomerAddressRepositoryInterface $customerAddressRepository,
+        private readonly DepartmentRepositoryInterface $departmentRepository,
+        private readonly ProvinceRepositoryInterface $provinceRepository,
+        private readonly DistrictRepositoryInterface $districtRepository,
     ){}
 
     public function index(): array
@@ -71,10 +82,32 @@ class CustomerController extends Controller
             $emails[] = $createEmailUseCase->execute($customerEmailDTO);
         }
 
+        // Crear las direcciones con foreach
+        $createCustomerAddressUseCase = new CreateCustomerAddressUseCase(
+            $this->customerAddressRepository,
+            $this->departmentRepository,
+            $this->provinceRepository,
+            $this->districtRepository,
+        );
+
+        $addresses = [];
+        foreach ($validatedData['addresses'] as $addressData) {
+            $customerAddressDTO = new CustomerAddressDTO([
+                'customer_id' => $customer->getId(),
+                'address' => $addressData['address'],
+                'department_id' => $addressData['department_id'],
+                'province_id' => $addressData['province_id'],
+                'district_id' => $addressData['district_id'],
+                'status' => 1
+            ]);
+            $addresses[] = $createCustomerAddressUseCase->execute($customerAddressDTO);
+        }
+
         return response()->json([
             'customer' => (new CustomerResource($customer))->resolve(),
             'phones' => CustomerPhoneResource::collection($phones)->resolve(),
             'emails' => CustomerEmailResource::collection($emails)->resolve(),
+            'addresses' => CustomerAddressResource::collection($addresses)->resolve(),
         ], 201);
     }
 }

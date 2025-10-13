@@ -21,4 +21,19 @@ class EloquentProvinceRepository implements ProvinceRepositoryInterface
             );
         })->toArray();
     }
+
+    public function findById($coddep, $codpro): ?Province
+    {
+        $province = EloquentProvince::where('coddep', $coddep)->where('codpro', $codpro)->first();
+
+        if (!$province) {
+            return null;
+        }
+
+        return new Province(
+            coddep: $province->coddep,
+            codpro: $province->codpro,
+            nompro: $province->nompro,
+        );
+    }
 }

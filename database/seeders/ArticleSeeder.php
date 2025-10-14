@@ -39,6 +39,7 @@ class ArticleSeeder extends Seeder
                 'user_id' => 1,
                 'created_at' => now(),
                 'updated_at' => now(),
+                'venta' => true,
             ]
             ];
       DB::table('articles')->insert($articles);

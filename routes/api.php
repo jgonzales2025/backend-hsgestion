@@ -2,9 +2,11 @@
 
 
 use App\Http\Controllers\MenuController;
+use App\Modules\Articles\Infrastructure\Controllers\ArticleController;
 use App\Modules\Brand\Infrastructure\Controllers\BrandController;
 use App\Modules\Category\Infrastructure\Controllers\CategoryController;
 use App\Modules\Company\Infrastructure\Controllers\CompanyController;
+use App\Modules\CurrencyType\Infrastructure\Controllers\CurrencyTypeController;
 use App\Modules\Customer\Infrastructure\Controllers\CustomerController;
 use App\Modules\Departments\Infrastructure\Controllers\DepartmentController;
 use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
@@ -113,9 +115,14 @@ Route::put('measurement-units/{id}', [MeasurementUnitController::class, 'update'
 // Customer types - Tipos de clientes
 Route::get('customer-types', [CustomerTypeController::class, 'index']);
 
+//customer
+Route::get('customer-document-types', [CustomerDocumentTypeController::class, 'index']);
+
+
 // Customers - Clientes
 Route::get('customers', [CustomerController::class, 'index']);
 Route::post('customers', [CustomerController::class, 'store']);
+
 
 // Customer phones - Telefonos de clientes
 Route::get('customer-phones', [CustomerPhoneController::class, 'index']);
@@ -127,6 +134,15 @@ Route::get('provinces/{id}', [ProvinceController::class, 'index']);
 //PaymentType
 Route::get('paymentType', [PaymentTypeController::class,'index']);
 Route::get('paymentType/{id}', [PaymentTypeController::class,'show']);
+
+//currencyType
+Route::get('currencyType',[CurrencyTypeController::class,'index']);
+//articles
+Route::get('articles',[ArticleController::class,'index']);
+Route::post('articles-save',[ArticleController::class,'store']);
+Route::get('articles/{id}',[ArticleController::class,'show']);
+Route::put('articles/{id}',[ArticleController::class,'update']);
+
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

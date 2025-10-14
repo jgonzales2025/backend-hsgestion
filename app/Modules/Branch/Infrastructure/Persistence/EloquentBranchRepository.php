@@ -85,7 +85,7 @@ public function update(Branch $branch): void
         throw new \Exception("Branch no encontrado");
     }
 
-    // 🔹 Actualiza los datos principales
+    // Actualiza los datos principales
     $eloquentBranch->update([
         'cia_id'     => $branch->getCia_id() ?? $eloquentBranch->cia_id,
         'name'       => $branch->getName(),
@@ -93,13 +93,15 @@ public function update(Branch $branch): void
         'email'      => $branch->getEmail(),
         'start_date' => $branch->getStart_date(),
         'serie'      => $branch->getSerie(),
-        'status'     => $branch->getStatus(),
+        'status'     => $branch->getStatus() ?? $eloquentBranch->status,
     ]);
+    
 
-    // 🔹 Si se enviaron teléfonos, reemplaza los existentes
     if (!empty($branch->getPhones())) {
         // Borra los teléfonos anteriores
         $eloquentBranch->phones()->delete();
+
+        
 
         // Inserta los nuevos
         foreach ($branch->getPhones() as $phone) {

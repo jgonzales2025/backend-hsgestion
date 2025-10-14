@@ -20,6 +20,7 @@ class BranchResource extends JsonResource
             'name' => $this->resource->getName(),
              'email' => $this->resource->getEmail(),
               'serie' => $this->resource->getSerie(),
+               'start_date' => $this->resource->getStart_date(),
             'address' => $this->resource->getAddress(),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             'phones'   => $this->resource->getPhones() ?? [],

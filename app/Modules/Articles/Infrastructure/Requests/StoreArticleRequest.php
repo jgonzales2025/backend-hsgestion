@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Modules\Articles\Infrastructure\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreArticleRequest extends FormRequest{
+    public function authorize():bool{
+        return true;
+    }
+    public function rules():array{
+        return [
+            'cod_fab'                     => 'required|string|max:20',
+            'description'                 => 'required|string|max:50',
+            'short_description'           => 'nullable|string|max:100',
+            'weight'                      => 'nullable|numeric|min:0',
+            'with_deduction'              => 'required|boolean',
+            'series_enabled'              => 'required|boolean',
+            'measurement_unit_id'         => 'required|integer',
+            'brand_id'                    => 'required|integer|exists:brands,id',
+            'category_id'                 => 'required|integer|exists:categories,id',
+            'location'                    => 'nullable|string|max:80',
+            'warranty'                    => 'nullable|string|max:255',
+            'tariff_rate'                 => 'nullable|numeric|min:0',
+            'igv_applicable'              => 'required|boolean',
+            'plastic_bag_applicable'      => 'required|boolean',
+            'min_stock'                   => 'nullable|integer|min:0',
+            'currency_type_id'            => 'required|integer|exists:currency_types,id',
+            'cost_to_price_percent'       => 'nullable|numeric|min:0',
+            'purchase_price'              => 'nullable|numeric|min:0',
+            'public_price'                => 'nullable|numeric|min:0',
+            'distributor_price'           => 'nullable|numeric|min:0',
+            'authorized_price'            => 'nullable|numeric|min:0',
+            'public_price_percent'        => 'nullable|numeric|min:0',
+            'distributor_price_percent'   => 'nullable|numeric|min:0',
+            'authorized_price_percent'    => 'nullable|numeric|min:0',
+            'status'                      => 'required|integer|exists:statuses,id',
+            'user_id'                     => 'required|integer|exists:users,id',
+        ];
+    }
+}

@@ -11,7 +11,7 @@ class Branch{
     private string $email;
     private string $start_date;
     private string $serie;
-    private int $status;
+    private ?int $status;
 
      // 🔹 Nuevo atributo opcional (lista de teléfonos)
     private array $phones;
@@ -24,11 +24,11 @@ class Branch{
      * @param string $email
      * @param string $start_date
      * @param string $serie
-     * @param int $status
+     * @param ?int $status
      */
     public function __construct(int $id, ?int $cia_id,
     string $name,string $address,string $email,string $start_date,
-    string $serie, int $status,  array $phones = []){
+    string $serie, ?int $status,  array $phones = []){
        $this->id = $id;
        $this->cia_id = $cia_id;
        $this->name = $name;
@@ -63,7 +63,7 @@ class Branch{
     public function getSerie():string{
        return $this->serie;
     }
-    public function getStatus():int{
+    public function getStatus():?int{
         return $this->status;
     }
         public function getPhones(): array

@@ -13,4 +13,6 @@ interface SubCategoryRepositoryInterface
     public function findById(int $id): ?SubCategory;
 
     public function update(SubCategory $subCategory): ?SubCategory;
+
+    public function findByCategoryId(int $categoryId): array;
 }

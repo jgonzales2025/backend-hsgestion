@@ -91,6 +91,7 @@ Route::put('categories/{id}',[CategoryController::class, 'update']);
 
 // SubCategories - subcategorias
 Route::get('sub-categories',[SubCategoryController::class, 'index']);
+Route::get('sub-categories/category/{id}',[SubCategoryController::class, 'findByCategoryId']);
 Route::post('sub-categories',[SubCategoryController::class, 'store']);
 Route::get('sub-categories/{id}',[SubCategoryController::class, 'show']);
 Route::put('sub-categories/{id}',[SubCategoryController::class, 'update']);

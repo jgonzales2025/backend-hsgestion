@@ -80,4 +80,21 @@ class EloquentSubCategoryRepository implements SubCategoryRepositoryInterface
             status: $eloquentSubCategory->status,
         );
     }
+
+    public function findByCategoryId(int $categoryId): array
+    {
+        $subCategories = EloquentSubCategory::with('category')
+            ->where('category_id', $categoryId)
+            ->get();
+
+        return $subCategories->map(function ($subCategory) {
+            return new SubCategory(
+                id: $subCategory->id,
+                name: $subCategory->name,
+                category_id: $subCategory->category_id,
+                category_name: $subCategory->category->name,
+                status: $subCategory->status
+            );
+        })->toArray();
+    }
 }

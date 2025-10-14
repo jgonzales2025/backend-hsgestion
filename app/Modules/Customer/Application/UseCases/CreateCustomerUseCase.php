@@ -34,7 +34,10 @@ class CreateCustomerUseCase
             fax: $customerDTO->fax,
             contact: $customerDTO->contact,
             is_withholding_applicable: $customerDTO->is_withholding_applicable,
-            status: $customerDTO->status
+            status: $customerDTO->status,
+            phones: null,
+            emails: null,
+            addresses: null,
         );
 
         return $this->customerRepository->save($customer);

@@ -11,7 +11,6 @@ class CustomerEmailResource extends JsonResource
         return [
             'id' => $this->resource->getId(),
             'email' => $this->resource->getEmail(),
-            'customer_id' => $this->resource->getCustomerId(),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
         ];
     }

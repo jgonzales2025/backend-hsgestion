@@ -22,4 +22,16 @@ class EloquentDistrictRepository implements DistrictRepositoryInterface
             );
         })->toArray();
     }
+
+    public function findById($coddep, $codpro, $coddis): ?District
+    {
+        $district = EloquentDistrict::where('coddep', $coddep)->where('codpro', $codpro)->where('coddis', $coddis)->first();
+
+        return new District(
+            coddep: $district->coddep,
+            codpro: $district->codpro,
+            coddis: $district->coddis,
+            nomdis: $district->nomdis,
+        );
+    }
 }

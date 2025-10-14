@@ -8,4 +8,6 @@ interface CustomerPhoneRepositoryInterface
 {
     public function findAll(): array;
     public function save(CustomerPhone $customerPhone): ?CustomerPhone;
+
+    public function findByCustomerId(int $customerId): array;
 }

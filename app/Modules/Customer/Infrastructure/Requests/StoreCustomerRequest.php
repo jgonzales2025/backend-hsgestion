@@ -29,6 +29,15 @@ class StoreCustomerRequest extends FormRequest
 
             'phones' => 'required|array|min:1',
             'phones.*.phone' => 'required|string',
+
+            'emails' => 'required|array|min:1',
+            'emails.*.email' => 'required|email',
+
+            'addresses' => 'required|array|min:1',
+            'addresses.*.address' => 'required|string',
+            'addresses.*.department_id' => 'required|integer|exists:departments,coddep',
+            'addresses.*.province_id' => 'required|integer|exists:provinces,codpro',
+            'addresses.*.district_id' => 'required|integer|exists:districts,coddis',
         ];
     }
 }

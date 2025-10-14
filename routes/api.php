@@ -149,6 +149,9 @@ Route::put('articles/{id}',[ArticleController::class,'update']);
 
 // Exchange Rates - Tipo de cambio
 Route::get('exchange-rates', [ExchangeRateController::class, 'index']);
+Route::get('exchange-rates/current', [ExchangeRateController::class, 'current']);
+Route::get('exchange-rates/{id}', [ExchangeRateController::class, 'show']);
+Route::put('exchange-rates/{id}', [ExchangeRateController::class, 'update']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

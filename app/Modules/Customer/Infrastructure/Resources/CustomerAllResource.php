@@ -5,11 +5,12 @@ namespace App\Modules\Customer\Infrastructure\Resources;
 use App\Modules\CustomerAddress\Infrastructure\Resources\CustomerAddressResource;
 use App\Modules\CustomerEmail\Infrastructure\Resources\CustomerEmailResource;
 use App\Modules\CustomerPhone\Infrastructure\Resources\CustomerPhoneResource;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class CustomerResource extends JsonResource
+class CustomerAllResource extends JsonResource
 {
-    public function toArray($request): array
+    public function toArray(Request $request)
     {
         return [
             'id' => $this->resource->getId(),
@@ -34,7 +35,10 @@ class CustomerResource extends JsonResource
             'fax' => $this->resource->getFax(),
             'contact' => $this->resource->getContact(),
             'is_withholding_applicable' => $this->resource->isWithholdingApplicable(),
-            'status' => $this->resource->getStatus()
+            'status' => $this->resource->getStatus(),
+            'phones' => CustomerPhoneResource::collection($this->resource->getPhones()),
+            'emails' => CustomerEmailResource::collection($this->resource->getEmails()),
+            'addresses' => CustomerAddressResource::collection($this->resource->getAddresses())
         ];
     }
 }

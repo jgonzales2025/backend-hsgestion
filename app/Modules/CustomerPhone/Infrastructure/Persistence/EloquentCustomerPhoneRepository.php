@@ -51,4 +51,5 @@ class EloquentCustomerPhoneRepository implements CustomerPhoneRepositoryInterfac
             );
         })->toArray();
     }
+
 }

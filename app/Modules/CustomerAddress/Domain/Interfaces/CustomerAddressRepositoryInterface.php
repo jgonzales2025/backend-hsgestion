@@ -9,4 +9,6 @@ interface CustomerAddressRepositoryInterface
     public function save(CustomerAddress $customerAddress): ?CustomerAddress;
 
     public function findByCustomerId(int $customerId): array;
+
+    public function update(CustomerAddress $customerAddress, int $customerId): ?CustomerAddress;
 }

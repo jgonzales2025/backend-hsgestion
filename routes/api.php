@@ -13,6 +13,7 @@ use App\Modules\CustomerDocumentType\Infrastructure\Controllers\CustomerDocument
 use App\Modules\CustomerPhone\Infrastructure\Controllers\CustomerPhoneController;
 use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
 use App\Modules\Driver\Infrastructure\Controllers\DriverController;
+use App\Modules\ExchangeRate\Infrastructure\Controllers\ExchangeRateController;
 use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
 use App\Modules\PaymentType\Infrastructure\Controllers\PaymentTypeController;
 use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
@@ -116,6 +117,8 @@ Route::get('customer-types', [CustomerTypeController::class, 'index']);
 // Customers - Clientes
 Route::get('customers', [CustomerController::class, 'index']);
 Route::post('customers', [CustomerController::class, 'store']);
+Route::get('customers/{id}', [CustomerController::class, 'show']);
+Route::put('customers/{id}', [CustomerController::class, 'update']);
 
 // Customer phones - Telefonos de clientes
 Route::get('customer-phones', [CustomerPhoneController::class, 'index']);
@@ -128,6 +131,9 @@ Route::get('districts/{coddep}/{codpro}', [DistrictController::class, 'index']);
 //PaymentType
 Route::get('paymentType', [PaymentTypeController::class,'index']);
 Route::get('paymentType/{id}', [PaymentTypeController::class,'show']);
+
+// Exchange Rates - Tipo de cambio
+Route::get('exchange-rates', [ExchangeRateController::class, 'index']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

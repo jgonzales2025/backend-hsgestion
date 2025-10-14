@@ -21,8 +21,14 @@ use App\Modules\CustomerPhone\Domain\Interfaces\CustomerPhoneRepositoryInterface
 use App\Modules\CustomerPhone\Infrastructure\Persistence\EloquentCustomerPhoneRepository;
 use App\Modules\CustomerType\Domain\Interfaces\CustomerTypeRepositoryInterface;
 use App\Modules\CustomerType\Infrastructure\Persistence\EloquentCustomerTypeRepository;
+use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
+use App\Modules\DocumentType\Infrastructure\Persistence\EloquentDocumentTypeRepository;
+use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterface;
+use App\Modules\EmissionReason\Infrastructure\Persistence\EloquentEmissionReasonRepository;
 use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
 use App\Modules\ExchangeRate\Infrastructure\Persistence\EloquentExchangeRateRepository;
+use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
+use App\Modules\IngressReason\Infrastructure\Persistence\EloquentIngressReasonRepository;
 use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInterface;
 use App\Modules\MeasurementUnit\Infrastructure\Persistence\EloquentMeasurementUnitRepository;
 use App\Modules\Menu\Domain\Interfaces\MenuRepositoryInterface;
@@ -77,7 +83,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DistrictRepositoryInterface::class, EloquentDistrictRepository::class);
         $this->app->bind(CustomerAddressRepositoryInterface::class, EloquentCustomerAddressRepository::class);
         $this->app->bind(ExchangeRateRepositoryInterface::class, EloquentExchangeRateRepository::class);
-
+        $this->app->bind(EmissionReasonRepositoryInterface::class, EloquentEmissionReasonRepository::class);
+        $this->app->bind(IngressReasonRepositoryInterface::class, EloquentIngressReasonRepository::class);
+        $this->app->bind(DocumentTypeRepositoryInterface::class, EloquentDocumentTypeRepository::class);
     }
 
     /**

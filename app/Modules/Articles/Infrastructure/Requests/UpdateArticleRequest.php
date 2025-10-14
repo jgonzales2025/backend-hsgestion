@@ -10,7 +10,7 @@ class UpdateArticleRequest extends FormRequest{
     }
     public function rules():array{
         return [
-             'cod_fab'                   => 'sometimes|string|max:20',
+             'cod_fab'              => 'sometimes|string|max:20',
         'description'               => 'sometimes|string|max:50',
         'short_description'         => 'sometimes|string|max:100',
         'weight'                    => 'sometimes|numeric|min:0',

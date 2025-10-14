@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\SubCategory\Application\DTOs\SubCategoryDTO;
 use App\Modules\SubCategory\Application\UseCases\CreateSubCategoryUseCase;
 use App\Modules\SubCategory\Application\UseCases\FindAllSubCategoriesUseCase;
+use App\Modules\SubCategory\Application\UseCases\FindByCategoryIdUseCase;
 use App\Modules\SubCategory\Application\UseCases\FindByIdSubCategoryUseCase;
 use App\Modules\SubCategory\Application\UseCases\UpdateSubCategoryUseCase;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
@@ -65,5 +66,13 @@ class SubCategoryController extends Controller
             (new SubCategoryResource($subCategory))->resolve(),
                200
         );
+    }
+
+    public function findByCategoryid($id): array
+    {
+        $subCategoryUseCase = new FindByCategoryIdUseCase($this->subCategoryRepository);
+        $subCategories = $subCategoryUseCase->execute($id);
+
+        return SubCategoryResource::collection($subCategories)->resolve();
     }
 }

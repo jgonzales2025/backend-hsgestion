@@ -31,7 +31,8 @@ class DatabaseSeeder extends Seeder
             DriverSeeder::class,
             TransportCompanySeeder::class,
             CategorySeeder::class,
-            SubCategorySeeder::class
+            SubCategorySeeder::class,
+            IngressReasonSeeder::class
         ]);
     }
 }

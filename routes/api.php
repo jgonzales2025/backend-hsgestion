@@ -15,7 +15,9 @@ use App\Modules\CustomerDocumentType\Infrastructure\Controllers\CustomerDocument
 use App\Modules\CustomerPhone\Infrastructure\Controllers\CustomerPhoneController;
 use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
 use App\Modules\Driver\Infrastructure\Controllers\DriverController;
+use App\Modules\EmissionReason\Infrastructure\Controllers\EmissionReasonController;
 use App\Modules\ExchangeRate\Infrastructure\Controllers\ExchangeRateController;
+use App\Modules\IngressReason\Infrastructure\Controllers\IngressReasonController;
 use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
 use App\Modules\PaymentType\Infrastructure\Controllers\PaymentTypeController;
 use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
@@ -27,6 +29,8 @@ use App\Modules\Ubigeo\Provinces\Infrastructure\Controllers\ProvinceController;
 use App\Modules\User\Infrastructure\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Modules\Ubigeo\Districts\Infrastructure\Controllers\DistrictController;
+use App\Modules\PaymentMethod\Infrastructure\Controllers\PaymentMethodController;
+use App\Modules\DocumentType\Infrastructure\Controllers\DocumentTypeController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -155,6 +159,15 @@ Route::get('exchange-rates/{id}', [ExchangeRateController::class, 'show']);
 Route::put('exchange-rates/{id}', [ExchangeRateController::class, 'update']);
 
 Route::get('/payment-methods', [PaymentMethodController::class, 'findAllPaymentMethods']);
+
+// Emission Reasons - Motivos de emisión
+Route::get('emission-reasons', [EmissionReasonController::class, 'index']);
+
+// Ingress Reasons - Motivos de ingreso
+Route::get('ingress-reasons', [IngressReasonController::class, 'index']);
+
+// Tipos de documentos
+Route::get('document-types', [DocumentTypeController::class, 'index']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

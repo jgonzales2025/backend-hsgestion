@@ -32,11 +32,8 @@ class DatabaseSeeder extends Seeder
             TransportCompanySeeder::class,
             CategorySeeder::class,
             SubCategorySeeder::class,
-<<<<<<< HEAD
-            IngressReasonSeeder::class
-=======
+            IngressReasonSeeder::class,
             ArticleSeeder::class
->>>>>>> main
         ]);
     }
 }

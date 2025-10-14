@@ -11,7 +11,7 @@ class EloquentSubCategoryRepository implements SubCategoryRepositoryInterface
 
     public function findAll(): array
     {
-        $subCategories = EloquentSubCategory::with('category')->get();
+        $subCategories = EloquentSubCategory::with('category')->orderBy('created_at', 'desc')->get();
 
         return $subCategories->map(function ($subCategory) {
             return new SubCategory(

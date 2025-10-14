@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
+use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Branch\Infrastructure\Persistence\EloquentBranchRepository;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
@@ -69,6 +71,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CustomerPhoneRepositoryInterface::class, EloquentCustomerPhoneRepository::class);
         $this->app->bind(CustomerEmailRepositoryInterface::class, EloquentCustomerEmailRepository::class);
         $this->app->bind(DepartmentRepositoryInterface::class, EloquentDepartmentRepository::class);
+        $this->app->bind(ProvinceRepositoryInterface::class, EloquentProvinceRepository::class);;
+        $this->app->bind(ArticleRepositoryInterface::class, EloquentArticleRepository::class);;
         $this->app->bind(ProvinceRepositoryInterface::class, EloquentProvinceRepository::class);
         $this->app->bind(DistrictRepositoryInterface::class, EloquentDistrictRepository::class);
         $this->app->bind(CustomerAddressRepositoryInterface::class, EloquentCustomerAddressRepository::class);

@@ -22,6 +22,23 @@ class EloquentCustomerDocumentTypeRepository implements CustomerDocumentTypeRepo
                 st_driver: $eloquentCustomerDocumentType->st_driver,
                 status: $eloquentCustomerDocumentType->status,
             );
+        })->toArray();   
+    }
+      public function findAllDrivers(): array
+    {
+        $eloquentCustomerDocumentTypes = EloquentCustomerDocumentType::all();
+
+        return $eloquentCustomerDocumentTypes->map(function ($eloquentCustomerDocumentType) {
+            return new CustomerDocumentType(
+                id: $eloquentCustomerDocumentType->id,
+                cod_sunat: $eloquentCustomerDocumentType->cod_sunat,
+                description: $eloquentCustomerDocumentType->description,
+                abbreviation: $eloquentCustomerDocumentType->abbreviation,
+                st_driver: $eloquentCustomerDocumentType->st_driver,
+                status: $eloquentCustomerDocumentType->status,
+            );
         })->toArray();
+
+        
     }
 }

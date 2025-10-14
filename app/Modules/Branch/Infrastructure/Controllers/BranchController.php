@@ -47,7 +47,7 @@ public function show(int $cia_id): JsonResponse
     $branches = $this->branchRepository->findByCiaId($cia_id);
 
     if (empty($branches)) {
-        return response()->json(['error' => 'Branches not found'], 404);
+        return response()->json(['error' => 'No se encontro Sucursal'], 404);
     }
 
     return response()->json(

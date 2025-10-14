@@ -8,4 +8,6 @@ interface CustomerRepositoryInterface
 {
     public function findAll(): array;
     public function save(Customer $customer): ?Customer;
+    public function findById(int $id): ?Customer;
+    public function update(Customer $customer): ?Customer;
 }

@@ -11,6 +11,8 @@ use App\Modules\Category\Infrastructure\Persistence\EloquentCategoryRepository;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\Customer\Infrastructure\Persistence\EloquentCustomerRepository;
+use App\Modules\CustomerAddress\Domain\Interfaces\CustomerAddressRepositoryInterface;
+use App\Modules\CustomerAddress\Infrastructure\Persistence\EloquentCustomerAddressRepository;
 use App\Modules\CustomerDocumentType\Domain\Interfaces\CustomerDocumentTypeRepositoryInterface;
 use App\Modules\CustomerDocumentType\Infrastructure\Persistence\EloquentCustomerDocumentTypeRepository;
 use App\Modules\CustomerEmail\Domain\Interfaces\CustomerEmailRepositoryInterface;
@@ -19,6 +21,8 @@ use App\Modules\CustomerPhone\Domain\Interfaces\CustomerPhoneRepositoryInterface
 use App\Modules\CustomerPhone\Infrastructure\Persistence\EloquentCustomerPhoneRepository;
 use App\Modules\CustomerType\Domain\Interfaces\CustomerTypeRepositoryInterface;
 use App\Modules\CustomerType\Infrastructure\Persistence\EloquentCustomerTypeRepository;
+use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
+use App\Modules\ExchangeRate\Infrastructure\Persistence\EloquentExchangeRateRepository;
 use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInterface;
 use App\Modules\MeasurementUnit\Infrastructure\Persistence\EloquentMeasurementUnitRepository;
 use App\Modules\Menu\Domain\Interfaces\MenuRepositoryInterface;
@@ -71,6 +75,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ArticleRepositoryInterface::class, EloquentArticleRepository::class);;
         $this->app->bind(ProvinceRepositoryInterface::class, EloquentProvinceRepository::class);
         $this->app->bind(DistrictRepositoryInterface::class, EloquentDistrictRepository::class);
+        $this->app->bind(CustomerAddressRepositoryInterface::class, EloquentCustomerAddressRepository::class);
+        $this->app->bind(ExchangeRateRepositoryInterface::class, EloquentExchangeRateRepository::class);
 
     }
 

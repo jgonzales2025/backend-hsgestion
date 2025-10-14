@@ -21,6 +21,9 @@ class Customer
     private ?string $contact;
     private bool $is_withholding_applicable;
     private int $status;
+    private ?array $phones;
+    private ?array $emails;
+    private ?array $addresses;
 
     public function __construct(
         int $id,
@@ -39,7 +42,10 @@ class Customer
         ?string $fax,
         ?string $contact,
         bool $is_withholding_applicable,
-        int $status
+        int $status,
+        ?array $phones = null,
+        ?array $emails = null,
+        ?array $addresses = null,
     ) {
         $this->id = $id;
         $this->record_type_id = $record_type_id;
@@ -58,6 +64,9 @@ class Customer
         $this->contact = $contact;
         $this->is_withholding_applicable = $is_withholding_applicable;
         $this->status = $status;
+        $this->phones = $phones;
+        $this->emails = $emails;
+        $this->addresses = $addresses;
     }
 
     public function getId(): int { return $this->id; }
@@ -77,4 +86,7 @@ class Customer
     public function getContact(): ?string { return $this->contact; }
     public function isWithholdingApplicable(): bool { return $this->is_withholding_applicable; }
     public function getStatus(): int { return $this->status; }
+    public function getPhones(): ?array { return $this->phones; }
+    public function getEmails(): ?array { return $this->emails; }
+    public function getAddresses(): ?array { return $this->addresses; }
 }

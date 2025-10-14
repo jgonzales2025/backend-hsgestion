@@ -24,4 +24,19 @@ class EloquentCustomerEmailRepository implements CustomerEmailRepositoryInterfac
             status: $eloquentCustomerEmail->status,
         );
     }
+
+    public function findByCustomerId(int $customerId): array
+    {
+        $emails = EloquentCustomerEmail::where('customer_id', $customerId)->get();
+
+        return $emails->map(function ($email) {
+            return new CustomerEmail(
+                id: $email->id,
+                email: $email->email,
+                customer_id: $email->customer_id,
+                status: $email->status,
+            );
+        })->toArray();
+    }
+
 }

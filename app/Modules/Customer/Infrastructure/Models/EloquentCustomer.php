@@ -2,11 +2,15 @@
 
 namespace App\Modules\Customer\Infrastructure\Models;
 
+use App\Modules\CustomerAddress\Infrastructure\Models\EloquentCustomerAddress;
 use App\Modules\CustomerDocumentType\Infrastructure\Models\EloquentCustomerDocumentType;
+use App\Modules\CustomerEmail\Infrastructure\Models\EloquentCustomerEmail;
+use App\Modules\CustomerPhone\Infrastructure\Models\EloquentCustomerPhone;
 use App\Modules\CustomerType\Infrastructure\Models\EloquentCustomerType;
 use App\Modules\RecordType\Infrastructure\Models\EloquentRecordType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EloquentCustomer extends Model
 {
@@ -42,5 +46,20 @@ class EloquentCustomer extends Model
     public function customerDocumentType(): BelongsTo
     {
         return $this->belongsTo(EloquentCustomerDocumentType::class, 'customer_document_type_id');
+    }
+
+    public function emails(): HasMany
+    {
+        return $this->hasMany(EloquentCustomerEmail::class, 'customer_id');
+    }
+
+    public function phones(): HasMany
+    {
+        return $this->hasMany(EloquentCustomerPhone::class, 'customer_id');
+    }
+
+    public function address(): HasMany
+    {
+        return $this->hasMany(EloquentCustomerAddress::class, 'customer_id');
     }
 }

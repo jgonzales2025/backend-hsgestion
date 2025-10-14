@@ -37,4 +37,19 @@ class EloquentCustomerPhoneRepository implements CustomerPhoneRepositoryInterfac
             status: $eloquentCustomerPhone->status,
         );
     }
+
+    public function findByCustomerId(int $customerId): array
+    {
+        $phones = EloquentCustomerPhone::where('customer_id', $customerId)->get();
+
+        return $phones->map(function ($phone) {
+            return new CustomerPhone(
+                id: $phone->id,
+                phone: $phone->phone,
+                customer_id: $phone->customer_id,
+                status: $phone->status,
+            );
+        })->toArray();
+    }
+
 }

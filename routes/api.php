@@ -154,6 +154,8 @@ Route::get('exchange-rates/current', [ExchangeRateController::class, 'current'])
 Route::get('exchange-rates/{id}', [ExchangeRateController::class, 'show']);
 Route::put('exchange-rates/{id}', [ExchangeRateController::class, 'update']);
 
+Route::get('/payment-methods', [PaymentMethodController::class, 'findAllPaymentMethods']);
+
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);

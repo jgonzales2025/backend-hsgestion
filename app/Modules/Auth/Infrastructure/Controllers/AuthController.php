@@ -5,11 +5,14 @@ namespace App\Modules\Auth\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Auth\Infrastructure\Requests\LoginRequest;
 use App\Modules\Auth\Infrastructure\Resources\AuthUserResource;
+use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\User\Domain\Entities\User;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
+    public function __construct(private UserMenuService $userMenuService) {}
+
     public function login(LoginRequest $request)
     {
         $credentials = $request->only(['username', 'password']);
@@ -18,7 +21,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Credenciales inválidas'], 401);
         }
 
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($token, $request->cia_id);
     }
 
     public function me()
@@ -70,17 +73,37 @@ class AuthController extends Controller
         return $this->respondWithToken(Auth::guard('api')->refresh());
     }
 
-    protected function respondWithToken($token)
+    protected function respondWithToken($token, $cia_id)
     {
         $eloquentUser = Auth::guard('api')->user();
+        $eloquentUser->refresh();
+        $eloquentUser->load(['assignments.company', 'assignments.branch']);
 
-        $eloquentUser->load(['roles', 'assignments']);
+        $userRoleId = \DB::table('model_has_roles')
+            ->where('model_type', get_class($eloquentUser))
+            ->where('model_id', $eloquentUser->id)
+            ->value('role_id');
 
-        $assignments = $eloquentUser->assignments->map(function ($assignment) {
+        $customRole = null;
+        $roleMenuIds = [];
+
+        if ($userRoleId) {
+            $customRole = \App\Models\Role::with('menus')->where('id', $userRoleId)->first();
+            $roleName = $customRole?->name;
+            $roleMenuIds = $customRole?->menus->pluck('id')->toArray() ?? [];
+        } else {
+            $roleName = null;
+        }
+
+        $assignments = $eloquentUser->assignments->when($cia_id, function ($query) use ($cia_id) {
+            return $query->where('company_id', $cia_id);
+        })->map(function ($assignment) {
             return [
                 'id' => $assignment->id,
                 'company_id' => $assignment->company_id,
+                'company_name' => $assignment->company?->company_name,
                 'branch_id' => $assignment->branch_id,
+                'branch_name' => $assignment->branch?->name,
                 'status' => $assignment->status,
             ];
         })->toArray();
@@ -92,64 +115,67 @@ class AuthController extends Controller
             lastname: $eloquentUser->lastname,
             password: $eloquentUser->password,
             status: $eloquentUser->status,
-            role: $eloquentUser->roles->first()?->name,
+            role: $roleName,
             assignments: $assignments
         );
 
+        // Obtener IDs de menús del usuario
+        $userMenuIds = \DB::table('user_menu_permissions')
+            ->where('user_id', $eloquentUser->id)
+            ->pluck('menu_id')
+            ->toArray();
+
+        // Obtener todos los menús con sus padres si existen
+        $allMenus = \App\Models\Menu::whereIn('id', $userMenuIds)
+            ->orWhereIn('id', function($query) use ($userMenuIds) {
+                $query->select('parent_id')
+                    ->from('menus')
+                    ->whereIn('id', $userMenuIds)
+                    ->whereNotNull('parent_id');
+            })
+            ->where('status', 1)
+            ->orderBy('order')
+            ->get();
+
+        // Identificar permisos personalizados
+        $customPermissionIds = array_diff($userMenuIds, $roleMenuIds);
+
+        // Construir estructura jerárquica
+        $parentMenus = $allMenus->whereNull('parent_id')->values();
+
+        $formattedMenus = $parentMenus->map(function ($menu) use ($allMenus) {
+            $menuArray = [
+                'id' => $menu->id,
+                'label' => $menu->label,
+                'icon' => $menu->icon,
+                'route' => $menu->route,
+                'order' => $menu->order,
+                'status' => $menu->status,
+            ];
+
+            $children = $allMenus->where('parent_id', $menu->id)->sortBy('order')->values();
+
+            if ($children->isNotEmpty()) {
+                $menuArray['children'] = $children->map(function ($child) {
+                    return [
+                        'id' => $child->id,
+                        'label' => $child->label,
+                        'route' => $child->route,
+                        'order' => $child->order,
+                        'status' => $child->status,
+                    ];
+                })->values()->toArray();
+            }
+
+            return $menuArray;
+        })->values();
 
         return response()->json([
             'access_token' => $token,
             'token_type'   => 'bearer',
             'expires_in'   => Auth::guard('api')->factory()->getTTL() * 60,
             'user' => new AuthUserResource($user),
-            'menus' => $this->getUserMenus($eloquentUser),
+            'menus' => $formattedMenus
         ]);
-    }
-
-    /**
-     * Obtener menús del usuario
-     */
-    protected function getUserMenus($user)
-    {
-        $menus = \App\Models\Menu::active()
-            ->main()
-            ->ordered()
-            ->with(['children' => function ($query) {
-                $query->active()->ordered();
-            }])
-            ->get();
-
-        return $menus->filter(function ($menu) use ($user) {
-            return !$menu->permission || $user->can($menu->permission);
-        })->map(function ($menu) use ($user) {
-            $formattedMenu = [
-                'id' => $menu->id,
-                'label' => $menu->label,
-                'icon' => $menu->icon,
-                'route' => $menu->route,
-                'order' => $menu->order,
-                'status' => $menu->status
-            ];
-
-            if ($menu->children->isNotEmpty()) {
-                $children = $menu->children->filter(function ($child) use ($user) {
-                    return !$child->permission || $user->can($child->permission);
-                })->map(function ($child) {
-                    return [
-                        'id' => $child->id,
-                        'label' => $child->label,
-                        'route' => $child->route,
-                        'order' => $child->order,
-                        'status' => $child->status
-                    ];
-                })->values();
-
-                if ($children->isNotEmpty()) {
-                    $formattedMenu['children'] = $children;
-                }
-            }
-
-            return $formattedMenu;
-        })->values();
     }
 }

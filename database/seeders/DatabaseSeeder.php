@@ -24,9 +24,14 @@ class DatabaseSeeder extends Seeder
             PaymentMethodSeeder::class,
             DocumentTypeSeeder::class,
             CustomerDocumentTypeSeeder::class,
-            RolePermissionSeeder::class,
             MenuSeeder::class,
+            RolePermissionSeeder::class,
             UserSeeder::class,
+            BrandSeeder::class,
+            DriverSeeder::class,
+            TransportCompanySeeder::class,
+            CategorySeeder::class,
+            SubCategorySeeder::class
         ]);
     }
 }

@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreignId('branch_id')->constrained('branches')->onDelete('cascade');
             $table->integer('status')->default(1);
             $table->timestamps();
+
+            $table->unique(['user_id', 'company_id']);
         });
     }
 

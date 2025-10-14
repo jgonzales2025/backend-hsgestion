@@ -43,6 +43,6 @@ class ArticleSeeder extends Seeder
             ]
             ];
       DB::table('articles')->insert($articles);
-    
+
     }
 }

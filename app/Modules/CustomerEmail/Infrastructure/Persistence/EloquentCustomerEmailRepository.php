@@ -38,4 +38,5 @@ class EloquentCustomerEmailRepository implements CustomerEmailRepositoryInterfac
             );
         })->toArray();
     }
+
 }

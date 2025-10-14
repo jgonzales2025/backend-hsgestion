@@ -57,4 +57,15 @@ class EloquentCustomerAddressRepository implements CustomerAddressRepositoryInte
             );
         })->toArray();
     }
+
+    public function update(CustomerAddress $customerAddress, int $customerId): ?CustomerAddress
+    {
+        $addresses = EloquentCustomerAddress::where('customer_id', $customerId)->get();
+
+        foreach ($addresses as $address) {
+            $address->delete();
+        }
+
+        return $this->save($customerAddress);
+    }
 }

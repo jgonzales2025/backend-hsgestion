@@ -94,10 +94,80 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             fax: $eloquentCustomer->fax,
             contact: $eloquentCustomer->contact,
             is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
-            status: $eloquentCustomer->status,
-            phones: null,
-            emails: null,
-            addresses: null,
+            status: $eloquentCustomer->status
+        );
+    }
+
+    public function findById(int $id): ?Customer
+    {
+        $eloquentCustomer = EloquentCustomer::find($id);
+
+        if (!$eloquentCustomer) {
+            return null;
+        }
+
+        return new Customer(
+            id: $eloquentCustomer->id,
+            record_type_id: $eloquentCustomer->record_type_id,
+            record_type_name: $eloquentCustomer->recordType->name,
+            customer_document_type_id: $eloquentCustomer->customer_document_type_id,
+            customer_document_type_name: $eloquentCustomer->customerDocumentType->description,
+            customer_document_type_abbreviation: $eloquentCustomer->customerDocumentType->abbreviation,
+            document_number: $eloquentCustomer->document_number,
+            company_name: $eloquentCustomer->company_name,
+            name: $eloquentCustomer->name,
+            lastname: $eloquentCustomer->lastname,
+            second_lastname: $eloquentCustomer->second_lastname,
+            customer_type_id: $eloquentCustomer->customer_type_id,
+            customer_type_name: $eloquentCustomer->customerType->description,
+            fax: $eloquentCustomer->fax,
+            contact: $eloquentCustomer->contact,
+            is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
+            status: $eloquentCustomer->status
+        );
+    }
+
+    public function update(Customer $customer): ?Customer
+    {
+        $eloquentCustomer = EloquentCustomer::find($customer->getId());
+
+        if (!$eloquentCustomer) {
+            return null;
+        }
+
+        $eloquentCustomer->update([
+            'record_type_id' => $customer->getRecordTypeId(),
+            'customer_document_type_id' => $customer->getCustomerDocumentTypeId(),
+            'document_number' => $customer->getDocumentNumber(),
+            'company_name' => $customer->getCompanyName(),
+            'name' => $customer->getName(),
+            'lastname' => $customer->getLastname(),
+            'second_lastname' => $customer->getSecondLastname(),
+            'customer_type_id' => $customer->getCustomerTypeId(),
+            'fax' => $customer->getFax(),
+            'contact' => $customer->getContact(),
+            'is_withholding_applicable' => $customer->isWithholdingApplicable(),
+            'status' => $customer->getStatus(),
+        ]);
+
+        return new Customer(
+            id: $eloquentCustomer->id,
+            record_type_id: $eloquentCustomer->record_type_id,
+            record_type_name: $eloquentCustomer->recordType->name,
+            customer_document_type_id: $eloquentCustomer->customer_document_type_id,
+            customer_document_type_name: $eloquentCustomer->customerDocumentType->description,
+            customer_document_type_abbreviation: $eloquentCustomer->customerDocumentType->abbreviation,
+            document_number: $eloquentCustomer->document_number,
+            company_name: $eloquentCustomer->company_name,
+            name: $eloquentCustomer->name,
+            lastname: $eloquentCustomer->lastname,
+            second_lastname: $eloquentCustomer->second_lastname,
+            customer_type_id: $eloquentCustomer->customer_type_id,
+            customer_type_name: $eloquentCustomer->customerType->description,
+            fax: $eloquentCustomer->fax,
+            contact: $eloquentCustomer->contact,
+            is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
+            status: $eloquentCustomer->status
         );
     }
 }

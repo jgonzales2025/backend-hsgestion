@@ -40,6 +40,7 @@ return new class extends Migration
             $table->decimal('public_price_percent', 8, 2)->default(0);
             $table->decimal('distributor_price_percent', 8, 2)->default(0);
             $table->decimal('authorized_price_percent', 8, 2)->default(0);
+            $table->boolean('venta' )->default(true);
 
             $table->tinyInteger('status')->default(1);
             $table->unsignedBigInteger('user_id');

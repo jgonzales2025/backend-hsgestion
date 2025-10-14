@@ -7,6 +7,7 @@ use App\Modules\Brand\Infrastructure\Models\EloquentBrand;
 use App\Modules\Category\Infrastructure\Models\EloquentCategory;
 use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\MeasurementUnit\Infrastructure\Models\EloquentMeasurementUnit;
+use App\Modules\SubCategory\Infrastructure\Models\EloquentSubCategory;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -37,7 +38,7 @@ class EloquentArticle extends Model{
         'authorized_price',
         'public_price_percent',
         'distributor_price_percent',
-        'authorized_price_percent',
+        'authori    zed_price_percent',
         'status',
         'user_id',
     ];
@@ -49,22 +50,27 @@ class EloquentArticle extends Model{
     }
 
     //  Relación con Marca
-    public function brand(): BelongsTo
-    {
-        return $this->belongsTo(EloquentBrand::class, 'brand_id');
-    }
+public function brand(): BelongsTo
+{
+    return $this->belongsTo(EloquentBrand::class, 'brand_id');
+}
+
 
     //  Relación con Categoría
-    // public function category(): BelongsTo
-    // {
-    //     return $this->belongsTo(EloquentCategory::class, 'category_id');
-    // }
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(EloquentCategory::class, 'category_id');
+    }
 
     // //  Relación con Tipo de Moneda
-    // public function currencyType(): BelongsTo
-    // {
-    //     return $this->belongsTo(EloquentCurrencyType::class, 'currency_type_id');
-    // }
+    public function currencyType(): BelongsTo
+    {
+        return $this->belongsTo(EloquentCurrencyType::class, 'currency_type_id');
+    }
+      public function subCategory(): BelongsTo
+    {
+        return $this->belongsTo(EloquentSubCategory::class, 'category_id');
+    }
 
     //  Relación con Estado
     // public function statusRelation(): BelongsTo

@@ -5,9 +5,7 @@ namespace App\Modules\Bank\Infrastructure\Persistence;
 use App\Modules\Bank\Domain\Entities\Bank;
 use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface;
 use App\Modules\Bank\Infrastructure\Models\EloquentBank;
-use App\Modules\Company\Infrastructure\Model\EloquentCompany;
-use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
-use App\Modules\User\Infrastructure\Model\EloquentUser;
+
 
 class EloquentBankRepository implements BankRepositoryInterface
 {
@@ -22,10 +20,10 @@ class EloquentBankRepository implements BankRepositoryInterface
                 id: $eloquentBank->id,
                 name: $eloquentBank->name,
                 account_number: $eloquentBank->account_number,
-                currency_type: $eloquentBank->toDomain($eloquentBank->currencyType),
-                user: $eloquentBank->toDomain($eloquentBank->user),
+                currency_type: $eloquentBank->currencyType->toDomain($eloquentBank->currencyType),
+                user: $eloquentBank->user->toDomain($eloquentBank->user),
                 date_at: $eloquentBank->created_at,
-                company: $eloquentBank->toDomain($eloquentBank->company),
+                company: $eloquentBank->company->toDomain($eloquentBank->company),
                 status: $eloquentBank->status,
             );
         })->toArray();

@@ -152,7 +152,7 @@ Route::get('paymentType', [PaymentTypeController::class,'index']);
 Route::get('paymentType/{id}', [PaymentTypeController::class,'show']);
 
 //currencyType
-Route::get('currencyType',[CurrencyTypeController::class,'index']);
+Route::get('currency-type',[CurrencyTypeController::class,'index']);
 //articles
 Route::get('articles',[ArticleController::class,'index']);
 Route::post('articles-save',[ArticleController::class,'store']);

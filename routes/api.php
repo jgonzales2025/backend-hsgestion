@@ -15,6 +15,7 @@ use App\Modules\Customer\Infrastructure\Controllers\CustomerController;
 use App\Modules\CustomerDocumentType\Infrastructure\Controllers\CustomerDocumentTypeController;
 use App\Modules\CustomerPhone\Infrastructure\Controllers\CustomerPhoneController;
 use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
+use App\Modules\DigitalWallet\Infrastructure\Controllers\DigitalWalletController;
 use App\Modules\Driver\Infrastructure\Controllers\DriverController;
 use App\Modules\EmissionReason\Infrastructure\Controllers\EmissionReasonController;
 use App\Modules\ExchangeRate\Infrastructure\Controllers\ExchangeRateController;
@@ -181,6 +182,12 @@ Route::get('banks', [BankController::class, 'index']);
 Route::post('banks', [BankController::class, 'store']);
 Route::get('banks/{id}', [BankController::class, 'show']);
 Route::put('banks/{id}', [BankController::class, 'update']);
+
+// Digital Wallets - Billeteras digitales
+Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
+Route::post('digital-wallets', [DigitalWalletController::class, 'store']);
+Route::get('digital-wallets/{id}', [DigitalWalletController::class, 'show']);
+Route::put('digital-wallets/{id}', [DigitalWalletController::class, 'update']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

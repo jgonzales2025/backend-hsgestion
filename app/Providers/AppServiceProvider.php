@@ -26,6 +26,8 @@ use App\Modules\CustomerPhone\Domain\Interfaces\CustomerPhoneRepositoryInterface
 use App\Modules\CustomerPhone\Infrastructure\Persistence\EloquentCustomerPhoneRepository;
 use App\Modules\CustomerType\Domain\Interfaces\CustomerTypeRepositoryInterface;
 use App\Modules\CustomerType\Infrastructure\Persistence\EloquentCustomerTypeRepository;
+use App\Modules\DigitalWallet\Domain\Interfaces\DigitalWalletRepositoryInterface;
+use App\Modules\DigitalWallet\Infrastructure\Persistence\EloquentDigitalWalletRepository;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\DocumentType\Infrastructure\Persistence\EloquentDocumentTypeRepository;
 use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterface;
@@ -93,6 +95,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DocumentTypeRepositoryInterface::class, EloquentDocumentTypeRepository::class);
         $this->app->bind(BankRepositoryInterface::class, EloquentBankRepository::class);
         $this->app->bind(CurrencyTypeRepositoryInterface::class, EloquentCurrencyTypeRepository::class);
+        $this->app->bind(DigitalWalletRepositoryInterface::class, EloquentDigitalWalletRepository::class);;
     }
 
     /**

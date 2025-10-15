@@ -179,6 +179,8 @@ Route::get('document-types', [DocumentTypeController::class, 'index']);
 // Banks - Bancos
 Route::get('banks', [BankController::class, 'index']);
 Route::post('banks', [BankController::class, 'store']);
+Route::get('banks/{id}', [BankController::class, 'show']);
+Route::put('banks/{id}', [BankController::class, 'update']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

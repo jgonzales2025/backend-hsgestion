@@ -17,18 +17,15 @@ class EloquentBankRepository implements BankRepositoryInterface
         $eloquentBanks = EloquentBank::with('currencyType', 'user', 'company')->get();
 
         return $eloquentBanks->map(function ($eloquentBank) {
-            $currencyType = EloquentCurrencyType::find($eloquentBank->currency_type_id);
-            $user = EloquentUser::find($eloquentBank->user_id);
-            $company = EloquentCompany::find($eloquentBank->company_id);
 
             return new Bank(
                 id: $eloquentBank->id,
                 name: $eloquentBank->name,
                 account_number: $eloquentBank->account_number,
-                currency_type: $currencyType->toDomain($currencyType),
-                user: $user->toDomain($user),
+                currency_type: $eloquentBank->toDomain($eloquentBank->currencyType),
+                user: $eloquentBank->toDomain($eloquentBank->user),
                 date_at: $eloquentBank->created_at,
-                company: $company->toDomain($company),
+                company: $eloquentBank->toDomain($eloquentBank->company),
                 status: $eloquentBank->status,
             );
         })->toArray();
@@ -53,6 +50,55 @@ class EloquentBankRepository implements BankRepositoryInterface
             user: $bank->getUser(),
             date_at: $eloquentBank->created_at,
             company: $bank->getCompany(),
+            status: $eloquentBank->status,
+        );
+    }
+
+    public function findById(int $id): ?Bank
+    {
+        $eloquentBank = EloquentBank::with('currencyType', 'user', 'company')->find($id);
+
+        if (!$eloquentBank) {
+            return null;
+        }
+
+        return new Bank(
+            id: $eloquentBank->id,
+            name: $eloquentBank->name,
+            account_number: $eloquentBank->account_number,
+            currency_type: $eloquentBank->currencyType->toDomain($eloquentBank->currencyType),
+            user: $eloquentBank->user->toDomain($eloquentBank->user),
+            date_at: $eloquentBank->created_at,
+            company: $eloquentBank->company->toDomain($eloquentBank->company),
+            status: $eloquentBank->status,
+        );
+    }
+
+    public function update(Bank $bank): ?Bank
+    {
+        $eloquentBank = EloquentBank::with('currencyType', 'user', 'company')->find($bank->getId());
+
+        if (!$eloquentBank) {
+            return null;
+        }
+
+        $eloquentBank->update([
+            'name' => $bank->getName(),
+            'account_number' => $bank->getAccountNumber(),
+            'currency_type_id' => $bank->getCurrencyType()->getId(),
+            'user_id' => $bank->getUser()->getId(),
+            'company_id' => $bank->getCompany()->getId(),
+            'status' => $bank->getStatus(),
+        ]);
+
+        return new Bank(
+            id: $eloquentBank->id,
+            name: $eloquentBank->name,
+            account_number: $eloquentBank->account_number,
+            currency_type: $eloquentBank->currencyType->toDomain($eloquentBank->currencyType),
+            user: $eloquentBank->user->toDomain($eloquentBank->user),
+            date_at: $eloquentBank->created_at,
+            company: $eloquentBank->company->toDomain($eloquentBank->company),
             status: $eloquentBank->status,
         );
     }

@@ -104,6 +104,8 @@ class RolePermissionSeeder extends Seeder
             'tablas.unidad_medida',
             'tablas.usuarios',
             'tablas.roles',
+            'tablas.bancos',
+            'tablas.billetera_digital',
 
             // MANTENIMIENTO
             'mantenimiento.guias_ingreso_internas',
@@ -247,6 +249,8 @@ class RolePermissionSeeder extends Seeder
             ['role_id' => $admin->id, 'menu_id' => 97],
             ['role_id' => $admin->id, 'menu_id' => 98],
             ['role_id' => $admin->id, 'menu_id' => 99],
+            ['role_id' => $admin->id, 'menu_id' => 100],
+            ['role_id' => $admin->id, 'menu_id' => 101],
         ]);
 
         // Gerente

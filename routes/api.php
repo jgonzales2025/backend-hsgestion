@@ -5,6 +5,7 @@ use App\Http\Controllers\MenuController;
 use App\Modules\Articles\Infrastructure\Controllers\ArticleController;
 use App\Http\Controllers\RoleController;
 use App\Modules\Auth\Infrastructure\Controllers\AuthController;
+use App\Modules\Bank\Infrastructure\Controllers\BankController;
 use App\Modules\Branch\Infrastructure\Controllers\BranchController;
 use App\Modules\Brand\Infrastructure\Controllers\BrandController;
 use App\Modules\Category\Infrastructure\Controllers\CategoryController;
@@ -15,7 +16,9 @@ use App\Modules\CustomerDocumentType\Infrastructure\Controllers\CustomerDocument
 use App\Modules\CustomerPhone\Infrastructure\Controllers\CustomerPhoneController;
 use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
 use App\Modules\Driver\Infrastructure\Controllers\DriverController;
+use App\Modules\EmissionReason\Infrastructure\Controllers\EmissionReasonController;
 use App\Modules\ExchangeRate\Infrastructure\Controllers\ExchangeRateController;
+use App\Modules\IngressReason\Infrastructure\Controllers\IngressReasonController;
 use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
 use App\Modules\PaymentType\Infrastructure\Controllers\PaymentTypeController;
 use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
@@ -28,6 +31,8 @@ use App\Modules\Ubigeo\Provinces\Infrastructure\Controllers\ProvinceController;
 use App\Modules\User\Infrastructure\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Modules\Ubigeo\Districts\Infrastructure\Controllers\DistrictController;
+use App\Modules\PaymentMethod\Infrastructure\Controllers\PaymentMethodController;
+use App\Modules\DocumentType\Infrastructure\Controllers\DocumentTypeController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -97,6 +102,7 @@ Route::put('categories/{id}',[CategoryController::class, 'update']);
 
 // SubCategories - subcategorias
 Route::get('sub-categories',[SubCategoryController::class, 'index']);
+Route::get('sub-categories/category/{id}',[SubCategoryController::class, 'findByCategoryId']);
 Route::post('sub-categories',[SubCategoryController::class, 'store']);
 Route::get('sub-categories/{id}',[SubCategoryController::class, 'show']);
 Route::put('sub-categories/{id}',[SubCategoryController::class, 'update']);
@@ -155,6 +161,24 @@ Route::put('articles/{id}',[ArticleController::class,'update']);
 
 // Exchange Rates - Tipo de cambio
 Route::get('exchange-rates', [ExchangeRateController::class, 'index']);
+Route::get('exchange-rates/current', [ExchangeRateController::class, 'current']);
+Route::get('exchange-rates/{id}', [ExchangeRateController::class, 'show']);
+Route::put('exchange-rates/{id}', [ExchangeRateController::class, 'update']);
+
+Route::get('/payment-methods', [PaymentMethodController::class, 'findAllPaymentMethods']);
+
+// Emission Reasons - Motivos de emisión
+Route::get('emission-reasons', [EmissionReasonController::class, 'index']);
+
+// Ingress Reasons - Motivos de ingreso
+Route::get('ingress-reasons', [IngressReasonController::class, 'index']);
+
+// Tipos de documentos
+Route::get('document-types', [DocumentTypeController::class, 'index']);
+
+// Banks - Bancos
+Route::get('banks', [BankController::class, 'index']);
+Route::post('banks', [BankController::class, 'store']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

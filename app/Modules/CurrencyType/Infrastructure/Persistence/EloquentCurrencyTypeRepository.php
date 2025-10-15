@@ -19,4 +19,19 @@ class EloquentCurrencyTypeRepository implements CurrencyTypeRepositoryInterface{
                     status:$currencyType->status
                 ))->toArray();
          }
+
+         public function findById(int $id): ?CurrencyType
+         {
+             $eloquentCurrencyType = EloquentCurrencyType::find($id);
+
+             if (!$eloquentCurrencyType) {
+                 return null;
+             }
+
+             return new CurrencyType(
+                 id: $eloquentCurrencyType->id,
+                 name: $eloquentCurrencyType->name,
+                 status: $eloquentCurrencyType->status
+             );
+         }
 }

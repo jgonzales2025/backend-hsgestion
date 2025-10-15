@@ -11,7 +11,7 @@ class EloquentSubCategoryRepository implements SubCategoryRepositoryInterface
 
     public function findAll(): array
     {
-        $subCategories = EloquentSubCategory::with('category')->get();
+        $subCategories = EloquentSubCategory::with('category')->orderBy('created_at', 'desc')->get();
 
         return $subCategories->map(function ($subCategory) {
             return new SubCategory(
@@ -79,5 +79,22 @@ class EloquentSubCategoryRepository implements SubCategoryRepositoryInterface
             category_name: $eloquentSubCategory->category->name,
             status: $eloquentSubCategory->status,
         );
+    }
+
+    public function findByCategoryId(int $categoryId): array
+    {
+        $subCategories = EloquentSubCategory::with('category')
+            ->where('category_id', $categoryId)
+            ->get();
+
+        return $subCategories->map(function ($subCategory) {
+            return new SubCategory(
+                id: $subCategory->id,
+                name: $subCategory->name,
+                category_id: $subCategory->category_id,
+                category_name: $subCategory->category->name,
+                status: $subCategory->status
+            );
+        })->toArray();
     }
 }

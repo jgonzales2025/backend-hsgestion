@@ -35,7 +35,7 @@ class CreateArticleUseCase
             min_stock: $articleDTO->min_stock,
             currency_type_id: $articleDTO->currency_type_id,
             cost_to_price_percent: $articleDTO->cost_to_price_percent ?? 0,
-            subcategoria_id: $articleDTO->subcategoria_id ?? 1,
+            subcategory_id: $articleDTO->subcategory_id ?? 1,
             purchase_price: $articleDTO->purchase_price,
             public_price: $articleDTO->public_price,
             distributor_price: $articleDTO->distributor_price,
@@ -44,7 +44,8 @@ class CreateArticleUseCase
             distributor_price_percent: $articleDTO->distributor_price_percent,
             authorized_price_percent: $articleDTO->authorized_price_percent,
             status: $articleDTO->status,
-     
+                user_id: $articleDTO->user_id ?? 1,  // Asegúrate de que esto esté presente
+ 
             // user_id: $articleDTO->user_id,
             // Parámetros opcionales
             brand: null,

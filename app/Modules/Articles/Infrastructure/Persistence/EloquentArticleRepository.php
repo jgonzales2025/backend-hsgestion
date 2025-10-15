@@ -40,7 +40,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         'status' => $article->getStatus(),
         'user_id' => $article->getUserId(),
         'venta' => $article->getVenta(),
-          'subcategoria_id' =>$article->getSubcategoriaId()
+        'subcategory_id' =>$article->getSubcategoriaId()
     ]);
 
     return new Article(
@@ -80,7 +80,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             : 0,
         venta: (bool)$eloquentArticle->venta,
         subCategory: $eloquentArticle->subCategory ? $eloquentArticle->subCategory->toArray() : null,
-         subcategoria_id:$eloquentArticle->subcategoria_id,
+         subcategory_id:$eloquentArticle->subcategory_id,
     );
 }
 
@@ -114,7 +114,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 min_stock: $article->min_stock,
                 currency_type_id: $article->currency_type_id,
                 cost_to_price_percent: $article->cost_to_price_percent,
-                subcategoria_id:$article->subcategoria_id,
+                subcategory_id:$article->subcategory_id,
                 purchase_price: $article->purchase_price,
                 public_price: $article->public_price,
                 distributor_price: $article->distributor_price,
@@ -165,7 +165,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             min_stock: $article->min_stock,
             currency_type_id: $article->currency_type_id,
             cost_to_price_percent: $article->cost_to_price_percent,
-             subcategoria_id:$article->subcategoria_id,
+             subcategory_id:$article->subcategory_id,
             purchase_price: $article->purchase_price,
             public_price: $article->public_price,
             distributor_price: $article->distributor_price,
@@ -227,7 +227,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'category' => $article->getCategory(),
             'currencyType' => $article->getCurrencyType(),
             'venta'=>$article->getVenta(),
-              'subcategoria_id' =>$article->getSubcategoriaId()
+              'subcategory_id' =>$article->getSubcategoriaId()
         ]);
 
 

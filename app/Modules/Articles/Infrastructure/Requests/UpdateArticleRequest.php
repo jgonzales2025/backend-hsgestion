@@ -36,7 +36,8 @@ class UpdateArticleRequest extends FormRequest{
         'authorized_price_percent'  => 'sometimes|numeric|min:0',
         'status'                    => 'sometimes|integer|exists:statuses,id',
         'user_id'                   => 'sometimes|integer|exists:users,id',
-        'subcategoria_id'           => 'sometimes|integer|exists:sub_categories,id'
+        'subcategoria_id'           => 'sometimes|integer|exists:sub_categories,id',
+        'venta' => 'sometimes|boolean',
         ];
     }
 }

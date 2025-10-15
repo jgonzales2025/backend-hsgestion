@@ -42,7 +42,7 @@ class EloquentArticle extends Model{
         'status',
         'user_id',
         'venta',
-        'subcategoria_id',
+        'subcategory_id',
     ];
      protected $hidden = ['created_at', 'updated_at'];
 

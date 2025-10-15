@@ -60,9 +60,10 @@ class ArticleResource extends JsonResource
             'authorized_price_percent' => $this->getAuthorizedPricePercent(),
             'status' => ($this->getStatus()) == 1 ? "Activo" : "Inactivo",
             'precioIGv' => $this->getPrecioIGV(),
-            'subcategoria_id' =>$this->getSubcategoriaId(),
+            'subcategory_id' =>$this->getSubcategoriaId(),
              'subCategory' =>$this->getSubCategoria(),
-            'venta'=>($this->getVenta()) == true ? "Activo" : "Inactivo" , 
+           'venta' => $this->getVenta() == true ? 'Activo' : 'Inactivo',
+
         ];
     }
 }

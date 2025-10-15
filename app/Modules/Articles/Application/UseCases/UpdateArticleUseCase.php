@@ -50,7 +50,7 @@ class UpdateArticleUseCase{
         measurementUnit: null,  // Asegúrate de incluir este campo
         precioIGv: $articleDTO->precioIGv ?? 0,  // Asegúrate de incluir este campo
         venta: $articleDTO->venta ?? false,
-        subcategoria_id: $articleDTO->subcategoria_id ?? null,
+         subcategory_id: $articleDTO->subcategory_id ?? 1,
         subCategory: null  // Asegúrate de incluir este campo
     );
     

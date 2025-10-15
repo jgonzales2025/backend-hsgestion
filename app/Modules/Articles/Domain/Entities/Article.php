@@ -39,7 +39,7 @@ class Article
     public ?array $measurementUnit;
     public ?array $subCategory;
     public float $precioIGv;
-    private ?int $subcategoria_id;
+    private ?int $subcategory_id;
 
     public function __construct(
         int $id,
@@ -74,8 +74,8 @@ class Article
         ?array $currencyType = null,
         ?array $measurementUnit = null,
         ?float $precioIGv = null,
-        bool $venta = false,
-        ?int $subcategoria_id = 1,
+        bool $venta ,
+        ?int $subcategory_id = 1,
         ?array $subCategory = null
     ) {
         $this->id = $id;
@@ -115,11 +115,11 @@ class Article
         $this->precioIGv = $precioIGv ?? $this->calculatePrecioIGV();
 
         $this->venta = $venta;
-        $this->subcategoria_id = $subcategoria_id;
+        $this->subcategory_id = $subcategory_id;
     }
        public function getSubcategoriaId(): ?int
     {
-        return $this->subcategoria_id;
+        return $this->subcategory_id;
     }
 
     public function calculatePrecioIGV(): float

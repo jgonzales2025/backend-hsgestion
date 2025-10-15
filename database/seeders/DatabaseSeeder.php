@@ -36,7 +36,6 @@ class DatabaseSeeder extends Seeder
             SubCategorySeeder::class,
             ArticleSeeder::class,
             ReferenceCodeSeeder::class,
-            MeasurementUnit::class,
             IngressReasonSeeder::class,
             ArticleSeeder::class,
             BankSeeder::class,

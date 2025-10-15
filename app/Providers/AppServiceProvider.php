@@ -4,11 +4,16 @@ namespace App\Providers;
 
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
+use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface;
+use App\Modules\Bank\Infrastructure\Persistence\EloquentBankRepository;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Branch\Infrastructure\Persistence\EloquentBranchRepository;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
 use App\Modules\Category\Infrastructure\Persistence\EloquentCategoryRepository;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
+use App\Modules\Company\Infrastructure\Persistence\EloquentCompanyRepository;
+use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
+use App\Modules\CurrencyType\Infrastructure\Persistence\EloquentCurrencyTypeRepository;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\Customer\Infrastructure\Persistence\EloquentCustomerRepository;
 use App\Modules\CustomerAddress\Domain\Interfaces\CustomerAddressRepositoryInterface;
@@ -72,7 +77,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CustomerDocumentTypeRepositoryInterface::class, EloquentCustomerDocumentTypeRepository::class);
             $this->app->bind(RecordTypeRepositoryInterface::class, EloquentBranchRepository::class);
         $this->app->bind(BranchRepositoryInterface::class, EloquentBranchRepository::class);
-        $this->app->bind(CompanyRepositoryInterface::class, EloquentRecordType::class);
+        $this->app->bind(CompanyRepositoryInterface::class, EloquentCompanyRepository::class);
 
         $this->app->bind(CustomerPhoneRepositoryInterface::class, EloquentCustomerPhoneRepository::class);
         $this->app->bind(CustomerEmailRepositoryInterface::class, EloquentCustomerEmailRepository::class);
@@ -86,6 +91,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EmissionReasonRepositoryInterface::class, EloquentEmissionReasonRepository::class);
         $this->app->bind(IngressReasonRepositoryInterface::class, EloquentIngressReasonRepository::class);
         $this->app->bind(DocumentTypeRepositoryInterface::class, EloquentDocumentTypeRepository::class);
+        $this->app->bind(BankRepositoryInterface::class, EloquentBankRepository::class);
+        $this->app->bind(CurrencyTypeRepositoryInterface::class, EloquentCurrencyTypeRepository::class);
     }
 
     /**

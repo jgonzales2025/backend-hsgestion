@@ -883,6 +883,28 @@ class MenuSeeder extends Seeder
             'type' => 'item',
         ]);
 
+        Menu::create([
+            'name' => 'tablas_bancos',
+            'label' => 'Mantenimiento de Bancos',
+            'route' => '/tablas/bancos',
+            'permission' => 'tablas.bancos',
+            'parent_id' => $tabla->id,
+            'order' => 17,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
+        Menu::create([
+            'name' => 'tablas_billetera_digital',
+            'label' => 'Mantenimiento de Billetera Digital',
+            'route' => '/tablas/billetera-digital',
+            'permission' => 'tablas.billetera_digital',
+            'parent_id' => $tabla->id,
+            'order' => 18,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
         // ===== MANTENIMIENTO =====
         $mantenimiento = Menu::create([
             'name' => 'mantenimiento',

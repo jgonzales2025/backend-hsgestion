@@ -10,6 +10,7 @@ class ExchangeRateResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->resource->getId(),
             'date' => $this->resource->getDate(),
             'purchase_rate' => $this->resource->getPurchaseRate(),
             'sale_rate' => $this->resource->getSaleRate(),

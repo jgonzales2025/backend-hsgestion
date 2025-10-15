@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             CustomerTypeSeeder::class,
             CurrencyTypeSeeder::class,
             PaymentTypeSeeder::class,
+            MeasurementUnit::class,
             PaymentMethodSeeder::class,
             DocumentTypeSeeder::class,
             CustomerDocumentTypeSeeder::class,
@@ -33,7 +34,8 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             SubCategorySeeder::class,
             IngressReasonSeeder::class,
-            ArticleSeeder::class
+            ArticleSeeder::class,
+            BankSeeder::class,
         ]);
     }
 }

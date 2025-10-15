@@ -70,7 +70,24 @@ class AuthController extends Controller
 
     public function refresh()
     {
-        return $this->respondWithToken(Auth::guard('api')->refresh());
+        // Obtener el usuario autenticado
+        $eloquentUser = Auth::guard('api')->user();
+
+        if (!$eloquentUser) {
+            return response()->json(['error' => 'No autenticado'], 401);
+        }
+
+        // Obtener la primera asignación activa del usuario para el cia_id
+        $activeAssignment = $eloquentUser->assignments()
+            ->where('status', 1)
+            ->first();
+
+        $cia_id = $activeAssignment?->company_id ?? null;
+
+        // Generar nuevo token
+        $token = Auth::guard('api')->refresh();
+
+        return $this->respondWithToken($token, $cia_id);
     }
 
     protected function respondWithToken($token, $cia_id)

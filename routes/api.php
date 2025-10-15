@@ -5,6 +5,7 @@ use App\Http\Controllers\MenuController;
 use App\Modules\Articles\Infrastructure\Controllers\ArticleController;
 use App\Http\Controllers\RoleController;
 use App\Modules\Auth\Infrastructure\Controllers\AuthController;
+use App\Modules\Bank\Infrastructure\Controllers\BankController;
 use App\Modules\Branch\Infrastructure\Controllers\BranchController;
 use App\Modules\Brand\Infrastructure\Controllers\BrandController;
 use App\Modules\Category\Infrastructure\Controllers\CategoryController;
@@ -168,6 +169,10 @@ Route::get('ingress-reasons', [IngressReasonController::class, 'index']);
 
 // Tipos de documentos
 Route::get('document-types', [DocumentTypeController::class, 'index']);
+
+// Banks - Bancos
+Route::get('banks', [BankController::class, 'index']);
+Route::post('banks', [BankController::class, 'store']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

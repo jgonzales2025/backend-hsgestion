@@ -22,19 +22,19 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
             status: $referenceCode->status
         ))->toArray();
     }
-    public function findById(int $id): ?ReferenceCode
+    public function findById(int $id): array
     {
-            $referenceCode = EloquentReferenceCode::find($id);
-            if (!$referenceCode) {
-                return null;
+            $referenceCode = EloquentReferenceCode::where('article_id', $id)->get();
+            if ($referenceCode->isEmpty()) {
+                return [];
             }
-         return new ReferenceCode(
-               id: $referenceCode->id,
+          return $referenceCode->map(fn($referenceCode) => new ReferenceCode(
+            id: $referenceCode->id,
             refCode: $referenceCode->ref_code,
             articleId: $referenceCode->article_id,
             dateAt: $referenceCode->date_at,
             status: $referenceCode->status
-         );
+        ))->toArray();
     }
      public function update(ReferenceCode $referenceCode): void
     {

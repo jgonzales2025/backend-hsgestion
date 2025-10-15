@@ -23,13 +23,13 @@ class ReferenceCodeController extends Controller{
         return ReferenceCodeResource::collection($referenceCode)->resolve();
     }
 
-    public function show(int $id):JsonResponse{
+    public function show(int $id):array{
          $referenceCodeUseCase = new FindByIdReferenceCodeUseCase($this->referenceCodeRepository);
          $referenceCode = $referenceCodeUseCase->execute($id);
 
-            return response()->json(
-            (new ReferenceCodeResource($referenceCode))->resolve(),200
-        );
+
+
+          return ReferenceCodeResource::collection($referenceCode)->resolve();
         
     }
         public function update(int $id):JsonResponse{

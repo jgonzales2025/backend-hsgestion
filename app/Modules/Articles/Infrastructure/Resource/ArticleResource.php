@@ -50,7 +50,7 @@ class ArticleResource extends JsonResource
             'plastic_bag_applicable' => $this->getPlasticBagApplicable(),
             'min_stock' => $this->getMinStock(),
             'currency_type_id' => $this->getCurrencyTypeId(),
-            'cost_to_price_percent' => $this->getCostToPricePercent(),
+            // 'cost_to_price_percent' => $this->getCostToPricePercent(),
             'purchase_price' => $this->getPurchasePrice(),
             'public_price' => $this->getPublicPrice(),
             'distributor_price' => $this->getDistributorPrice(),

@@ -52,7 +52,7 @@ class ArticleDTO
         $this->plastic_bag_applicable = isset($data['plastic_bag_applicable']) ? (bool)$data['plastic_bag_applicable'] : false;
         $this->min_stock = $data['min_stock'] ?? 0;
         $this->currency_type_id = $data['currency_type_id'] ?? null;
-        $this->cost_to_price_percent = isset($data['cost_to_price_percent']) ? (float)$data['cost_to_price_percent'] : 0;
+        // $this->cost_to_price_percent = isset($data['cost_to_price_percent']) ? (float)$data['cost_to_price_percent'] : 0;
         $this->purchase_price = isset($data['purchase_price']) ? (float)$data['purchase_price'] : 0;
         $this->public_price = isset($data['public_price']) ? (float)$data['public_price'] : 0;
         $this->distributor_price = isset($data['distributor_price']) ? (float)$data['distributor_price'] : 0;

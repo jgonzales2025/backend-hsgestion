@@ -58,7 +58,7 @@ class Article
         bool $plastic_bag_applicable,
         int $min_stock,
         int $currency_type_id,
-        float $cost_to_price_percent,
+        ?float $cost_to_price_percent = 0,
         float $purchase_price,
         float $public_price,
         float $distributor_price,
@@ -142,7 +142,7 @@ class Article
     public function getPlasticBagApplicable(): bool { return $this->plastic_bag_applicable; }
     public function getMinStock(): int { return $this->min_stock; }
     public function getCurrencyTypeId(): int { return $this->currency_type_id; }
-    public function getCostToPricePercent(): float { return $this->cost_to_price_percent; }
+    public function getCostToPricePercent(): ?float { return $this->cost_to_price_percent; }
     public function getPurchasePrice(): float { return $this->purchase_price; }
     public function getPublicPrice(): float { return $this->public_price; }
     public function getDistributorPrice(): float { return $this->distributor_price; }

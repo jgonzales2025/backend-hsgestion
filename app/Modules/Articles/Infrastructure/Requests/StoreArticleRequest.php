@@ -4,43 +4,39 @@ namespace App\Modules\Articles\Infrastructure\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreArticleRequest extends FormRequest
-{
-    public function authorize(): bool
-    {
+class StoreArticleRequest extends FormRequest{
+    public function authorize():bool{
         return true;
     }
-
-    public function rules(): array
-    {
+    public function rules():array{
         return [
-            'cod_fab' => 'required|string|max:20',
-            'description' => 'required|string|max:100',
-            'short_description' => 'nullable|string|max:255',
-            'weight' => 'required|numeric',
-            'with_deduction' => 'required|boolean',
-            'series_enabled' => 'required|boolean',
-            'measurement_unit_id' => 'required|integer',
-            'brand_id' => 'required|integer',
-            'category_id' => 'required|integer',
-            'location' => 'nullable|string|max:50',
-            'warranty' => 'nullable|string|max:50',
-            'tariff_rate' => 'required|numeric',
-            'igv_applicable' => 'required|boolean',
-            'plastic_bag_applicable' => 'required|boolean',
-            'min_stock' => 'required|integer',
-            'currency_type_id' => 'required|integer',
-            'cost_to_price_percent' => 'required|numeric',
-            'purchase_price' => 'required|numeric',
-            'public_price' => 'required|numeric',
-            'distributor_price' => 'required|numeric',
-            'authorized_price' => 'required|numeric',
-            'public_price_percent' => 'required|numeric',
-            'distributor_price_percent' => 'required|numeric',
-            'authorized_price_percent' => 'required|numeric',
-            'status' => 'required|integer',
-            'user_id' => 'nullable|integer',
-            'venta' => 'required|boolean'
+             'cod_fab'              => 'sometimes|string|max:20',
+        'description'               => 'sometimes|string|max:50',
+        'short_description'         => 'sometimes|string|max:100',
+        'weight'                    => 'sometimes|numeric|min:0',
+        'with_deduction'            => 'sometimes|boolean',
+        'series_enabled'            => 'sometimes|boolean',
+        'measurement_unit_id'       => 'sometimes|integer',
+        'brand_id'                  => 'sometimes|integer|exists:brands,id',
+        'category_id'               => 'sometimes|integer|exists:categories,id',
+        'location'                  => 'sometimes|string|max:80',
+        'warranty'                  => 'sometimes|string|max:255',
+        'tariff_rate'               => 'sometimes|numeric|min:0',
+        'igv_applicable'            => 'sometimes|boolean',
+        'plastic_bag_applicable'    => 'sometimes|boolean',
+        'min_stock'                 => 'sometimes|integer|min:0',
+        'currency_type_id'          => 'sometimes|integer|exists:currency_types,id',
+         'cost_to_price_percent' => 'sometimes|numeric|min:0',
+        'purchase_price'            => 'sometimes|numeric|min:0',
+        'public_price'              => 'sometimes|numeric|min:0',
+        'distributor_price'         => 'sometimes|numeric|min:0',
+        'authorized_price'          => 'sometimes|numeric|min:0',
+        'public_price_percent'      => 'sometimes|numeric|min:0',
+        'distributor_price_percent' => 'sometimes|numeric|min:0',
+        'authorized_price_percent'  => 'sometimes|numeric|min:0',
+        'status'                    => 'sometimes|integer|exists:statuses,id',
+        'user_id'                   => 'sometimes|integer|exists:users,id',
+        'subcategoria_id'           => 'sometimes|integer'
         ];
     }
 }

@@ -14,14 +14,10 @@ class UpdateArticleUseCase{
     public function __construct(ArticleRepositoryInterface $articleRepository){
         $this->articleRepository = $articleRepository;
     }
-    public function execute(int $id, ArticleDTO $articleDTO){
-       $articleExist = $this->articleRepository->findById($id);
-
-       if (!$articleExist) {
-         return null;
-       }
-       $article = new Article(
-          id: $id, 
+  public function execute(int $id, ArticleDTO $articleDTO): void
+{
+    $article = new Article(
+        id: $id,
         cod_fab: $articleDTO->cod_fab,
         description: $articleDTO->description,
         short_description: $articleDTO->short_description,
@@ -38,7 +34,7 @@ class UpdateArticleUseCase{
         plastic_bag_applicable: $articleDTO->plastic_bag_applicable,
         min_stock: $articleDTO->min_stock,
         currency_type_id: $articleDTO->currency_type_id,
-        cost_to_price_percent: $articleDTO->cost_to_price_percent,
+        cost_to_price_percent: $articleDTO->cost_to_price_percent ?? 0,
         purchase_price: $articleDTO->purchase_price,
         public_price: $articleDTO->public_price,
         distributor_price: $articleDTO->distributor_price,
@@ -47,8 +43,17 @@ class UpdateArticleUseCase{
         distributor_price_percent: $articleDTO->distributor_price_percent,
         authorized_price_percent: $articleDTO->authorized_price_percent,
         status: $articleDTO->status,
-   
-       );
-       $this->articleRepository->update($article);
-    }
+        user_id: $articleDTO->user_id ?? 1,
+        brand: null,  // Asegúrate de incluir este campo
+        category: null,  // Asegúrate de incluir este campo
+        currencyType: null,  // Asegúrate de incluir este campo
+        measurementUnit: null,  // Asegúrate de incluir este campo
+        precioIGv: $articleDTO->precioIGv ?? 0,  // Asegúrate de incluir este campo
+        venta: $articleDTO->venta ?? false,
+        subcategoria_id: $articleDTO->subcategoria_id ?? null,
+        subCategory: null  // Asegúrate de incluir este campo
+    );
+    
+    $this->articleRepository->update($article);
+}
 }

@@ -20,7 +20,7 @@ class Article
     private bool $plastic_bag_applicable;
     private int $min_stock;
     private int $currency_type_id;
-    private float $cost_to_price_percent;
+    private ?float $cost_to_price_percent;
     private float $purchase_price;
     private float $public_price;
     private float $distributor_price;
@@ -39,6 +39,7 @@ class Article
     public ?array $measurementUnit;
     public ?array $subCategory;
     public float $precioIGv;
+    private ?int $subcategoria_id;
 
     public function __construct(
         int $id,
@@ -74,6 +75,7 @@ class Article
         ?array $measurementUnit = null,
         ?float $precioIGv = null,
         bool $venta = false,
+        ?int $subcategoria_id = 1,
         ?array $subCategory = null
     ) {
         $this->id = $id;
@@ -109,14 +111,18 @@ class Article
         $this->currencyType = $currencyType;
         $this->measurementUnit = $measurementUnit;
         $this->subCategory = $subCategory;
-
         // Calcula precioIGv si no se pasa
         $this->precioIGv = $precioIGv ?? $this->calculatePrecioIGV();
 
         $this->venta = $venta;
+        $this->subcategoria_id = $subcategoria_id;
+    }
+       public function getSubcategoriaId(): ?int
+    {
+        return $this->subcategoria_id;
     }
 
-    private function calculatePrecioIGV(): float
+    public function calculatePrecioIGV(): float
     {
         return $this->purchase_price + ($this->purchase_price * $this->tariff_rate / 100);
     }

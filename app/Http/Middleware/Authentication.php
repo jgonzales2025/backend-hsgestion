@@ -17,7 +17,13 @@ class Authentication
             return response()->json(['error' => 'No autenticado'], 401);
         }
 
-        $request->merge(['user_id' => $user->getAuthIdentifier()]);
+        $payload = auth('api')->payload();
+
+        $request->merge([
+            'user_id' => $user->getAuthIdentifier(),
+            'company_id' => $payload->get('company_id')
+        ]);
+
         return $next($request);
     }
 }

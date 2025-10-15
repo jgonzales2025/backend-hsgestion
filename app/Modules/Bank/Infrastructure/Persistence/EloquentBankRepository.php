@@ -12,7 +12,12 @@ class EloquentBankRepository implements BankRepositoryInterface
 
     public function findAll(): array
     {
-        $eloquentBanks = EloquentBank::with('currencyType', 'user', 'company')->get();
+        $payload = auth('api')->payload();
+        $companyId = $payload->get('company_id');
+
+        $eloquentBanks = EloquentBank::with('currencyType', 'user', 'company')
+            ->where('company_id', $companyId)
+            ->get();
 
         return $eloquentBanks->map(function ($eloquentBank) {
 

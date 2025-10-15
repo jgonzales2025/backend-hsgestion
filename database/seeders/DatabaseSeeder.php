@@ -33,6 +33,9 @@ class DatabaseSeeder extends Seeder
             TransportCompanySeeder::class,
             CategorySeeder::class,
             SubCategorySeeder::class,
+            ArticleSeeder::class,
+            ReferenceCodeSeeder::class,
+            MeasurementUnit::class
             IngressReasonSeeder::class,
             ArticleSeeder::class,
             BankSeeder::class,

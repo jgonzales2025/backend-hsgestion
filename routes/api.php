@@ -23,6 +23,7 @@ use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitContro
 use App\Modules\PaymentType\Infrastructure\Controllers\PaymentTypeController;
 use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
 use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
+use App\Modules\ReferenceCode\Infrastructure\Controllers\ReferenceCodeController;
 use App\Modules\SubCategory\Infrastructure\Controllers\SubCategoryController;
 use App\Modules\TransportCompany\Infrastructure\Controllers\TransportCompanyController;
 use App\Modules\Ubigeo\Departments\Infrastructure\Controllers\DepartmentController;
@@ -75,6 +76,11 @@ Route::put('/users/{id}', [UserController::class, 'update']);
 
 // TIPOS DE DOCUMENTOS (DNI, RUC, ETC)
 Route::get('driver-document-types', [CustomerDocumentTypeController::class, 'indexForDrivers']);
+
+//reference code
+Route::get('referenceCode', [ReferenceCodeController::class, 'index']);
+Route::get('referenceCode/{id}', [ReferenceCodeController::class, 'show']);
+Route::put('referenceCode/{id}', [ReferenceCodeController::class, 'update']);
 
 // Marcas
 Route::get('brands', [BrandController::class, 'index']);

@@ -17,7 +17,11 @@ class AuthController extends Controller
     {
         $credentials = $request->only(['username', 'password']);
 
-        if (! $token = Auth::guard('api')->attempt($credentials)) {
+        $customClaims = [
+            'company_id' => $request->cia_id
+        ];
+
+        if (! $token = Auth::guard('api')->claims($customClaims)->attempt($credentials)) {
             return response()->json(['error' => 'Credenciales inválidas'], 401);
         }
 
@@ -32,18 +36,25 @@ class AuthController extends Controller
             return response()->json(['error' => 'No autenticado'], 401);
         }
 
-        $eloquentUser->load(['roles', 'assignments']);
+        $eloquentUser->load(['roles', 'assignments.company', 'assignments.branch']);
 
-        $assignments = $eloquentUser->assignments->map(function ($assignment) {
-            return [
-                'id' => $assignment->id,
-                'company_id' => $assignment->company_id,
-                'company_name' => $assignment->company?->company_name,
-                'branch_id' => $assignment->branch_id,
-                'branch_name' => $assignment->branch?->name,
-                'status' => ($assignment->status) == 1 ? 'Activo' : 'Inactivo',
-            ];
-        })->toArray();
+        // Obtener company_id del token JWT
+        $payload = Auth::guard('api')->payload();
+        $companyId = $payload->get('company_id');
+
+        // Filtrar solo la asignación de la compañía con la que inició sesión
+        $assignments = $eloquentUser->assignments
+            ->where('company_id', $companyId)
+            ->map(function ($assignment) {
+                return [
+                    'id' => $assignment->id,
+                    'company_id' => $assignment->company_id,
+                    'company_name' => $assignment->company?->company_name,
+                    'branch_id' => $assignment->branch_id,
+                    'branch_name' => $assignment->branch?->name,
+                    'status' => ($assignment->status) == 1 ? 'Activo' : 'Inactivo',
+                ];
+            })->toArray();
 
         $user = new User(
             id: $eloquentUser->id,
@@ -77,15 +88,17 @@ class AuthController extends Controller
             return response()->json(['error' => 'No autenticado'], 401);
         }
 
-        // Obtener la primera asignación activa del usuario para el cia_id
-        $activeAssignment = $eloquentUser->assignments()
-            ->where('status', 1)
-            ->first();
+        // Obtener company_id del token actual
+        $payload = Auth::guard('api')->payload();
+        $cia_id = $payload->get('company_id');
 
-        $cia_id = $activeAssignment?->company_id ?? null;
+        // Generar nuevo token con el mismo company_id
+        $customClaims = [
+            'company_id' => $cia_id
+        ];
 
         // Generar nuevo token
-        $token = Auth::guard('api')->refresh();
+        $token = Auth::guard('api')->claims($customClaims)->refresh();
 
         return $this->respondWithToken($token, $cia_id);
     }

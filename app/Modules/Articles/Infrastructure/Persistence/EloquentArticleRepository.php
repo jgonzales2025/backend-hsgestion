@@ -40,6 +40,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         'status' => $article->getStatus(),
         'user_id' => $article->getUserId(),
         'venta' => $article->getVenta(),
+          'subcategoria_id' =>$article->getSubcategoriaId()
     ]);
 
     return new Article(
@@ -60,7 +61,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         plastic_bag_applicable: (bool)$eloquentArticle->plastic_bag_applicable,
         min_stock: $eloquentArticle->min_stock,
         currency_type_id: $eloquentArticle->currency_type_id,
-        cost_to_price_percent: (float)$eloquentArticle->cost_to_price_percent,
+        cost_to_price_percent:12.2,
         purchase_price: (float)$eloquentArticle->purchase_price,
         public_price: (float)$eloquentArticle->public_price,
         distributor_price: (float)$eloquentArticle->distributor_price,
@@ -70,15 +71,16 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         authorized_price_percent: isset($eloquentArticle->authorized_price_percent) ? (float)$eloquentArticle->authorized_price_percent : 0,
         status: $eloquentArticle->status,
         user_id: 1,
-        brand: null,
-        category: null,
-        currencyType: null,
-        measurementUnit: null,
+        brand: $eloquentArticle->brand ? $eloquentArticle->brand->toArray() : null,
+        category: $eloquentArticle->category ? $eloquentArticle->category->toArray() : null,
+        currencyType: $eloquentArticle->currencyType ? $eloquentArticle->currencyType->toArray() : null,
+        measurementUnit: $eloquentArticle->measurementUnit ? $eloquentArticle->measurementUnit->toArray() : null,
         precioIGv: isset($eloquentArticle->purchase_price, $eloquentArticle->tariff_rate)
             ? (float)($eloquentArticle->purchase_price + ($eloquentArticle->purchase_price * $eloquentArticle->tariff_rate / 100))
             : 0,
         venta: (bool)$eloquentArticle->venta,
-        subCategory: null
+        subCategory: $eloquentArticle->subCategory ? $eloquentArticle->subCategory->toArray() : null,
+         subcategoria_id:$eloquentArticle->subcategoria_id,
     );
 }
 
@@ -112,6 +114,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 min_stock: $article->min_stock,
                 currency_type_id: $article->currency_type_id,
                 cost_to_price_percent: $article->cost_to_price_percent,
+                subcategoria_id:$article->subcategoria_id,
                 purchase_price: $article->purchase_price,
                 public_price: $article->public_price,
                 distributor_price: $article->distributor_price,
@@ -128,6 +131,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 measurementUnit: $article->measurementUnit ? $article->measurementUnit->toArray() : null,
                 venta: $article->venta,
                  subCategory: $article->subCategory ? $article->subCategory->toArray() : null,
+                
+                 
             );
         })->toArray();
     }
@@ -160,6 +165,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             min_stock: $article->min_stock,
             currency_type_id: $article->currency_type_id,
             cost_to_price_percent: $article->cost_to_price_percent,
+             subcategoria_id:$article->subcategoria_id,
             purchase_price: $article->purchase_price,
             public_price: $article->public_price,
             distributor_price: $article->distributor_price,
@@ -173,9 +179,10 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             category: $article->category ? $article->category->toArray() : null,
             currencyType: $article->currencyType ? $article->currencyType->toArray() : null,
             measurementUnit: $article->measurementUnit ? $article->measurementUnit->toArray() : null,
-            //precioIGv: $precioIGv,
+            precioIGv: 455,
             venta: $article->venta,
              subCategory: $article->subCategory ? $article->subCategory->toArray() : null,
+
 
         );
     }
@@ -219,7 +226,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'brand' => $article->getBrand(),
             'category' => $article->getCategory(),
             'currencyType' => $article->getCurrencyType(),
-            'venta'=>$article->getVenta()
+            'venta'=>$article->getVenta(),
+              'subcategoria_id' =>$article->getSubcategoriaId()
         ]);
 
 

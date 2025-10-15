@@ -38,9 +38,11 @@ class EloquentArticle extends Model{
         'authorized_price',
         'public_price_percent',
         'distributor_price_percent',
-        'authori    zed_price_percent',
+        'authorized_price_percent',
         'status',
         'user_id',
+        'venta',
+        'subcategoria_id',
     ];
      protected $hidden = ['created_at', 'updated_at'];
 
@@ -69,7 +71,7 @@ public function brand(): BelongsTo
     }
       public function subCategory(): BelongsTo
     {
-        return $this->belongsTo(EloquentSubCategory::class, 'category_id');
+        return $this->belongsTo(EloquentSubCategory::class, 'subcategoria_id');
     }
 
     //  Relación con Estado

@@ -26,7 +26,7 @@ class UpdateArticleRequest extends FormRequest{
         'plastic_bag_applicable'    => 'sometimes|boolean',
         'min_stock'                 => 'sometimes|integer|min:0',
         'currency_type_id'          => 'sometimes|integer|exists:currency_types,id',
-        'cost_to_price_percent'     => 'sometimes|numeric|min:0',
+         'cost_to_price_percent' => 'sometimes|numeric|min:0',
         'purchase_price'            => 'sometimes|numeric|min:0',
         'public_price'              => 'sometimes|numeric|min:0',
         'distributor_price'         => 'sometimes|numeric|min:0',
@@ -36,6 +36,7 @@ class UpdateArticleRequest extends FormRequest{
         'authorized_price_percent'  => 'sometimes|numeric|min:0',
         'status'                    => 'sometimes|integer|exists:statuses,id',
         'user_id'                   => 'sometimes|integer|exists:users,id',
+        'subcategoria_id'           => 'sometimes|integer|exists:sub_categories,id'
         ];
     }
 }

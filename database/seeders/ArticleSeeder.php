@@ -40,6 +40,7 @@ class ArticleSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
                 'venta' => true,
+                'subcategoria_id'=> 1
             ]
             ];
       DB::table('articles')->insert($articles);

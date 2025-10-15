@@ -1,8 +1,6 @@
 <?php
 namespace App\Modules\Articles\Domain\Entities;
 
-use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
-
 class Article 
 {
     private int $id;
@@ -33,13 +31,15 @@ class Article
     private int $status;
     private ?int $user_id;
     private bool $venta;
-    //brand
-    public ?array $brand = null;
-     public ?array $category = null;
-      public ?array $currencyType = null;
-      public ?array $measurementUnit = null;
-       public ?array  $subCategory = null;
-      public float $precioIGv;
+
+    // Relaciones opcionales
+    public ?array $brand;
+    public ?array $category;
+    public ?array $currencyType;
+    public ?array $measurementUnit;
+    public ?array $subCategory;
+    public float $precioIGv;
+
     public function __construct(
         int $id,
         string $cod_fab,
@@ -67,14 +67,14 @@ class Article
         float $distributor_price_percent,
         float $authorized_price_percent,
         int $status,
-        ?int $user_id,
+        ?int $user_id = 0,
         ?array $brand = null,
-         ?array $category = null,
-          ?array $currencyType = null,
-           ?array $measurementUnit = null,
-          float $precioIGv,
-          bool $venta,
-           ?array $subCategory = null
+        ?array $category = null,
+        ?array $currencyType = null,
+        ?array $measurementUnit = null,
+        ?float $precioIGv = null,
+        bool $venta = false,
+        ?array $subCategory = null
     ) {
         $this->id = $id;
         $this->cod_fab = $cod_fab;
@@ -103,49 +103,28 @@ class Article
         $this->authorized_price_percent = $authorized_price_percent;
         $this->status = $status;
         $this->user_id = $user_id;
-          $this->brand = $brand;
-          $this->category = $category;
-          $this->currencyType = $currencyType;
-          $this->precioIGv = $precioIGv ?? $this->getPrecioIGV();
-          $this->measurementUnit = $measurementUnit;
-         $this->venta = $venta;
-          $this->subCategory = $subCategory;
+
+        $this->brand = $brand;
+        $this->category = $category;
+        $this->currencyType = $currencyType;
+        $this->measurementUnit = $measurementUnit;
+        $this->subCategory = $subCategory;
+
+        // Calcula precioIGv si no se pasa
+        $this->precioIGv = $precioIGv ?? $this->calculatePrecioIGV();
+
+        $this->venta = $venta;
     }
 
+    private function calculatePrecioIGV(): float
+    {
+        return $this->purchase_price + ($this->purchase_price * $this->tariff_rate / 100);
+    }
     public function getSubCategoria(): ?array
 {
     return $this->subCategory;
 }
-   public function getBrand(): ?array
-{
-    return $this->brand;
-}
-   public function getVenta(): bool
-{
-    return $this->venta;
-}
-  public function getMeasurementUnit(): ?array
-{
-    return $this->measurementUnit;
-}
-  public function getCategory(): ?array
-{
-    return $this->category;
-}
-  public function getCurrencyType(): ?array
-{
-    return $this->currencyType;
-}
-public function getPrecioIGV(): float
-{
-    $igv = $this->purchase_price * ($this->tariff_rate / 100);
-
-    $precioIGV = $this->purchase_price + $igv;
-
-    return $precioIGV;
-}
-
-
+    // Getters
     public function getId(): int { return $this->id; }
     public function getCodFab(): string { return $this->cod_fab; }
     public function getDescription(): string { return $this->description; }
@@ -173,5 +152,11 @@ public function getPrecioIGV(): float
     public function getAuthorizedPricePercent(): float { return $this->authorized_price_percent; }
     public function getStatus(): int { return $this->status; }
     public function getUserId(): ?int { return $this->user_id; }
-
+    public function getVenta(): bool { return $this->venta; }
+    public function getPrecioIGV(): float { return $this->precioIGv; }
+    public function getBrand(): ?array { return $this->brand; }
+    public function getCategory(): ?array { return $this->category; }
+    public function getCurrencyType(): ?array { return $this->currencyType; }
+    public function getMeasurementUnit(): ?array { return $this->measurementUnit; }
+    public function getSubCategory(): ?array { return $this->subCategory; }
 }

@@ -5,6 +5,7 @@ namespace App\Modules\Articles\Application\UseCases;
 use App\Modules\Articles\Application\DTOs\ArticleDTO;
 use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
+use Illuminate\Support\Facades\Log;
 
 class UpdateArticleUseCase{
 
@@ -15,7 +16,7 @@ class UpdateArticleUseCase{
     }
     public function execute(int $id, ArticleDTO $articleDTO){
        $articleExist = $this->articleRepository->findById($id);
-       
+
        if (!$articleExist) {
          return null;
        }
@@ -46,7 +47,7 @@ class UpdateArticleUseCase{
         distributor_price_percent: $articleDTO->distributor_price_percent,
         authorized_price_percent: $articleDTO->authorized_price_percent,
         status: $articleDTO->status,
-        user_id: $articleDTO->user_id
+   
        );
        $this->articleRepository->update($article);
     }

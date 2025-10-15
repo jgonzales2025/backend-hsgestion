@@ -61,8 +61,7 @@ class ArticleResource extends JsonResource
             'status' => ($this->getStatus()) == 1 ? "Activo" : "Inactivo",
             'precioIGv' => $this->getPrecioIGV(),
              'subCategory' =>$this->getSubCategoria(),
-            'venta'=>($this->getVenta()) == true ? "Activo" : "Inactivo" ,
-            // 'user_id' => $this->getUserId(),
+            'venta'=>($this->getVenta()) == true ? "Activo" : "Inactivo" , 
         ];
     }
 }

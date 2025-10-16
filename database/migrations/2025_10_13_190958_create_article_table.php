@@ -49,17 +49,19 @@ return new class extends Migration
             $table->timestamps();
 
             //  Si existen las tablas relacionadas, puedes agregar las FK:
-            // $table->foreign('measurement_unit_id')->references('id')->on('measurement_units');
-            // $table->foreign('brand_id')->references('id')->on('brands');
-            // $table->foreign('category_id')->references('id')->on('categories');
-            // $table->foreign('currency_type_id')->references('id')->on('currency_types');
-            // $table->foreign('user_id')->references('id')->on('users');
-       
+            $table->foreign('measurement_unit_id')->references('id')->on('measurement_units');
+            $table->foreign('brand_id')->references('id')->on('brands');
+            $table->foreign('category_id')->references('id')->on('categories');
+            $table->foreign('currency_type_id')->references('id')->on('currency_types');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->timestamp('date_at')->default(DB::raw('CURRENT_TIMESTAMP'))->change();
+   
         });
     }
 
     public function down(): void
     {
         Schema::dropIfExists('articles');
+        
     }
 };

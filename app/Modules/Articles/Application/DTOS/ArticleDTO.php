@@ -46,7 +46,7 @@ class ArticleDTO
         $this->series_enabled = isset($data['series_enabled']) ? (bool)$data['series_enabled'] : false;
         $this->measurement_unit_id = $data['measurement_unit_id'] ?? null;
         $this->brand_id = $data['brand_id'] ?? null;
-        $this->category_id = $data['category_id'] ?? null;
+        $this->category_id = $data['category_id'] ;
         $this->location = $data['location'] ?? '';
         $this->warranty = $data['warranty'] ?? '';
         $this->tariff_rate = isset($data['tariff_rate']) ? (float)$data['tariff_rate'] : 0;

@@ -7,14 +7,14 @@ class ReferenceCode
     private int $id;
     private string $refCode;
     private int $articleId;
-    private string $dateAt;
+    private ?string $dateAt;
     private int $status;
 
     public function __construct(
         int $id,
         string $refCode,
         int $articleId,
-        string $dateAt,
+        ?string $dateAt,
         int $status
     ) {
         $this->id = $id;
@@ -40,7 +40,7 @@ class ReferenceCode
         return $this->articleId;
     }
 
-    public function getDateAt(): string
+    public function getDateAt(): ?string
     {
         return $this->dateAt;
     }

@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\Log;
 class EloquentArticleRepository implements ArticleRepositoryInterface
 {
 
-    public function save(Article $article): Article
+    public function save(Article $article): ?Article
 {
+    
+    
     $eloquentArticle = EloquentArticle::create([
         'cod_fab' => $article->getCodFab(),
         'description' => $article->getDescription(),    
@@ -19,9 +21,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         'weight' => $article->getWeight(),
         'with_deduction' => $article->getWithDeduction(),
         'series_enabled' => $article->getSeriesEnabled(),
-        'measurement_unit_id' => $article->getMeasurementUnitId(),
-        'brand_id' => $article->getBrandId(),
-        'category_id' => $article->getCategoryId(),
+        // 'measurement_unit_id' => $article->getMeasurementUnitId(),
+        // 'brand_id' => $article->getBrandId(),
+        // 'category_id' => $article->getCategoryId(),
         'location' => $article->getLocation(),
         'warranty' => $article->getWarranty(),
         'tariff_rate' => $article->getTariffRate(),
@@ -38,11 +40,15 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         'distributor_price_percent' => $article->getDistributorPricePercent(),
         'authorized_price_percent' => $article->getAuthorizedPricePercent(),
         'status' => $article->getStatus(),
-        'user_id' => $article->getUserId(),
+        // 'user_id' => $article->getUserId(),
         'venta' => $article->getVenta(),
-        'subcategory_id' =>$article->getSubcategoriaId()
+        'subcategory_id' =>$article->getSubcategoriaId(),
+        'category_id'=> $article->getCategory()->getId(),
+        'currencyType'=>$article->getCurrencyType()->getId(),
+        'brand_id'=>$article->getBrand()->getId(),
+        'measurement_unit_id'=>$article->getMeasurementUnit()->getId()
     ]);
-
+    // Log::info('eloquentArticle',$eloquentArticle);
     return new Article(
         id: $eloquentArticle->id,
         cod_fab: $eloquentArticle->cod_fab,
@@ -51,9 +57,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         weight: (float)$eloquentArticle->weight,
         with_deduction: (bool)$eloquentArticle->with_deduction,
         series_enabled: (bool)$eloquentArticle->series_enabled,
-        measurement_unit_id: $eloquentArticle->measurement_unit_id,
-        brand_id: $eloquentArticle->brand_id,
-        category_id: $eloquentArticle->category_id,
+        // measurement_unit_id: $eloquentArticle->measurement_unit_id,
+        // brand_id: $eloquentArticle->brand_id,
+        // category_id: $eloquentArticle->category_id,
         location: $eloquentArticle->location,
         warranty: $eloquentArticle->warranty,
         tariff_rate: (float)$eloquentArticle->tariff_rate,
@@ -71,28 +77,30 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         authorized_price_percent: isset($eloquentArticle->authorized_price_percent) ? (float)$eloquentArticle->authorized_price_percent : 0,
         status: $eloquentArticle->status,
         user_id: 1,
-        brand: $eloquentArticle->brand ? $eloquentArticle->brand->toArray() : null,
-        category: $eloquentArticle->category ? $eloquentArticle->category->toArray() : null,
-        currencyType: $eloquentArticle->currencyType ? $eloquentArticle->currencyType->toArray() : null,
-        measurementUnit: $eloquentArticle->measurementUnit ? $eloquentArticle->measurementUnit->toArray() : null,
+        brand: $eloquentArticle->getBrand(),
+        category: $eloquentArticle->getCategory(),
+        currencyType: $eloquentArticle->getCurrencyType(),
+        measurementUnit: $eloquentArticle->getMeasurementUnit(),
         precioIGv: isset($eloquentArticle->purchase_price, $eloquentArticle->tariff_rate)
             ? (float)($eloquentArticle->purchase_price + ($eloquentArticle->purchase_price * $eloquentArticle->tariff_rate / 100))
             : 0,
         venta: (bool)$eloquentArticle->venta,
-        subCategory: $eloquentArticle->subCategory ? $eloquentArticle->subCategory->toArray() : null,
-         subcategory_id:$eloquentArticle->subcategory_id,
+        subCategory: $eloquentArticle->subCategory->getSubCategory,
+         subcategory_id:$eloquentArticle->getSubcategoriaId(),
     );
 }
 
     public function findAllArticle(): array
     {
-        $articles = EloquentArticle::with(['brand', 'category', 'currencyType','subCategory'])->get();
+        //  $payload = auth('api')->payload();
 
-        if ($articles->isEmpty()) {
-            return [];
-        }
+        //  $companyId = $payload->get('company_id');
 
-        return $articles->map(function ($article) {
+        $Eloquentarticles = EloquentArticle::with(['brand', 'category', 'currencyType','subCategory'])
+          ->where('id', "1")
+        ->get();
+
+        return $Eloquentarticles->map(function ($article) {
 
 
             return new Article(
@@ -103,9 +111,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 weight: $article->weight,
                 with_deduction: $article->with_deduction,
                 series_enabled: $article->series_enabled,
-                measurement_unit_id: $article->measurement_unit_id,
-                brand_id: $article->brand_id,
-                category_id: $article->category_id,
+                // measurement_unit_id: $article->measurement_unit_id,
+                // brand_id: $article->brand_id,
+                // category_id: $article->category_id,
                 location: $article->location,
                 warranty: $article->warranty,
                 tariff_rate: $article->tariff_rate,
@@ -124,13 +132,13 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 authorized_price_percent: $article->authorized_price_percent,
                 status: $article->status,
                 user_id: $article->user_id,
-                brand: $article->brand ? $article->brand->toArray() : null,
-                category: $article->category ? $article->category->toArray() : null,
-                currencyType: $article->currencyType ? $article->currencyType->toArray() : null,
+                brand: $article->brand->toDomain($article->brand) ?? null,
+                category: $article->category->toDomain($article->category)?? null,
+                currencyType: $article->currencyType->toDomain($article->currencyType)?? null,
                 precioIGv: $article->purchase_price + ($article->purchase_price * ($article->tariff_rate / 100)),
-                measurementUnit: $article->measurementUnit ? $article->measurementUnit->toArray() : null,
+                measurementUnit: $article->measurementUnit->toDomain($article->measurementUnit)?? null,
                 venta: $article->venta,
-                 subCategory: $article->subCategory ? $article->subCategory->toArray() : null,
+                //  subCategory: $article->subCategory->toDomain($article->subCategory)?? null,
                 
                  
             );
@@ -154,9 +162,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             weight: $article->weight,
             with_deduction: $article->with_deduction,
             series_enabled: $article->series_enabled,
-            measurement_unit_id: $article->measurement_unit_id,
-            brand_id: $article->brand_id,
-            category_id: $article->category_id,
+            // measurement_unit_id: $article->measurement_unit_id,
+            // brand_id: $article->brand_id,
+            // category_id: $article->category_id,
             location: $article->location,
             warranty: $article->warranty,
             tariff_rate: $article->tariff_rate,

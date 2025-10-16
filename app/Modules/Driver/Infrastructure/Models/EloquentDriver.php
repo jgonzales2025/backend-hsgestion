@@ -3,6 +3,7 @@
 namespace App\Modules\Driver\Infrastructure\Models;
 
 use App\Models\CustomerDocumentType;
+use App\Modules\CustomerDocumentType\Infrastructure\Models\EloquentCustomerDocumentType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -24,6 +25,6 @@ class EloquentDriver extends Model
 
     public function customerDocumentType(): BelongsTo
     {
-        return $this->belongsTo(CustomerDocumentType::class, 'customer_document_type_id');
+        return $this->belongsTo(EloquentCustomerDocumentType::class, 'customer_document_type_id');
     }
 }

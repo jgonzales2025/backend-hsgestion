@@ -14,6 +14,7 @@ use App\Modules\CurrencyType\Infrastructure\Controllers\CurrencyTypeController;
 use App\Modules\Customer\Infrastructure\Controllers\CustomerController;
 use App\Modules\CustomerDocumentType\Infrastructure\Controllers\CustomerDocumentTypeController;
 use App\Modules\CustomerPhone\Infrastructure\Controllers\CustomerPhoneController;
+use App\Modules\CustomerPortfolio\Infrastructure\Controllers\CustomerPortfolioController;
 use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
 use App\Modules\DigitalWallet\Infrastructure\Controllers\DigitalWalletController;
 use App\Modules\Driver\Infrastructure\Controllers\DriverController;
@@ -188,6 +189,10 @@ Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
 Route::post('digital-wallets', [DigitalWalletController::class, 'store']);
 Route::get('digital-wallets/{id}', [DigitalWalletController::class, 'show']);
 Route::put('digital-wallets/{id}', [DigitalWalletController::class, 'update']);
+
+// Customer portfolios - Cartera de clientes
+Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index']);
+Route::post('customer-portfolios', [CustomerPortfolioController::class, 'store']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

@@ -170,10 +170,7 @@ class UserController extends Controller
             }
 
             // 1. Actualizar el usuario
-            $userDTO = new UserDTO(array_merge(
-                $request->validated(),
-                ['id' => $id]
-            ));
+            $userDTO = new UserDTO($request->validated());
 
             $updateUserUseCase = new UpdateUserUseCase($this->userRepository);
             $user = $updateUserUseCase->execute($id, $userDTO);

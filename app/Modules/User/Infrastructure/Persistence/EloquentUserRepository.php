@@ -72,7 +72,6 @@ class EloquentUserRepository implements UserRepositoryInterface
         }
 
         $data = [
-            'username' => $user->getUsername(),
             'firstname' => $user->getFirstname(),
             'lastname' => $user->getLastname(),
             'status' => $user->getStatus(),

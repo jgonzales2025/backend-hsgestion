@@ -8,6 +8,8 @@ use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface;
 use App\Modules\Bank\Infrastructure\Persistence\EloquentBankRepository;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Branch\Infrastructure\Persistence\EloquentBranchRepository;
+use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
+use App\Modules\Brand\Infrastructure\Persistence\EloquentBrandRepository;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
 use App\Modules\Category\Infrastructure\Persistence\EloquentCategoryRepository;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
@@ -95,7 +97,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DocumentTypeRepositoryInterface::class, EloquentDocumentTypeRepository::class);
         $this->app->bind(BankRepositoryInterface::class, EloquentBankRepository::class);
         $this->app->bind(CurrencyTypeRepositoryInterface::class, EloquentCurrencyTypeRepository::class);
-        $this->app->bind(DigitalWalletRepositoryInterface::class, EloquentDigitalWalletRepository::class);;
+        $this->app->bind(DigitalWalletRepositoryInterface::class, EloquentDigitalWalletRepository::class);
+        $this->app->bind(BrandRepositoryInterface::class, EloquentBrandRepository::class);
     }
 
     /**

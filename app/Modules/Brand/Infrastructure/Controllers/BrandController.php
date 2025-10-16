@@ -7,6 +7,7 @@ use App\Modules\Brand\Application\UseCases\CreateBrandUseCase;
 use App\Modules\Brand\Application\UseCases\FindAllBrandUseCases;
 use App\Modules\Brand\Application\UseCases\FindByIdBrandUseCase;
 use App\Modules\Brand\Application\UseCases\UpdateBrandUseCase;
+use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
 use App\Modules\Brand\Infrastructure\Persistence\EloquentBrandRepository;
 use App\Modules\Brand\Infrastructure\Requests\StoreBrandRequest;
 use App\Modules\Brand\Infrastructure\Requests\UpdateBrandRequest;
@@ -14,14 +15,9 @@ use App\Modules\Brand\Infrastructure\Resources\BrandResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BrandController
+readonly class BrandController
 {
-    protected $brandRepository;
-
-    public function __construct()
-    {
-        $this->brandRepository = new EloquentBrandRepository();
-    }
+    public function __construct(private readonly BrandRepositoryInterface $brandRepository){}
 
     public function index(): array
     {

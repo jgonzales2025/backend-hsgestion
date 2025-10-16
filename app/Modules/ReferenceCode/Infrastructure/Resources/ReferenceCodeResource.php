@@ -10,7 +10,8 @@ class ReferenceCodeResource extends JsonResource{
             'refCode' => $this->resource->getRefCode(),
             'articleId' => $this->resource->getArticleId(),
             'dateAt' => $this->resource->getDateAt(),
-            'status' => $this->resource->getStatus(),
+            'status' => ($this->resource->getStatus()) == true ? "Activo" :"Inactivo",
+            // "creacion"=>$this->resource->getDateAt()
         ];
     }
 }

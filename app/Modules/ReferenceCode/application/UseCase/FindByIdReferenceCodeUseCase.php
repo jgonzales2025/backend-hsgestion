@@ -16,4 +16,5 @@ class FindByIdReferenceCodeUseCase{
     public function execute(int $id){
           return $this->eloquentReferenceCodeRepository->findById($id);
     }
+ 
 }

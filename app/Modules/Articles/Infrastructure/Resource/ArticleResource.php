@@ -20,29 +20,28 @@ class ArticleResource extends JsonResource
 
             // 'measurement_unit' => $this->getMeasurementUnitId(),
 
-            'brand' => $this->getBrand() ? [
-                'id' => $this->getBrand()['id'] ?? null,
-                'name' => $this->getBrand()['name'] ?? null,
-                'status' => ($this->getBrand()['status'] ?? 0) == 1 ? 'Activo' : 'Inactivo',
-            ] : null,
-            'category' => $this->getCategory() ? [
-                'id' => $this->getCategory()['id'] ?? null,
-                'name' => $this->getCategory()['name'] ?? null,
-                'status' => ($this->getCategory()['status'] ?? 0) == 1 ? 'Activo' : 'Inactivo',
-            ] : null,
-            'currencyType' => $this->getCurrencyType() ? [
-                'id' => $this->getCurrencyType()['id'] ?? null,
-                'name' => $this->getCurrencyType()['name'] ?? null,
-                'status' => ($this->getCurrencyType()['status'] ?? 0) == 1 ? 'Activo' : 'Inactivo',
-            ] : null,
-             'measurementUnit' => $this->getMeasurementUnit() ? [
-                'id' => $this->getMeasurementUnit()['id'] ?? null,
-                'name' => $this->getMeasurementUnit()['name'] ?? null,
-                'status' => ($this->getMeasurementUnit()['status'] ?? 0) == 1 ? 'Activo' : 'Inactivo',
-            ] : null,
+            'brand' => [
+                'id' => $this->getBrand()->getId(),
+                'name' => $this->getBrand()->getName(),
+                'status' => ($this->getBrand()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+            ] ,
+            'category' => [
+                'id' => $this->resource->getCategory()->getId(),
+                'name' => $this->resource->getCategory()->getName(),
+                'status' =>($this->resource->getCategory()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+            ] ,
+
+            'currencyType' => [
+                'id' => $this->resource->getCurrencyType()->getId(),
+                'name' => $this->resource->getCurrencyType()->getName(),
+            ],
+             'measurementUnit' =>  [
+                'id' => $this->resource->getMeasurementUnit()->getId(),
+                'name' => $this->resource->getMeasurementUnit()->getName(),
+                'status' => ($this->resource->getMeasurementUnit()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+            ],
 
             // Resto de campos planos
-            'category_id' => $this->getCategoryId(),
             'location' => $this->getLocation(),
             'warranty' => $this->getWarranty(),
             'tariff_rate' => $this->getTariffRate(),

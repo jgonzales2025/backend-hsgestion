@@ -83,6 +83,9 @@ Route::get('driver-document-types', [CustomerDocumentTypeController::class, 'ind
 Route::get('referenceCode', [ReferenceCodeController::class, 'index']);
 Route::get('referenceCode/{id}', [ReferenceCodeController::class, 'show']);
 Route::put('referenceCode/{id}', [ReferenceCodeController::class, 'update']);
+Route::get('referenceCodeId/{id}', [ReferenceCodeController::class, 'indexid']);
+Route::post('referenceCode-save', [ReferenceCodeController::class, 'store']);
+
 
 // Marcas
 Route::get('brands', [BrandController::class, 'index']);

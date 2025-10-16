@@ -8,4 +8,5 @@ interface ReferenceCodeRepositoryInterface{
     public function findAllReferenceCode():array;
     public function findById(int $id): array;
      public function update(ReferenceCode $referenceCode) :void;
+     public function indexid(int $id) :?ReferenceCode;
 }

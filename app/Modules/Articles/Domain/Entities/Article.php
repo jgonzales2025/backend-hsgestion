@@ -1,6 +1,12 @@
 <?php
 namespace App\Modules\Articles\Domain\Entities;
 
+use App\Modules\Brand\Domain\Entities\Brand;
+use App\Modules\Category\Domain\Entities\Category;
+use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
+use App\Modules\MeasurementUnit\Domain\Entities\MeasurementUnit;
+use App\Modules\SubCategory\Domain\Entities\SubCategory;
+
 class Article 
 {
     private int $id;
@@ -10,9 +16,9 @@ class Article
     private float $weight;
     private bool $with_deduction;
     private bool $series_enabled;
-    private int $measurement_unit_id;
-    private int $brand_id;
-    private int $category_id;
+    // private int $measurement_unit_id;
+    // private int $brand_id;
+  
     private string $location;
     private string $warranty;
     private float $tariff_rate;
@@ -33,12 +39,12 @@ class Article
     private bool $venta;
 
     // Relaciones opcionales
-    public ?array $brand;
-    public ?array $category;
-    public ?array $currencyType;
-    public ?array $measurementUnit;
-    public ?array $subCategory;
-    public float $precioIGv;
+    private ?Brand $brand;
+    private ?Category $category;
+    private ?CurrencyType $currencyType;
+    private ?MeasurementUnit $measurementUnit;
+    private ?SubCategory $subCategory;
+    private float $precioIGv;
     private ?int $subcategory_id;
 
     public function __construct(
@@ -49,9 +55,9 @@ class Article
         float $weight,
         bool $with_deduction,
         bool $series_enabled,
-        int $measurement_unit_id,
-        int $brand_id,
-        int $category_id,
+        // int $measurement_unit_id,
+        // int $brand_id,
+     
         string $location,
         string $warranty,
         float $tariff_rate,
@@ -69,14 +75,14 @@ class Article
         float $authorized_price_percent,
         int $status,
         ?int $user_id = 0,
-        ?array $brand = null,
-        ?array $category = null,
-        ?array $currencyType = null,
-        ?array $measurementUnit = null,
+        ?Brand $brand = null,
+        ?Category $category = null,
+        ?CurrencyType $currencyType = null,
+        ?MeasurementUnit $measurementUnit = null,
         ?float $precioIGv = null,
         bool $venta ,
         ?int $subcategory_id = 1,
-        ?array $subCategory = null
+        ?SubCategory $subCategory = null
     ) {
         $this->id = $id;
         $this->cod_fab = $cod_fab;
@@ -85,9 +91,9 @@ class Article
         $this->weight = $weight;
         $this->with_deduction = $with_deduction;
         $this->series_enabled = $series_enabled;
-        $this->measurement_unit_id = $measurement_unit_id;
-        $this->brand_id = $brand_id;
-        $this->category_id = $category_id;
+        // $this->measurement_unit_id = $measurement_unit_id;
+        // $this->brand_id = $brand_id;
+      
         $this->location = $location;
         $this->warranty = $warranty;
         $this->tariff_rate = $tariff_rate;
@@ -138,9 +144,9 @@ class Article
     public function getWeight(): float { return $this->weight; }
     public function getWithDeduction(): bool { return $this->with_deduction; }
     public function getSeriesEnabled(): bool { return $this->series_enabled; }
-    public function getMeasurementUnitId(): int { return $this->measurement_unit_id; }
-    public function getBrandId(): int { return $this->brand_id; }
-    public function getCategoryId(): int { return $this->category_id; }
+    // public function getMeasurementUnitId(): int { return $this->measurement_unit_id; }
+    // public function getBrandId(): int { return $this->brand_id; }
+  
     public function getLocation(): string { return $this->location; }
     public function getWarranty(): string { return $this->warranty; }
     public function getTariffRate(): float { return $this->tariff_rate; }
@@ -160,9 +166,9 @@ class Article
     public function getUserId(): ?int { return $this->user_id; }
     public function getVenta(): bool { return $this->venta; }
     public function getPrecioIGV(): float { return $this->precioIGv; }
-    public function getBrand(): ?array { return $this->brand; }
-    public function getCategory(): ?array { return $this->category; }
-    public function getCurrencyType(): ?array { return $this->currencyType; }
-    public function getMeasurementUnit(): ?array { return $this->measurementUnit; }
-    public function getSubCategory(): ?array { return $this->subCategory; }
+    public function getBrand(): Brand|null { return $this->brand; }
+    public function getCategory(): Category|null { return $this->category; }
+    public function getCurrencyType(): CurrencyType|null { return $this->currencyType; }
+    public function getMeasurementUnit(): MeasurementUnit|null { return $this->measurementUnit; }
+    public function getSubCategory(): SubCategory|null { return $this->subCategory; }
 }

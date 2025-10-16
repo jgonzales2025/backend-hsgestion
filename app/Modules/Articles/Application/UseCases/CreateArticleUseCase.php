@@ -4,18 +4,38 @@ namespace App\Modules\Articles\Application\UseCases;
 use App\Modules\Articles\Application\DTOs\ArticleDTO;
 use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
+use App\Modules\Category\Application\UseCases\FindByIdCategoryUseCase;
+use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
+use App\Modules\CurrencyType\Application\UseCases\FindAllCurrencyTypeUseCase;
+use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
+use Illuminate\Support\Facades\Log;
 
-class CreateArticleUseCase
+readonly class CreateArticleUseCase
 {
-    private ArticleRepositoryInterface $articleRepository;
+    // private ArticleRepositoryInterface $articleRepository;
 
-    public function __construct(ArticleRepositoryInterface $articleRepository)
-    {
-        $this->articleRepository = $articleRepository;
-    }
+    public function __construct(
+        private readonly CategoryRepositoryInterface $categoryRepository,
+         private readonly ArticleRepositoryInterface $articleRepository,
+        //  private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
+         )
+    {}
 
     public function execute(ArticleDTO $articleDTO): Article
     {
+         $categoryUseCase = new FindByIdCategoryUseCase( $this->categoryRepository);
+         $categoryType = $categoryUseCase->execute($articleDTO->category_id);
+
+        //     $currencyUseCase = new FindAllCurrencyTypeUseCase( $this->currencyTypeRepository);
+        //  $currencyType = $currencyUseCase->execute($articleDTO->category_id);
+
+        //     $categoryUseCase = new FindByIdCategoryUseCase(categoryRepository: $this->categoryRepository);
+        //  $categoryType = $categoryUseCase->execute($articleDTO->category_id);
+
+        //     $categoryUseCase = new FindByIdCategoryUseCase(categoryRepository: $this->categoryRepository);
+        //  $categoryType = $categoryUseCase->execute($articleDTO->category_id);
+            //   Log::info('categoryType',$categoryType->getId());
+
         $article = new Article(
             id: 0,
             cod_fab: $articleDTO->cod_fab,
@@ -24,9 +44,9 @@ class CreateArticleUseCase
             weight: $articleDTO->weight,
             with_deduction: $articleDTO->with_deduction,
             series_enabled: $articleDTO->series_enabled,
-            measurement_unit_id: $articleDTO->measurement_unit_id,
-            brand_id: $articleDTO->brand_id,
-            category_id: $articleDTO->category_id,
+            // measurement_unit_id: $articleDTO->measurement_unit_id,
+            // brand_id: $articleDTO->brand_id,
+            // category_id: $articleDTO->category_id,
             location: $articleDTO->location,
             warranty: $articleDTO->warranty,
             tariff_rate: $articleDTO->tariff_rate,
@@ -49,7 +69,7 @@ class CreateArticleUseCase
             // user_id: $articleDTO->user_id,
             // Parámetros opcionales
             brand: null,
-            category: null,
+            category: $categoryType ,
             currencyType: null,
             measurementUnit: null,
             precioIGv: null, // Se calculará automáticamente en el constructor

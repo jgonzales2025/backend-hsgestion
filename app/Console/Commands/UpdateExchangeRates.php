@@ -40,12 +40,20 @@ class UpdateExchangeRates extends Command
             if ($response->successful() && $response->json('success')) {
                 $data = $response->json('data');
 
+                // Obtener el parallel_rate del registro más reciente
+                $previousRate = DB::table('exchange_rates')
+                    ->orderBy('date', 'desc')
+                    ->value('parallel_rate');
+
+                // Usar el valor anterior o 3.55 por defecto
+                $parallelRate = $previousRate ?? 3.55;
+
                 DB::table('exchange_rates')->updateOrInsert(
                     ['date' => $data['date']],
                     [
                         'purchase_rate' => $data['buy_price'],
                         'sale_rate' => $data['sell_price'],
-                        'parallel_rate' => 0, // Ajusta según necesites
+                        'parallel_rate' => $parallelRate,
                         'updated_at' => now()
                     ]
                 );

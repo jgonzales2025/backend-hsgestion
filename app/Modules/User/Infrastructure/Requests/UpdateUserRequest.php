@@ -14,18 +14,11 @@ class UpdateUserRequest extends FormRequest
 
     public function rules(): array
     {
-        $userId = $this->route('id'); // Obtener el ID del usuario desde la ruta
 
         return [
-            'username' => [
-                'required',
-                'string',
-                'max:20',
-                Rule::unique('users', 'username')->ignore($userId)
-            ],
             'firstname' => 'required|string|max:30',
             'lastname' => 'required|string|max:60',
-            'password' => 'nullable|string|confirmed|min:8', // Opcional al actualizar
+            'password' => 'nullable|string|confirmed|min:8',
             'status' => 'required|integer|in:0,1',
             'role_id' => 'required|integer|exists:roles,id',
             'assignments' => 'required|array|min:1',
@@ -37,8 +30,6 @@ class UpdateUserRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'username.required' => 'El usuario es obligatorio',
-            'username.unique' => 'El usuario ya existe',
             'firstname.required' => 'El nombre es obligatorio',
             'lastname.required' => 'El apellido es obligatorio',
             'password.confirmed' => 'Las contraseñas no coinciden',

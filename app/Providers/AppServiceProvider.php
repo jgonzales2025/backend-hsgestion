@@ -26,6 +26,8 @@ use App\Modules\CustomerEmail\Domain\Interfaces\CustomerEmailRepositoryInterface
 use App\Modules\CustomerEmail\Infrastructure\Persistence\EloquentCustomerEmailRepository;
 use App\Modules\CustomerPhone\Domain\Interfaces\CustomerPhoneRepositoryInterface;
 use App\Modules\CustomerPhone\Infrastructure\Persistence\EloquentCustomerPhoneRepository;
+use App\Modules\CustomerPortfolio\Domain\Interfaces\CustomerPortfolioRepositoryInterface;
+use App\Modules\CustomerPortfolio\Infrastructure\Persistence\EloquentCustomerPortfolioRepository;
 use App\Modules\CustomerType\Domain\Interfaces\CustomerTypeRepositoryInterface;
 use App\Modules\CustomerType\Infrastructure\Persistence\EloquentCustomerTypeRepository;
 use App\Modules\DigitalWallet\Domain\Interfaces\DigitalWalletRepositoryInterface;
@@ -43,6 +45,7 @@ use App\Modules\MeasurementUnit\Infrastructure\Persistence\EloquentMeasurementUn
 use App\Modules\Menu\Domain\Interfaces\MenuRepositoryInterface;
 use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\Menu\Infrastructure\Persistence\EloquentMenuRepository;
+use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface;
 use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRepository;
 use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
@@ -99,6 +102,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CurrencyTypeRepositoryInterface::class, EloquentCurrencyTypeRepository::class);
         $this->app->bind(DigitalWalletRepositoryInterface::class, EloquentDigitalWalletRepository::class);
         $this->app->bind(BrandRepositoryInterface::class, EloquentBrandRepository::class);
+        $this->app->bind(CustomerPortfolioRepositoryInterface::class, EloquentCustomerPortfolioRepository::class);
     }
 
     /**

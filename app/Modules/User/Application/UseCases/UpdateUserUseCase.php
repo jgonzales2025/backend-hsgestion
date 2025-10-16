@@ -26,7 +26,7 @@ class UpdateUserUseCase
 
         $user = new User(
             id: $id,
-            username: $userDTO->username,
+            username: $existingUser->getUsername(),
             firstname: $userDTO->firstname,
             lastname: $userDTO->lastname,
             password: $userDTO->password ?? $existingUser->getPassword(),

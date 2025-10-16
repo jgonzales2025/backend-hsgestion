@@ -106,6 +106,18 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             return null;
         }
 
+        // Cargar teléfonos
+        $phoneUseCase = new FindByCustomerIdPhoneUseCase($this->customerPhoneRepository);
+        $phones = $phoneUseCase->execute($eloquentCustomer->id);
+
+        // Cargar emails
+        $emailUseCase = new FindByCustomerIdEmailUseCase($this->customerEmailRepository);
+        $emails = $emailUseCase->execute($eloquentCustomer->id);
+
+        // Cargar direcciones - AGREGAR ESTO
+        $addressUseCase = new FindByIdCustomerAddressUseCase($this->customerAddressRepository);
+        $addresses = $addressUseCase->execute($eloquentCustomer->id);
+
         return new Customer(
             id: $eloquentCustomer->id,
             record_type_id: $eloquentCustomer->record_type_id,
@@ -123,7 +135,10 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             fax: $eloquentCustomer->fax,
             contact: $eloquentCustomer->contact,
             is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
-            status: $eloquentCustomer->status
+            status: $eloquentCustomer->status,
+            phones: $phones,
+            emails: $emails,
+            addresses: $addresses
         );
     }
 

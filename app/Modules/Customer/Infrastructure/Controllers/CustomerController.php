@@ -129,21 +129,12 @@ class CustomerController extends Controller
         $customerUseCase = new FindByIdCustomerUseCase($this->customerRepository);
         $customer = $customerUseCase->execute($id);
 
-        $phoneUseCase = new FindByCustomerIdPhoneUseCase($this->customerPhoneRepository);
-        $phones = $phoneUseCase->execute($customer->getId());
-
-        $emailUseCase = new FindByCustomerIdEmailUseCase($this->customerEmailRepository);
-        $emails = $emailUseCase->execute($customer->getId());
-
-        $addressUseCase = new FindByIdCustomerAddressUseCase($this->customerAddressRepository);
-        $addresses = $addressUseCase->execute($customer->getId());
-
         return response()->json(
             [
                 'customer' => (new CustomerResource($customer))->resolve(),
-                'phones' => CustomerPhoneResource::collection($phones)->resolve(),
-                'emails' => CustomerEmailResource::collection($emails)->resolve(),
-                'addresses' => CustomerAddressResource::collection($addresses)->resolve(),
+                'phones' => CustomerPhoneResource::collection($customer->getPhones())->resolve(),
+                'emails' => CustomerEmailResource::collection($customer->getEmails())->resolve(),
+                'addresses' => CustomerAddressResource::collection($customer->getAddresses())->resolve(),
             ], 200
         );
     }

@@ -12,7 +12,7 @@ class UserDTO
     public $status;
 
     public function __construct(array $data) {
-        $this->username = $data['username'];
+        $this->username = $data['username'] ?? null;
         $this->firstname = $data['firstname'];
         $this->lastname = $data['lastname'];
         $this->role = $data['role_id'];

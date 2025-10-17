@@ -22,20 +22,25 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
             status: $referenceCode->status
         ))->toArray();
     }
-    public function findById(int $id): array
-    {
-            $referenceCode = EloquentReferenceCode::where('article_id', $id)->get();
-            if ($referenceCode->isEmpty()) {
-                return [];
-            }
-          return $referenceCode->map(fn($referenceCode) => new ReferenceCode(
+  public function findById(int $articleId): array
+{
+    $referenceCodes = EloquentReferenceCode::where('article_id', $articleId)->get();
+
+    if ($referenceCodes->isEmpty()) {
+        return [];
+    }
+
+    return $referenceCodes->map(function ($referenceCode) {
+        return new ReferenceCode(
             id: $referenceCode->id,
             refCode: $referenceCode->ref_code,
             articleId: $referenceCode->article_id,
             dateAt: $referenceCode->date_at,
             status: $referenceCode->status
-        ))->toArray();
-    }
+        );
+    })->toArray();
+}
+
      public function indexid(int $id): ?ReferenceCode
     {
               $referenceCode = EloquentReferenceCode::find($id);
@@ -52,7 +57,7 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
     }
      public function update(ReferenceCode $referenceCode): void
     {
-           $EloquentreferenceCode = EloquentReferenceCode::with(['article'])->find($referenceCode->getId());
+           $EloquentreferenceCode = EloquentReferenceCode::find($referenceCode->getId());
         
             if (!$EloquentreferenceCode) {
                throw new   \Exception("Error Processing Request", 1);

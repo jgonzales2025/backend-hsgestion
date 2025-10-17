@@ -62,6 +62,8 @@ use App\Modules\Ubigeo\Provinces\Domain\Interfaces\ProvinceRepositoryInterface;
 use App\Modules\Ubigeo\Provinces\Infrastructure\Persistence\EloquentProvinceRepository;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Modules\User\Infrastructure\Persistence\EloquentUserRepository;
+use App\Modules\VisibleArticles\Domain\Interfaces\VisibleArticleRepositoryInterface;
+use App\Modules\VisibleArticles\Infrastructure\Persistence\EloquentVisibleArticleRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -103,6 +105,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DigitalWalletRepositoryInterface::class, EloquentDigitalWalletRepository::class);
         $this->app->bind(BrandRepositoryInterface::class, EloquentBrandRepository::class);
         $this->app->bind(CustomerPortfolioRepositoryInterface::class, EloquentCustomerPortfolioRepository::class);
+        $this->app->bind(VisibleArticleRepositoryInterface::class, EloquentVisibleArticleRepository::class);
+     
     }
 
     /**

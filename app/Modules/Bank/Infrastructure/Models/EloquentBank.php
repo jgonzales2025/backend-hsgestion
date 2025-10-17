@@ -12,7 +12,15 @@ class EloquentBank extends Model
 {
     protected $table = 'banks';
 
-    protected $fillable = ['name', 'account_number', 'currency_type_id', 'user_id', 'created_at', 'company_id', 'status'];
+    protected $fillable = [
+        'name',
+        'account_number',
+        'currency_type_id',
+        'user_id',
+        'created_at',
+        'company_id',
+        'status'
+    ];
 
     protected $hidden = ['updated_at'];
 

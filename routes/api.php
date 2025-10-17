@@ -31,6 +31,7 @@ use App\Modules\TransportCompany\Infrastructure\Controllers\TransportCompanyCont
 use App\Modules\Ubigeo\Departments\Infrastructure\Controllers\DepartmentController;
 use App\Modules\Ubigeo\Provinces\Infrastructure\Controllers\ProvinceController;
 use App\Modules\User\Infrastructure\Controllers\UserController;
+use App\Modules\VisibleArticles\Infrastructure\Controllers\VisibleArticleController;
 use Illuminate\Support\Facades\Route;
 use App\Modules\Ubigeo\Districts\Infrastructure\Controllers\DistrictController;
 use App\Modules\PaymentMethod\Infrastructure\Controllers\PaymentMethodController;
@@ -46,8 +47,9 @@ Route::put('/roles/{id}', [RoleController::class, 'update']);
 
 Route::get('/usernames', [UserController::class, 'findAllUserName']);
 
-
-
+//visible Articulos
+Route::get('/visibleArticle/{id}', [VisibleArticleController::class, 'show']);
+Route::put('/visibleArticle/{id}', [VisibleArticleController::class, 'update']);
 //recordType
 Route::get('/recordType', [RecordTypeController::class, 'index']);
 

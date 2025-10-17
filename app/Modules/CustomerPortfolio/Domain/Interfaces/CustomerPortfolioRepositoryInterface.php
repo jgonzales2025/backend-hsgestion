@@ -9,4 +9,6 @@ interface CustomerPortfolioRepositoryInterface
     public function findAll(): array;
 
     public function save(CustomerPortfolio $customerPortfolio): CustomerPortfolio;
+
+    public function update($id, $newId): void;
 }

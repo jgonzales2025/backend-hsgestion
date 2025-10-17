@@ -32,10 +32,10 @@ class EloquentCustomer extends Model
         'lastname',
         'second_lastname',
         'customer_type_id',
-        'fax',
         'contact',
         'is_withholding_applicable',
-        'status'
+        'status',
+        'st_assigned'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -97,7 +97,6 @@ class EloquentCustomer extends Model
             second_lastname: $eloquentCustomer->second_lastname,
             customer_type_id: $eloquentCustomer->customer_type_id,
             customer_type_name: $eloquentCustomer->customerType->name,
-            fax: $eloquentCustomer->fax,
             contact: $eloquentCustomer->contact,
             is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
             status: $eloquentCustomer->status,

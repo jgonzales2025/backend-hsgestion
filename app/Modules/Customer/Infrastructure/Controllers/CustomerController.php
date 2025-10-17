@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Customer\Application\DTOs\CustomerDTO;
 use App\Modules\Customer\Application\UseCases\CreateCustomerUseCase;
 use App\Modules\Customer\Application\UseCases\FindAllCustomersUseCase;
+use App\Modules\Customer\Application\UseCases\FindAllUnassignedCustomerUseCase;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
 use App\Modules\Customer\Application\UseCases\UpdateCustomerUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
@@ -197,5 +198,13 @@ class CustomerController extends Controller
             'emails' => CustomerEmailResource::collection($emails)->resolve(),
             'addresses' => CustomerAddressResource::collection($addresses)->resolve(),
         ]);
+    }
+
+    public function findAllUnassigned(): array
+    {
+        $customersUseCase = new FindAllUnassignedCustomerUseCase($this->customerRepository);
+        $customers = $customersUseCase->execute();
+
+        return CustomerAllResource::collection($customers)->resolve();
     }
 }

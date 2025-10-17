@@ -17,10 +17,10 @@ class Customer
     private ?string $second_lastname;
     private int $customer_type_id;
     private ?string $customer_type_name;
-    private ?string $fax;
     private ?string $contact;
     private bool $is_withholding_applicable;
     private int $status;
+    private int $st_assigned;
     private ?array $phones;
     private ?array $emails;
     private ?array $addresses;
@@ -39,10 +39,10 @@ class Customer
         ?string $second_lastname,
         int $customer_type_id,
         ?string $customer_type_name,
-        ?string $fax,
         ?string $contact,
         bool $is_withholding_applicable,
         int $status,
+        int $st_assigned = 0,
         ?array $phones = null,
         ?array $emails = null,
         ?array $addresses = null,
@@ -60,10 +60,10 @@ class Customer
         $this->second_lastname = $second_lastname;
         $this->customer_type_id = $customer_type_id;
         $this->customer_type_name = $customer_type_name;
-        $this->fax = $fax;
         $this->contact = $contact;
         $this->is_withholding_applicable = $is_withholding_applicable;
         $this->status = $status;
+        $this->st_assigned = $st_assigned;
         $this->phones = $phones;
         $this->emails = $emails;
         $this->addresses = $addresses;
@@ -82,10 +82,10 @@ class Customer
     public function getSecondLastname(): ?string { return $this->second_lastname; }
     public function getCustomerTypeId(): int { return $this->customer_type_id; }
     public function getCustomerTypeName(): string|null { return $this->customer_type_name; }
-    public function getFax(): ?string { return $this->fax; }
     public function getContact(): ?string { return $this->contact; }
     public function isWithholdingApplicable(): bool { return $this->is_withholding_applicable; }
     public function getStatus(): int { return $this->status; }
+    public function getStAssigned(): int { return $this->st_assigned; }
     public function getPhones(): ?array { return $this->phones; }
     public function getEmails(): ?array { return $this->emails; }
     public function getAddresses(): ?array { return $this->addresses; }

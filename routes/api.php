@@ -139,10 +139,10 @@ Route::get('customer-document-types', [CustomerDocumentTypeController::class, 'i
 
 // Customers - Clientes
 Route::get('customers', [CustomerController::class, 'index']);
+Route::get('customers/unassigned', [CustomerController::class, 'findAllUnassigned']);
 Route::post('customers', [CustomerController::class, 'store']);
 Route::get('customers/{id}', [CustomerController::class, 'show']);
 Route::put('customers/{id}', [CustomerController::class, 'update']);
-
 
 // Customer phones - Telefonos de clientes
 Route::get('customer-phones', [CustomerPhoneController::class, 'index']);
@@ -188,14 +188,22 @@ Route::get('banks/{id}', [BankController::class, 'show']);
 Route::put('banks/{id}', [BankController::class, 'update']);
 
 // Digital Wallets - Billeteras digitales
-Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
+//Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
 Route::post('digital-wallets', [DigitalWalletController::class, 'store']);
 Route::get('digital-wallets/{id}', [DigitalWalletController::class, 'show']);
 Route::put('digital-wallets/{id}', [DigitalWalletController::class, 'update']);
 
 // Customer portfolios - Cartera de clientes
-Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index']);
 Route::post('customer-portfolios', [CustomerPortfolioController::class, 'store']);
+Route::put('customer-portfolios', [CustomerPortfolioController::class, 'update']);
+
+Route::middleware(['auth:api', 'auth.custom'])->group(function () {
+    // Customer portfolios - Cartera de clientes
+    Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index']);
+
+    // Digital Wallets - Billeteras digitales
+    Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
+});
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);

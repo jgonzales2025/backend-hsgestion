@@ -49,7 +49,6 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
                 second_lastname: $customer->second_lastname,
                 customer_type_id: $customer->customer_type_id,
                 customer_type_name: $customer->customerType->description,
-                fax: $customer->fax,
                 contact: $customer->contact,
                 is_withholding_applicable: $customer->is_withholding_applicable,
                 status: $customer->status,
@@ -71,10 +70,10 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             'lastname' => $customer->getLastname(),
             'second_lastname' => $customer->getSecondLastname(),
             'customer_type_id' => $customer->getCustomerTypeId(),
-            'fax' => $customer->getFax(),
             'contact' => $customer->getContact(),
             'is_withholding_applicable' => $customer->isWithholdingApplicable(),
             'status' => $customer->getStatus(),
+            'st_assigned' => $customer->getStAssigned()
         ]);
 
         return new Customer(
@@ -91,7 +90,6 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             second_lastname: $eloquentCustomer->second_lastname,
             customer_type_id: $eloquentCustomer->customer_type_id,
             customer_type_name: $eloquentCustomer->customerType->description,
-            fax: $eloquentCustomer->fax,
             contact: $eloquentCustomer->contact,
             is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
             status: $eloquentCustomer->status
@@ -132,7 +130,6 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             second_lastname: $eloquentCustomer->second_lastname,
             customer_type_id: $eloquentCustomer->customer_type_id,
             customer_type_name: $eloquentCustomer->customerType->description,
-            fax: $eloquentCustomer->fax,
             contact: $eloquentCustomer->contact,
             is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
             status: $eloquentCustomer->status,
@@ -159,7 +156,6 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             'lastname' => $customer->getLastname(),
             'second_lastname' => $customer->getSecondLastname(),
             'customer_type_id' => $customer->getCustomerTypeId(),
-            'fax' => $customer->getFax(),
             'contact' => $customer->getContact(),
             'is_withholding_applicable' => $customer->isWithholdingApplicable(),
             'status' => $customer->getStatus(),
@@ -179,10 +175,51 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             second_lastname: $eloquentCustomer->second_lastname,
             customer_type_id: $eloquentCustomer->customer_type_id,
             customer_type_name: $eloquentCustomer->customerType->description,
-            fax: $eloquentCustomer->fax,
             contact: $eloquentCustomer->contact,
             is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
             status: $eloquentCustomer->status
         );
+    }
+
+    public function findAllUnassigned(): array
+    {
+        $customerUnassigned = EloquentCustomer::where('st_assigned', 0)->get();
+
+        return $customerUnassigned->map(function (EloquentCustomer $customer) {
+
+            // Cargar teléfonos
+            $phoneUseCase = new FindByCustomerIdPhoneUseCase($this->customerPhoneRepository);
+            $phones = $phoneUseCase->execute($customer->id);
+
+            // Cargar emails
+            $emailUseCase = new FindByCustomerIdEmailUseCase($this->customerEmailRepository);
+            $emails = $emailUseCase->execute($customer->id);
+
+            // Cargar direcciones - AGREGAR ESTO
+            $addressUseCase = new FindByIdCustomerAddressUseCase($this->customerAddressRepository);
+            $addresses = $addressUseCase->execute($customer->id);
+
+            return new Customer(
+                id: $customer->id,
+                record_type_id: $customer->record_type_id,
+                record_type_name: $customer->recordType->name,
+                customer_document_type_id: $customer->customer_document_type_id,
+                customer_document_type_name: $customer->customerDocumentType->description,
+                customer_document_type_abbreviation: $customer->customerDocumentType->abbreviation,
+                document_number: $customer->document_number,
+                company_name: $customer->company_name,
+                name: $customer->name,
+                lastname: $customer->lastname,
+                second_lastname: $customer->second_lastname,
+                customer_type_id: $customer->customer_type_id,
+                customer_type_name: $customer->customerType->description,
+                contact: $customer->contact,
+                is_withholding_applicable: $customer->is_withholding_applicable,
+                status: $customer->status,
+                phones: $phones,
+                emails: $emails,
+                addresses: $addresses,
+            );
+        })->toArray();
     }
 }

@@ -25,24 +25,60 @@ class StoreUserRequest extends FormRequest
             //Assignments
             'assignments' => 'required|array|min:1',
             'assignments.*.company_id' => 'required|integer|exists:companies,id',
-            'assignments.*.branch_id' => 'required|integer|exists:branches,id',
+            'assignments.*.branch_id' => [
+                'nullable',
+                'integer',
+                function ($attribute, $value, $fail) {
+                    // Solo validar exists si NO es 0
+                    if ($value != 0 && !DB::table('branches')->where('id', $value)->exists()) {
+                        $fail('La sucursal seleccionada no existe.');
+                    }
+                }
+            ],
 
             'custom_permissions' => 'nullable|array',
-            'custom_permissions.*.menu_id' => 'required|exists:menus,id',
+            'custom_permissions.*.menu_id' => 'required|exists:menus,id'
         ];
     }
 
     public function withValidator($validator)
     {
-        $validator->after(function ($validator) {
+        /*$validator->after(function ($validator) {
             $assignments = $this->input('assignments', []);
 
-            $companyIds = collect($assignments)->pluck('company_id');
+            // Validar que cada branch_id pertenezca a su company_id
+            foreach ($assignments as $index => $assignment) {
+                if (isset($assignment['company_id']) && isset($assignment['branch_id'])) {
 
-            if ($companyIds->count() !== $companyIds->unique()->count()) {
-                $validator->errors()->add('assignments', 'Cada usuario solo puede tener asignado una sucursal por empresa.');
+                    // Si branch_id es 0, validar que la compañía tenga sucursales
+                    if ($assignment['branch_id'] == 0) {
+                        $hasBranches = DB::table('branches')
+                            ->where('cia_id', $assignment['company_id'])
+                            ->exists();
+
+                        if (!$hasBranches) {
+                            $validator->errors()->add(
+                                "assignments.{$index}.branch_id",
+                                'La compañía seleccionada no tiene sucursales disponibles.'
+                            );
+                        }
+                    } else {
+                        // Validar que la sucursal específica pertenezca a la compañía
+                        $branchExists = DB::table('branches')
+                            ->where('id', $assignment['branch_id'])
+                            ->where('cia_id', $assignment['company_id'])
+                            ->exists();
+
+                        if (!$branchExists) {
+                            $validator->errors()->add(
+                                "assignments.{$index}.branch_id",
+                                'La sucursal seleccionada no pertenece a la compañía especificada.'
+                            );
+                        }
+                    }
+                }
             }
-        });
+        });*/
     }
 
 

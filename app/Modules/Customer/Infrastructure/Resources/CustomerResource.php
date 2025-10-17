@@ -31,7 +31,6 @@ class CustomerResource extends JsonResource
                 'id' => $this->resource->getCustomerTypeId(),
                 'name' => $this->resource->getCustomerTypeName(),
             ],
-            'fax' => $this->resource->getFax(),
             'contact' => $this->resource->getContact(),
             'is_withholding_applicable' => $this->resource->isWithholdingApplicable(),
             'status' => $this->resource->getStatus()

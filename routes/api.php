@@ -195,7 +195,8 @@ Route::put('digital-wallets/{id}', [DigitalWalletController::class, 'update']);
 
 // Customer portfolios - Cartera de clientes
 Route::post('customer-portfolios', [CustomerPortfolioController::class, 'store']);
-Route::put('customer-portfolios', [CustomerPortfolioController::class, 'update']);
+Route::put('customer-portfolios', [CustomerPortfolioController::class, 'updateAllCustomersByVendedor']);
+Route::put('customer-portfolios/{id}', [CustomerPortfolioController::class, 'update']);
 
 Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Customer portfolios - Cartera de clientes

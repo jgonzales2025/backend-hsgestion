@@ -4,7 +4,7 @@ namespace App\Modules\CustomerPortfolio\Infrastructure\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCustomerPortfolioRequest extends FormRequest
+class UpdateAllRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,7 +14,8 @@ class UpdateCustomerPortfolioRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|integer|exists:users,id'
+            'id' => 'required|integer|exists:users,id',
+            'newUserId' => 'required|integer|exists:users,id',
         ];
     }
 }

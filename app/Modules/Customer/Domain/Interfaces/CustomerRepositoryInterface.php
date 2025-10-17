@@ -10,4 +10,5 @@ interface CustomerRepositoryInterface
     public function save(Customer $customer): ?Customer;
     public function findById(int $id): ?Customer;
     public function update(Customer $customer): ?Customer;
+    public function findAllUnassigned(): array;
 }

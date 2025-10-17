@@ -2,6 +2,7 @@
 
 namespace App\Modules\CustomerPortfolio\Infrastructure\Persistence;
 
+use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\CustomerPortfolio\Domain\Entities\CustomerPortfolio;
 use App\Modules\CustomerPortfolio\Domain\Interfaces\CustomerPortfolioRepositoryInterface;
 use App\Modules\CustomerPortfolio\Infrastructure\Models\EloquentCustomerPortfolio;
@@ -11,7 +12,18 @@ class EloquentCustomerPortfolioRepository implements CustomerPortfolioRepository
 
     public function findAll(): array
     {
-        $eloquentCustomerPortfolios = EloquentCustomerPortfolio::with('customer', 'user')->get();
+        $query = EloquentCustomerPortfolio::with('customer', 'user');
+
+        // Obtener el usuario autenticado y su rol desde el request
+        $userId = request()->get('user_id');
+        $role = request()->get('role');
+
+        // Si no es admin, filtrar solo los registros del usuario
+        if ($role !== 'Administrador') {
+            $query->where('user_id', $userId);
+        }
+
+        $eloquentCustomerPortfolios = $query->get();
 
         return $eloquentCustomerPortfolios->map(function ($customerPortfolio) {
             return new CustomerPortfolio(
@@ -31,6 +43,8 @@ class EloquentCustomerPortfolioRepository implements CustomerPortfolioRepository
             'user_id' => $customerPortfolio->getUser()->getId()
         ]);
 
+        EloquentCustomer::where('id', $customerPortfolio->getCustomer()->getId())->update(['st_assigned' => 1]);
+
         return new CustomerPortfolio(
             id: $eloquentCustomerPortfolio->id,
             customer: $customerPortfolio->getCustomer(),
@@ -38,5 +52,10 @@ class EloquentCustomerPortfolioRepository implements CustomerPortfolioRepository
             created_at: $eloquentCustomerPortfolio->created_at,
             updated_at: null
         );
+    }
+
+    public function update($id, $newId): void
+    {
+        EloquentCustomerPortfolio::where('user_id', $id)->update(['user_id' => $newId]);
     }
 }

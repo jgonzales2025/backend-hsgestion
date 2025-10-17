@@ -27,7 +27,6 @@ class UpdateCustomerRequest extends FormRequest
             'lastname' => 'required_if:customer_document_type_id,3,4,5|string|max:50',
             'second_lastname' => 'required_if:customer_document_type_id,3,4,5|string|max:50',
             'customer_type_id' => 'required|integer|exists:customer_types,id',
-            'fax' => 'nullable|string|max:20',
             'contact' => 'nullable|string|max:100',
             'is_withholding_applicable' => 'sometimes|boolean',
             'status' => 'sometimes|integer',

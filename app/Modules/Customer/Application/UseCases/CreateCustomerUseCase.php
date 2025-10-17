@@ -31,7 +31,6 @@ class CreateCustomerUseCase
             second_lastname: $customerDTO->second_lastname,
             customer_type_id: $customerDTO->customer_type_id,
             customer_type_name: null,
-            fax: $customerDTO->fax,
             contact: $customerDTO->contact,
             is_withholding_applicable: $customerDTO->is_withholding_applicable,
             status: $customerDTO->status,

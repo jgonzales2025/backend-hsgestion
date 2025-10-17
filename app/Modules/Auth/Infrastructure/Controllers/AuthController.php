@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function __construct(private UserMenuService $userMenuService) {}
 
     public function login(LoginRequest $request)
     {

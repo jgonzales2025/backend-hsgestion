@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('status')->default(1);
             $table->timestamps();
 
-            $table->unique(['user_id', 'company_id']);
+            $table->unique(['user_id', 'company_id', 'branch_id']);
         });
     }
 

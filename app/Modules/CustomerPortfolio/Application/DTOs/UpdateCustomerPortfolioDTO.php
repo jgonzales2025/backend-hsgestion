@@ -2,14 +2,14 @@
 
 namespace App\Modules\CustomerPortfolio\Application\DTOs;
 
+use App\Modules\CustomerPortfolio\Domain\Interfaces\CustomerPortfolioRepositoryInterface;
+
 class UpdateCustomerPortfolioDTO
 {
-    public $id;
-    public $newUserId;
+    public $userId;
 
     public function __construct(array $data)
     {
-        $this->id = $data['id'];
-        $this->newUserId = $data['newUserId'];
+        $this->userId = $data['user_id'];
     }
 }

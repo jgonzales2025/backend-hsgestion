@@ -3,6 +3,7 @@
 namespace App\Modules\User\Infrastructure\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
@@ -21,9 +22,22 @@ class UpdateUserRequest extends FormRequest
             'password' => 'nullable|string|confirmed|min:8',
             'status' => 'required|integer|in:0,1',
             'role_id' => 'required|integer|exists:roles,id',
+            //Assignments
             'assignments' => 'required|array|min:1',
             'assignments.*.company_id' => 'required|integer|exists:companies,id',
-            'assignments.*.branch_id' => 'required|integer|exists:branches,id',
+            'assignments.*.branch_id' => [
+                'nullable',
+                'integer',
+                function ($attribute, $value, $fail) {
+                    // Solo validar exists si NO es 0
+                    if ($value != 0 && !DB::table('branches')->where('id', $value)->exists()) {
+                        $fail('La sucursal seleccionada no existe.');
+                    }
+                }
+            ],
+
+            'custom_permissions' => 'nullable|array',
+            'custom_permissions.*.menu_id' => 'required|exists:menus,id'
         ];
     }
 

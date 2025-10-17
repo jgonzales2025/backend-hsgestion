@@ -39,7 +39,25 @@ class EloquentUserRepository implements UserRepositoryInterface
             return null;
         }
 
-        $assignments = $user->assignments->map(function ($assignment) {
+        // Agrupar asignaciones por company_id
+        $groupedByCompany = $user->assignments->groupBy('company_id');
+
+        $assignments = $groupedByCompany->map(function ($companyAssignments, $companyId) {
+            // Si hay más de una sucursal para esta compañía
+            if ($companyAssignments->count() > 1) {
+                $firstAssignment = $companyAssignments->first();
+                return [
+                    'id' => $firstAssignment->id,
+                    'company_id' => $companyId,
+                    'company_name' => $firstAssignment->company?->company_name,
+                    'branch_id' => 0,
+                    'branch_name' => 'Todas las sucursales',
+                    'status' => ($firstAssignment->status) == 1 ? 'Activo' : 'Inactivo',
+                ];
+            }
+
+            // Si solo hay una sucursal, devolver normalmente
+            $assignment = $companyAssignments->first();
             return [
                 'id' => $assignment->id,
                 'company_id' => $assignment->company_id,
@@ -48,8 +66,7 @@ class EloquentUserRepository implements UserRepositoryInterface
                 'branch_name' => $assignment->branch?->name,
                 'status' => ($assignment->status) == 1 ? 'Activo' : 'Inactivo',
             ];
-        })->toArray();
-
+        })->values()->toArray();
 
         return new User(
             id: $user->id,

@@ -29,11 +29,9 @@ return new class extends Migration
             $table->boolean('plastic_bag_applicable')->default(false);
 
             $table->integer('min_stock')->default(0);
-            $table->integer('subcategory_id')->default(0);
             $table->unsignedBigInteger('currency_type_id');
 
-            $table->decimal('cost_to_price_percent', 8, 2)->default(0);
-            $table->decimal('purchase_price', 10, 2)->default(0);
+          $table->decimal('purchase_price', 10, 2)->default(0);
             $table->decimal('public_price', 10, 2)->default(0);
             $table->decimal('distributor_price', 10, 2)->default(0);
             $table->decimal('authorized_price', 10, 2)->default(0);

@@ -14,7 +14,11 @@ use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
 use App\Modules\Articles\Infrastructure\Requests\StoreArticleRequest;
 use App\Modules\Articles\Infrastructure\Requests\UpdateArticleRequest;
 use App\Modules\Articles\Infrastructure\Resource\ArticleResource;
+use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
+use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
+use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInterface;
+use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
 class ArticleController extends Controller
@@ -24,6 +28,10 @@ class ArticleController extends Controller
   public function __construct(
     private readonly CategoryRepositoryInterface $categoryRepository,
     private readonly ArticleRepositoryInterface $articleRepository,
+    private readonly MeasurementUnitRepositoryInterface $measurementUnitRepository,
+    private readonly BrandRepositoryInterface $brandRepository,
+          private readonly UserRepositoryInterface $userRepository,
+      private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
   ){}
   public function index(): array
   {
@@ -60,7 +68,7 @@ class ArticleController extends Controller
   public function store(StoreArticleRequest $request): JsonResponse
   {
     $articleDTO = new ArticleDTO($request->validated());
-    $articleUseCase = new CreateArticleUseCase($this->categoryRepository,$this->articleRepository);
+    $articleUseCase = new CreateArticleUseCase($this->categoryRepository,$this->articleRepository,$this->measurementUnitRepository,$this->brandRepository, $this->userRepository,$this->currencyTypeRepository);
     $article = $articleUseCase->execute($articleDTO);
 
     return response()->json(

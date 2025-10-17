@@ -27,7 +27,6 @@ class ArticleSeeder extends Seeder
                 'plastic_bag_applicable' => false,
                 'min_stock' => 10,
                 'currency_type_id' => 1,
-                'cost_to_price_percent' => 15.0,
                 'purchase_price' => 500.00,
                 'public_price' => 575.00,
                 'distributor_price' => 550.00,
@@ -40,7 +39,6 @@ class ArticleSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
                 'venta' => true,
-                'subcategory_id'=> 1
             ]
             ];
       DB::table('articles')->insert($articles);

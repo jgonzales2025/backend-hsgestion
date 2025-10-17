@@ -48,8 +48,7 @@ class ArticleResource extends JsonResource
             'igv_applicable' => $this->getIgvApplicable(),
             'plastic_bag_applicable' => $this->getPlasticBagApplicable(),
             'min_stock' => $this->getMinStock(),
-            'currency_type_id' => $this->getCurrencyTypeId(),
-            // 'cost_to_price_percent' => $this->getCostToPricePercent(),
+
             'purchase_price' => $this->getPurchasePrice(),
             'public_price' => $this->getPublicPrice(),
             'distributor_price' => $this->getDistributorPrice(),
@@ -59,8 +58,6 @@ class ArticleResource extends JsonResource
             'authorized_price_percent' => $this->getAuthorizedPricePercent(),
             'status' => ($this->getStatus()) == 1 ? "Activo" : "Inactivo",
             'precioIGv' => $this->getPrecioIGV(),
-            'subcategory_id' =>$this->getSubcategoriaId(),
-             'subCategory' =>$this->getSubCategoria(),
            'venta' => $this->getVenta() == true ? 'Activo' : 'Inactivo',
 
         ];

@@ -31,7 +31,6 @@ class EloquentArticle extends Model{
         'plastic_bag_applicable',
         'min_stock',
         'currency_type_id',
-        'cost_to_price_percent',
         'purchase_price',
         'public_price',
         'distributor_price',
@@ -70,10 +69,10 @@ public function brand(): BelongsTo
     {
         return $this->belongsTo(EloquentCurrencyType::class, 'currency_type_id');
     }
-      public function subCategory(): BelongsTo
-    {
-        return $this->belongsTo(EloquentSubCategory::class, 'subcategoria_id');
-    }
+    //   public function subCategory(): BelongsTo
+    // {
+    //     return $this->belongsTo(EloquentSubCategory::class, 'subcategoria_id');
+    // }
 
     //  Relación con Estado
     // public function statusRelation(): BelongsTo
@@ -82,9 +81,9 @@ public function brand(): BelongsTo
     // }
 
     //  Relación con Usuario
-    // public function user(): BelongsTo
-    // {
-    //     return $this->belongsTo(EloquentUser::class, 'user_id');
-    // }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(EloquentUser::class, 'user_id');
+    }
 
 }

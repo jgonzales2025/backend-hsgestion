@@ -5,17 +5,16 @@ namespace App\Modules\ReferenceCode\Application\DTOs;
 class ReferenceCodeDTO
 {
     public int $id;
-    public string $refCode;
-    public int $articleId;
+    public string $ref_code;
+    public int $article_Id;
     public string $dateAt;
     public int $status;
 
     public function __construct(array $data)
     {
         $this->id = $data['id'] ?? 0; // por si es nuevo y aún no tiene ID
-        $this->refCode = $data['refCode'];
-        $this->articleId = $data['articleId'];
-        $this->dateAt = $data['dateAt'];
+        $this->ref_code = $data['ref_code'];
+        $this->article_Id = $data['article_id'];
         $this->status = $data['status'];
     }
 }

@@ -94,62 +94,67 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticle(): array
+public function findAllArticle(): array
+{  
+       // Obtener el ID de la empresa desde el token JWT
+    $payload = auth('api')->payload();
+    $companyId = $payload->get('company_id');
+
+        $visibleArticleIds = EloquentVisibleArticle::where('company_id', $companyId)
+        ->pluck('article_id'); // devuelve una colección con los IDs
+        
+
+    $articles = EloquentArticle::with([
+        'measurementUnit',
+        'brand',
+        'category',
+        'currencyType',
+        'subCategory',
+        'user'
+    ])->get();
+    
+    return $articles->map(function ($article) {
+        return new Article(
+            id: $article->id,
+            user: $article->user ? $article->user->toDomain($article->user) : null,
+            cod_fab: $article->cod_fab,
+            description: $article->description,
+            weight: $article->weight,
+            with_deduction: $article->with_deduction,
+            series_enabled: $article->series_enabled,
+            location: $article->location,
+            warranty: $article->warranty,
+            tariff_rate: $article->tariff_rate,
+            igv_applicable: $article->igv_applicable,
+            plastic_bag_applicable: $article->plastic_bag_applicable,
+            min_stock: $article->min_stock,
+            purchase_price: $article->purchase_price,
+            public_price: $article->public_price,
+            distributor_price: $article->distributor_price,
+            authorized_price: $article->authorized_price,
+            public_price_percent: $article->public_price_percent,
+            distributor_price_percent: $article->distributor_price_percent,
+            authorized_price_percent: $article->authorized_price_percent,
+            status: $article->status,
+            brand: $article->brand ? $article->brand->toDomain($article->brand) : null,
+            category: $article->category ? $article->category->toDomain($article->category) : null,
+            currencyType: $article->currencyType ? $article->currencyType->toDomain($article->currencyType) : null,
+            measurementUnit: $article->measurementUnit ? $article->measurementUnit->toDomain($article->measurementUnit) : null,
+            subCategory: $article->subCategory ? $article->subCategory->toDomain($article->subCategory) : null,
+            precioIGv: $article->purchase_price + ($article->purchase_price * ($article->tariff_rate / 100)),
+            venta: $article->venta,
+        );
+    })->toArray();
+}
+
+
+    public function findById(int $id): ?Article
     {
         $payload = auth('api')->payload();
         $companyId = $payload->get('company_id');
 
         $Eloquentvisiblearticles = EloquentVisibleArticle::where('company_id', $companyId)
             ->get();
-
-        return $Eloquentvisiblearticles->map(function ($article) {
-            $articleType = EloquentArticle::with(
-                'measurementUnit'
-                ,
-                'brand',
-                'category',
-                'currencyType',
-                'user'
-            )->find($article->article_id);
-
-
-            return new Article(
-                id: $articleType->id,
-                user: $articleType->user->toDomain($articleType->user),
-                cod_fab: $articleType->cod_fab,
-                description: $articleType->description,
-                weight: $articleType->weight,
-                with_deduction: $articleType->with_deduction,
-                series_enabled: $articleType->series_enabled,
-                location: $articleType->location,
-                warranty: $articleType->warranty,
-                tariff_rate: $articleType->tariff_rate,
-                igv_applicable: $articleType->igv_applicable,
-                plastic_bag_applicable: $articleType->plastic_bag_applicable,
-                min_stock: $articleType->min_stock,
-                purchase_price: $articleType->purchase_price,
-                public_price: $articleType->public_price,
-                distributor_price: $articleType->distributor_price,
-                authorized_price: $articleType->authorized_price,
-                public_price_percent: $articleType->public_price_percent,
-                distributor_price_percent: $articleType->distributor_price_percent,
-                authorized_price_percent: $articleType->authorized_price_percent,
-                status: $articleType->status,
-
-                brand: $articleType->brand->toDomain($articleType->brand) ?? null,
-                category: $articleType->category->toDomain($articleType->category) ?? null,
-                currencyType: $articleType->currencyType->toDomain($articleType->currencyType) ?? null,
-                precioIGv: $articleType->purchase_price + ($articleType->purchase_price * ($articleType->tariff_rate / 100)),
-                measurementUnit: $articleType->measurementUnit->toDomain($articleType->measurementUnit) ?? null,
-                venta: $articleType->venta,
-                subCategory: $articleType->subCategory->toDomain($articleType->subCategory) ?? null,
-
-            );
-        })->toArray();
-    }
-
-    public function findById(int $id): ?Article
-    {
         $article = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory'])->find($id);
 
         // $precioIGv = $article->purchase_price + ($article->purchase_price * ($article->tariff_rate / 100));
@@ -189,6 +194,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             subCategory: $article->subCategory->toDomain($article->subCategory) ?? null,
 
 
+
         );
     }
 
@@ -226,7 +232,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'user_id' => $article->getUser()->getId(),
             'category_id' => $article->getCategory()->getId(),
             'sub_category_id' => $article->getSubCategory()->getId()
-        ]); 
+        ]);
     }
 }
 

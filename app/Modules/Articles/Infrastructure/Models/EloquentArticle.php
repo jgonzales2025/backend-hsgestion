@@ -17,7 +17,6 @@ class EloquentArticle extends Model{
         protected $fillable = [
         'cod_fab',
         'description',
-        'short_description',
         'weight',
         'with_deduction',
         'series_enabled',
@@ -43,6 +42,7 @@ class EloquentArticle extends Model{
         'venta',
         'subcategory_id',
         'category_id',
+        'sub_category_id'
     ];
      protected $hidden = ['created_at', 'updated_at'];
 
@@ -69,10 +69,10 @@ public function brand(): BelongsTo
     {
         return $this->belongsTo(EloquentCurrencyType::class, 'currency_type_id');
     }
-    //   public function subCategory(): BelongsTo
-    // {
-    //     return $this->belongsTo(EloquentSubCategory::class, 'subcategoria_id');
-    // }
+      public function subCategory(): BelongsTo
+    {
+        return $this->belongsTo(EloquentSubCategory::class, 'sub_category_id');
+    }
 
     //  Relación con Estado
     // public function statusRelation(): BelongsTo

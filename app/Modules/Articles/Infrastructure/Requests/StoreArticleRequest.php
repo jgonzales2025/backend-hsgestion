@@ -25,7 +25,6 @@ class StoreArticleRequest extends FormRequest{
             // Campos obligatorios
             'cod_fab'              => 'required|string|max:20',
             'description'          => 'required|string|max:50',
-            'short_description'    => 'required|string|max:100',
             'weight'               => 'required|numeric|min:0',
             'with_deduction'       => 'required|boolean',
             'series_enabled'       => 'required|boolean',
@@ -40,6 +39,7 @@ class StoreArticleRequest extends FormRequest{
             'authorized_price'     => 'required|numeric|min:0',
             'status'               => 'required|integer|exists:statuses,id',
             'user_id'              => 'required|integer|exists:users,id',
+           'sub_category_id'      => 'required|integer|exists:sub_categories,id',
             'venta'                => 'required|boolean',
             
             // Campos opcionales
@@ -53,7 +53,6 @@ class StoreArticleRequest extends FormRequest{
             'public_price_percent'  => 'nullable|numeric|min:0',
             'distributor_price_percent' => 'nullable|numeric|min:0',
             'authorized_price_percent' => 'nullable|numeric|min:0',
-            'precioIGv'            => 'nullable|numeric|min:0',
         ];
     }
 }

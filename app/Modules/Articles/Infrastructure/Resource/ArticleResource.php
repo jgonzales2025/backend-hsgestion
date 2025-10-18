@@ -12,7 +12,6 @@ class ArticleResource extends JsonResource
             'id' => $this->getId(),
             'cod_fab' => $this->getCodFab(),
             'description' => $this->getDescription(),
-            // 'short_description' => $this->getShortDescription(),
             'weight' => $this->getWeight(),
             'with_deduction' => $this->getWithDeduction(),
             'series_enabled' => $this->getSeriesEnabled(),
@@ -40,6 +39,11 @@ class ArticleResource extends JsonResource
                 'name' => $this->resource->getMeasurementUnit()->getName(),
                 'status' => ($this->resource->getMeasurementUnit()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             ],
+               'subCategory' =>  [
+                'id' => $this->resource->getSubCategory()->getId(),
+                'name' => $this->resource->getSubCategory()->getName(),
+                'status' => ($this->resource->getSubCategory()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+            ],
 
             // Resto de campos planos
             'location' => $this->getLocation(),
@@ -57,7 +61,7 @@ class ArticleResource extends JsonResource
             'distributor_price_percent' => $this->getDistributorPricePercent(),
             'authorized_price_percent' => $this->getAuthorizedPricePercent(),
             'status' => ($this->getStatus()) == 1 ? "Activo" : "Inactivo",
-            'precioIGv' => $this->getPrecioIGV(),
+            'precioIGv' => $this->calculatePrecioIGV(),
            'venta' => $this->getVenta() == true ? 'Activo' : 'Inactivo',
 
         ];

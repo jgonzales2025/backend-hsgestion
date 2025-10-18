@@ -13,7 +13,6 @@ class Article
     private ?int $id;
     private string $cod_fab;
     private string $description;
-    private string $short_description;
     private float $weight;
     private bool $with_deduction;
     private bool $series_enabled; 
@@ -39,15 +38,16 @@ class Article
     private ?Category $category;
     private ?CurrencyType $currencyType;
     private ?MeasurementUnit $measurementUnit;
+     private  ?SubCategory $subCategory;
+ 
 
     private float $precioIGv;
-    private ?int $category_id;
+
 
     public function __construct(
         ?int $id,
         string $cod_fab,
         string $description,
-        string $short_description,
         float $weight,
         bool $with_deduction,
         bool $series_enabled,      
@@ -72,13 +72,13 @@ class Article
         ?User $user,
         ?float $precioIGv,
         bool $venta ,
+        ?SubCategory $subCategory
  
  
     ) {
         $this->id = $id;
         $this->cod_fab = $cod_fab;
         $this->description = $description;
-        $this->short_description = $short_description;
         $this->weight = $weight;
         $this->with_deduction = $with_deduction;
         $this->series_enabled = $series_enabled;       
@@ -106,6 +106,7 @@ class Article
         $this->precioIGv = $precioIGv ?? $this->calculatePrecioIGV();
 
         $this->venta = $venta;
+        $this->subCategory = $subCategory;
     }
 
     public function calculatePrecioIGV(): float
@@ -117,11 +118,13 @@ class Article
 {
     return $this->user;
 }
+public function getSubCategory():SubCategory|null{
+    return $this->subCategory;
+}
     // Getters
     public function getId(): int|null { return $this->id; }
     public function getCodFab(): string { return $this->cod_fab; }
     public function getDescription(): string { return $this->description; }
-    public function getShortDescription(): string { return $this->short_description; }
     public function getWeight(): float { return $this->weight; }
     public function getWithDeduction(): bool { return $this->with_deduction; }
     public function getSeriesEnabled(): bool { return $this->series_enabled; } 

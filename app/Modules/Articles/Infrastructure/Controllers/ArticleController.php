@@ -18,6 +18,7 @@ use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInterface;
+use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -32,6 +33,7 @@ class ArticleController extends Controller
     private readonly BrandRepositoryInterface $brandRepository,
           private readonly UserRepositoryInterface $userRepository,
       private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
+      private readonly SubCategoryRepositoryInterface $subCategoryRepository,
   ){}
   public function index(): array
   {
@@ -55,20 +57,16 @@ class ArticleController extends Controller
   {
     $articleDTO = new ArticleDTO($request->validated());
 
-    $articleUseCase = new UpdateArticleUseCase($this->articleRepository);
+    $articleUseCase = new UpdateArticleUseCase($this->categoryRepository,$this->articleRepository,$this->measurementUnitRepository,$this->brandRepository, $this->userRepository,$this->currencyTypeRepository,$this->subCategoryRepository);
     $articleUseCase->execute($id, $articleDTO);
 
-    $article = $this->articleRepository->findById($id);
 
-    return response()->json(
-      (new ArticleResource($article))->resolve(),
-      200
-    );
+    return response()->json(['message' =>'se actualizo correctamente' ]);
   }
   public function store(StoreArticleRequest $request): JsonResponse
   {
     $articleDTO = new ArticleDTO($request->validated());
-    $articleUseCase = new CreateArticleUseCase($this->categoryRepository,$this->articleRepository,$this->measurementUnitRepository,$this->brandRepository, $this->userRepository,$this->currencyTypeRepository);
+    $articleUseCase = new CreateArticleUseCase($this->categoryRepository,$this->articleRepository,$this->measurementUnitRepository,$this->brandRepository, $this->userRepository,$this->currencyTypeRepository,$this->subCategoryRepository);
     $article = $articleUseCase->execute($articleDTO);
 
     return response()->json(

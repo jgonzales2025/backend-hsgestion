@@ -5,7 +5,6 @@ class ArticleDTO
 { 
     public $cod_fab;
     public $description;
-    public $short_description;
     public $weight;
     public $with_deduction;
     public $series_enabled;
@@ -28,16 +27,13 @@ class ArticleDTO
     public $authorized_price_percent;
     public $status;
     public $user_id;
-    public $precioIGv;
     public $venta;
-    public $subcategoria_id;
-    // public $subcategory_id;
+    public $sub_category_id;
 
     public function __construct(array $data)
     {
         $this->cod_fab = $data['cod_fab'];
         $this->description = $data['description'];
-        $this->short_description = $data['short_description'];
         $this->weight = $data['weight'];
         $this->with_deduction = $data['with_deduction'];
         $this->series_enabled = $data['series_enabled'];
@@ -60,9 +56,7 @@ class ArticleDTO
         $this->authorized_price_percent = $data['authorized_price_percent'];
         $this->status = $data['status'];
         $this->user_id = $data['user_id'];
-        $this->precioIGv = $data['precioIGv'];
-        $this->venta = $data['venta'];
-        // $this->subcategoria_id = $data['subcategoria_id'];
-        // $this->subcategory_id = $data['subcategory_id'];
+        $this->venta = $data['venta'];  
+        $this->sub_category_id = $data['sub_category_id'];
     }
 }

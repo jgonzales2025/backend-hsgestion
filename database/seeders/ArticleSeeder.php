@@ -13,7 +13,6 @@ class ArticleSeeder extends Seeder
             [
                 'cod_fab' => 'ART-001',
                 'description' => 'Monitor LED 24 pulgadas',
-                'short_description' => 'Monitor Full HD',
                 'weight' => 3.5,
                 'with_deduction' => false,
                 'series_enabled' => false,
@@ -39,6 +38,7 @@ class ArticleSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
                 'venta' => true,
+                'sub_category_id'=>1
             ]
             ];
       DB::table('articles')->insert($articles);

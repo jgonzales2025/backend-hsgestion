@@ -8,36 +8,48 @@ class UpdateArticleRequest extends FormRequest{
     public function authorize():bool{
         return true;
     }
+       protected function prepareForValidation(): void
+    {
+        // Obtener company_id del payload del token JWT
+        $payload = auth('api')->payload();
+
+        $this->merge([
+            'user_id' => auth('api')->id()
+        ]);
+    }
+
     public function rules():array{
         return [
-             'cod_fab'              => 'sometimes|string|max:20',
-        'description'               => 'sometimes|string|max:50',
-        'short_description'         => 'sometimes|string|max:100',
-        'weight'                    => 'sometimes|numeric|min:0',
-        'with_deduction'            => 'sometimes|boolean',
-        'series_enabled'            => 'sometimes|boolean',
-        'measurement_unit_id'       => 'sometimes|integer',
-        'brand_id'                  => 'sometimes|integer|exists:brands,id',
-        'category_id'               => 'sometimes|integer|exists:categories,id',
-        'location'                  => 'sometimes|string|max:80',
-        'warranty'                  => 'sometimes|string|max:255',
-        'tariff_rate'               => 'sometimes|numeric|min:0',
-        'igv_applicable'            => 'sometimes|boolean',
-        'plastic_bag_applicable'    => 'sometimes|boolean',
-        'min_stock'                 => 'sometimes|integer|min:0',
-        'currency_type_id'          => 'sometimes|integer|exists:currency_types,id',
-         'cost_to_price_percent' => 'sometimes|numeric|min:0',
-        'purchase_price'            => 'sometimes|numeric|min:0',
-        'public_price'              => 'sometimes|numeric|min:0',
-        'distributor_price'         => 'sometimes|numeric|min:0',
-        'authorized_price'          => 'sometimes|numeric|min:0',
-        'public_price_percent'      => 'sometimes|numeric|min:0',
-        'distributor_price_percent' => 'sometimes|numeric|min:0',
-        'authorized_price_percent'  => 'sometimes|numeric|min:0',
-        'status'                    => 'sometimes|integer|exists:statuses,id',
-        'user_id'                   => 'sometimes|integer|exists:users,id',
-        'subcategoria_id'           => 'sometimes|integer|exists:sub_categories,id',
-        'venta' => 'sometimes|boolean',
+             'cod_fab'              => 'required|string|max:20',
+            'description'          => 'required|string|max:50',
+            'weight'               => 'required|numeric|min:0',
+            'with_deduction'       => 'required|boolean',
+            'series_enabled'       => 'required|boolean',
+            'measurement_unit_id'  => 'required|integer|exists:measurement_units,id',
+            'brand_id'             => 'required|integer|exists:brands,id',
+            'category_id'=>'required|integer|exists:categories,id',
+         
+            'currency_type_id'     => 'required|integer|exists:currency_types,id',
+            'purchase_price'       => 'required|numeric|min:0',
+            'public_price'         => 'required|numeric|min:0',
+            'distributor_price'    => 'required|numeric|min:0',
+            'authorized_price'     => 'required|numeric|min:0',
+            'status'               => 'required|integer|exists:statuses,id',
+            'user_id'              => 'required|integer|exists:users,id',
+            'sub_category_id'      => 'required|integer|exists:sub_categories,id',
+            'venta'                => 'required|boolean',
+            
+            // Campos opcionales
+            'location'             => 'nullable|string|max:80',
+            'warranty'             => 'nullable|string|max:255',
+            'tariff_rate'          => 'nullable|numeric|min:0',
+            'igv_applicable'       => 'nullable|boolean',
+            'plastic_bag_applicable' => 'nullable|boolean',
+            'min_stock'            => 'nullable|integer|min:0',
+            'cost_to_price_percent' => 'nullable|numeric|min:0',
+            'public_price_percent'  => 'nullable|numeric|min:0',
+            'distributor_price_percent' => 'nullable|numeric|min:0',
+            'authorized_price_percent' => 'nullable|numeric|min:0',
         ];
     }
 }

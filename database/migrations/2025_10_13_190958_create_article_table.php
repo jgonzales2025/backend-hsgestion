@@ -13,7 +13,6 @@ return new class extends Migration
 
             $table->string('cod_fab', 100);
             $table->string('description');
-            $table->string('short_description')->nullable();
             $table->float('weight')->default(0);
             $table->boolean('with_deduction')->default(false);
             $table->boolean('series_enabled')->default(false);
@@ -27,6 +26,7 @@ return new class extends Migration
             $table->decimal('tariff_rate', 8, 2)->default(0);
             $table->boolean('igv_applicable')->default(true);
             $table->boolean('plastic_bag_applicable')->default(false);
+            $table->unsignedBigInteger('sub_category_id');
 
             $table->integer('min_stock')->default(0);
             $table->unsignedBigInteger('currency_type_id');

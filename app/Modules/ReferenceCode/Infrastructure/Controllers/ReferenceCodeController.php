@@ -60,13 +60,13 @@ class ReferenceCodeController extends Controller
     }
 
 
-    public function store(StoreReferenceCodeRequest $request): JsonResponse
+    public function store(StoreReferenceCodeRequest $request, $id): JsonResponse
     {
         // 1️⃣ Crear la entidad de dominio a partir del request
         $referenceCode = new ReferenceCode(
             id: 0,
-            refCode: $request->input('ref_code') ?? 'REF-' . str_pad(rand(1, 9999), 4, '0', STR_PAD_LEFT), // ✅ snake_case
-            articleId: $request->input('article_id'),
+            refCode: $request->input('refCode') , 
+            articleId: $id,
             dateAt: now()->toDateTimeString(),
             status: $request->input('status') ?? 1
         );

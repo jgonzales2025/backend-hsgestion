@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserMenuPermission extends Model
 {
-    protected $fillable = ['user_id', 'menu_id'];
+    protected $fillable = ['user_id', 'role_id', 'menu_id'];
 
     public function user()
     {
@@ -17,5 +17,10 @@ class UserMenuPermission extends Model
     public function menu()
     {
         return $this->belongsTo(Menu::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(\App\Models\Role::class);
     }
 }

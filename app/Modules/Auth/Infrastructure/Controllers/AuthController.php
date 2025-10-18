@@ -7,6 +7,7 @@ use App\Modules\Auth\Infrastructure\Requests\LoginRequest;
 use App\Modules\Auth\Infrastructure\Resources\AuthUserResource;
 use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\User\Domain\Entities\User;
+use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -16,13 +17,40 @@ class AuthController extends Controller
     {
         $credentials = $request->only(['username', 'password']);
 
-        $customClaims = [
-            'company_id' => $request->cia_id
-        ];
-
-        if (! $token = Auth::guard('api')->claims($customClaims)->attempt($credentials)) {
+        // Primer intento de autenticación sin generar token
+        if (!Auth::guard('api')->validate($credentials)) {
             return response()->json(['error' => 'Credenciales inválidas'], 401);
         }
+
+        // Obtener usuario
+        $eloquentUser = EloquentUser::where('username', $request->username)->first();
+
+        // Verificar roles del usuario
+        $userRoles = \DB::table('model_has_roles')
+            ->where('model_type', get_class($eloquentUser))
+            ->where('model_id', $eloquentUser->id)
+            ->get();
+
+        // Si tiene más de un rol y no envió role_id, retornar lista de roles
+        if ($userRoles->count() > 1 && !$request->role_id) {
+            return response()->json(['message' => 'El usuario seleccionado tiene multiples roles, debe seleccionar uno para continuar.'], 200);
+        }
+
+        // Validar que el role_id pertenezca al usuario
+        if ($request->role_id) {
+            $hasRole = $userRoles->contains('role_id', $request->role_id);
+            if (!$hasRole) {
+                return response()->json(['error' => 'El rol seleccionado no pertenece al usuario'], 403);
+            }
+        }
+
+        // Generar token con claims personalizados
+        $customClaims = [
+            'company_id' => $request->cia_id,
+            'role_id' => $request->role_id ?? $userRoles->first()->role_id
+        ];
+
+        $token = Auth::guard('api')->claims($customClaims)->attempt($credentials);
 
         return $this->respondWithToken($token, $request->cia_id);
     }
@@ -37,9 +65,14 @@ class AuthController extends Controller
 
         $eloquentUser->load(['roles', 'assignments.company', 'assignments.branch']);
 
-        // Obtener company_id del token JWT
+        // Obtener company_id y role_id del token JWT
         $payload = Auth::guard('api')->payload();
         $companyId = $payload->get('company_id');
+        $roleId = $payload->get('role_id');
+
+        // Obtener el rol actual con el que inició sesión
+        $selectedRole = $eloquentUser->roles->firstWhere('id', $roleId);
+        $roleName = $selectedRole?->name;
 
         // Filtrar solo la asignación de la compañía con la que inició sesión
         $assignments = $eloquentUser->assignments
@@ -53,7 +86,9 @@ class AuthController extends Controller
                     'branch_name' => $assignment->branch?->name,
                     'status' => ($assignment->status) == 1 ? 'Activo' : 'Inactivo',
                 ];
-            })->toArray();
+            })
+            ->values()
+            ->toArray();
 
         $user = new User(
             id: $eloquentUser->id,
@@ -62,8 +97,8 @@ class AuthController extends Controller
             lastname: $eloquentUser->lastname,
             password: $eloquentUser->password,
             status: $eloquentUser->status,
-            role: $eloquentUser->roles->first()?->name,
-            assignments: $assignments
+            roles: $roleName,
+            assignment: $assignments
         );
 
         return response()->json([
@@ -80,23 +115,21 @@ class AuthController extends Controller
 
     public function refresh()
     {
-        // Obtener el usuario autenticado
         $eloquentUser = Auth::guard('api')->user();
 
         if (!$eloquentUser) {
             return response()->json(['error' => 'No autenticado'], 401);
         }
 
-        // Obtener company_id del token actual
         $payload = Auth::guard('api')->payload();
         $cia_id = $payload->get('company_id');
+        $role_id = $payload->get('role_id');
 
-        // Generar nuevo token con el mismo company_id
         $customClaims = [
-            'company_id' => $cia_id
+            'company_id' => $cia_id,
+            'role_id' => $role_id
         ];
 
-        // Generar nuevo token
         $token = Auth::guard('api')->claims($customClaims)->refresh();
 
         return $this->respondWithToken($token, $cia_id);
@@ -106,36 +139,41 @@ class AuthController extends Controller
     {
         $eloquentUser = Auth::guard('api')->user();
         $eloquentUser->refresh();
-        $eloquentUser->load(['assignments.company', 'assignments.branch']);
+        $eloquentUser->load(['roles', 'assignments.company', 'assignments.branch']);
 
-        $userRoleId = \DB::table('model_has_roles')
-            ->where('model_type', get_class($eloquentUser))
-            ->where('model_id', $eloquentUser->id)
-            ->value('role_id');
+        // Obtener role_id del token JWT
+        $payload = Auth::guard('api')->payload();
+        $roleId = $payload->get('role_id');
 
-        $customRole = null;
+        // Obtener el rol seleccionado
+        $selectedRole = $eloquentUser->roles->firstWhere('id', $roleId);
+        $roleName = $selectedRole?->name;
+
+        // Obtener permisos del rol base
         $roleMenuIds = [];
-
-        if ($userRoleId) {
-            $customRole = \App\Models\Role::with('menus')->where('id', $userRoleId)->first();
-            $roleName = $customRole?->name;
-            $roleMenuIds = $customRole?->menus->pluck('id')->toArray() ?? [];
-        } else {
-            $roleName = null;
+        if ($selectedRole) {
+            $roleMenuIds = \DB::table('role_has_permissions')
+                ->join('menus', 'role_has_permissions.permission_id', '=', 'menus.id')
+                ->where('role_has_permissions.role_id', $roleId)
+                ->pluck('menus.id')
+                ->toArray();
         }
 
-        $assignments = $eloquentUser->assignments->when($cia_id, function ($query) use ($cia_id) {
-            return $query->where('company_id', $cia_id);
-        })->map(function ($assignment) {
-            return [
-                'id' => $assignment->id,
-                'company_id' => $assignment->company_id,
-                'company_name' => $assignment->company?->company_name,
-                'branch_id' => $assignment->branch_id,
-                'branch_name' => $assignment->branch?->name,
-                'status' => $assignment->status,
-            ];
-        })->toArray();
+        // Filtrar assignments solo de la compañía con la que inició sesión
+        $assignments = $eloquentUser->assignments
+            ->where('company_id', $cia_id)
+            ->map(function ($assignment) {
+                return [
+                    'id' => $assignment->id,
+                    'company_id' => $assignment->company_id,
+                    'company_name' => $assignment->company?->company_name,
+                    'branch_id' => $assignment->branch_id,
+                    'branch_name' => $assignment->branch?->name,
+                    'status' => $assignment->status,
+                ];
+            })
+            ->values()
+            ->toArray();
 
         $user = new User(
             id: $eloquentUser->id,
@@ -144,17 +182,27 @@ class AuthController extends Controller
             lastname: $eloquentUser->lastname,
             password: $eloquentUser->password,
             status: $eloquentUser->status,
-            role: $roleName,
-            assignments: $assignments
+            roles: $roleName,
+            assignment: $assignments
         );
 
-        // Obtener IDs de menús del usuario
-        $userMenuIds = \DB::table('user_menu_permissions')
+        // Obtener permisos personalizados del usuario SOLO para el rol actual
+        $userMenuPermissions = \DB::table('user_menu_permissions')
             ->where('user_id', $eloquentUser->id)
-            ->pluck('menu_id')
-            ->toArray();
+            ->where('role_id', $roleId) // ← FILTRAR POR ROL ACTUAL
+            ->get();
 
-        // Obtener todos los menús con sus padres si existen
+        // Determinar qué permisos usar
+        $userMenuIds = [];
+        if ($userMenuPermissions->isEmpty()) {
+            // Si no hay permisos personalizados, usar los del rol
+            $userMenuIds = $roleMenuIds;
+        } else {
+            // Si hay permisos personalizados, usarlos
+            $userMenuIds = $userMenuPermissions->pluck('menu_id')->toArray();
+        }
+
+        // Obtener todos los menús con sus padres
         $allMenus = \App\Models\Menu::whereIn('id', $userMenuIds)
             ->orWhereIn('id', function($query) use ($userMenuIds) {
                 $query->select('parent_id')
@@ -165,9 +213,6 @@ class AuthController extends Controller
             ->where('status', 1)
             ->orderBy('order')
             ->get();
-
-        // Identificar permisos personalizados
-        $customPermissionIds = array_diff($userMenuIds, $roleMenuIds);
 
         // Construir estructura jerárquica
         $parentMenus = $allMenus->whereNull('parent_id')->values();

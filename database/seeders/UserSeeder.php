@@ -22,7 +22,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('123456789'),
             'status' => 1
         ]);
-        $user->assignRole('Gerente');
+        $user->assignRole('Gerente', 'Vendedor', 'Contador');
 
         $user->assignments()->create([
             'company_id' => 1,
@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('123456789'),
             'status' => 1
         ]);
-        $user2->assignRole('Contador');
+        $user2->assignRole('Contador','Cajero');
 
         $user2->assignments()->create([
             'company_id' => 1,

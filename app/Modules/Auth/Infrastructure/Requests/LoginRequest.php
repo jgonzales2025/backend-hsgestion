@@ -16,7 +16,8 @@ class LoginRequest extends FormRequest
         return [
             'username' => 'required|string',
             'password' => 'required|string',
-            'cia_id' => 'required|integer'
+            'cia_id' => 'required|integer',
+            'role_id' => 'nullable|integer|exists:roles,id'
         ];
     }
 
@@ -27,6 +28,8 @@ class LoginRequest extends FormRequest
             'password.required' => 'La contraseña es obligatoria',
             'cia_id.required' => 'La compañía es obligatoria',
             'cia_id.integer' => 'La compañía debe ser un número válido',
+            'role_id.integer' => 'El rol debe ser un número válido',
+            'role_id.exists' => 'El rol seleccionado no existe',
         ];
     }
 }

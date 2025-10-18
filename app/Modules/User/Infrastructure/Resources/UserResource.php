@@ -14,8 +14,9 @@ class UserResource extends JsonResource
             'firstname' => $this->resource->getFirstname(),
             'lastname' => $this->resource->getLastname(),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
-            'role' => $this->resource->getRole(),
-            'assignments' => $this->resource->getAssignments() ?? []
+            'role' => $this->resource->getRoles(),
+            'assignments' => $this->resource->getAssignment()
+
         ];
     }
 }

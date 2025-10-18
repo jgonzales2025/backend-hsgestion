@@ -26,8 +26,8 @@ class EloquentUserRepository implements UserRepositoryInterface
             lastname: $eloquentUser->lastname,
             password: $eloquentUser->password,
             status: $eloquentUser->status,
-            role: null,
-            assignments: null
+            roles: null,
+            assignment: null
         );
     }
 
@@ -75,8 +75,8 @@ class EloquentUserRepository implements UserRepositoryInterface
             lastname: $user->lastname,
             password: $user->password,
             status: $user->status,
-            role: $user->roles->first()?->name,
-            assignments: $assignments
+            roles: $user->roles->first()?->name,
+            assignment: $assignments
         );
     }
 
@@ -150,8 +150,8 @@ class EloquentUserRepository implements UserRepositoryInterface
                 lastname: $user->lastname,
                 password: $user->password,
                 status: $user->status,
-                role: $user->roles->first()?->name,
-                assignments: $assignments
+                roles: $user->roles->first()?->name,
+                assignment: $assignments
             );
         })->toArray();
     }
@@ -183,8 +183,8 @@ class EloquentUserRepository implements UserRepositoryInterface
                 lastname: $user->lastname,
                 password: $user->password,
                 status: $user->status,
-                role: $user->roles->first()?->name,
-                assignments: $assignments
+                roles: $user->roles->first()?->name,
+                assignment: $assignments
             );
         })->toArray();
     }
@@ -216,9 +216,36 @@ class EloquentUserRepository implements UserRepositoryInterface
                 lastname: $user->lastname,
                 password: $user->password,
                 status: $user->status,
-                role: $user->roles->first()?->name,
-                assignments: $assignments
+                roles: $user->roles->toArray(),//PENDIENTE MODIFICAR
+                assignment: $assignments
             );
         })->toArray();
+    }
+
+    public function findByUserName(string $userName): ?User
+    {
+        $eloquentUser = EloquentUser::with('roles', 'assignments')->where('username', $userName)->first();
+
+        if (!$eloquentUser) {
+            return null;
+        }
+
+        $assignments = $eloquentUser->assignments->map(function ($assignment) {
+            return [
+                'company_id' => $assignment->company_id,
+                'company_name' => $assignment->company?->company_name,
+            ];
+        })->toArray();
+
+        return new User(
+            id: $eloquentUser->id,
+            username: $eloquentUser->username,
+            firstname: $eloquentUser->firstname,
+            lastname: $eloquentUser->lastname,
+            password: $eloquentUser->password,
+            status: $eloquentUser->status,
+            roles: $eloquentUser->roles->toArray(),
+            assignment: $assignments
+        );
     }
 }

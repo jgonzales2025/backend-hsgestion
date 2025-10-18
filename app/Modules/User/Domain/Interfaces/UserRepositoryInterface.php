@@ -14,4 +14,5 @@ interface UserRepositoryInterface
     public function findAllUsers(): array;
     public function findAllUsersByVendedor(): array;
     public function findAllUsersByAlmacen(): array;
+    public function findByUserName(string $userName): ?User;
 }

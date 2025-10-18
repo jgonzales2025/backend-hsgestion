@@ -316,6 +316,8 @@ class RolePermissionSeeder extends Seeder
             ['name' => 'Cajero', 'guard_name' => 'api']
         );
         $cajero->givePermissionTo([
+            'caja.cancelacion_facturas',
+            'caja.parte_diario',
             'caja.registro_cobranzas',
             'caja.deposito_cheques',
             'caja.deposito_tarjetas',
@@ -324,6 +326,8 @@ class RolePermissionSeeder extends Seeder
 
         DB::table('menu_role')->insert([
             ['role_id' => $cajero->id, 'menu_id' => 7],
+            ['role_id' => $cajero->id, 'menu_id' => 8],
+            ['role_id' => $cajero->id, 'menu_id' => 9],
             ['role_id' => $cajero->id, 'menu_id' => 10],
             ['role_id' => $cajero->id, 'menu_id' => 11],
             ['role_id' => $cajero->id, 'menu_id' => 12],
@@ -404,5 +408,12 @@ class RolePermissionSeeder extends Seeder
         if (!$user->hasRole('Administrador')) {
             $user->assignRole('Administrador');
         }
+
+        $user->assignments()->createMany([
+            ['company_id' => 1, 'branch_id' => 1, 'status' => 1],
+            ['company_id' => 1, 'branch_id' => 2, 'status' => 1],
+            ['company_id' => 2, 'branch_id' => 1, 'status' => 1],
+            ['company_id' => 2, 'branch_id' => 2, 'status' => 1],
+        ]);
     }
 }

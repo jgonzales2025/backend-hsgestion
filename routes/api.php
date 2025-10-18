@@ -74,8 +74,10 @@ Route::get('/users', [UserController::class, 'findAllUsers']);
 Route::get('/users-vendedor', [UserController::class, 'findAllUsersByVendedor']);
 Route::get('/users-almacen', [UserController::class, 'findAllUsersByAlmacen']);
 Route::get('/users/{id}', [UserController::class, 'show']);
+Route::get('/users-name/{userName}', [UserController::class, 'FindByUserName']);
 Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
+
 
 
 // TIPOS DE DOCUMENTOS (DNI, RUC, ETC)

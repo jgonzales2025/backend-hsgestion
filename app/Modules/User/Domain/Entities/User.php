@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Modules\User\Domain\Entities;
+use App\Modules\UserAssignment\Domain\Entities\UserAssignment;
 use DateTime;
 use Exception;
 use http\Exception\InvalidArgumentException;
@@ -13,8 +14,8 @@ class User
     private string $lastname;
     private ?string $password;
     private int $status;
-    private string|null $role;
-    private array|null $assignments;
+    private array|string|null $roles;
+    private ?array $assignment;
 
     /**
      * @param int $id
@@ -23,10 +24,10 @@ class User
      * @param string $lastname
      * @param ?string $password
      * @param int $status
-     * @param string|null $role
-     * @param array|null $assignments
+     * @param array|string|null $roles
+     * @param array|null $assignment
      */
-    public function __construct(int $id, ?string $username, string $firstname, string $lastname, ?string $password, int $status, string|null $role, array|null $assignments)
+    public function __construct(int $id, ?string $username, string $firstname, string $lastname, ?string $password, int $status, array|string|null $roles, array|null $assignment)
     {
         $this->id = $id;
         $this->username = $username;
@@ -34,8 +35,8 @@ class User
         $this->lastname = $lastname;
         $this->password = $password;
         $this->status = $status;
-        $this->role = $role;
-        $this->assignments = $assignments;
+        $this->roles = $roles;
+        $this->assignment = $assignment;
     }
 
     public function getId(): int { return $this->id; }
@@ -44,8 +45,8 @@ class User
     public function getLastname(): string { return $this->lastname; }
     public function getPassword(): string|null { return $this->password; }
     public function getStatus(): string { return $this->status; }
-    public function getRole(): string|null { return $this->role; }
-    public function getAssignments(): ?array { return $this->assignments; }
+    public function getRoles(): array|string|null { return $this->roles; }
+    public function getAssignment(): ?array { return $this->assignment; }
 
 
     // --- Perfil básico

@@ -37,6 +37,7 @@ class UpdateArticleRequest extends FormRequest{
             'status'               => 'required|integer|exists:statuses,id',
             'user_id'              => 'required|integer|exists:users,id',
             'sub_category_id'      => 'required|integer|exists:sub_categories,id',
+            'company_type_id'      => 'required|integer|exists:companies,id',
             'venta'                => 'required|boolean',
             
             // Campos opcionales

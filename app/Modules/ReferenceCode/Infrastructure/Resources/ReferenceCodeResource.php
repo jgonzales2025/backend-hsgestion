@@ -7,8 +7,8 @@ class ReferenceCodeResource extends JsonResource{
       public function toArray($request): array{
         return [
              'id' => $this->resource->getId(),
-            'refCode' => $this->resource->getRefCode(),
-            'articleId' => $this->resource->getArticleId(),
+            'ref_code' => $this->resource->getRefCode(),
+            'article_id' => $this->resource->getArticleId(),
             'dateAt' => $this->resource->getDateAt(),
             'status' => ($this->resource->getStatus()) == true ? "Activo" :"Inactivo",
             // "creacion"=>$this->resource->getDateAt()

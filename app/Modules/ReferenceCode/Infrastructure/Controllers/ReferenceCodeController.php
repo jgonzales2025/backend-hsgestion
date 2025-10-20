@@ -62,25 +62,20 @@ class ReferenceCodeController extends Controller
 
     public function store(StoreReferenceCodeRequest $request, $id): JsonResponse
     {
-    //     1️⃣ Crear la entidad de dominio a partir del request
-    //       $branches = $this->referenceCodeRepository->findById($id);
-    //       if (!$branches) {
-    // return response()->json(['message' => 'no hay wualterrrrrrr'],404) ;
-  
-    //       }
+ 
         $referenceCode = new ReferenceCode(
             id: 0,
-            refCode: $request->input('refCode') , 
-            articleId: $id,
+            ref_code: $request->input('refCode') , 
+            article_id: $id,
             dateAt: now()->toDateTimeString(),
             status: $request->input('status') ?? 1
         );
 
 
-        // 2️⃣ Guardar en repositorio
+   
         $savedReferenceCode = $this->referenceCodeRepository->save($referenceCode);
 
-        // 3️⃣ Devolver respuesta JSON
+  
         return response()->json(new ReferenceCodeResource($savedReferenceCode), 201);
     }
 

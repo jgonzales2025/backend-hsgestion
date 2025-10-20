@@ -16,8 +16,8 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
         }
         return $referenceCode->map(fn($referenceCode) => new ReferenceCode(
             id: $referenceCode->id,
-            refCode: $referenceCode->ref_code,
-            articleId: $referenceCode->article_id,
+            ref_code: $referenceCode->ref_code,
+            article_id: $referenceCode->article_id,
             dateAt: $referenceCode->date_at,
             status: $referenceCode->status
         ))->toArray();
@@ -33,8 +33,8 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
     return $referenceCodes->map(function ($referenceCode) {
         return new ReferenceCode(
             id: $referenceCode->id,
-            refCode: $referenceCode->ref_code,
-            articleId: $referenceCode->article_id,
+            ref_code: $referenceCode->ref_code,
+            article_id: $referenceCode->article_id,
             dateAt: $referenceCode->date_at,
             status: $referenceCode->status
         );
@@ -49,14 +49,15 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
             }
           return  new ReferenceCode(
             id: $referenceCode->id,
-            refCode: $referenceCode->ref_code,
-            articleId: $referenceCode->article_id,
+            ref_code: $referenceCode->ref_code,
+            article_id: $referenceCode->article_id,
             dateAt: $referenceCode->date_at,
             status: $referenceCode->status
         );
     }
      public function update(ReferenceCode $referenceCode): void
     {
+
            $EloquentreferenceCode = EloquentReferenceCode::find($referenceCode->getId());
         
             if (!$EloquentreferenceCode) {
@@ -64,15 +65,14 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
                
             }
            $EloquentreferenceCode->update([
-            'refCode' => $referenceCode->getRefCode(),
-            'articleId' => $referenceCode->getArticleId(),
-            'dateAt' => $referenceCode->getDateAt(),
+            'ref_code' => $referenceCode->getRefCode(),
+            'article_id' => $EloquentreferenceCode->article_id,
             'status' => $referenceCode->getStatus(),
            ]);
     }
       public function save(ReferenceCode $referenceCode): ?ReferenceCode
 {
-    // 1️⃣ Crear el registro y capturar el modelo creado
+    // 1️ Crear el registro y capturar el modelo creado
     $eloquentReferenceCode = EloquentReferenceCode::create([
           'ref_code' => $referenceCode->getRefCode(), 
         'article_id' => $referenceCode->getArticleId(),
@@ -82,8 +82,8 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
 
     return new ReferenceCode(
         id: $eloquentReferenceCode->id,
-        refCode: $eloquentReferenceCode->ref_code,
-          articleId: $eloquentReferenceCode->article_id,
+        ref_code: $eloquentReferenceCode->ref_code,
+          article_id: $eloquentReferenceCode->article_id,
         dateAt: $eloquentReferenceCode->date_at,
         status: $eloquentReferenceCode->status,
     );

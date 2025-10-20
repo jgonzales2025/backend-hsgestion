@@ -51,6 +51,7 @@ Route::get('/usernames', [UserController::class, 'findAllUserName']);
 //visible Articulos
 Route::get('/visibleArticle/{id}', [VisibleArticleController::class, 'show']);
 Route::put('/visibleArticle/{id}', [VisibleArticleController::class, 'update']);
+Route::get('/visibleArticlelist/{id}', [VisibleArticleController::class, 'visibleBranch']);
 //recordType
 Route::get('/recordType', [RecordTypeController::class, 'index']);
 

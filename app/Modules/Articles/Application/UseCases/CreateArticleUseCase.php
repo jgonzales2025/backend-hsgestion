@@ -8,6 +8,8 @@ use App\Modules\Brand\Application\UseCases\FindByIdBrandUseCase;
 use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
 use App\Modules\Category\Application\UseCases\FindByIdCategoryUseCase;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
+use App\Modules\Company\Application\UseCases\FindByIdCompanyUseCase;
+use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Application\UseCases\FindAllCurrencyTypeUseCase;
 use App\Modules\CurrencyType\Application\UseCases\FindByIdCurrencyTypeUseCase;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
@@ -17,11 +19,10 @@ use App\Modules\SubCategory\Application\UseCases\FindByIdSubCategoryUseCase;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\User\Application\UseCases\GetUserByIdUseCase;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
-use App\Modules\UserAssignment\Domain\Interfaces\UserAssignmentRepositoryInterface;
- 
+
 readonly class CreateArticleUseCase
 {
-    // private ArticleRepositoryInterface $articleRepository;
+
 
     public function __construct(
         private readonly CategoryRepositoryInterface $categoryRepository,
@@ -31,6 +32,7 @@ readonly class CreateArticleUseCase
          private readonly UserRepositoryInterface $userRepository,
          private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
          private readonly SubCategoryRepositoryInterface $subCategoryRepository,
+      private readonly CompanyRepositoryInterface $companyRepository,
     ) {
     }
 
@@ -53,8 +55,11 @@ readonly class CreateArticleUseCase
 
            $subCategoryUseCase = new FindByIdSubCategoryUseCase( $this->subCategoryRepository);
          $subCategoryType = $subCategoryUseCase->execute($articleDTO->sub_category_id);
-        //   Log::info('categoryType',$categoryType->getId());
-
+          
+         $CompanyUseCase = new FindByIdCompanyUseCase( $this->companyRepository);
+         $companyType = $CompanyUseCase->execute($articleDTO->company_type_id);
+       
+      
         $article = new Article( 
             id:null,
             cod_fab: $articleDTO->cod_fab,
@@ -84,7 +89,8 @@ readonly class CreateArticleUseCase
             precioIGv: null,
             user: $user,
             venta: $articleDTO->venta ?? false,
-            subCategory:$subCategoryType
+            subCategory:$subCategoryType,
+            company:$companyType
 
         );
 

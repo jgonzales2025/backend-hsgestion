@@ -44,6 +44,9 @@ class ArticleResource extends JsonResource
                 'name' => $this->resource->getSubCategory()->getName(),
                 'status' => ($this->resource->getSubCategory()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             ],
+    //           'company' =>  [
+    //             'id' => $this->resource->getCompany()->getId(),
+    //   ],
 
             // Resto de campos planos
             'location' => $this->getLocation(),
@@ -63,7 +66,7 @@ class ArticleResource extends JsonResource
             'status' => ($this->getStatus()) == 1 ? "Activo" : "Inactivo",
             'precioIGv' => $this->calculatePrecioIGV(),
            'venta' => $this->getVenta() == true ? 'Activo' : 'Inactivo',
-
+           'company'=>$this->getCompany()->getId()
         ];
     }
 }

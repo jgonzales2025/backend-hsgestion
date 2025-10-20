@@ -15,8 +15,8 @@ class UpdateReferenceCodeUseCase{
         $updatedReferenceCode = new ReferenceCode(
             $id,
             $referenceCodeDTO->ref_code,
-            $referenceCodeDTO->article_Id,
-             null,
+            $referenceCodeDTO->article_id,
+             now(),
             $referenceCodeDTO->status
         );
 

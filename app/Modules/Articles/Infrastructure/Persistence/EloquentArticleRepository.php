@@ -5,15 +5,18 @@ use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
+use App\Modules\Branch\Infrastructure\Persistence\EloquentBranchRepository;
 use App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle;
+use App\Modules\VisibleArticles\Infrastructure\Persistence\EloquentVisibleArticleRepository;
 use Illuminate\Support\Facades\Log;
 
 class EloquentArticleRepository implements ArticleRepositoryInterface
 {
 
     public function save(Article $article): ?Article
-    {
-
+    { 
+           $payload = auth('api')->payload();
+        $companyIds = $payload->get('company_id');
 
         $eloquentArticle = EloquentArticle::create([
             'cod_fab' => $article->getCodFab(),
@@ -41,7 +44,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'venta' => $article->getVenta(),
             'user_id' => $article->getUser()->getId(),
             'category_id' => $article->getCategory()->getId(),
-            'sub_category_id' => $article->getSubCategory()->getId()
+            'sub_category_id' => $article->getSubCategory()->getId(),
+            'company_type_id' => $article->getCompany()->getId(),
         ]);
 
         $payload = auth('api')->payload();
@@ -89,62 +93,64 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             ? (float) ($eloquentArticle->purchase_price + ($eloquentArticle->purchase_price * $eloquentArticle->tariff_rate / 100))
             : 0,
             venta: (bool) $eloquentArticle->venta,
-            subCategory: $eloquentArticle->subCategory->toDomain($eloquentArticle->subCategory)
-
+            subCategory: $eloquentArticle->subCategory->toDomain($eloquentArticle->subCategory),
+            company:$eloquentArticle->company->toDomain($eloquentArticle->company),
         );
     }
 
 public function findAllArticle(): array
-{  
-       // Obtener el ID de la empresa desde el token JWT
-    $payload = auth('api')->payload();
-    $companyId = $payload->get('company_id');
-
-        $visibleArticleIds = EloquentVisibleArticle::where('company_id', $companyId)
-        ->pluck('article_id'); // devuelve una colección con los IDs
-        
-
+{   
+       $payload = auth('api')->payload();
+        $companyId = $payload->get('company_id');
+     
     $articles = EloquentArticle::with([
         'measurementUnit',
         'brand',
         'category',
         'currencyType',
         'subCategory',
-        'user'
-    ])->get();
+        'user',
+        'company',
+    ])->where('company_type_id',$companyId)
+    ->get();
     
-    return $articles->map(function ($article) {
-        return new Article(
-            id: $article->id,
-            user: $article->user ? $article->user->toDomain($article->user) : null,
-            cod_fab: $article->cod_fab,
-            description: $article->description,
-            weight: $article->weight,
-            with_deduction: $article->with_deduction,
-            series_enabled: $article->series_enabled,
-            location: $article->location,
-            warranty: $article->warranty,
-            tariff_rate: $article->tariff_rate,
-            igv_applicable: $article->igv_applicable,
-            plastic_bag_applicable: $article->plastic_bag_applicable,
-            min_stock: $article->min_stock,
-            purchase_price: $article->purchase_price,
-            public_price: $article->public_price,
-            distributor_price: $article->distributor_price,
-            authorized_price: $article->authorized_price,
-            public_price_percent: $article->public_price_percent,
-            distributor_price_percent: $article->distributor_price_percent,
-            authorized_price_percent: $article->authorized_price_percent,
-            status: $article->status,
-            brand: $article->brand ? $article->brand->toDomain($article->brand) : null,
-            category: $article->category ? $article->category->toDomain($article->category) : null,
-            currencyType: $article->currencyType ? $article->currencyType->toDomain($article->currencyType) : null,
-            measurementUnit: $article->measurementUnit ? $article->measurementUnit->toDomain($article->measurementUnit) : null,
-            subCategory: $article->subCategory ? $article->subCategory->toDomain($article->subCategory) : null,
-            precioIGv: $article->purchase_price + ($article->purchase_price * ($article->tariff_rate / 100)),
-            venta: $article->venta,
-        );
-    })->toArray();
+    
+    return $articles->map(function ($article) {   
+               
+            return new Article(
+                id: $article->id,
+                user: $article->user ? $article->user->toDomain($article->user) : null,
+                cod_fab: $article->cod_fab,
+                description: $article->description,
+                weight: $article->weight,
+                with_deduction: $article->with_deduction,
+                series_enabled: $article->series_enabled,
+                location: $article->location,
+                warranty: $article->warranty,
+                tariff_rate: $article->tariff_rate,
+                igv_applicable: $article->igv_applicable,
+                plastic_bag_applicable: $article->plastic_bag_applicable,
+                min_stock: $article->min_stock,
+                purchase_price: $article->purchase_price,
+                public_price: $article->public_price,
+                distributor_price: $article->distributor_price,
+                authorized_price: $article->authorized_price,
+                public_price_percent: $article->public_price_percent,
+                distributor_price_percent: $article->distributor_price_percent,
+                authorized_price_percent: $article->authorized_price_percent,
+                status: $article->status,
+                brand: $article->brand ? $article->brand->toDomain($article->brand) : null,
+                category: $article->category ? $article->category->toDomain($article->category) : null,
+                currencyType: $article->currencyType ? $article->currencyType->toDomain($article->currencyType) : null,
+                measurementUnit: $article->measurementUnit ? $article->measurementUnit->toDomain($article->measurementUnit) : null,
+                subCategory: $article->subCategory ? $article->subCategory->toDomain($article->subCategory) : null,
+                precioIGv: $article->purchase_price + ($article->purchase_price * ($article->tariff_rate / 100)),
+                venta: $article->venta,
+                company:$article->company->toDomain($article->company),
+            );
+  
+})->toArray();
+
 }
 
 
@@ -155,7 +161,7 @@ public function findAllArticle(): array
 
         $Eloquentvisiblearticles = EloquentVisibleArticle::where('company_id', $companyId)
             ->get();
-        $article = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory'])->find($id);
+        $article = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory','company'])->find($id);
 
         // $precioIGv = $article->purchase_price + ($article->purchase_price * ($article->tariff_rate / 100));
 
@@ -192,6 +198,7 @@ public function findAllArticle(): array
             measurementUnit: $article->measurementUnit->toDomain($article->measurementUnit) ?? null,
             venta: $article->venta,
             subCategory: $article->subCategory->toDomain($article->subCategory) ?? null,
+            company:$article->company->toDomain($article->company)
 
 
 

@@ -3,6 +3,7 @@ namespace App\Modules\Articles\Domain\Entities;
 
 use App\Modules\Brand\Domain\Entities\Brand;
 use App\Modules\Category\Domain\Entities\Category;
+use App\Modules\Company\Domain\Entities\Company;
 use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
 use App\Modules\MeasurementUnit\Domain\Entities\MeasurementUnit;
 use App\Modules\SubCategory\Domain\Entities\SubCategory;
@@ -39,9 +40,9 @@ class Article
     private ?CurrencyType $currencyType;
     private ?MeasurementUnit $measurementUnit;
      private  ?SubCategory $subCategory;
- 
-
-    private float $precioIGv;
+     
+     private float $precioIGv;
+     private ?Company $company;
 
 
     public function __construct(
@@ -72,7 +73,8 @@ class Article
         ?User $user,
         ?float $precioIGv,
         bool $venta ,
-        ?SubCategory $subCategory
+        ?SubCategory $subCategory,
+        ?Company $company
  
  
     ) {
@@ -107,6 +109,7 @@ class Article
 
         $this->venta = $venta;
         $this->subCategory = $subCategory;
+        $this->company = $company;
     }
 
     public function calculatePrecioIGV(): float
@@ -122,6 +125,7 @@ public function getSubCategory():SubCategory|null{
     return $this->subCategory;
 }
     // Getters
+   
     public function getId(): int|null { return $this->id; }
     public function getCodFab(): string { return $this->cod_fab; }
     public function getDescription(): string { return $this->description; }
@@ -149,5 +153,6 @@ public function getSubCategory():SubCategory|null{
     public function getCategory(): Category|null { return $this->category; }
     public function getCurrencyType(): CurrencyType|null { return $this->currencyType; }
     public function getMeasurementUnit(): MeasurementUnit|null { return $this->measurementUnit; }
+     public function getCompany():Company|null{return $this->company;}
 
 }

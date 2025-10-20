@@ -29,6 +29,7 @@ class ArticleDTO
     public $user_id;
     public $venta;
     public $sub_category_id;
+    public $company_type_id;
 
     public function __construct(array $data)
     {
@@ -58,5 +59,6 @@ class ArticleDTO
         $this->user_id = $data['user_id'];
         $this->venta = $data['venta'];  
         $this->sub_category_id = $data['sub_category_id'];
+        $this->company_type_id = $data['company_type_id'];
     }
 }

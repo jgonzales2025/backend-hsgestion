@@ -5,6 +5,7 @@ namespace App\Modules\Auth\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Auth\Infrastructure\Requests\LoginRequest;
 use App\Modules\Auth\Infrastructure\Resources\AuthUserResource;
+use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\LoginAttempt\Application\DTOs\LoginAttemptDTO;
 use App\Modules\LoginAttempt\Application\UseCases\CreateLoginAttemptUseCase;
 use App\Modules\LoginAttempt\Domain\Interfaces\LoginAttemptRepositoryInterface;
@@ -16,13 +17,16 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
 
-    public function __construct(private readonly LoginAttemptRepositoryInterface $loginAttemptRepository){}
+    public function __construct(
+        private readonly LoginAttemptRepositoryInterface $loginAttemptRepository,
+        private readonly CompanyRepositoryInterface $companyRepository,
+    ){}
 
     public function login(LoginRequest $request)
     {
         $credentials = $request->only(['username', 'password']);
 
-        $loginAttemptUseCase = new CreateLoginAttemptUseCase($this->loginAttemptRepository);
+        $loginAttemptUseCase = new CreateLoginAttemptUseCase($this->loginAttemptRepository, $this->companyRepository);
 
         // Obtener usuario antes de validar
         $eloquentUser = EloquentUser::where('username', $request->username)->first();

@@ -2,6 +2,7 @@
 
 namespace App\Modules\LoginAttempt\Infrastructure\Persistence;
 
+use App\Models\Role;
 use App\Modules\LoginAttempt\Domain\Entities\LoginAttempt;
 use App\Modules\LoginAttempt\Domain\Interfaces\LoginAttemptRepositoryInterface;
 use App\Modules\LoginAttempt\Infrastructure\Models\EloquentLoginAttempt;
@@ -10,9 +11,10 @@ class EloquentLoginAttemptRepository implements LoginAttemptRepositoryInterface
 {
     public function findAllLoginAttempts(): array
     {
-        $loginAttempts = EloquentLoginAttempt::all()->sortByDesc('created_at');
+        $loginAttempts = EloquentLoginAttempt::with('company')->orderBy('created_at', 'desc')->get();
 
         return $loginAttempts->map(function ($loginAttempt) {
+            $roleName = Role::find($loginAttempt->role_id);
             return new LoginAttempt(
                 id: $loginAttempt->id,
                 userName: $loginAttempt->username,
@@ -22,8 +24,9 @@ class EloquentLoginAttemptRepository implements LoginAttemptRepositoryInterface
                 userAgent: $loginAttempt->user_agent,
                 failureReason: $loginAttempt->failure_reason,
                 failedAttemptsCount: $loginAttempt->failed_attempts_count,
-                companyId: $loginAttempt->company_id,
+                company: $loginAttempt->company?->toDomain($loginAttempt->company),
                 roleId: $loginAttempt->role_id,
+                roleName: $roleName?->name,
                 attemptAt: $loginAttempt->attempted_at,
             );
         })->toArray();
@@ -39,7 +42,7 @@ class EloquentLoginAttemptRepository implements LoginAttemptRepositoryInterface
             'user_agent' => $loginAttempt->getUserAgent(),
             'failure_reason' => $loginAttempt->getFailureReason(),
             'failed_attempts_count' => $loginAttempt->getFailedAttemptsCount(),
-            'company_id' => $loginAttempt->getCompanyId(),
+            'company_id' => $loginAttempt->getCompany()->getId(),
             'role_id' => $loginAttempt->getRoleId(),
             'attempted_at' => $loginAttempt->getAttemptAt()
         ]);

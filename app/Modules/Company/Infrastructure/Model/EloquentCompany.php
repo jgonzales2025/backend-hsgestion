@@ -32,7 +32,7 @@ class EloquentCompany extends Model
         return $this->hasMany(EloquentBank::class, 'company_id');
     }
 
-    public function toDomain(EloquentCompany $eloquentCompany): Company
+    public function toDomain(EloquentCompany $eloquentCompany): ?Company
     {
         return new Company(
             id: $eloquentCompany->id,

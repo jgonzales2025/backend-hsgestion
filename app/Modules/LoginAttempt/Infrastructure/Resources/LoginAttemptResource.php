@@ -18,8 +18,13 @@ class LoginAttemptResource extends JsonResource
             'user_agent' => $this->resource->getUserAgent(),
             'failure_reason' => $this->resource->getFailureReason(),
             'failed_attempts_count' => $this->resource->getFailedAttemptsCount(),
-            'company_id' => $this->resource->getCompanyId(),
+            'company' => $this->resource->getCompany() ? [
+                'id' => $this->resource->getCompany()?->getId(),
+                'ruc' => $this->resource->getCompany()?->getRuc(),
+                'company_name' => $this->resource->getCompany()?->getCompanyName(),
+            ] : null,
             'role_id' => $this->resource->getRoleId(),
+            'role_name' => $this->resource->getRoleName(),
             'attempted_at' => $this->resource->getAttemptAt(),
         ];
     }

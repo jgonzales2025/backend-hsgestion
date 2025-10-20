@@ -2,6 +2,8 @@
 
 namespace App\Modules\LoginAttempt\Infrastructure\Models;
 
+use App\Modules\Company\Infrastructure\Model\EloquentCompany;
+use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -29,6 +31,11 @@ class EloquentLoginAttempt extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(EloquentUser::class, 'user_id');
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(EloquentCompany::class, 'company_id');
     }
 }

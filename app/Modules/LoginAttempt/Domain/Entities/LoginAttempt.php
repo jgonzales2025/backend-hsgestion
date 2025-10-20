@@ -2,6 +2,9 @@
 
 namespace App\Modules\LoginAttempt\Domain\Entities;
 
+use App\Modules\Company\Domain\Entities\Company;
+use App\Modules\Role\Domain\Entities\Role;
+
 class LoginAttempt
 {
     private int $id;
@@ -12,11 +15,12 @@ class LoginAttempt
     private string $userAgent;
     private ?string $failureReason;
     private ?int $failedAttemptsCount;
-    private ?int $companyId;
+    private ?Company $company;
     private ?int $roleId;
+    private ?string $roleName;
     private string $attemptAt;
 
-    public function __construct(int $id, string $userName, ?int $userId, bool $successful, string $ipAddress, string $userAgent, ?string $failureReason, ?int $failedAttemptsCount, ?int $companyId, ?int $roleId, string $attemptAt)
+    public function __construct(int $id, string $userName, ?int $userId, bool $successful, string $ipAddress, string $userAgent, ?string $failureReason, ?int $failedAttemptsCount, ?Company $company, ?int $roleId, ?string $roleName, string $attemptAt)
     {
         $this->id = $id;
         $this->userName = $userName;
@@ -26,8 +30,9 @@ class LoginAttempt
         $this->userAgent = $userAgent;
         $this->failureReason = $failureReason;
         $this->failedAttemptsCount = $failedAttemptsCount;
-        $this->companyId = $companyId;
+        $this->company = $company;
         $this->roleId = $roleId;
+        $this->roleName = $roleName;
         $this->attemptAt = $attemptAt;
     }
 
@@ -39,7 +44,8 @@ class LoginAttempt
     public function getUserAgent(): string { return $this->userAgent; }
     public function getFailureReason(): ?string { return $this->failureReason; }
     public function getFailedAttemptsCount(): ?int { return $this->failedAttemptsCount; }
-    public function getCompanyId(): ?int { return $this->companyId; }
+    public function getCompany(): ?Company { return $this->company; }
     public function getRoleId(): ?int { return $this->roleId; }
+    public function getRoleName(): ?string { return $this->roleName; }
     public function getAttemptAt(): string { return $this->attemptAt; }
 }

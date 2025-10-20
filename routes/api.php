@@ -36,6 +36,7 @@ use Illuminate\Support\Facades\Route;
 use App\Modules\Ubigeo\Districts\Infrastructure\Controllers\DistrictController;
 use App\Modules\PaymentMethod\Infrastructure\Controllers\PaymentMethodController;
 use App\Modules\DocumentType\Infrastructure\Controllers\DocumentTypeController;
+use App\Modules\LoginAttempt\Infrastructure\Controllers\LoginAttemptController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -72,14 +73,11 @@ Route::get('/menus', [MenuController::class, 'index']);
 
 // User routes devuelvelo como estaba protegido
 Route::get('/users', [UserController::class, 'findAllUsers']);
-Route::get('/users-vendedor', [UserController::class, 'findAllUsersByVendedor']);
-Route::get('/users-almacen', [UserController::class, 'findAllUsersByAlmacen']);
 Route::get('/users/{id}', [UserController::class, 'show']);
 Route::get('/users-name/{userName}', [UserController::class, 'FindByUserName']);
 Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
-
-
+Route::put('/users/status-login/{id}', [UserController::class, 'updateStLogin']);
 
 // TIPOS DE DOCUMENTOS (DNI, RUC, ETC)
 Route::get('driver-document-types', [CustomerDocumentTypeController::class, 'indexForDrivers']);
@@ -145,7 +143,6 @@ Route::get('customer-document-types', [CustomerDocumentTypeController::class, 'i
 // Customers - Clientes
 Route::get('customers', [CustomerController::class, 'index']);
 Route::get('customers/unassigned', [CustomerController::class, 'findAllUnassigned']);
-Route::post('customers', [CustomerController::class, 'store']);
 Route::get('customers/{id}', [CustomerController::class, 'show']);
 Route::put('customers/{id}', [CustomerController::class, 'update']);
 
@@ -203,12 +200,18 @@ Route::post('customer-portfolios', [CustomerPortfolioController::class, 'store']
 Route::put('customer-portfolios', [CustomerPortfolioController::class, 'updateAllCustomersByVendedor']);
 Route::put('customer-portfolios/{id}', [CustomerPortfolioController::class, 'update']);
 
+// Logs de sesion
+Route::get('logs-login', [LoginAttemptController::class, 'index']);
+
 Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Customer portfolios - Cartera de clientes
     Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index']);
 
     // Digital Wallets - Billeteras digitales
     Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
+
+    // Crear cliente
+    Route::post('customers', [CustomerController::class, 'store']);
 });
 
 Route::middleware('auth:api')->group(function () {

@@ -40,6 +40,8 @@ use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
 use App\Modules\ExchangeRate\Infrastructure\Persistence\EloquentExchangeRateRepository;
 use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
 use App\Modules\IngressReason\Infrastructure\Persistence\EloquentIngressReasonRepository;
+use App\Modules\LoginAttempt\Domain\Interfaces\LoginAttemptRepositoryInterface;
+use App\Modules\LoginAttempt\Infrastructure\Persistence\EloquentLoginAttemptRepository;
 use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInterface;
 use App\Modules\MeasurementUnit\Infrastructure\Persistence\EloquentMeasurementUnitRepository;
 use App\Modules\Menu\Domain\Interfaces\MenuRepositoryInterface;
@@ -106,7 +108,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BrandRepositoryInterface::class, EloquentBrandRepository::class);
         $this->app->bind(CustomerPortfolioRepositoryInterface::class, EloquentCustomerPortfolioRepository::class);
         $this->app->bind(VisibleArticleRepositoryInterface::class, EloquentVisibleArticleRepository::class);
-     
+        $this->app->bind(LoginAttemptRepositoryInterface::class, EloquentLoginAttemptRepository::class);;
     }
 
     /**

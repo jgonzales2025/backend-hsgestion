@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Role;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
@@ -20,10 +21,12 @@ class Authentication
 
         $payload = auth('api')->payload();
 
+        $roleName = Role::where('id', $payload->get('role_id'))->first();
+
         $request->merge([
             'user_id' => $user->getAuthIdentifier(),
             'company_id' => $payload->get('company_id'),
-            'role' => $user->getRoleNames()->first()
+            'role' => $roleName->name
         ]);
 
         return $next($request);

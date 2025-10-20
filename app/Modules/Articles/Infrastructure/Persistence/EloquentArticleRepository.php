@@ -4,20 +4,13 @@ namespace App\Modules\Articles\Infrastructure\Persistence;
 use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
-use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
-use App\Modules\Branch\Infrastructure\Persistence\EloquentBranchRepository;
-use App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle;
-use App\Modules\VisibleArticles\Infrastructure\Persistence\EloquentVisibleArticleRepository;
-use Illuminate\Support\Facades\Log;
-
+use App\Modules\Branch\Infrastructure\Models\EloquentBranch; 
+use App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle; 
 class EloquentArticleRepository implements ArticleRepositoryInterface
 {
 
     public function save(Article $article): ?Article
-    { 
-           $payload = auth('api')->payload();
-        $companyIds = $payload->get('company_id');
-
+    {
         $eloquentArticle = EloquentArticle::create([
             'cod_fab' => $article->getCodFab(),
             'description' => $article->getDescription(),
@@ -62,7 +55,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 'status' => 1
             ]);
         });
-        // Log::info('eloquentArticle',$eloquentArticle);
+
         return new Article(
             id: $eloquentArticle->id,
             cod_fab: $eloquentArticle->cod_fab,
@@ -94,29 +87,29 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             : 0,
             venta: (bool) $eloquentArticle->venta,
             subCategory: $eloquentArticle->subCategory->toDomain($eloquentArticle->subCategory),
-            company:$eloquentArticle->company->toDomain($eloquentArticle->company),
+            company: $eloquentArticle->company->toDomain($eloquentArticle->company),
         );
     }
 
-public function findAllArticle(): array
-{   
-       $payload = auth('api')->payload();
+    public function findAllArticle(): array
+    {
+        $payload = auth('api')->payload();
         $companyId = $payload->get('company_id');
-     
-    $articles = EloquentArticle::with([
-        'measurementUnit',
-        'brand',
-        'category',
-        'currencyType',
-        'subCategory',
-        'user',
-        'company',
-    ])->where('company_type_id',$companyId)
-    ->get();
-    
-    
-    return $articles->map(function ($article) {   
-               
+
+        $articles = EloquentArticle::with([
+            'measurementUnit',
+            'brand',
+            'category',
+            'currencyType',
+            'subCategory',
+            'user',
+            'company',
+        ])->where('company_type_id', $companyId)
+            ->get();
+
+
+        return $articles->map(function ($article) {
+
             return new Article(
                 id: $article->id,
                 user: $article->user ? $article->user->toDomain($article->user) : null,
@@ -146,24 +139,18 @@ public function findAllArticle(): array
                 subCategory: $article->subCategory ? $article->subCategory->toDomain($article->subCategory) : null,
                 precioIGv: $article->purchase_price + ($article->purchase_price * ($article->tariff_rate / 100)),
                 venta: $article->venta,
-                company:$article->company->toDomain($article->company),
+                company: $article->company->toDomain($article->company),
             );
-  
-})->toArray();
 
-}
+        })->toArray();
+
+    }
 
 
     public function findById(int $id): ?Article
     {
-        $payload = auth('api')->payload();
-        $companyId = $payload->get('company_id');
 
-        $Eloquentvisiblearticles = EloquentVisibleArticle::where('company_id', $companyId)
-            ->get();
-        $article = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory','company'])->find($id);
-
-        // $precioIGv = $article->purchase_price + ($article->purchase_price * ($article->tariff_rate / 100));
+        $article = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory', 'company'])->find($id);
 
         if (!$article)
             return null;
@@ -198,10 +185,7 @@ public function findAllArticle(): array
             measurementUnit: $article->measurementUnit->toDomain($article->measurementUnit) ?? null,
             venta: $article->venta,
             subCategory: $article->subCategory->toDomain($article->subCategory) ?? null,
-            company:$article->company->toDomain($article->company)
-
-
-
+            company: $article->company->toDomain($article->company)
         );
     }
 
@@ -241,11 +225,4 @@ public function findAllArticle(): array
             'sub_category_id' => $article->getSubCategory()->getId()
         ]);
     }
-}
-
-//  $table->foreign('measurement_unit_id')->references('id')->on('measurement_units');
-//     $table->foreign('brand_id')->references('id')->on('brands');
-//     $table->foreign('category_id')->references('id')->on('categories');
-//     $table->foreign('currency_type_id')->references('id')->on('currency_types');
-//     $table->foreign('user_id')->references('id')->on('users');
-//     $table->timestamp('date_at')->default(DB::raw('CURRENT_TIMESTAMP'))->change();
+} 

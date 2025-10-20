@@ -13,10 +13,12 @@ use App\Modules\User\Application\UseCases\FindAllUsersUseCase;
 use App\Modules\User\Application\UseCases\FindAllUserUseNameCase;
 use App\Modules\User\Application\UseCases\FindByUserNameUseCase;
 use App\Modules\User\Application\UseCases\GetUserByIdUseCase;
+use App\Modules\User\Application\UseCases\UpdateUserStLoginUseCase;
 use App\Modules\User\Application\UseCases\UpdateUserUseCase;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
 use App\Modules\User\Infrastructure\Persistence\EloquentUserRepository;
 use App\Modules\User\Infrastructure\Requests\StoreUserRequest;
+use App\Modules\User\Infrastructure\Requests\UpdateStLoginUserRequest;
 use App\Modules\User\Infrastructure\Requests\UpdateUserRequest;
 use App\Modules\User\Infrastructure\Resources\UserResource;
 use App\Modules\UserAssignment\Application\DTOs\UserAssignmentDTO;
@@ -119,7 +121,7 @@ class UserController extends Controller
             ];
         })->toArray();
 
-        $assignments = collect($user->getAssignments())->map(function ($assignment) {
+        $assignments = collect($user->getAssignment())->map(function ($assignment) {
             return [
                 'id' => $assignment['id'],
                 'company_id' => $assignment['company_id'],
@@ -157,21 +159,6 @@ class UserController extends Controller
         return UserResource::collection($users)->resolve();
     }
 
-    public function findAllUsersByVendedor(): array
-    {
-        $userUseCase = new FindAllUserByVendedor($this->userRepository);
-        $users = $userUseCase->execute();
-
-        return UserResource::collection($users)->resolve();
-    }
-
-    public function findAllUsersByAlmacen(): array
-    {
-        $userUseCase = new FindAllUsersByAlmacen($this->userRepository);
-        $users = $userUseCase->execute();
-
-        return UserResource::collection($users)->resolve();
-    }
 
     public function update(UpdateUserRequest $request, $id): JsonResponse
     {
@@ -208,7 +195,7 @@ class UserController extends Controller
 
                 if ($customPermissions === null) {
                     // Usar permisos del rol
-                    $role = \Spatie\Permission\Models\Role::with('menus')->find($roleId);
+                    $role = \App\Models\Role::with('menus')->find($roleId);
                     if ($role && $role->menus) {
                         foreach ($role->menus as $menu) {
                             UserMenuPermission::create([
@@ -265,6 +252,15 @@ class UserController extends Controller
         }
 
         return response()->json(new UserResource($user), 200);
+    }
+
+    public function updateStLogin(UpdateStLoginUserRequest $request, $id): JsonResponse
+    {
+        $validatedData = $request->validated();
+        $userStLoginUseCase = new UpdateUserStLoginUseCase($this->userRepository);
+        $userStLoginUseCase->execute($id, $validatedData['st_login']);
+
+        return response()->json(['message' => 'Estado de login actualizado correctamente'], 200);
     }
 
 

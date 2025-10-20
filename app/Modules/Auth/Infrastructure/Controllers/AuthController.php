@@ -5,6 +5,9 @@ namespace App\Modules\Auth\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Auth\Infrastructure\Requests\LoginRequest;
 use App\Modules\Auth\Infrastructure\Resources\AuthUserResource;
+use App\Modules\LoginAttempt\Application\DTOs\LoginAttemptDTO;
+use App\Modules\LoginAttempt\Application\UseCases\CreateLoginAttemptUseCase;
+use App\Modules\LoginAttempt\Domain\Interfaces\LoginAttemptRepositoryInterface;
 use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\User\Domain\Entities\User;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
@@ -13,18 +16,93 @@ use Illuminate\Support\Facades\Auth;
 class AuthController extends Controller
 {
 
+    public function __construct(private readonly LoginAttemptRepositoryInterface $loginAttemptRepository){}
+
     public function login(LoginRequest $request)
     {
         $credentials = $request->only(['username', 'password']);
 
-        // Primer intento de autenticación sin generar token
-        if (!Auth::guard('api')->validate($credentials)) {
-            return response()->json(['error' => 'Credenciales inválidas'], 401);
-        }
+        $loginAttemptUseCase = new CreateLoginAttemptUseCase($this->loginAttemptRepository);
 
-        // Obtener usuario
+        // Obtener usuario antes de validar
         $eloquentUser = EloquentUser::where('username', $request->username)->first();
 
+        // Validar si el usuario existe
+        if (!$eloquentUser) {
+            $loginAttemptDTO = new LoginAttemptDTO([
+                'userName' => $request->username,
+                'successful' => false,
+                'ipAddress' => $request->ip(),
+                'userAgent' => $request->userAgent(),
+                'failureReason' => 'Usuario no existe',
+                'attemptAt' => now()->toDateString()
+            ]);
+            $loginAttemptUseCase->execute($loginAttemptDTO);
+            return response()->json(['error' => 'Usuario no existe'], 401);
+        }
+
+        if ($eloquentUser->st_login == 0)
+        {
+            $loginAttemptDTO = new LoginAttemptDTO([
+                'userName' => $eloquentUser->username,
+                'successful' => false,
+                'ipAddress' => $request->ip(),
+                'userAgent' => $request->userAgent(),
+                'userId' => $eloquentUser->id,
+                'failureReason' => 'Cuenta bloqueada',
+                'failedAttemptsCount' => $eloquentUser->failed_attempts,
+                'attemptAt' => now()->toDateString()
+            ]);
+            $loginAttemptUseCase->execute($loginAttemptDTO);
+            return response()->json(['error' => 'Cantidad de intentos superado, contacte al administrador.'], 401);
+        }
+
+        // Validar credenciales
+        if (!Auth::guard('api')->validate($credentials)) {
+            // Incrementar contador de intentos fallidos
+            $eloquentUser->increment('failed_attempts');
+
+            // Si alcanza 3 intentos, bloquear cuenta
+            if ($eloquentUser->failed_attempts >= 3) {
+                $eloquentUser->update(['st_login' => 0, 'failed_attempts' => 0]);
+
+                $loginAttemptDTO = new LoginAttemptDTO([
+                    'userName' => $eloquentUser->username,
+                    'successful' => false,
+                    'ipAddress' => $request->ip(),
+                    'userAgent' => $request->userAgent(),
+                    'userId' => $eloquentUser->id,
+                    'failureReason' => 'Cuenta bloqueada por intentos excedidos',
+                    'failedAttemptsCount' => 3,
+                    'attemptAt' => now()->toDateString()
+                ]);
+                $loginAttemptUseCase->execute($loginAttemptDTO);
+
+                return response()->json(['error' => 'Cantidad de intentos superado, contacte al administrador.'], 401);
+            }
+
+            $remainingAttempts = 3 - $eloquentUser->failed_attempts;
+
+            $loginAttemptDTO = new LoginAttemptDTO([
+                'userName' => $eloquentUser->username,
+                'successful' => false,
+                'ipAddress' => $request->ip(),
+                'userAgent' => $request->userAgent(),
+                'userId' => $eloquentUser->id,
+                'failureReason' => 'Credenciales inválidas',
+                'failedAttemptsCount' => $eloquentUser->failed_attempts,
+                'attemptAt' => now()->toDateString()
+            ]);
+            $loginAttemptUseCase->execute($loginAttemptDTO);
+
+            return response()->json([
+                'error' => 'Credenciales inválidas',
+                'intentos_restantes' => $remainingAttempts
+            ], 401);
+        }
+
+        // Login exitoso: resetear intentos fallidos
+        $eloquentUser->update(['failed_attempts' => 0]);
         // Verificar roles del usuario
         $userRoles = \DB::table('model_has_roles')
             ->where('model_type', get_class($eloquentUser))
@@ -51,6 +129,19 @@ class AuthController extends Controller
         ];
 
         $token = Auth::guard('api')->claims($customClaims)->attempt($credentials);
+
+        $loginAttemptDTO = new LoginAttemptDTO([
+            'userName' => $eloquentUser->username,
+            'successful' => true,
+            'ipAddress' => $request->ip(),
+            'userAgent' => $request->userAgent(),
+            'userId' => $eloquentUser->id,
+            'companyId' => $customClaims['company_id'],
+            'roleId' => $customClaims['role_id'],
+            'failedAttemptsCount' => $eloquentUser->failed_attempts,
+            'attemptAt' => now()->toDateString()
+        ]);
+        $loginAttemptUseCase->execute($loginAttemptDTO);
 
         return $this->respondWithToken($token, $request->cia_id);
     }

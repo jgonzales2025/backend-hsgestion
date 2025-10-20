@@ -75,7 +75,7 @@ class EloquentUserRepository implements UserRepositoryInterface
             lastname: $user->lastname,
             password: $user->password,
             status: $user->status,
-            roles: $user->roles->first()?->name,
+            roles: $user->roles->toArray(),
             assignment: $assignments
         );
     }
@@ -150,73 +150,7 @@ class EloquentUserRepository implements UserRepositoryInterface
                 lastname: $user->lastname,
                 password: $user->password,
                 status: $user->status,
-                roles: $user->roles->first()?->name,
-                assignment: $assignments
-            );
-        })->toArray();
-    }
-
-    public function findAllUsersByVendedor(): array
-    {
-        $users = EloquentUser::whereHas('roles', function ($query) {
-            $query->where('name', 'Vendedor');
-        })->with('roles', 'assignments')->get();
-
-        if ($users->isEmpty()) {
-            return [];
-        }
-
-        return $users->map(function ($user) {
-            $assignments = $user->assignments->map(function ($assignment) {
-                return [
-                    'id' => $assignment->id,
-                    'company_id' => $assignment->company_id,
-                    'branch_id' => $assignment->branch_id,
-                    'status' => $assignment->status,
-                ];
-            })->toArray();
-
-            return new User(
-                id: $user->id,
-                username: $user->username,
-                firstname: $user->firstname,
-                lastname: $user->lastname,
-                password: $user->password,
-                status: $user->status,
-                roles: $user->roles->first()?->name,
-                assignment: $assignments
-            );
-        })->toArray();
-    }
-
-    public function findAllUsersByAlmacen(): array
-    {
-        $users = EloquentUser::whereHas('roles', function ($query) {
-            $query->where('name', 'Almacenero');
-        })->with('roles', 'assignments')->get();
-
-        if ($users->isEmpty()) {
-            return [];
-        }
-
-        return $users->map(function ($user) {
-            $assignments = $user->assignments->map(function ($assignment) {
-                return [
-                    'id' => $assignment->id,
-                    'company_id' => $assignment->company_id,
-                    'branch_id' => $assignment->branch_id,
-                    'status' => $assignment->status,
-                ];
-            })->toArray();
-
-            return new User(
-                id: $user->id,
-                username: $user->username,
-                firstname: $user->firstname,
-                lastname: $user->lastname,
-                password: $user->password,
-                status: $user->status,
-                roles: $user->roles->toArray(),//PENDIENTE MODIFICAR
+                roles: $user->roles->toArray(),
                 assignment: $assignments
             );
         })->toArray();
@@ -224,18 +158,23 @@ class EloquentUserRepository implements UserRepositoryInterface
 
     public function findByUserName(string $userName): ?User
     {
-        $eloquentUser = EloquentUser::with('roles', 'assignments')->where('username', $userName)->first();
+        $eloquentUser = EloquentUser::with('roles', 'assignments.company')->where('username', $userName)->first();
 
         if (!$eloquentUser) {
             return null;
         }
 
-        $assignments = $eloquentUser->assignments->map(function ($assignment) {
-            return [
-                'company_id' => $assignment->company_id,
-                'company_name' => $assignment->company?->company_name,
-            ];
-        })->toArray();
+        $assignments = $eloquentUser->assignments
+            ->unique('company_id')
+            ->sortBy('company_id')
+            ->map(function ($assignment) {
+                return [
+                    'company_id' => $assignment->company_id,
+                    'company_name' => $assignment->company?->company_name,
+                ];
+            })
+            ->values()
+            ->toArray();
 
         return new User(
             id: $eloquentUser->id,
@@ -247,5 +186,10 @@ class EloquentUserRepository implements UserRepositoryInterface
             roles: $eloquentUser->roles->toArray(),
             assignment: $assignments
         );
+    }
+
+    public function updateStLogin(int $id, int $stLogin): void
+    {
+        EloquentUser::where('id', $id)->update(['st_login' => $stLogin]);
     }
 }

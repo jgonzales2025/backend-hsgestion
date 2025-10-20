@@ -12,7 +12,6 @@ interface UserRepositoryInterface
     public function delete(User $user): void;
     public function findAllUserName(): array;
     public function findAllUsers(): array;
-    public function findAllUsersByVendedor(): array;
-    public function findAllUsersByAlmacen(): array;
     public function findByUserName(string $userName): ?User;
+    public function updateStLogin(int $id, int $stLogin): void;
 }

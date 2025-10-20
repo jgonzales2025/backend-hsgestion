@@ -38,7 +38,8 @@ class ArticleSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
                 'venta' => true,
-                'sub_category_id'=>1
+                'sub_category_id'=>1,
+                'company_type_id'=>1
             ]
             ];
       DB::table('articles')->insert($articles);

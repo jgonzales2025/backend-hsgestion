@@ -5,21 +5,21 @@ namespace App\Modules\ReferenceCode\Domain\Entities;
 class ReferenceCode
 {
     private int $id;
-    private string $refCode;
-    private int $articleId;
+    private string $ref_code;
+    private int $article_id;
     private ?string $dateAt;
     private int $status;
 
     public function __construct(
         int $id,
-        string $refCode,
-        int $articleId,
+        string $ref_code,
+        int $article_id,
         ?string $dateAt,
         int $status
     ) {
         $this->id = $id;
-        $this->refCode = $refCode;
-        $this->articleId = $articleId;
+        $this->ref_code = $ref_code;
+        $this->article_id = $article_id;
         $this->dateAt = $dateAt;
         $this->status = $status;
     }
@@ -32,12 +32,12 @@ class ReferenceCode
 
     public function getRefCode(): string
     {
-        return $this->refCode;
+        return $this->ref_code;
     }
 
     public function getArticleId(): int
     {
-        return $this->articleId;
+        return $this->article_id;
     }
 
     public function getDateAt(): ?string

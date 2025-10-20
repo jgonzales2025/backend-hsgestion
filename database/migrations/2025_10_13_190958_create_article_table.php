@@ -30,6 +30,7 @@ return new class extends Migration
 
             $table->integer('min_stock')->default(0);
             $table->unsignedBigInteger('currency_type_id');
+            $table->unsignedBigInteger('company_type_id');
 
           $table->decimal('purchase_price', 10, 2)->default(0);
             $table->decimal('public_price', 10, 2)->default(0);
@@ -53,7 +54,8 @@ return new class extends Migration
             $table->foreign('currency_type_id')->references('id')->on('currency_types');
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamp('date_at')->default(DB::raw('CURRENT_TIMESTAMP'))->change();
-   
+            $table->foreign('company_type_id')->references('id')->on('companies');
+         
         });
     }
 

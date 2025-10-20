@@ -8,10 +8,15 @@ class UpdateReferenceCodeRequest extends FormRequest{
       public function authorize():bool{
         return true;
     }
+        protected function prepareForValidation(): void
+    {
+   
+    }
+
       public function rules():array{
         return [
             'ref_code'=>'string|max:20',
-            'article_id'=>'integer',
+              'article_id'=>'integer',
             'status'=> 'boolean',
         ];
     }

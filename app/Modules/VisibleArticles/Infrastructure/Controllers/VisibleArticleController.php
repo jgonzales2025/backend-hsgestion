@@ -41,4 +41,10 @@ class VisibleArticleController extends Controller
         return response()->json(['message'=> 'Estado actualizado correctamente.']);
 
     }
+        public function visibleBranch($id): array
+    {
+        $visibleDTO = $this->visibleArticleRepository->mostrar($id);
+
+    return  VisibleArticleResource::collection($visibleDTO)->resolve();
+    }
 }

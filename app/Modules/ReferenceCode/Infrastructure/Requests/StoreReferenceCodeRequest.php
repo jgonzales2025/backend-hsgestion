@@ -10,6 +10,7 @@ class StoreReferenceCodeRequest extends FormRequest{
       public function rules():array{
         return [
             'ref_code'=>'string|max:20',
+            'article_id'=>'integer',
             'status'=> 'boolean',
         ];
     }

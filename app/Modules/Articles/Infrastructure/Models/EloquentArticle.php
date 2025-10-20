@@ -5,6 +5,7 @@ namespace App\Modules\Articles\Infrastructure\Models;
 
 use App\Modules\Brand\Infrastructure\Models\EloquentBrand;
 use App\Modules\Category\Infrastructure\Models\EloquentCategory;
+use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\MeasurementUnit\Infrastructure\Models\EloquentMeasurementUnit;
 use App\Modules\SubCategory\Infrastructure\Models\EloquentSubCategory;
@@ -12,9 +13,10 @@ use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class EloquentArticle extends Model{
+class EloquentArticle extends Model
+{
     protected $table = 'articles';
-        protected $fillable = [
+    protected $fillable = [
         'cod_fab',
         'description',
         'weight',
@@ -42,20 +44,21 @@ class EloquentArticle extends Model{
         'venta',
         'subcategory_id',
         'category_id',
-        'sub_category_id'
+        'sub_category_id',
+        'company_type_id'
     ];
-     protected $hidden = ['created_at', 'updated_at'];
+    protected $hidden = ['created_at', 'updated_at'];
 
-         public function measurementUnit(): BelongsTo
+    public function measurementUnit(): BelongsTo
     {
         return $this->belongsTo(EloquentMeasurementUnit::class, 'measurement_unit_id');
     }
 
     //  Relación con Marca
-public function brand(): BelongsTo
-{
-    return $this->belongsTo(EloquentBrand::class, 'brand_id');
-}
+    public function brand(): BelongsTo
+    {
+        return $this->belongsTo(EloquentBrand::class, 'brand_id');
+    }
 
 
     //  Relación con Categoría
@@ -69,7 +72,7 @@ public function brand(): BelongsTo
     {
         return $this->belongsTo(EloquentCurrencyType::class, 'currency_type_id');
     }
-      public function subCategory(): BelongsTo
+    public function subCategory(): BelongsTo
     {
         return $this->belongsTo(EloquentSubCategory::class, 'sub_category_id');
     }
@@ -84,6 +87,10 @@ public function brand(): BelongsTo
     public function user(): BelongsTo
     {
         return $this->belongsTo(EloquentUser::class, 'user_id');
+    }
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(EloquentCompany::class, 'company_type_id');
     }
 
 }

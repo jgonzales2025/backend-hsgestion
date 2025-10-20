@@ -13,9 +13,11 @@ class StoreArticleRequest extends FormRequest{
     {
         // Obtener company_id del payload del token JWT
         $payload = auth('api')->payload();
+        $companyId = $payload->get('company_id');
 
         $this->merge([
-            'user_id' => auth('api')->id()
+            'user_id' => auth('api')->id(),
+              'company_type_id' => $companyId, 
         ]);
     }
 
@@ -41,6 +43,7 @@ class StoreArticleRequest extends FormRequest{
             'user_id'              => 'required|integer|exists:users,id',
            'sub_category_id'      => 'required|integer|exists:sub_categories,id',
             'venta'                => 'required|boolean',
+            'company_type_id'     =>  'required|integer|exists:companies,id',
             
             // Campos opcionales
             'location'             => 'nullable|string|max:80',

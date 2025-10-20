@@ -9,6 +9,8 @@ use App\Modules\Brand\Application\UseCases\FindByIdBrandUseCase;
 use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
 use App\Modules\Category\Application\UseCases\FindByIdCategoryUseCase;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
+use App\Modules\Company\Application\UseCases\FindByIdCompanyUseCase;
+use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Application\UseCases\FindByIdCurrencyTypeUseCase;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\MeasurementUnit\Application\UseCases\FindByIdMeasurementUnit;
@@ -31,6 +33,7 @@ readonly class UpdateArticleUseCase
         private readonly UserRepositoryInterface $userRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private readonly SubCategoryRepositoryInterface $subCategoryRepository,
+        private readonly CompanyRepositoryInterface $companyRepository,
     ) {
     }
     public function execute(int $id, ArticleDTO $articleDTO): void
@@ -52,7 +55,9 @@ readonly class UpdateArticleUseCase
 
         $subCategoryUseCase = new FindByIdSubCategoryUseCase($this->subCategoryRepository);
         $subCategoryType = $subCategoryUseCase->execute($articleDTO->sub_category_id);
-    //   Log::info('subCategoryType', ['sub_category_id' => $subCategoryType->getId()]);
+        
+          $CompanyUseCase = new FindByIdCompanyUseCase( $this->companyRepository);
+         $companyType = $CompanyUseCase->execute($articleDTO->company_type_id);
 
         $article = new Article(
             id:$id,
@@ -83,7 +88,8 @@ readonly class UpdateArticleUseCase
             precioIGv: null,
             user: $user,
             venta: $articleDTO->venta ?? false,
-            subCategory:$subCategoryType
+            subCategory:$subCategoryType,
+            company:$companyType
         );
 
         $this->articleRepository->update($article);

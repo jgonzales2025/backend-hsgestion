@@ -36,6 +36,7 @@ class ArticleController extends Controller
       private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
       private readonly SubCategoryRepositoryInterface $subCategoryRepository,
       private readonly CompanyRepositoryInterface $companyRepository,
+      
   ){}
   public function index(): array
   {
@@ -59,7 +60,7 @@ class ArticleController extends Controller
   {
     $articleDTO = new ArticleDTO($request->validated());
 
-    $articleUseCase = new UpdateArticleUseCase($this->categoryRepository,$this->articleRepository,$this->measurementUnitRepository,$this->brandRepository, $this->userRepository,$this->currencyTypeRepository,$this->subCategoryRepository);
+    $articleUseCase = new UpdateArticleUseCase($this->categoryRepository,$this->articleRepository,$this->measurementUnitRepository,$this->brandRepository, $this->userRepository,$this->currencyTypeRepository,$this->subCategoryRepository,$this->companyRepository);
     $articleUseCase->execute($id, $articleDTO);
 
 

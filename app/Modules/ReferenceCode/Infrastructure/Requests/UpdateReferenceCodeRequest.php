@@ -16,7 +16,7 @@ class UpdateReferenceCodeRequest extends FormRequest{
       public function rules():array{
         return [
             'ref_code'=>'string|max:20',
-              'article_id'=>'integer',
+             'article_id'=>'required|exists:articles,id',
             'status'=> 'boolean',
         ];
     }

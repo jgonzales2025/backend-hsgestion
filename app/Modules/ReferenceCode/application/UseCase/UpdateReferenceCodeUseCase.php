@@ -12,12 +12,12 @@ class UpdateReferenceCodeUseCase{
 
      public function execute(int $id, ReferenceCodeDTO $referenceCodeDTO): void
     {
+        
         $updatedReferenceCode = new ReferenceCode(
-            $id,
-            $referenceCodeDTO->ref_code,
-            $referenceCodeDTO->article_id,
-             now(),
-            $referenceCodeDTO->status
+            id:$id,
+            ref_code:$referenceCodeDTO->ref_code,
+            article_id:$referenceCodeDTO->article_id, 
+            status:$referenceCodeDTO->status
         );
 
          $this->referenceCodeRepository->update($updatedReferenceCode);

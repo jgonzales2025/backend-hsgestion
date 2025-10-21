@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unsignedBigInteger('branch_id');
             $table->unsignedBigInteger('article_id');
             $table->unsignedBigInteger('user_id');
-            
+
             // Otros campos
             $table->boolean('status')->default(1);
             $table->timestamps();

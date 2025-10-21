@@ -12,7 +12,7 @@ class ReferenceCodeDTO
     public function __construct(array $data)
     {
         $this->id = $data['id'] ?? 0;
-        $this->ref_code = $data['ref_code'];
+        $this->ref_code = $data['ref_code']??0;
          $this->article_id = $data['article_id']??0;
         $this->status = $data['status'];
     }

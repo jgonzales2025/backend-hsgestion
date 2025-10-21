@@ -9,17 +9,29 @@ class StoreArticleRequest extends FormRequest{
         return true;
     }
   
-   protected function prepareForValidation(): void
-    {
-        // Obtener company_id del payload del token JWT
-        $payload = auth('api')->payload();
-        $companyId = $payload->get('company_id');
+protected function prepareForValidation(): void
+{
+    $payload = auth('api')->payload();
+    $companyId = $payload->get('company_id');
 
-        $this->merge([
-            'user_id' => auth('api')->id(),
-              'company_type_id' => $companyId, 
-        ]);
-    }
+    $this->merge([
+        'user_id' => auth('api')->id(),
+        'company_type_id' => $companyId,
+        // Conversión de booleanos
+        'with_deduction' => filter_var($this->with_deduction, FILTER_VALIDATE_BOOLEAN),
+        'series_enabled' => filter_var($this->series_enabled, FILTER_VALIDATE_BOOLEAN),
+        'igv_applicable' => filter_var($this->igv_applicable, FILTER_VALIDATE_BOOLEAN),
+        'plastic_bag_applicable' => filter_var($this->plastic_bag_applicable, FILTER_VALIDATE_BOOLEAN),
+        'venta' => filter_var($this->venta, FILTER_VALIDATE_BOOLEAN),
+        // Conversión de numéricos
+        'weight' => isset($this->weight) ? (float)$this->weight : 0,
+        'tariff_rate' => isset($this->tariff_rate) ? (float)$this->tariff_rate : 0,
+        'purchase_price' => isset($this->purchase_price) ? (float)$this->purchase_price : 0,
+        'public_price' => isset($this->public_price) ? (float)$this->public_price : 0,
+        'distributor_price' => isset($this->distributor_price) ? (float)$this->distributor_price : 0,
+        'authorized_price' => isset($this->authorized_price) ? (float)$this->authorized_price : 0,
+    ]);
+}
 
 
     public function rules(): array {

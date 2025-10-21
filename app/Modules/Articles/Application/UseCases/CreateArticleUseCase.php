@@ -90,7 +90,8 @@ readonly class CreateArticleUseCase
             user: $user,
             venta: $articleDTO->venta ?? false,
             subCategory:$subCategoryType,
-            company:$companyType
+            company:$companyType,
+            image_url:$articleDTO->image_url
 
         );
 

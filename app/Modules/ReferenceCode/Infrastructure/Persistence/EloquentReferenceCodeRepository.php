@@ -18,75 +18,67 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
             id: $referenceCode->id,
             ref_code: $referenceCode->ref_code,
             article_id: $referenceCode->article_id,
-            dateAt: $referenceCode->date_at,
             status: $referenceCode->status
         ))->toArray();
     }
-  public function findById(int $articleId): array
-{
-    $referenceCodes = EloquentReferenceCode::where('article_id', $articleId)->get();
+    public function findById(int $articleId): array
+    {
+        $referenceCodes = EloquentReferenceCode::where('article_id', $articleId)->get();
 
-    if ($referenceCodes->isEmpty()) {
-        return [];
+        return $referenceCodes->map(function ($referenceCode) {
+            return new ReferenceCode(
+                id: $referenceCode->id,
+                ref_code: $referenceCode->ref_code,
+                article_id: $referenceCode->article_id,
+                status: $referenceCode->status
+            );
+        })->toArray();
     }
 
-    return $referenceCodes->map(function ($referenceCode) {
+    public function indexid(int $id): ?ReferenceCode
+    {
+        $referenceCode = EloquentReferenceCode::find($id);
+        if (!$referenceCode) {
+            return null;
+        }
         return new ReferenceCode(
             id: $referenceCode->id,
             ref_code: $referenceCode->ref_code,
-            article_id: $referenceCode->article_id,
-            dateAt: $referenceCode->date_at,
-            status: $referenceCode->status
-        );
-    })->toArray();
-}
-
-     public function indexid(int $id): ?ReferenceCode
-    {
-              $referenceCode = EloquentReferenceCode::find($id);
-            if (!$referenceCode) {
-                return null;
-            }
-          return  new ReferenceCode(
-            id: $referenceCode->id,
-            ref_code: $referenceCode->ref_code,
-            article_id: $referenceCode->article_id,
-            dateAt: $referenceCode->date_at,
+            article_id: $referenceCode->article_id, 
             status: $referenceCode->status
         );
     }
-     public function update(ReferenceCode $referenceCode): void
+    public function update(ReferenceCode $referenceCode): void
     {
 
-           $EloquentreferenceCode = EloquentReferenceCode::find($referenceCode->getId());
-        
-            if (!$EloquentreferenceCode) {
-               throw new   \Exception("Error Processing Request", 1);
-               
-            }
-           $EloquentreferenceCode->update([
+        $EloquentreferenceCode = EloquentReferenceCode::find($referenceCode->getId());
+
+        if (!$EloquentreferenceCode) {
+            throw new \Exception("Error Processing Request", 1);
+
+        }
+        $EloquentreferenceCode->update([
             'ref_code' => $referenceCode->getRefCode(),
             'article_id' => $EloquentreferenceCode->article_id,
             'status' => $referenceCode->getStatus(),
-           ]);
+        ]);
     }
-      public function save(ReferenceCode $referenceCode): ?ReferenceCode
-{
-    // 1️ Crear el registro y capturar el modelo creado
-    $eloquentReferenceCode = EloquentReferenceCode::create([
-          'ref_code' => $referenceCode->getRefCode(), 
-        'article_id' => $referenceCode->getArticleId(),
-        'date_at' => $referenceCode->getDateAt() ?? now(),
-        'status' => $referenceCode->getStatus(),
-    ]);
+    public function save(int $id, ReferenceCode $referenceCode): ?ReferenceCode
+    {
+  
+        $eloquentReferenceCode = EloquentReferenceCode::create([
+            'ref_code' => $referenceCode->getRefCode(),
+            'article_id' => $id,
+            'status' => $referenceCode->getStatus(),
+            'date_at' => $referenceCode->getDateAt(),
+        ]);
 
-    return new ReferenceCode(
-        id: $eloquentReferenceCode->id,
-        ref_code: $eloquentReferenceCode->ref_code,
-          article_id: $eloquentReferenceCode->article_id,
-        dateAt: $eloquentReferenceCode->date_at,
-        status: $eloquentReferenceCode->status,
-    );
-}
+        return new ReferenceCode(
+            id: $eloquentReferenceCode->id,
+            ref_code: $eloquentReferenceCode->ref_code,
+            article_id: $eloquentReferenceCode->article_id,
+            status: $eloquentReferenceCode->status,
+        );
+    }
 
 }

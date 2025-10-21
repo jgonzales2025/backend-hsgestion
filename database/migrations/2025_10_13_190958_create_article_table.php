@@ -31,6 +31,8 @@ return new class extends Migration
             $table->integer('min_stock')->default(0);
             $table->unsignedBigInteger('currency_type_id');
             $table->unsignedBigInteger('company_type_id');
+              $table->string('image_url')->nullable(); 
+            
 
           $table->decimal('purchase_price', 10, 2)->default(0);
             $table->decimal('public_price', 10, 2)->default(0);

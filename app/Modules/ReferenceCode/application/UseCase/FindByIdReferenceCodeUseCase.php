@@ -2,19 +2,15 @@
 
 namespace App\Modules\ReferenceCode\Application\UseCase;
 
-use App\Modules\ReferenceCode\Infrastructure\Persistence\EloquentReferenceCodeRepository;
-
+use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
+use App\Modules\ReferenceCode\Domain\Interfaces\ReferenceCodeRepositoryInterface;
 
 class FindByIdReferenceCodeUseCase{
+     public function __construct(private readonly ReferenceCodeRepositoryInterface $referenceCodeRepository){}
 
-   private EloquentReferenceCodeRepository $eloquentReferenceCodeRepository;
+     public function execute($id):array{
+       
+        return $this->referenceCodeRepository->findById($id);
 
-    public  function __construct(EloquentReferenceCodeRepository $eloquentReferenceCodeRepository){
-         $this->eloquentReferenceCodeRepository = $eloquentReferenceCodeRepository;
-    }
-
-    public function execute(int $id){
-          return $this->eloquentReferenceCodeRepository->findById($id);
-    }
- 
+     }
 }

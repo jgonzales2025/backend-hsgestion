@@ -3,12 +3,18 @@
 namespace App\Modules\ReferenceCode\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Articles\Application\UseCases\FindByIdArticleUseCase;
+use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
+use App\Modules\RecordType\Infrastructure\Persistence\EloquentRecordTypeRepository;
 use App\Modules\ReferenceCode\Application\DTOs\ReferenceCodeDTO;
+use App\Modules\ReferenceCode\Application\UseCase\CreateReferenceCodeUseCase;
 use App\Modules\ReferenceCode\Application\UseCase\FindAllReferenceCodeUseCase;
 use App\Modules\ReferenceCode\Application\UseCase\FindByIdReferenceCode;
+use App\Modules\ReferenceCode\Application\UseCase\FindByIdReferenceCodeCIAUseCase;
 use App\Modules\ReferenceCode\Application\UseCase\FindByIdReferenceCodeUseCase;
 use App\Modules\ReferenceCode\Application\UseCase\UpdateReferenceCodeUseCase;
-use App\Modules\ReferenceCode\Domain\Entities\ReferenceCode;
+use App\Modules\ReferenceCode\Domain\Interfaces\ReferenceCodeRepositoryInterface;
+use App\Modules\ReferenceCode\Infrastructure\Models\EloquentReferenceCode;
 use App\Modules\ReferenceCode\Infrastructure\Persistence\EloquentReferenceCodeRepository;
 use App\Modules\ReferenceCode\Infrastructure\Requests\StoreReferenceCodeRequest;
 use App\Modules\ReferenceCode\Infrastructure\Requests\UpdateReferenceCodeRequest;
@@ -17,76 +23,81 @@ use Illuminate\Http\JsonResponse;
 
 class ReferenceCodeController extends Controller
 {
+    protected EloquentReferenceCodeRepository $referenceCodeRepository;
+    protected EloquentArticleRepository $articleRepository;
 
-    protected $referenceCodeRepository;
-    // protected $referenceCodeRepositoryinterface;
-    public function __construct()
+    public function __construct(EloquentReferenceCodeRepository $referenceCodeRepository, EloquentArticleRepository $articleRepository)
     {
-        $this->referenceCodeRepository = new EloquentReferenceCodeRepository;
-        //    $this->referenceCodeRepositoryinterface = new EloquentReferenceCodeRepository();
+        $this->referenceCodeRepository = $referenceCodeRepository;
+        $this->articleRepository = $articleRepository;
     }
-    public function index(): array
+
+    public function index(): JsonResponse
     {
         $referenceCodeUseCase = new FindAllReferenceCodeUseCase($this->referenceCodeRepository);
         $referenceCode = $referenceCodeUseCase->execute();
 
-        return ReferenceCodeResource::collection($referenceCode)->resolve();
+        return response()->json(  ReferenceCodeResource::collection($referenceCode)->resolve(),200);
 
     }
-    public function show(int $id): array
+    public function show(int $id): JsonResponse
     {
+
         $referenceCodeUseCase = new FindByIdReferenceCodeUseCase($this->referenceCodeRepository);
-        $referenceCodes = $referenceCodeUseCase->execute($id);
-        if (empty($referenceCodes)) {
-            return [];
+        $referenceCode = $referenceCodeUseCase->execute($id);
+        if (empty($referenceCode)) {
+
+            return response()->json(['message' => 'No hay datos'], 404);
         }
-
-        return ReferenceCodeResource::collection($referenceCodes)->resolve();
-
-    }
-    public function indexid(int $id): JsonResponse
-    {
-        $branches = $this->referenceCodeRepository->indexid($id);
-
-        if (empty($branches)) {
-            return response()->json(['error' => 'No se encontro Sucursal'], 404);
-        }
-
         return response()->json(
-            (new ReferenceCodeResource($branches))->resolve(),
+            ReferenceCodeResource::collection($referenceCode)->resolve(),
             200
         );
 
     }
+    public function indexid(int $id): JsonResponse
+    {
+        $referenceCodeUseCase = new FindByIdReferenceCodeCIAUseCase($this->referenceCodeRepository);
+        $referenceCode = $referenceCodeUseCase->execute($id);
 
+        if (empty($referenceCode)) {
+            return response()->json(['message' => 'No se encontro Sucursal'], 404);
+        }
+
+        return response()->json(
+            (new ReferenceCodeResource($referenceCode))->resolve(),
+            200
+        );
+
+    } 
 
     public function store(StoreReferenceCodeRequest $request, $id): JsonResponse
     {
- 
-        $referenceCode = new ReferenceCode(
-            id: 0,
-            ref_code: $request->input('refCode') , 
-            article_id: $id,
-            dateAt: now()->toDateTimeString(),
-            status: $request->input('status') ?? 1
-        );
+        $filter = new FindByIdArticleUseCase($this->articleRepository);
+        $result = $filter->execute($id);
+        if (!$result ) {
+            return response()->json(["message"=>"No existe este articulo"],404);
+        }
 
+        $referenceCodeDTO = new ReferenceCodeDTO($request->validated());
+        $referenceCodeUseCase = new CreateReferenceCodeUseCase($this->referenceCodeRepository);
+        $referenceCode = $referenceCodeUseCase->execute($id, $referenceCodeDTO);
 
-   
-        $savedReferenceCode = $this->referenceCodeRepository->save($referenceCode);
-
-  
-        return response()->json(new ReferenceCodeResource($savedReferenceCode), 201);
+        return response()->json(new ReferenceCodeResource($referenceCode), 201);
     }
 
 
     public function update(UpdateReferenceCodeRequest $request, $id): JsonResponse
-    {    
+    {
         $referenceCodeDTO = new ReferenceCodeDTO($request->validated());
         $referenceCodeUseCase = new UpdateReferenceCodeUseCase($this->referenceCodeRepository);
-       $referenceCodeUseCase->execute($id,$referenceCodeDTO);
+        $referenceCodeUseCase->execute($id, $referenceCodeDTO);
+        
+        if (empty($referenceCodeUseCase)) {
+            return response()->json(["message"=>"No hay datos"],404);
+        }
 
-        return response()->json(['message'=>'codigo de referencia actualizado']);
+        return response()->json(['message' => 'codigo de referencia actualizado']);
     }
 
 }

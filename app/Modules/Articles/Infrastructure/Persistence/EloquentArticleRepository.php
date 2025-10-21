@@ -11,6 +11,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
     public function save(Article $article): ?Article
     {
+ 
         $eloquentArticle = EloquentArticle::create([
             'cod_fab' => $article->getCodFab(),
             'description' => $article->getDescription(),
@@ -39,6 +40,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'category_id' => $article->getCategory()->getId(),
             'sub_category_id' => $article->getSubCategory()->getId(),
             'company_type_id' => $article->getCompany()->getId(),
+            'image_url' => $article->getImageURL()
         ]);
 
         $payload = auth('api')->payload();
@@ -88,6 +90,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             venta: (bool) $eloquentArticle->venta,
             subCategory: $eloquentArticle->subCategory->toDomain($eloquentArticle->subCategory),
             company: $eloquentArticle->company->toDomain($eloquentArticle->company),
+            image_url:$eloquentArticle->image_url
         );
     }
 
@@ -140,6 +143,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 precioIGv: $article->purchase_price + ($article->purchase_price * ($article->tariff_rate / 100)),
                 venta: $article->venta,
                 company: $article->company->toDomain($article->company),
+                image_url:$article->image_url
+            
             );
 
         })->toArray();

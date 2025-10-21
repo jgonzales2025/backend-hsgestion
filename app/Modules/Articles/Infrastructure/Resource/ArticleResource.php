@@ -1,6 +1,7 @@
 <?php
 namespace App\Modules\Articles\Infrastructure\Resource;
 
+use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ArticleResource extends JsonResource
@@ -23,30 +24,30 @@ class ArticleResource extends JsonResource
                 'id' => $this->getBrand()->getId(),
                 'name' => $this->getBrand()->getName(),
                 'status' => ($this->getBrand()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
-            ] ,
+            ],
             'category' => [
                 'id' => $this->resource->getCategory()->getId(),
                 'name' => $this->resource->getCategory()->getName(),
-                'status' =>($this->resource->getCategory()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
-            ] ,
+                'status' => ($this->resource->getCategory()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+            ],
 
             'currencyType' => [
                 'id' => $this->resource->getCurrencyType()->getId(),
                 'name' => $this->resource->getCurrencyType()->getName(),
             ],
-             'measurementUnit' =>  [
+            'measurementUnit' => [
                 'id' => $this->resource->getMeasurementUnit()->getId(),
                 'name' => $this->resource->getMeasurementUnit()->getName(),
                 'status' => ($this->resource->getMeasurementUnit()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             ],
-               'subCategory' =>  [
+            'subCategory' => [
                 'id' => $this->resource->getSubCategory()->getId(),
                 'name' => $this->resource->getSubCategory()->getName(),
                 'status' => ($this->resource->getSubCategory()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             ],
-    //           'company' =>  [
-    //             'id' => $this->resource->getCompany()->getId(),
-    //   ],
+            //           'company' =>  [
+            //             'id' => $this->resource->getCompany()->getId(),
+            //   ],
 
             // Resto de campos planos
             'location' => $this->getLocation(),
@@ -65,8 +66,14 @@ class ArticleResource extends JsonResource
             'authorized_price_percent' => $this->getAuthorizedPricePercent(),
             'status' => ($this->getStatus()) == 1 ? "Activo" : "Inactivo",
             'precioIGv' => $this->calculatePrecioIGV(),
-           'venta' => $this->getVenta() == true ? 'Activo' : 'Inactivo',
-           'company'=>$this->getCompany()->getId()
+            'venta' => $this->getVenta() == true ? 'Activo' : 'Inactivo',
+   'company' => [
+    'id' => $this->resource->getCompany()->getId(),
+    'status' => ($this->resource->getCompany()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+    'branches' => EloquentBranch::where('cia_id', $this->resource->getCompany()->getId())
+        ->pluck('id'),
+],
+            'image_url' => $this->getImageURL()
         ];
     }
 }

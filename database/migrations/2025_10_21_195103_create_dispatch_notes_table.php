@@ -1,0 +1,62 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('dispatch_notes', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+
+            // Relaciones clave foránea
+            $table->foreignId('cia_id')->constrained('companies')->unique();
+            $table->foreignId('branch_id')->constrained('branches')->unique();
+            $table->string('serie')->unique();
+            $table->unsignedBigInteger('correlativo')->unique();
+            $table->date('date');
+
+            $table->foreignId('emission_reason_id')->constrained('emission_reasons');
+            $table->text('description')->nullable();
+
+            $table->foreignId('destination_branch_id')->constrained('branches');
+            $table->string('destination_address_customer');
+
+            $table->foreignId('transport_id')->constrained('transport_companies');
+            $table->text('observations')->nullable();
+
+            $table->string('num_orden_compra', 20)->nullable();
+
+            // Documento de referencia
+            $table->string('doc_referencia')->nullable();
+            $table->string('num_referencia')->nullable();
+            $table->string('serie_referencia')->nullable();
+            $table->date('date_referencia')->nullable();
+
+            $table->boolean('status')->default(true);
+
+            $table->foreignId('cod_conductor')->constrained('drivers');
+            $table->string('license_plate');
+            $table->decimal('total_weight', 10, 2);
+
+            $table->string('transfer_type');
+            $table->string('vehicle_type');
+
+
+
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('dispatch_notes');
+    }
+};

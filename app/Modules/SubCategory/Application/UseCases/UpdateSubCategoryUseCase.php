@@ -7,12 +7,10 @@ use App\Modules\SubCategory\Domain\Entities\SubCategory;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 
 class UpdateSubCategoryUseCase
-{
-    private subCategoryRepositoryInterface $subCategoryRepository;
+{ 
 
-    public function __construct(subCategoryRepositoryInterface $subCategoryRepository)
-    {
-        $this->subCategoryRepository = $subCategoryRepository;
+    public function __construct(private readonly subCategoryRepositoryInterface $subCategoryRepository)
+    { 
     }
 
     public function execute($id, SubCategoryDTO $subCategoryDTO)

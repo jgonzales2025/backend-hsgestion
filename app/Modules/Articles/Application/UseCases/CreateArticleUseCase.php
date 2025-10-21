@@ -29,10 +29,10 @@ readonly class CreateArticleUseCase
         private readonly ArticleRepositoryInterface $articleRepository,
         private readonly MeasurementUnitRepositoryInterface $measurementUnitRepository,
         private readonly BrandRepositoryInterface $brandRepository,
-         private readonly UserRepositoryInterface $userRepository,
-         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
-         private readonly SubCategoryRepositoryInterface $subCategoryRepository,
-      private readonly CompanyRepositoryInterface $companyRepository,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
+        private readonly SubCategoryRepositoryInterface $subCategoryRepository,
+        private readonly CompanyRepositoryInterface $companyRepository,
     ) {
     }
 
@@ -41,32 +41,32 @@ readonly class CreateArticleUseCase
         $categoryUseCase = new FindByIdCategoryUseCase($this->categoryRepository);
         $categoryType = $categoryUseCase->execute($articleDTO->category_id);
 
-            $userUseCase = new GetUserByIdUseCase( $this->userRepository);
-         $user = $userUseCase->execute($articleDTO->user_id);
+        $userUseCase = new GetUserByIdUseCase($this->userRepository);
+        $user = $userUseCase->execute($articleDTO->user_id);
 
-            $measurementUseCase = new FindByIdMeasurementUnit( $this->measurementUnitRepository);
-         $measurementUseCaseType = $measurementUseCase->execute($articleDTO->measurement_unit_id);
+        $measurementUseCase = new FindByIdMeasurementUnit($this->measurementUnitRepository);
+        $measurementUseCaseType = $measurementUseCase->execute($articleDTO->measurement_unit_id);
 
-            $BrandUseCase = new FindByIdBrandUseCase( $this->brandRepository);
-         $brand = $BrandUseCase->execute($articleDTO->brand_id);
+        $BrandUseCase = new FindByIdBrandUseCase($this->brandRepository);
+        $brand = $BrandUseCase->execute($articleDTO->brand_id);
 
-                 $currencyType = new FindByIdCurrencyTypeUseCase( $this->currencyTypeRepository);
-         $currencyType = $currencyType->execute($articleDTO->currency_type_id);
+        $currencyType = new FindByIdCurrencyTypeUseCase($this->currencyTypeRepository);
+        $currencyType = $currencyType->execute($articleDTO->currency_type_id);
 
-           $subCategoryUseCase = new FindByIdSubCategoryUseCase( $this->subCategoryRepository);
-         $subCategoryType = $subCategoryUseCase->execute($articleDTO->sub_category_id);
-          
-         $CompanyUseCase = new FindByIdCompanyUseCase( $this->companyRepository);
-         $companyType = $CompanyUseCase->execute($articleDTO->company_type_id);
-       
-      
-        $article = new Article( 
-            id:null,
+        $subCategoryUseCase = new FindByIdSubCategoryUseCase($this->subCategoryRepository);
+        $subCategoryType = $subCategoryUseCase->execute($articleDTO->sub_category_id);
+
+        $CompanyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
+        $companyType = $CompanyUseCase->execute($articleDTO->company_type_id);
+
+
+        $article = new Article(
+            id: null,
             cod_fab: $articleDTO->cod_fab,
             description: $articleDTO->description,
             weight: $articleDTO->weight,
             with_deduction: $articleDTO->with_deduction,
-            series_enabled: $articleDTO->series_enabled, 
+            series_enabled: $articleDTO->series_enabled,
             location: $articleDTO->location,
             warranty: $articleDTO->warranty,
             tariff_rate: $articleDTO->tariff_rate,
@@ -81,7 +81,7 @@ readonly class CreateArticleUseCase
             distributor_price_percent: $articleDTO->distributor_price_percent,
             authorized_price_percent: $articleDTO->authorized_price_percent,
             status: $articleDTO->status,
-            
+
             brand: $brand,
             category: $categoryType,
             currencyType: $currencyType,
@@ -89,9 +89,9 @@ readonly class CreateArticleUseCase
             precioIGv: null,
             user: $user,
             venta: $articleDTO->venta ?? false,
-            subCategory:$subCategoryType,
-            company:$companyType,
-            image_url:$articleDTO->image_url
+            subCategory: $subCategoryType,
+            company: $companyType,
+            image_url: $articleDTO->image_url
 
         );
 

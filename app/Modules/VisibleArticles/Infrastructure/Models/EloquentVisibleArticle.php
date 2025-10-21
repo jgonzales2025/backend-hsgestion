@@ -1,6 +1,6 @@
 <?php
 
-namespace  App\Modules\VisibleArticles\Infrastructure\Models;
+namespace App\Modules\VisibleArticles\Infrastructure\Models;
 
 use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
@@ -16,9 +16,9 @@ class EloquentVisibleArticle extends Model
     protected $fillable = ['company_id', 'branch_id', 'article_id', 'user_id', 'status'];
 
     protected $hidden = ['created_at', 'updated_at'];
-   
 
-       public function user(): BelongsTo
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(EloquentUser::class, 'user_id');
     }
@@ -32,7 +32,7 @@ class EloquentVisibleArticle extends Model
     {
         return $this->belongsTo(EloquentCompany::class, 'company_id');
     }
-      public function article(): BelongsTo
+    public function article(): BelongsTo
     {
         return $this->belongsTo(EloquentArticle::class, 'article_id');
     }

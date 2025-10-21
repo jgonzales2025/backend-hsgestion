@@ -16,10 +16,6 @@ class ArticleResource extends JsonResource
             'weight' => $this->getWeight(),
             'with_deduction' => $this->getWithDeduction(),
             'series_enabled' => $this->getSeriesEnabled(),
-
-
-            // 'measurement_unit' => $this->getMeasurementUnitId(),
-
             'brand' => [
                 'id' => $this->getBrand()->getId(),
                 'name' => $this->getBrand()->getName(),
@@ -45,11 +41,6 @@ class ArticleResource extends JsonResource
                 'name' => $this->resource->getSubCategory()->getName(),
                 'status' => ($this->resource->getSubCategory()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             ],
-            //           'company' =>  [
-            //             'id' => $this->resource->getCompany()->getId(),
-            //   ],
-
-            // Resto de campos planos
             'location' => $this->getLocation(),
             'warranty' => $this->getWarranty(),
             'tariff_rate' => $this->getTariffRate(),
@@ -67,12 +58,12 @@ class ArticleResource extends JsonResource
             'status' => ($this->getStatus()) == 1 ? "Activo" : "Inactivo",
             'precioIGv' => $this->calculatePrecioIGV(),
             'venta' => $this->getVenta() == true ? 'Activo' : 'Inactivo',
-   'company' => [
-    'id' => $this->resource->getCompany()->getId(),
-    'status' => ($this->resource->getCompany()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
-    'branches' => EloquentBranch::where('cia_id', $this->resource->getCompany()->getId())
-        ->pluck('id'),
-],
+            'company' => [
+                'id' => $this->resource->getCompany()->getId(),
+                'status' => ($this->resource->getCompany()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+                'branches' => EloquentBranch::where('cia_id', $this->resource->getCompany()->getId())
+                    ->pluck('id'),
+            ],
             'image_url' => $this->getImageURL()
         ];
     }

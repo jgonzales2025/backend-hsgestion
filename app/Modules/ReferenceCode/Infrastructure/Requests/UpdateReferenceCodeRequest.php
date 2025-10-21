@@ -4,20 +4,23 @@ namespace App\Modules\ReferenceCode\Infrastructure\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateReferenceCodeRequest extends FormRequest{
-      public function authorize():bool{
+class UpdateReferenceCodeRequest extends FormRequest
+{
+    public function authorize(): bool
+    {
         return true;
     }
-        protected function prepareForValidation(): void
+    protected function prepareForValidation(): void
     {
-   
+
     }
 
-      public function rules():array{
+    public function rules(): array
+    {
         return [
-            'ref_code'=>'string|max:20',
-             'article_id'=>'required|exists:articles,id',
-            'status'=> 'boolean',
+            'ref_code' => 'string|max:20',
+            'article_id' => 'required|exists:articles,id',
+            'status' => 'boolean',
         ];
     }
 }

@@ -9,7 +9,7 @@ class VisibleArticleDTO
 
     public function __construct(array $data)
     {
-      
+
         $this->status = $data['status'];
 
 

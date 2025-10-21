@@ -251,6 +251,7 @@ class RolePermissionSeeder extends Seeder
             ['role_id' => $admin->id, 'menu_id' => 99],
             ['role_id' => $admin->id, 'menu_id' => 100],
             ['role_id' => $admin->id, 'menu_id' => 101],
+            ['role_id' => $admin->id, 'menu_id' => 102],
         ]);
 
         // Gerente

@@ -42,7 +42,7 @@ class EloquentLoginAttemptRepository implements LoginAttemptRepositoryInterface
             'user_agent' => $loginAttempt->getUserAgent(),
             'failure_reason' => $loginAttempt->getFailureReason(),
             'failed_attempts_count' => $loginAttempt->getFailedAttemptsCount(),
-            'company_id' => $loginAttempt->getCompany()->getId(),
+            'company_id' => $loginAttempt->getCompany()?->getId(),
             'role_id' => $loginAttempt->getRoleId(),
             'attempted_at' => $loginAttempt->getAttemptAt()
         ]);

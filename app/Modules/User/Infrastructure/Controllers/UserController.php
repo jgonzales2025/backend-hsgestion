@@ -9,6 +9,7 @@ use App\Modules\User\Application\DTOs\UserDTO;
 use App\Modules\User\Application\UseCases\CreateUserUseCase;
 use App\Modules\User\Application\UseCases\FindAllUserByVendedor;
 use App\Modules\User\Application\UseCases\FindAllUsersByAlmacen;
+use App\Modules\User\Application\UseCases\FindAllUsersByVendedor;
 use App\Modules\User\Application\UseCases\FindAllUsersUseCase;
 use App\Modules\User\Application\UseCases\FindAllUserUseNameCase;
 use App\Modules\User\Application\UseCases\FindByUserNameUseCase;
@@ -138,17 +139,10 @@ class UserController extends Controller
             'firstname' => $user->getFirstname(),
             'lastname' => $user->getLastname(),
             'status' => $user->getStatus(),
+            'st_login' => $user->getStLogin(),
             'user_roles' => $userRoles,
             'assignments' => $assignments
         ]);
-    }
-
-    public function findAllUserName(): JsonResponse
-    {
-        $userUseCase = new FindAllUserUseNameCase($this->userRepository);
-        $users = $userUseCase->execute();
-
-        return response()->json($users);
     }
 
     public function findAllUsers(): array
@@ -158,7 +152,6 @@ class UserController extends Controller
 
         return UserResource::collection($users)->resolve();
     }
-
 
     public function update(UpdateUserRequest $request, $id): JsonResponse
     {
@@ -263,5 +256,11 @@ class UserController extends Controller
         return response()->json(['message' => 'Estado de login actualizado correctamente'], 200);
     }
 
+    public function findAllUsersByVendedor(): array
+    {
+        $userUseCase = new FindAllUsersByVendedor($this->userRepository);
+        $users = $userUseCase->execute();
 
+        return UserResource::collection($users)->resolve();
+    }
 }

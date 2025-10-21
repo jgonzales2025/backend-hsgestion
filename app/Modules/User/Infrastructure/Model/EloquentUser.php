@@ -67,7 +67,8 @@ class EloquentUser extends Authenticatable implements JWTSubject
             password: null,
             status: $eloquentUser->status,
             roles: null,
-            assignment: null
+            assignment: null,
+            st_login: $eloquentUser->st_login
         );
     }
 

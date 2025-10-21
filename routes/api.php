@@ -78,6 +78,7 @@ Route::get('/users-name/{userName}', [UserController::class, 'FindByUserName']);
 Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::put('/users/status-login/{id}', [UserController::class, 'updateStLogin']);
+Route::get('/users-vendedor', [UserController::class, 'findAllUsersByVendedor']);
 
 // TIPOS DE DOCUMENTOS (DNI, RUC, ETC)
 Route::get('driver-document-types', [CustomerDocumentTypeController::class, 'indexForDrivers']);
@@ -217,7 +218,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::post('/refresh', [AuthController::class, 'refresh']);
+
 
 });
 
+Route::post('/refresh', [AuthController::class, 'refresh']);

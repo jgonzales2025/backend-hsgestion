@@ -65,14 +65,50 @@ class ArticleController extends Controller
   }
   public function update(UpdateArticleRequest $request, int $id): JsonResponse
   {
-    $articleDTO = new ArticleDTO($request->validated());
+    $data = $request->validated();
 
+    //  Buscar el artículo existente
+    $article = $this->articleRepository->findById($id);
+    if (!$article) {
+      return response()->json(['message' => 'Artículo no encontrado'], 404);
+    }
+
+    if ($request->hasFile('image_url')) {
+      $image = $request->file('image_url');
+
+
+      $destinationPath = public_path('image');
+      if (!file_exists($destinationPath)) {
+        mkdir($destinationPath, 0777, true);
+      }
+
+      $filename = time() . '_' . $image->getClientOriginalName();
+
+      $image->move($destinationPath, $filename);
+
+      $publicUrl = asset('image/' . $filename);
+      $data['image_url'] = $publicUrl;
+
+      \Log::info(' Imagen actualizada correctamente en: ' . $publicUrl);
+
+      if (!empty($article->getImageUrl())) {
+        $oldImagePath = str_replace(asset('') . '/', public_path('/'), $article->getImageUrl());
+        if (file_exists($oldImagePath)) {
+          unlink($oldImagePath);
+          \Log::info(' Imagen anterior eliminada: ' . $oldImagePath);
+        }
+      }
+    } else {
+      $data['image_url'] = $article->getImageUrl();
+    }
+
+    $articleDTO = new ArticleDTO($data);
     $articleUseCase = new UpdateArticleUseCase($this->categoryRepository, $this->articleRepository, $this->measurementUnitRepository, $this->brandRepository, $this->userRepository, $this->currencyTypeRepository, $this->subCategoryRepository, $this->companyRepository);
-    $articleUseCase->execute($id, $articleDTO);
+    $articleUseCase->execute($id,$articleDTO);
 
-
-    return response()->json(['message' => 'se actualizo correctamente']);
+    return response()->json(['message' => 'Artículo actualizado correctamente']);
   }
+
   public function store(StoreArticleRequest $request): JsonResponse
   {
     $data = $request->validated();

@@ -40,9 +40,12 @@ class EloquentVisibleArticleRepository implements VisibleArticleRepositoryInterf
     }
 public function mostrar(int $id): array
 {
+    $payload = auth('api')->payload();
+    $companyId = $payload->get('company_id');
 
-    $visibleArticles = EloquentVisibleArticle::where('article_id', $id)->get();
-
+    $visibleArticles = EloquentVisibleArticle::where('article_id', $id)
+        ->where('company_id', $companyId)
+        ->get();
 
     return $visibleArticles->map(function ($visible) {
         return new VisibleArticle(
@@ -54,7 +57,5 @@ public function mostrar(int $id): array
             status: $visible->status
         );
     })->toArray();
-}
-
-
+} 
 }

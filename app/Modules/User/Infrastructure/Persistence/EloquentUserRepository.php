@@ -27,7 +27,8 @@ class EloquentUserRepository implements UserRepositoryInterface
             password: $eloquentUser->password,
             status: $eloquentUser->status,
             roles: null,
-            assignment: null
+            assignment: null,
+            st_login: $eloquentUser->st_login
         );
     }
 
@@ -76,7 +77,8 @@ class EloquentUserRepository implements UserRepositoryInterface
             password: $user->password,
             status: $user->status,
             roles: $user->roles->toArray(),
-            assignment: $assignments
+            assignment: $assignments,
+            st_login: $user->st_login
         );
     }
 
@@ -102,27 +104,6 @@ class EloquentUserRepository implements UserRepositoryInterface
 
         $eloquentUser->update($data);
 
-    }
-
-    public function delete(User $user): void
-    {
-        // TODO: Implement delete() method.
-    }
-
-    public function findAllUserName(): array
-    {
-        $users = EloquentUser::with('roles')->where('status', 1)->get();
-
-        if ($users->isEmpty()) {
-            return [];
-        }
-
-        return $users->map(function ($user) {
-            return [
-                'id' => $user->id,
-                'username' => $user->username
-            ];
-        })->toArray();
     }
 
     public function findAllUsers(): array
@@ -151,7 +132,8 @@ class EloquentUserRepository implements UserRepositoryInterface
                 password: $user->password,
                 status: $user->status,
                 roles: $user->roles->toArray(),
-                assignment: $assignments
+                assignment: $assignments,
+                st_login: $user->st_login
             );
         })->toArray();
     }
@@ -184,12 +166,34 @@ class EloquentUserRepository implements UserRepositoryInterface
             password: $eloquentUser->password,
             status: $eloquentUser->status,
             roles: $eloquentUser->roles->toArray(),
-            assignment: $assignments
+            assignment: $assignments,
+            st_login: $eloquentUser->st_login
         );
     }
 
     public function updateStLogin(int $id, int $stLogin): void
     {
         EloquentUser::where('id', $id)->update(['st_login' => $stLogin]);
+    }
+
+    public function findAllUsersByVendedor(): array
+    {
+        $usersVendedor = EloquentUser::whereHas('roles', function ($query) {
+            $query->where('name', 'Vendedor');
+        })->get();
+
+        return $usersVendedor->map(function ($user) {
+            return new User(
+                id: $user->id,
+                username: $user->username,
+                firstname: $user->firstname,
+                lastname: $user->lastname,
+                password: $user->password,
+                status: $user->status,
+                roles: $user->roles->toArray(),
+                assignment: null,
+                st_login: $user->st_login
+            );
+        })->toArray();
     }
 }

@@ -17,8 +17,11 @@ readonly class CreateLoginAttemptUseCase
 
     public function execute(LoginAttemptDTO $loginAttemptDTO): void
     {
-        $companyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
-        $company = $companyUseCase->execute($loginAttemptDTO->companyId);
+        if ($loginAttemptDTO->companyId != null)
+        {
+            $companyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
+            $company = $companyUseCase->execute($loginAttemptDTO->companyId);
+        }
 
         $loginAttempt = new LoginAttempt(
             id: 0,
@@ -29,7 +32,7 @@ readonly class CreateLoginAttemptUseCase
             userAgent: $loginAttemptDTO->userAgent,
             failureReason: $loginAttemptDTO->failureReason,
             failedAttemptsCount: $loginAttemptDTO->failedAttemptsCount,
-            company: $company,
+            company: $company ?? null,
             roleId: $loginAttemptDTO->roleId,
             roleName: null,
             attemptAt: $loginAttemptDTO->attemptAt

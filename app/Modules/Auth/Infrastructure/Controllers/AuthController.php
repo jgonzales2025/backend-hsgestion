@@ -13,6 +13,9 @@ use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\User\Domain\Entities\User;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -193,7 +196,8 @@ class AuthController extends Controller
             password: $eloquentUser->password,
             status: $eloquentUser->status,
             roles: $roleName,
-            assignment: $assignments
+            assignment: $assignments,
+            st_login: $eloquentUser->st_login
         );
 
         return response()->json([
@@ -210,37 +214,42 @@ class AuthController extends Controller
 
     public function refresh()
     {
-        $eloquentUser = Auth::guard('api')->user();
+        try {
+            // Usar JWTAuth en lugar de Auth::guard('api')
+            $token = JWTAuth::parseToken()->refresh();
 
-        if (!$eloquentUser) {
-            return response()->json(['error' => 'No autenticado'], 401);
+            // Obtener el payload del NUEVO token
+            $payload = JWTAuth::setToken($token)->getPayload();
+            $userId = $payload->get('sub');
+            $cia_id = $payload->get('company_id');
+            $role_id = $payload->get('role_id');
+
+            $eloquentUser = EloquentUser::find($userId);
+
+            if (!$eloquentUser) {
+                return response()->json(['error' => 'Usuario no encontrado'], 401);
+            }
+
+            return $this->buildTokenResponse($token, $eloquentUser, $cia_id, $role_id);
+
+        } catch (TokenExpiredException $e) {
+            return response()->json([
+                'error' => 'El token ha expirado y no puede ser refrescado. Por favor, inicie sesión nuevamente.'
+            ], 401);
+        } catch (TokenInvalidException $e) {
+            return response()->json(['error' => 'Token inválido'], 401);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'No se pudo refrescar el token',
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        $payload = Auth::guard('api')->payload();
-        $cia_id = $payload->get('company_id');
-        $role_id = $payload->get('role_id');
-
-        $customClaims = [
-            'company_id' => $cia_id,
-            'role_id' => $role_id
-        ];
-
-        $token = Auth::guard('api')->claims($customClaims)->refresh();
-
-        return $this->respondWithToken($token, $cia_id);
     }
 
-    protected function respondWithToken($token, $cia_id)
+    protected function buildTokenResponse($token, $eloquentUser, $cia_id, $roleId)
     {
-        $eloquentUser = Auth::guard('api')->user();
-        $eloquentUser->refresh();
         $eloquentUser->load(['roles', 'assignments.company', 'assignments.branch']);
 
-        // Obtener role_id del token JWT
-        $payload = Auth::guard('api')->payload();
-        $roleId = $payload->get('role_id');
-
-        // Obtener el rol seleccionado
         $selectedRole = $eloquentUser->roles->firstWhere('id', $roleId);
         $roleName = $selectedRole?->name;
 
@@ -254,7 +263,7 @@ class AuthController extends Controller
                 ->toArray();
         }
 
-        // Filtrar assignments solo de la compañía con la que inició sesión
+        // Filtrar assignments
         $assignments = $eloquentUser->assignments
             ->where('company_id', $cia_id)
             ->map(function ($assignment) {
@@ -278,26 +287,21 @@ class AuthController extends Controller
             password: $eloquentUser->password,
             status: $eloquentUser->status,
             roles: $roleName,
-            assignment: $assignments
+            assignment: $assignments,
+            st_login: $eloquentUser->st_login,
         );
 
-        // Obtener permisos personalizados del usuario SOLO para el rol actual
+        // Obtener permisos personalizados
         $userMenuPermissions = \DB::table('user_menu_permissions')
             ->where('user_id', $eloquentUser->id)
-            ->where('role_id', $roleId) // ← FILTRAR POR ROL ACTUAL
+            ->where('role_id', $roleId)
             ->get();
 
-        // Determinar qué permisos usar
-        $userMenuIds = [];
-        if ($userMenuPermissions->isEmpty()) {
-            // Si no hay permisos personalizados, usar los del rol
-            $userMenuIds = $roleMenuIds;
-        } else {
-            // Si hay permisos personalizados, usarlos
-            $userMenuIds = $userMenuPermissions->pluck('menu_id')->toArray();
-        }
+        $userMenuIds = $userMenuPermissions->isEmpty()
+            ? $roleMenuIds
+            : $userMenuPermissions->pluck('menu_id')->toArray();
 
-        // Obtener todos los menús con sus padres
+        // Obtener menús
         $allMenus = \App\Models\Menu::whereIn('id', $userMenuIds)
             ->orWhereIn('id', function($query) use ($userMenuIds) {
                 $query->select('parent_id')
@@ -309,7 +313,6 @@ class AuthController extends Controller
             ->orderBy('order')
             ->get();
 
-        // Construir estructura jerárquica
         $parentMenus = $allMenus->whereNull('parent_id')->values();
 
         $formattedMenus = $parentMenus->map(function ($menu) use ($allMenus) {
@@ -346,5 +349,14 @@ class AuthController extends Controller
             'user' => new AuthUserResource($user),
             'menus' => $formattedMenus
         ]);
+    }
+
+    protected function respondWithToken($token, $cia_id)
+    {
+        $eloquentUser = Auth::guard('api')->user();
+        $payload = Auth::guard('api')->payload();
+        $roleId = $payload->get('role_id');
+
+        return $this->buildTokenResponse($token, $eloquentUser, $cia_id, $roleId);
     }
 }

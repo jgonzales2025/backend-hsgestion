@@ -30,4 +30,24 @@ class EloquentDocumentTypeRepository implements DocumentTypeRepositoryInterface
             );
         })->toArray();
     }
+
+    public function findById($id): ?DocumentType
+    {
+        $eloquentDocumentType = EloquentDocumentType::find($id);
+
+        if (!$eloquentDocumentType){
+            return null;
+        }
+
+        return new DocumentType(
+            id: $eloquentDocumentType->id,
+            cod_sunat: $eloquentDocumentType->cod_sunat,
+            description: $eloquentDocumentType->description,
+            abbreviation: $eloquentDocumentType->abbreviation,
+            st_sales: $eloquentDocumentType->st_sales,
+            st_purchases: $eloquentDocumentType->st_purchases,
+            st_collections: $eloquentDocumentType->st_collections,
+            status: $eloquentDocumentType->status
+        );
+    }
 }

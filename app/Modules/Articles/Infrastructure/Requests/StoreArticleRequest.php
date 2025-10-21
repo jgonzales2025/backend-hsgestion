@@ -10,7 +10,7 @@ class StoreArticleRequest extends FormRequest
     {
         return true;
     }
-
+  
     protected function prepareForValidation(): void
     {
         $payload = auth('api')->payload();
@@ -33,6 +33,35 @@ class StoreArticleRequest extends FormRequest
             'distributor_price' => isset($this->distributor_price) ? (float) $this->distributor_price : 0,
             'authorized_price' => isset($this->authorized_price) ? (float) $this->authorized_price : 0,
         ]);
+    }
+  protected function passedValidation(): void
+    {
+        if ($this->hasFile('image_url')) {
+            $image = $this->file('image_url');
+
+            $destinationPath = public_path('image');
+
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0777, true);
+            }
+
+            $filename = time() . '_' . $image->getClientOriginalName();
+
+            $image->move($destinationPath, $filename);
+
+            $publicUrl = asset('image/' . $filename);
+
+            // Sobrescribimos el valor de image_url
+            $this->merge([
+                'image_url' => $publicUrl,
+            ]);
+
+            // Log::info('📸 Imagen guardada correctamente en: ' . $publicUrl);
+        } else {
+            $this->merge([
+                'image_url' => null,
+            ]);
+        }
     }
 
 
@@ -71,6 +100,7 @@ class StoreArticleRequest extends FormRequest
             'public_price_percent' => 'nullable|numeric|min:0',
             'distributor_price_percent' => 'nullable|numeric|min:0',
             'authorized_price_percent' => 'nullable|numeric|min:0',
+            'image_url' => 'nullable|image',
         ];
     }
 }

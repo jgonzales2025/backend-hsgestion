@@ -111,33 +111,33 @@ class ArticleController extends Controller
 
   public function store(StoreArticleRequest $request): JsonResponse
   {
-    $data = $request->validated();
+    // $data = $request->validated();
 
-    if ($request->hasFile('image_url')) {
-      $image = $request->file('image_url');
+    // if ($request->hasFile('image_url')) {
+    //   $image = $request->file('image_url');
 
-      $destinationPath = public_path('image');
+    //   $destinationPath = public_path('image');
 
-      if (!file_exists($destinationPath)) {
-        mkdir($destinationPath, 0777, true);
-      }
+    //   if (!file_exists($destinationPath)) {
+    //     mkdir($destinationPath, 0777, true);
+    //   }
 
-      $filename = time() . '_' . $image->getClientOriginalName();
+    //   $filename = time() . '_' . $image->getClientOriginalName();
 
-      $image->move($destinationPath, $filename);
+    //   $image->move($destinationPath, $filename);
 
-      $publicUrl = asset('image/' . $filename);
+    //   $publicUrl = asset('image/' . $filename);
 
-      $data['image_url'] = $publicUrl;
+    //   $data['image_url'] = $publicUrl;
 
-      \Log::info(' Imagen guardada correctamente en: ' . $publicUrl);
-    } else {
+    //   \Log::info(' Imagen guardada correctamente en: ' . $publicUrl);
+    // } else {
 
-      $data['image_url'] = null;
-    }
+    //   $data['image_url'] = null;
+    // }
 
 
-    $articleDTO = new ArticleDTO($data);
+    $articleDTO = new ArticleDTO($request->validated());
     $articleUseCase = new CreateArticleUseCase($this->categoryRepository, $this->articleRepository, $this->measurementUnitRepository, $this->brandRepository, $this->userRepository, $this->currencyTypeRepository, $this->subCategoryRepository, $this->companyRepository);
     $article = $articleUseCase->execute($articleDTO);
 

@@ -52,6 +52,8 @@ use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface
 use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRepository;
 use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
 use App\Modules\RecordType\Infrastructure\Models\EloquentRecordType;
+use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
+use App\Modules\Serie\Infrastructure\Persistence\EloquentSerieRepository;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\SubCategory\Infrastructure\Persistence\EloquentSubCategoryRepository;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
@@ -108,7 +110,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BrandRepositoryInterface::class, EloquentBrandRepository::class);
         $this->app->bind(CustomerPortfolioRepositoryInterface::class, EloquentCustomerPortfolioRepository::class);
         $this->app->bind(VisibleArticleRepositoryInterface::class, EloquentVisibleArticleRepository::class);
-        $this->app->bind(LoginAttemptRepositoryInterface::class, EloquentLoginAttemptRepository::class);;
+        $this->app->bind(LoginAttemptRepositoryInterface::class, EloquentLoginAttemptRepository::class);
+        $this->app->bind(SerieRepositoryInterface::class, EloquentSerieRepository::class);
     }
 
     /**

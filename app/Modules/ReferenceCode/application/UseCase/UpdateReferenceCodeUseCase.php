@@ -6,20 +6,23 @@ use App\Modules\ReferenceCode\Domain\Entities\ReferenceCode;
 use App\Modules\ReferenceCode\Domain\Interfaces\ReferenceCodeRepositoryInterface;
 use App\Modules\ReferenceCode\Infrastructure\Persistence\EloquentReferenceCodeRepository;
 
-class UpdateReferenceCodeUseCase{
+class UpdateReferenceCodeUseCase
+{
 
-    public function __construct(private readonly ReferenceCodeRepositoryInterface $referenceCodeRepository){}
-
-     public function execute(int $id, ReferenceCodeDTO $referenceCodeDTO): void
+    public function __construct(private readonly ReferenceCodeRepositoryInterface $referenceCodeRepository)
     {
-        
+    }
+
+    public function execute(int $id, ReferenceCodeDTO $referenceCodeDTO): void
+    {
+
         $updatedReferenceCode = new ReferenceCode(
-            id:$id,
-            ref_code:$referenceCodeDTO->ref_code,
-            article_id:$referenceCodeDTO->article_id, 
-            status:$referenceCodeDTO->status
+            id: $id,
+            ref_code: $referenceCodeDTO->ref_code,
+            article_id: $referenceCodeDTO->article_id,
+            status: $referenceCodeDTO->status
         );
 
-         $this->referenceCodeRepository->update($updatedReferenceCode);
+        $this->referenceCodeRepository->update($updatedReferenceCode);
     }
 }

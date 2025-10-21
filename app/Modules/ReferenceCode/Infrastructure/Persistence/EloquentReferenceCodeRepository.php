@@ -44,7 +44,7 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
         return new ReferenceCode(
             id: $referenceCode->id,
             ref_code: $referenceCode->ref_code,
-            article_id: $referenceCode->article_id, 
+            article_id: $referenceCode->article_id,
             status: $referenceCode->status
         );
     }
@@ -65,7 +65,7 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
     }
     public function save(int $id, ReferenceCode $referenceCode): ?ReferenceCode
     {
-  
+
         $eloquentReferenceCode = EloquentReferenceCode::create([
             'ref_code' => $referenceCode->getRefCode(),
             'article_id' => $id,

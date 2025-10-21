@@ -37,7 +37,7 @@ class ReferenceCodeController extends Controller
         $referenceCodeUseCase = new FindAllReferenceCodeUseCase($this->referenceCodeRepository);
         $referenceCode = $referenceCodeUseCase->execute();
 
-        return response()->json(  ReferenceCodeResource::collection($referenceCode)->resolve(),200);
+        return response()->json(ReferenceCodeResource::collection($referenceCode)->resolve(), 200);
 
     }
     public function show(int $id): JsonResponse
@@ -69,14 +69,14 @@ class ReferenceCodeController extends Controller
             200
         );
 
-    } 
+    }
 
     public function store(StoreReferenceCodeRequest $request, $id): JsonResponse
     {
         $filter = new FindByIdArticleUseCase($this->articleRepository);
         $result = $filter->execute($id);
-        if (!$result ) {
-            return response()->json(["message"=>"No existe este articulo"],404);
+        if (!$result) {
+            return response()->json(["message" => "No existe este articulo"], 404);
         }
 
         $referenceCodeDTO = new ReferenceCodeDTO($request->validated());
@@ -92,9 +92,9 @@ class ReferenceCodeController extends Controller
         $referenceCodeDTO = new ReferenceCodeDTO($request->validated());
         $referenceCodeUseCase = new UpdateReferenceCodeUseCase($this->referenceCodeRepository);
         $referenceCodeUseCase->execute($id, $referenceCodeDTO);
-        
+
         if (empty($referenceCodeUseCase)) {
-            return response()->json(["message"=>"No hay datos"],404);
+            return response()->json(["message" => "No hay datos"], 404);
         }
 
         return response()->json(['message' => 'codigo de referencia actualizado']);

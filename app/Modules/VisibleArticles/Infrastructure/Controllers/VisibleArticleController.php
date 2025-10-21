@@ -16,14 +16,11 @@ use Illuminate\Support\Facades\Log;
 
 class VisibleArticleController extends Controller
 {
-    public function __construct(
-        private readonly VisibleArticleRepositoryInterface $visibleArticleRepository,
-
-    ) {
-
+    public function __construct(private readonly VisibleArticleRepositoryInterface $visibleArticleRepository)
+    {
     }
 
-    public function show( $id): JsonResponse
+    public function show($id): JsonResponse
     {
         $visibleArticleUseCase = new FindByVisibleArticleUseCase($this->visibleArticleRepository);
         $visible = $visibleArticleUseCase->execute($id);
@@ -36,15 +33,15 @@ class VisibleArticleController extends Controller
         $visibleDTO = new VisibleArticleDTO($request->validated());
 
         $visibleArticleUseCase = new UpdateVisibleArticleUseCase($this->visibleArticleRepository);
-        $visibleArticleUseCase->execute($id,$visibleDTO);
+        $visibleArticleUseCase->execute($id, $visibleDTO);
 
-        return response()->json(['message'=> 'Estado actualizado correctamente.']);
+        return response()->json(['message' => 'Estado actualizado correctamente.']);
 
     }
-        public function visibleBranch($id): array
+    public function visibleBranch($id): array
     {
         $visibleDTO = $this->visibleArticleRepository->mostrar($id);
 
-    return  VisibleArticleResource::collection($visibleDTO)->resolve();
+        return VisibleArticleResource::collection($visibleDTO)->resolve();
     }
 }

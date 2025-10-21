@@ -14,13 +14,13 @@ class ReferenceCode
         int $id,
         string $ref_code,
         int $article_id,
-        int $status ,
+        int $status,
     ) {
         $this->id = $id;
         $this->ref_code = $ref_code;
         $this->article_id = $article_id;
         $this->status = $status;
-        $this->dateAt = now(); 
+        $this->dateAt = now();
     }
 
     // Getters

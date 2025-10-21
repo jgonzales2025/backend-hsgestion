@@ -104,7 +104,7 @@ class ArticleController extends Controller
 
     $articleDTO = new ArticleDTO($data);
     $articleUseCase = new UpdateArticleUseCase($this->categoryRepository, $this->articleRepository, $this->measurementUnitRepository, $this->brandRepository, $this->userRepository, $this->currencyTypeRepository, $this->subCategoryRepository, $this->companyRepository);
-    $articleUseCase->execute($id,$articleDTO);
+    $articleUseCase->execute($id, $articleDTO);
 
     return response()->json(['message' => 'Artículo actualizado correctamente']);
   }

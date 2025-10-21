@@ -19,9 +19,24 @@ class SubCategory
         $this->status = $status;
     }
 
-    public function getId(): int { return $this->id; }
-    public function getName(): string|null { return $this->name; }
-    public function getCategoryId(): int { return $this->category_id; }
-    public function getCategoryName(): string { return $this->category_name; }
-    public function getStatus(): int { return $this->status; }
+    public function getId(): int
+    {
+        return $this->id;
+    }
+    public function getName(): string|null
+    {
+        return $this->name;
+    }
+    public function getCategoryId(): int
+    {
+        return $this->category_id;
+    }
+    public function getCategoryName(): string
+    {
+        return $this->category_name;
+    }
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
 }

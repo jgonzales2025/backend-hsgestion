@@ -7,11 +7,8 @@ use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 
 class FindByIdSubCategoryUseCase
 {
-    private subCategoryRepositoryInterface $subCategoryRepository;
-
-    public function __construct(subCategoryRepositoryInterface $subCategoryRepository)
-    {
-        $this->subCategoryRepository = $subCategoryRepository;
+    public function __construct(private readonly subCategoryRepositoryInterface $subCategoryRepository)
+    { 
     }
 
     public function execute(int $id): SubCategory

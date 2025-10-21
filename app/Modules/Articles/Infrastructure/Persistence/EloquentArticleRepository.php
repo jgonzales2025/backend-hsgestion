@@ -4,14 +4,14 @@ namespace App\Modules\Articles\Infrastructure\Persistence;
 use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
-use App\Modules\Branch\Infrastructure\Models\EloquentBranch; 
-use App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle; 
+use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
+use App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle;
 class EloquentArticleRepository implements ArticleRepositoryInterface
 {
 
     public function save(Article $article): ?Article
     {
- 
+
         $eloquentArticle = EloquentArticle::create([
             'cod_fab' => $article->getCodFab(),
             'description' => $article->getDescription(),
@@ -90,7 +90,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             venta: (bool) $eloquentArticle->venta,
             subCategory: $eloquentArticle->subCategory->toDomain($eloquentArticle->subCategory),
             company: $eloquentArticle->company->toDomain($eloquentArticle->company),
-            image_url:$eloquentArticle->image_url
+            image_url: $eloquentArticle->image_url
         );
     }
 
@@ -143,8 +143,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 precioIGv: $article->purchase_price + ($article->purchase_price * ($article->tariff_rate / 100)),
                 venta: $article->venta,
                 company: $article->company->toDomain($article->company),
-                image_url:$article->image_url
-            
+                image_url: $article->image_url
+
             );
 
         })->toArray();
@@ -191,7 +191,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             venta: $article->venta,
             subCategory: $article->subCategory->toDomain($article->subCategory) ?? null,
             company: $article->company->toDomain($article->company),
-            image_url:$article->image_url
+            image_url: $article->image_url
         );
     }
 
@@ -232,4 +232,4 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'image_url' => $article->getImageURL()
         ]);
     }
-} 
+}

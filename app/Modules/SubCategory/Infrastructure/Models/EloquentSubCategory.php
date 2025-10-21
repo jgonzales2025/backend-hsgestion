@@ -22,10 +22,10 @@ class EloquentSubCategory extends Model
     {
         return new SubCategory(
             id: $eloquentCategory->id,
-            name:$eloquentCategory->name,
-            category_id:$eloquentCategory->category_id,
-            category_name:$eloquentCategory->category_name,
-            status:$eloquentCategory->status
+            name: $eloquentCategory->name,
+            category_id: $eloquentCategory->category_id,
+            category_name: $eloquentCategory->category_name,
+            status: $eloquentCategory->status
         );
     }
 }

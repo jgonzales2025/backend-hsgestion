@@ -8,18 +8,20 @@ use App\Modules\ReferenceCode\Domain\Interfaces\ReferenceCodeRepositoryInterface
 
 class CreateReferenceCodeUseCase
 {
-    public function __construct(private readonly ReferenceCodeRepositoryInterface $referenceCodeRepository){}
+    public function __construct(private readonly ReferenceCodeRepositoryInterface $referenceCodeRepository)
+    {
+    }
 
-    public function execute($id,ReferenceCodeDTO $referenceCodeDTO)
+    public function execute($id, ReferenceCodeDTO $referenceCodeDTO)
     {
 
         $referenceCodes = new ReferenceCode(
             id: $referenceCodeDTO->id,
             ref_code: $referenceCodeDTO->ref_code,
-            article_id:$id,
+            article_id: $id,
             status: $referenceCodeDTO->status
         );
 
-        return $this->referenceCodeRepository->save($id,$referenceCodes);
+        return $this->referenceCodeRepository->save($id, $referenceCodes);
     }
 }

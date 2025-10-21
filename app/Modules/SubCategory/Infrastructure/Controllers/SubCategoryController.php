@@ -41,7 +41,7 @@ class SubCategoryController extends Controller
 
         return response()->json(
             (new SubCategoryResource($subCategory))->resolve(),
-             201
+            201
         );
     }
 
@@ -52,7 +52,7 @@ class SubCategoryController extends Controller
 
         return response()->json(
             (new SubCategoryResource($subCategory))->resolve(),
-             200
+            200
         );
     }
 
@@ -64,7 +64,7 @@ class SubCategoryController extends Controller
 
         return response()->json(
             (new SubCategoryResource($subCategory))->resolve(),
-               200
+            200
         );
     }
 

@@ -223,3 +223,4 @@ Route::middleware('auth:api')->group(function () {
 });
 
 Route::post('/refresh', [AuthController::class, 'refresh']);
+Route::get('/serie-number/{id}', [\App\Modules\Serie\Infrastructure\Controllers\SerieController::class, 'findByDocumentType']);

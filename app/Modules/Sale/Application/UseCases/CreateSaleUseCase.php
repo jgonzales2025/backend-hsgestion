@@ -26,7 +26,6 @@ readonly class CreateSaleUseCase
         private readonly SaleRepositoryInterface $saleRepository,
         private readonly CompanyRepositoryInterface $companyRepository,
         private readonly UserRepositoryInterface $userRepository,
-        private readonly BranchRepositoryInterface $branchRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
@@ -40,9 +39,6 @@ readonly class CreateSaleUseCase
 
         $userUseCase = new GetUserByIdUseCase($this->userRepository);
         $user = $userUseCase->execute($saleDTO->user_id);
-
-        $branchUseCase = new FindByIdBranchUseCase($this->branchRepository);
-        $branch = $branchUseCase->execute($saleDTO->branch_id);
 
         $currencyTypeUseCase = new FindByIdCurrencyTypeUseCase($this->currencyTypeRepository);
         $currencyType = $currencyTypeUseCase->execute($saleDTO->currency_type_id);
@@ -60,7 +56,7 @@ readonly class CreateSaleUseCase
             id: 0,
             company: $company,
             documentType: $documentType,
-            branch: $branch,
+            serie: $saleDTO->serie,
             document_number: $saleDTO->document_number,
             parallel_rate: $saleDTO->parallel_rate,
             customer: $customer,

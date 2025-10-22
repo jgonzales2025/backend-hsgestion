@@ -6,7 +6,7 @@ class SaleDTO
 {
     public $company_id;
     public $document_type_id;
-    public $branch_id;
+    public $serie;
     public $document_number;
     public $parallel_rate;
     public $customer_id;
@@ -27,7 +27,7 @@ class SaleDTO
     {
         $this->company_id = $data['company_id'];
         $this->document_type_id = $data['document_type_id'];
-        $this->branch_id = $data['branch_id'];
+        $this->serie = $data['serie'];
         $this->document_number = $data['document_number'];
         $this->parallel_rate = $data['parallel_rate'];
         $this->customer_id = $data['customer_id'];

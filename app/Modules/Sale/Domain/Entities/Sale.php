@@ -15,7 +15,7 @@ class Sale
     private int $id;
     private Company $company;
     private DocumentType $documentType;
-    private Branch $branch;
+    private string $serie;
     private int $document_number;
     private float $parallel_rate;
     private Customer $customer;
@@ -36,7 +36,7 @@ class Sale
         int $id,
         Company $company,
         DocumentType $documentType,
-        Branch $branch,
+        string $serie,
         int $document_number,
         float $parallel_rate,
         Customer $customer,
@@ -56,7 +56,7 @@ class Sale
         $this->id = $id;
         $this->company = $company;
         $this->documentType = $documentType;
-        $this->branch = $branch;
+        $this->serie = $serie;
         $this->document_number = $document_number;
         $this->parallel_rate = $parallel_rate;
         $this->customer = $customer;
@@ -77,7 +77,7 @@ class Sale
     public function getId(): int { return $this->id; }
     public function getCompany(): Company { return $this->company; }
     public function getDocumentType(): DocumentType { return $this->documentType; }
-    public function getBranch(): Branch { return $this->branch; }
+    public function getSerie(): string { return $this->serie; }
     public function getDocumentNumber(): int { return $this->document_number; }
     public function getParallelRate(): float { return $this->parallel_rate; }
     public function getCustomer(): Customer { return $this->customer; }

@@ -7,22 +7,27 @@ use App\Modules\Serie\Application\UseCases\FindByDocumentTypeUseCase;
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Serie\Infrastructure\Resources\SerieResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class SerieController extends Controller
 {
     public function __construct(private readonly SerieRepositoryInterface $serieRepository){}
 
-    public function findByDocumentType(int $documentType): array|JsonResponse
+    public function findByDocumentType(Request $request): JsonResponse
     {
-        Log::info('Buscando series por tipo de documento: ' . $documentType);
+        $documentType = $request->query('document_type_id');
+        $branch_id = $request->query('branch_id');
+
         $serieUseCase = new FindByDocumentTypeUseCase($this->serieRepository);
-        $series = $serieUseCase->execute($documentType);
+        $series = $serieUseCase->execute($documentType, $branch_id);
 
         if (!$series) {
             return response()->json(["message" => "No se encontraron series"]);
         }
 
-        return SerieResource::collection($series)->resolve();
+        return response()->json(
+            (new SerieResource($series))->resolve(),
+        );
     }
 }

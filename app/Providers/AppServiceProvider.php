@@ -66,6 +66,8 @@ use App\Modules\Ubigeo\Provinces\Domain\Interfaces\ProvinceRepositoryInterface;
 use App\Modules\Ubigeo\Provinces\Infrastructure\Persistence\EloquentProvinceRepository;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Modules\User\Infrastructure\Persistence\EloquentUserRepository;
+use App\Modules\UserAssignment\Domain\Interfaces\UserAssignmentRepositoryInterface;
+use App\Modules\UserAssignment\Infrastructure\Persistence\EloquentUserAssignmentRepository;
 use App\Modules\VisibleArticles\Domain\Interfaces\VisibleArticleRepositoryInterface;
 use App\Modules\VisibleArticles\Infrastructure\Persistence\EloquentVisibleArticleRepository;
 use Illuminate\Support\ServiceProvider;
@@ -112,6 +114,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(VisibleArticleRepositoryInterface::class, EloquentVisibleArticleRepository::class);
         $this->app->bind(LoginAttemptRepositoryInterface::class, EloquentLoginAttemptRepository::class);
         $this->app->bind(SerieRepositoryInterface::class, EloquentSerieRepository::class);
+        $this->app->bind(UserAssignmentRepositoryInterface::class, EloquentUserAssignmentRepository::class);
     }
 
     /**

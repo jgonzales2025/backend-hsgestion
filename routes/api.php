@@ -213,6 +213,12 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Crear cliente
     Route::post('customers', [CustomerController::class, 'store']);
+
+    // Series
+    Route::get('/serie-number', [\App\Modules\Serie\Infrastructure\Controllers\SerieController::class, 'findByDocumentType']);
+
+    // Ruta para traer las sucursales asignadas a un usuario
+    Route::get('/branches-by-user', [\App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController::class, 'indexBranchesByUser']);
 });
 
 Route::middleware('auth:api')->group(function () {
@@ -223,4 +229,4 @@ Route::middleware('auth:api')->group(function () {
 });
 
 Route::post('/refresh', [AuthController::class, 'refresh']);
-Route::get('/serie-number/{id}', [\App\Modules\Serie\Infrastructure\Controllers\SerieController::class, 'findByDocumentType']);
+

@@ -100,7 +100,7 @@ class StoreArticleRequest extends FormRequest
             'public_price_percent' => 'nullable|numeric|min:0',
             'distributor_price_percent' => 'nullable|numeric|min:0',
             'authorized_price_percent' => 'nullable|numeric|min:0',
-             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
         ];
     }
         public function messages(): array
@@ -108,7 +108,7 @@ class StoreArticleRequest extends FormRequest
         return [
             'image_url.image' => 'El archivo debe ser una imagen',
             'image_url.mimes' => 'La imagen debe ser formato: jpeg, png, jpg, gif o webp',
-            'image_url.max' => 'La imagen no debe superar los 2MB',
+            // 'image_url.max' => 'La imagen no debe superar los 2MB',
         ];
     }
 }

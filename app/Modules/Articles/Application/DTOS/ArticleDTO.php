@@ -1,6 +1,8 @@
 <?php
 namespace App\Modules\Articles\Application\DTOs;
 
+use Illuminate\Http\UploadedFile;
+
 class ArticleDTO
 { 
     public string $cod_fab;
@@ -30,7 +32,7 @@ class ArticleDTO
     public bool $venta;
     public int $sub_category_id;
     public int $company_type_id;
-    public ?string $image_url;
+    public ?UploadedFile $image_url;
 
     public function __construct(array $data)
     {

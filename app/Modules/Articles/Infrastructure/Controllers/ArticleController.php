@@ -10,6 +10,7 @@ use App\Modules\Articles\Application\UseCases\FindByIdArticleUseCase;
 use App\Modules\Articles\Application\UseCases\UpdateArticleUseCase;
 use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
+use App\Modules\Articles\Domain\Interfaces\FileStoragePort;
 use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
 use App\Modules\Articles\Infrastructure\Requests\StoreArticleRequest;
 use App\Modules\Articles\Infrastructure\Requests\UpdateArticleRequest;
@@ -24,7 +25,7 @@ use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Str;
 class ArticleController extends Controller
 {
 
@@ -50,6 +51,7 @@ class ArticleController extends Controller
   }
   public function show(int $id): JsonResponse
   {
+
     $articleUseCase = new FindByIdArticleUseCase($this->articleRepository);
     $article = $articleUseCase->execute($id);
 
@@ -111,33 +113,15 @@ class ArticleController extends Controller
 
   public function store(StoreArticleRequest $request): JsonResponse
   {
-    // $data = $request->validated();
+      $data = $request->validated();
 
-    // if ($request->hasFile('image_url')) {
-    //   $image = $request->file('image_url');
-
-    //   $destinationPath = public_path('image');
-
-    //   if (!file_exists($destinationPath)) {
-    //     mkdir($destinationPath, 0777, true);
-    //   }
-
-    //   $filename = time() . '_' . $image->getClientOriginalName();
-
-    //   $image->move($destinationPath, $filename);
-
-    //   $publicUrl = asset('image/' . $filename);
-
-    //   $data['image_url'] = $publicUrl;
-
-    //   \Log::info(' Imagen guardada correctamente en: ' . $publicUrl);
-    // } else {
-
-    //   $data['image_url'] = null;
-    // }
-
-
-    $articleDTO = new ArticleDTO($request->validated());
+   if ($request->hasFile('image_url') && $request->file('image_url')->isValid()) {
+    $image = $request->file('image_url');
+    $filename = uniqid() . '.' . $image->getClientOriginalExtension();
+    $image->move(public_path('image'), $filename);
+    $data['image_url'] = asset('image/' . $filename);
+}
+    $articleDTO = new ArticleDTO($data);
     $articleUseCase = new CreateArticleUseCase($this->categoryRepository, $this->articleRepository, $this->measurementUnitRepository, $this->brandRepository, $this->userRepository, $this->currencyTypeRepository, $this->subCategoryRepository, $this->companyRepository);
     $article = $articleUseCase->execute($articleDTO);
 

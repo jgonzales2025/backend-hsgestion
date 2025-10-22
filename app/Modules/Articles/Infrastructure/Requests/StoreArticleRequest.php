@@ -88,6 +88,7 @@ class StoreArticleRequest extends FormRequest
             'sub_category_id' => 'required|integer|exists:sub_categories,id',
             'venta' => 'required|boolean',
             'company_type_id' => 'required|integer|exists:companies,id',
+        
 
             // Campos opcionales
             'location' => 'nullable|string|max:80',
@@ -96,11 +97,18 @@ class StoreArticleRequest extends FormRequest
             'igv_applicable' => 'nullable|boolean',
             'plastic_bag_applicable' => 'nullable|boolean',
             'min_stock' => 'nullable|integer|min:0',
-            'cost_to_price_percent' => 'nullable|numeric|min:0',
             'public_price_percent' => 'nullable|numeric|min:0',
             'distributor_price_percent' => 'nullable|numeric|min:0',
             'authorized_price_percent' => 'nullable|numeric|min:0',
-            'image_url' => 'nullable|image',
+             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+        ];
+    }
+        public function messages(): array
+    {
+        return [
+            'image_url.image' => 'El archivo debe ser una imagen',
+            'image_url.mimes' => 'La imagen debe ser formato: jpeg, png, jpg, gif o webp',
+            'image_url.max' => 'La imagen no debe superar los 2MB',
         ];
     }
 }

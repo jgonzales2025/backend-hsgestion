@@ -4,6 +4,7 @@ namespace App\Modules\Articles\Application\UseCases;
 use App\Modules\Articles\Application\DTOs\ArticleDTO;
 use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
+use App\Modules\Articles\Domain\Interfaces\FileStoragePort;
 use App\Modules\Brand\Application\UseCases\FindByIdBrandUseCase;
 use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
 use App\Modules\Category\Application\UseCases\FindByIdCategoryUseCase;
@@ -33,6 +34,7 @@ readonly class CreateArticleUseCase
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private readonly SubCategoryRepositoryInterface $subCategoryRepository,
         private readonly CompanyRepositoryInterface $companyRepository,
+
     ) {
     }
 
@@ -91,7 +93,7 @@ readonly class CreateArticleUseCase
             venta: $articleDTO->venta ?? false,
             subCategory: $subCategoryType,
             company: $companyType,
-            image_url: $articleDTO->image_url
+            image_url:$articleDTO->image_url
 
         );
 

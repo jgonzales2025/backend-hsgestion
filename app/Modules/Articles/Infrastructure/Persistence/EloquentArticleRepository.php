@@ -6,11 +6,13 @@ use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle;
+use Illuminate\Http\UploadedFile;
 class EloquentArticleRepository implements ArticleRepositoryInterface
 {
 
     public function save(Article $article): ?Article
     {
+       
 
         $eloquentArticle = EloquentArticle::create([
             'cod_fab' => $article->getCodFab(),

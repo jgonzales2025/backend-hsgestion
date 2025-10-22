@@ -3,6 +3,7 @@
 namespace App\Modules\Articles\Domain\Interfaces;
 
 use App\Modules\Articles\Domain\Entities\Article;
+use Illuminate\Http\UploadedFile;
 
 interface ArticleRepositoryInterface
 {

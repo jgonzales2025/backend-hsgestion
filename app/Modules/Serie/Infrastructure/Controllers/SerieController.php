@@ -7,6 +7,7 @@ use App\Modules\Serie\Application\UseCases\FindByDocumentTypeUseCase;
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Serie\Infrastructure\Resources\SerieResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class SerieController extends Controller
 {
@@ -14,6 +15,7 @@ class SerieController extends Controller
 
     public function findByDocumentType(int $documentType): array|JsonResponse
     {
+        Log::info('Buscando series por tipo de documento: ' . $documentType);
         $serieUseCase = new FindByDocumentTypeUseCase($this->serieRepository);
         $series = $serieUseCase->execute($documentType);
 

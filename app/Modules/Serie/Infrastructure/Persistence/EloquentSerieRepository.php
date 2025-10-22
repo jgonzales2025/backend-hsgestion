@@ -5,13 +5,17 @@ namespace App\Modules\Serie\Infrastructure\Persistence;
 use App\Modules\Serie\Domain\Entities\Serie;
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Serie\Infrastructure\Models\EloquentSerie;
+use Illuminate\Support\Facades\Log;
 
 class EloquentSerieRepository implements SerieRepositoryInterface
 {
 
     public function findByDocumentType(int $documentType): ?array
     {
-        $eloquentSeries = EloquentSerie::with('company', 'branch', 'elecDocumentType', 'dirDocumentType')->where('elec_document_type_id', $documentType)->get();
+        Log::info('Buscando series por tipo de documento: ' . $documentType);;
+        $eloquentSeries = EloquentSerie::where('elec_document_type_id', $documentType);
+
+        Log::info('Serires encontradas: ' . $eloquentSeries->count());
 
         return $eloquentSeries->map(function ($serie) {
             return new Serie(

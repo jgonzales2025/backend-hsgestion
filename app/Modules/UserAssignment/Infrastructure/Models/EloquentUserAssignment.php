@@ -5,6 +5,7 @@ namespace App\Modules\UserAssignment\Infrastructure\Models;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
+use App\Modules\UserAssignment\Domain\Entities\UserAssignment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 

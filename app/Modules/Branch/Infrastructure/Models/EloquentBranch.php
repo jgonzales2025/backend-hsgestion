@@ -2,6 +2,7 @@
 
 namespace App\Modules\Branch\Infrastructure\Models;
 
+use App\Modules\Branch\Domain\Entities\Branch;
 use App\Modules\BranchPhone\Infrastructure\Model\EloquentBranchPhone;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +26,20 @@ class EloquentBranch extends Model
     public function phones(): HasMany
     {
         return $this->hasMany(EloquentBranchPhone::class, 'branch_id');
+    }
+
+    public function toDomain(EloquentBranch $eloquentBranch): ?Branch
+    {
+        return new Branch(
+            id: $eloquentBranch->id,
+            cia_id: $eloquentBranch->company->id,
+            name: $eloquentBranch->name,
+            address: $eloquentBranch->address,
+            email: $eloquentBranch->email,
+            start_date: $eloquentBranch->start_date,
+            serie: $eloquentBranch->serie,
+            status: $eloquentBranch->status,
+        );
     }
 }
 

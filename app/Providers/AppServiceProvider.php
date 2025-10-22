@@ -40,6 +40,8 @@ use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
 use App\Modules\ExchangeRate\Infrastructure\Persistence\EloquentExchangeRateRepository;
 use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
 use App\Modules\IngressReason\Infrastructure\Persistence\EloquentIngressReasonRepository;
+use App\Modules\LoginAttempt\Domain\Interfaces\LoginAttemptRepositoryInterface;
+use App\Modules\LoginAttempt\Infrastructure\Persistence\EloquentLoginAttemptRepository;
 use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInterface;
 use App\Modules\MeasurementUnit\Infrastructure\Persistence\EloquentMeasurementUnitRepository;
 use App\Modules\Menu\Domain\Interfaces\MenuRepositoryInterface;
@@ -50,6 +52,8 @@ use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface
 use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRepository;
 use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
 use App\Modules\RecordType\Infrastructure\Models\EloquentRecordType;
+use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
+use App\Modules\Serie\Infrastructure\Persistence\EloquentSerieRepository;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\SubCategory\Infrastructure\Persistence\EloquentSubCategoryRepository;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
@@ -62,6 +66,8 @@ use App\Modules\Ubigeo\Provinces\Domain\Interfaces\ProvinceRepositoryInterface;
 use App\Modules\Ubigeo\Provinces\Infrastructure\Persistence\EloquentProvinceRepository;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Modules\User\Infrastructure\Persistence\EloquentUserRepository;
+use App\Modules\UserAssignment\Domain\Interfaces\UserAssignmentRepositoryInterface;
+use App\Modules\UserAssignment\Infrastructure\Persistence\EloquentUserAssignmentRepository;
 use App\Modules\VisibleArticles\Domain\Interfaces\VisibleArticleRepositoryInterface;
 use App\Modules\VisibleArticles\Infrastructure\Persistence\EloquentVisibleArticleRepository;
 use Illuminate\Support\ServiceProvider;
@@ -106,7 +112,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BrandRepositoryInterface::class, EloquentBrandRepository::class);
         $this->app->bind(CustomerPortfolioRepositoryInterface::class, EloquentCustomerPortfolioRepository::class);
         $this->app->bind(VisibleArticleRepositoryInterface::class, EloquentVisibleArticleRepository::class);
-     
+        $this->app->bind(LoginAttemptRepositoryInterface::class, EloquentLoginAttemptRepository::class);
+        $this->app->bind(SerieRepositoryInterface::class, EloquentSerieRepository::class);
+        $this->app->bind(UserAssignmentRepositoryInterface::class, EloquentUserAssignmentRepository::class);
     }
 
     /**

@@ -22,7 +22,7 @@ class EloquentUser extends Authenticatable implements JWTSubject
 
     protected $guard_name = 'api';
 
-    protected $fillable = ['username', 'firstname', 'lastname', 'password', 'status'];
+    protected $fillable = ['username', 'firstname', 'lastname', 'password', 'status', 'st_login', 'failed_attempts'];
 
     protected $hidden = ['password', 'remember_token'];
 
@@ -66,8 +66,9 @@ class EloquentUser extends Authenticatable implements JWTSubject
             lastname: $eloquentUser->lastname,
             password: null,
             status: $eloquentUser->status,
-            role: null,
-            assignments: null
+            roles: null,
+            assignment: null,
+            st_login: $eloquentUser->st_login
         );
     }
 

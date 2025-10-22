@@ -54,8 +54,13 @@ class EloquentCustomerPortfolioRepository implements CustomerPortfolioRepository
         );
     }
 
-    public function update($id, $newId): void
+    public function updateAllCustomersByVendedor($userId, $newId): void
     {
-        EloquentCustomerPortfolio::where('user_id', $id)->update(['user_id' => $newId]);
+        EloquentCustomerPortfolio::where('user_id', $userId)->update(['user_id' => $newId]);
+    }
+
+    public function updateCustomerPortfolio($id, $userId): void
+    {
+        EloquentCustomerPortfolio::find($id)->update(['user_id' => $userId]);
     }
 }

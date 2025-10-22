@@ -5,24 +5,150 @@ namespace App\Modules\Auth\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Auth\Infrastructure\Requests\LoginRequest;
 use App\Modules\Auth\Infrastructure\Resources\AuthUserResource;
+use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
+use App\Modules\LoginAttempt\Application\DTOs\LoginAttemptDTO;
+use App\Modules\LoginAttempt\Application\UseCases\CreateLoginAttemptUseCase;
+use App\Modules\LoginAttempt\Domain\Interfaces\LoginAttemptRepositoryInterface;
 use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\User\Domain\Entities\User;
+use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
+
+    public function __construct(
+        private readonly LoginAttemptRepositoryInterface $loginAttemptRepository,
+        private readonly CompanyRepositoryInterface $companyRepository,
+    ){}
 
     public function login(LoginRequest $request)
     {
         $credentials = $request->only(['username', 'password']);
 
+        $loginAttemptUseCase = new CreateLoginAttemptUseCase($this->loginAttemptRepository, $this->companyRepository);
+
+        // Obtener usuario antes de validar
+        $eloquentUser = EloquentUser::where('username', $request->username)->first();
+
+        // Validar si el usuario existe
+        if (!$eloquentUser) {
+            $loginAttemptDTO = new LoginAttemptDTO([
+                'userName' => $request->username,
+                'successful' => false,
+                'ipAddress' => $request->ip(),
+                'userAgent' => $request->userAgent(),
+                'failureReason' => 'Usuario no existe',
+                'attemptAt' => now()->toDateString()
+            ]);
+            $loginAttemptUseCase->execute($loginAttemptDTO);
+            return response()->json(['error' => 'Usuario no existe'], 401);
+        }
+
+        if ($eloquentUser->st_login == 0)
+        {
+            $loginAttemptDTO = new LoginAttemptDTO([
+                'userName' => $eloquentUser->username,
+                'successful' => false,
+                'ipAddress' => $request->ip(),
+                'userAgent' => $request->userAgent(),
+                'userId' => $eloquentUser->id,
+                'failureReason' => 'Cuenta bloqueada',
+                'failedAttemptsCount' => $eloquentUser->failed_attempts,
+                'attemptAt' => now()->toDateString()
+            ]);
+            $loginAttemptUseCase->execute($loginAttemptDTO);
+            return response()->json(['error' => 'Cantidad de intentos superado, contacte al administrador.'], 401);
+        }
+
+        // Validar credenciales
+        if (!Auth::guard('api')->validate($credentials)) {
+            // Incrementar contador de intentos fallidos
+            $eloquentUser->increment('failed_attempts');
+
+            // Si alcanza 3 intentos, bloquear cuenta
+            if ($eloquentUser->failed_attempts >= 3) {
+                $eloquentUser->update(['st_login' => 0, 'failed_attempts' => 0]);
+
+                $loginAttemptDTO = new LoginAttemptDTO([
+                    'userName' => $eloquentUser->username,
+                    'successful' => false,
+                    'ipAddress' => $request->ip(),
+                    'userAgent' => $request->userAgent(),
+                    'userId' => $eloquentUser->id,
+                    'failureReason' => 'Cuenta bloqueada por intentos excedidos',
+                    'failedAttemptsCount' => 3,
+                    'attemptAt' => now()->toDateString()
+                ]);
+                $loginAttemptUseCase->execute($loginAttemptDTO);
+
+                return response()->json(['error' => 'Cantidad de intentos superado, contacte al administrador.'], 401);
+            }
+
+            $remainingAttempts = 3 - $eloquentUser->failed_attempts;
+
+            $loginAttemptDTO = new LoginAttemptDTO([
+                'userName' => $eloquentUser->username,
+                'successful' => false,
+                'ipAddress' => $request->ip(),
+                'userAgent' => $request->userAgent(),
+                'userId' => $eloquentUser->id,
+                'failureReason' => 'Credenciales inválidas',
+                'failedAttemptsCount' => $eloquentUser->failed_attempts,
+                'attemptAt' => now()->toDateString()
+            ]);
+            $loginAttemptUseCase->execute($loginAttemptDTO);
+
+            return response()->json([
+                'error' => 'Credenciales inválidas',
+                'intentos_restantes' => $remainingAttempts
+            ], 401);
+        }
+
+        // Login exitoso: resetear intentos fallidos
+        $eloquentUser->update(['failed_attempts' => 0]);
+        // Verificar roles del usuario
+        $userRoles = \DB::table('model_has_roles')
+            ->where('model_type', get_class($eloquentUser))
+            ->where('model_id', $eloquentUser->id)
+            ->get();
+
+        // Si tiene más de un rol y no envió role_id, retornar lista de roles
+        if ($userRoles->count() > 1 && !$request->role_id) {
+            return response()->json(['message' => 'El usuario seleccionado tiene multiples roles, debe seleccionar uno para continuar.'], 200);
+        }
+
+        // Validar que el role_id pertenezca al usuario
+        if ($request->role_id) {
+            $hasRole = $userRoles->contains('role_id', $request->role_id);
+            if (!$hasRole) {
+                return response()->json(['error' => 'El rol seleccionado no pertenece al usuario'], 403);
+            }
+        }
+
+        // Generar token con claims personalizados
         $customClaims = [
-            'company_id' => $request->cia_id
+            'company_id' => $request->cia_id,
+            'role_id' => $request->role_id ?? $userRoles->first()->role_id
         ];
 
-        if (! $token = Auth::guard('api')->claims($customClaims)->attempt($credentials)) {
-            return response()->json(['error' => 'Credenciales inválidas'], 401);
-        }
+        $token = Auth::guard('api')->claims($customClaims)->attempt($credentials);
+
+        $loginAttemptDTO = new LoginAttemptDTO([
+            'userName' => $eloquentUser->username,
+            'successful' => true,
+            'ipAddress' => $request->ip(),
+            'userAgent' => $request->userAgent(),
+            'userId' => $eloquentUser->id,
+            'companyId' => $customClaims['company_id'],
+            'roleId' => $customClaims['role_id'],
+            'failedAttemptsCount' => $eloquentUser->failed_attempts,
+            'attemptAt' => now()->toDateString()
+        ]);
+        $loginAttemptUseCase->execute($loginAttemptDTO);
 
         return $this->respondWithToken($token, $request->cia_id);
     }
@@ -37,9 +163,14 @@ class AuthController extends Controller
 
         $eloquentUser->load(['roles', 'assignments.company', 'assignments.branch']);
 
-        // Obtener company_id del token JWT
+        // Obtener company_id y role_id del token JWT
         $payload = Auth::guard('api')->payload();
         $companyId = $payload->get('company_id');
+        $roleId = $payload->get('role_id');
+
+        // Obtener el rol actual con el que inició sesión
+        $selectedRole = $eloquentUser->roles->firstWhere('id', $roleId);
+        $roleName = $selectedRole?->name;
 
         // Filtrar solo la asignación de la compañía con la que inició sesión
         $assignments = $eloquentUser->assignments
@@ -53,7 +184,9 @@ class AuthController extends Controller
                     'branch_name' => $assignment->branch?->name,
                     'status' => ($assignment->status) == 1 ? 'Activo' : 'Inactivo',
                 ];
-            })->toArray();
+            })
+            ->values()
+            ->toArray();
 
         $user = new User(
             id: $eloquentUser->id,
@@ -62,8 +195,9 @@ class AuthController extends Controller
             lastname: $eloquentUser->lastname,
             password: $eloquentUser->password,
             status: $eloquentUser->status,
-            role: $eloquentUser->roles->first()?->name,
-            assignments: $assignments
+            roles: $roleName,
+            assignment: $assignments,
+            st_login: $eloquentUser->st_login
         );
 
         return response()->json([
@@ -80,62 +214,70 @@ class AuthController extends Controller
 
     public function refresh()
     {
-        // Obtener el usuario autenticado
-        $eloquentUser = Auth::guard('api')->user();
+        try {
+            // Usar JWTAuth en lugar de Auth::guard('api')
+            $token = JWTAuth::parseToken()->refresh();
 
-        if (!$eloquentUser) {
-            return response()->json(['error' => 'No autenticado'], 401);
+            // Obtener el payload del NUEVO token
+            $payload = JWTAuth::setToken($token)->getPayload();
+            $userId = $payload->get('sub');
+            $cia_id = $payload->get('company_id');
+            $role_id = $payload->get('role_id');
+
+            $eloquentUser = EloquentUser::find($userId);
+
+            if (!$eloquentUser) {
+                return response()->json(['error' => 'Usuario no encontrado'], 401);
+            }
+
+            return $this->buildTokenResponse($token, $eloquentUser, $cia_id, $role_id);
+
+        } catch (TokenExpiredException $e) {
+            return response()->json([
+                'error' => 'El token ha expirado y no puede ser refrescado. Por favor, inicie sesión nuevamente.'
+            ], 401);
+        } catch (TokenInvalidException $e) {
+            return response()->json(['error' => 'Token inválido'], 401);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'No se pudo refrescar el token',
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        // Obtener company_id del token actual
-        $payload = Auth::guard('api')->payload();
-        $cia_id = $payload->get('company_id');
-
-        // Generar nuevo token con el mismo company_id
-        $customClaims = [
-            'company_id' => $cia_id
-        ];
-
-        // Generar nuevo token
-        $token = Auth::guard('api')->claims($customClaims)->refresh();
-
-        return $this->respondWithToken($token, $cia_id);
     }
 
-    protected function respondWithToken($token, $cia_id)
+    protected function buildTokenResponse($token, $eloquentUser, $cia_id, $roleId)
     {
-        $eloquentUser = Auth::guard('api')->user();
-        $eloquentUser->refresh();
-        $eloquentUser->load(['assignments.company', 'assignments.branch']);
+        $eloquentUser->load(['roles', 'assignments.company', 'assignments.branch']);
 
-        $userRoleId = \DB::table('model_has_roles')
-            ->where('model_type', get_class($eloquentUser))
-            ->where('model_id', $eloquentUser->id)
-            ->value('role_id');
+        $selectedRole = $eloquentUser->roles->firstWhere('id', $roleId);
+        $roleName = $selectedRole?->name;
 
-        $customRole = null;
+        // Obtener permisos del rol base
         $roleMenuIds = [];
-
-        if ($userRoleId) {
-            $customRole = \App\Models\Role::with('menus')->where('id', $userRoleId)->first();
-            $roleName = $customRole?->name;
-            $roleMenuIds = $customRole?->menus->pluck('id')->toArray() ?? [];
-        } else {
-            $roleName = null;
+        if ($selectedRole) {
+            $roleMenuIds = \DB::table('role_has_permissions')
+                ->join('menus', 'role_has_permissions.permission_id', '=', 'menus.id')
+                ->where('role_has_permissions.role_id', $roleId)
+                ->pluck('menus.id')
+                ->toArray();
         }
 
-        $assignments = $eloquentUser->assignments->when($cia_id, function ($query) use ($cia_id) {
-            return $query->where('company_id', $cia_id);
-        })->map(function ($assignment) {
-            return [
-                'id' => $assignment->id,
-                'company_id' => $assignment->company_id,
-                'company_name' => $assignment->company?->company_name,
-                'branch_id' => $assignment->branch_id,
-                'branch_name' => $assignment->branch?->name,
-                'status' => $assignment->status,
-            ];
-        })->toArray();
+        // Filtrar assignments
+        $assignments = $eloquentUser->assignments
+            ->where('company_id', $cia_id)
+            ->map(function ($assignment) {
+                return [
+                    'id' => $assignment->id,
+                    'company_id' => $assignment->company_id,
+                    'company_name' => $assignment->company?->company_name,
+                    'branch_id' => $assignment->branch_id,
+                    'branch_name' => $assignment->branch?->name,
+                    'status' => $assignment->status,
+                ];
+            })
+            ->values()
+            ->toArray();
 
         $user = new User(
             id: $eloquentUser->id,
@@ -144,17 +286,22 @@ class AuthController extends Controller
             lastname: $eloquentUser->lastname,
             password: $eloquentUser->password,
             status: $eloquentUser->status,
-            role: $roleName,
-            assignments: $assignments
+            roles: $roleName,
+            assignment: $assignments,
+            st_login: $eloquentUser->st_login,
         );
 
-        // Obtener IDs de menús del usuario
-        $userMenuIds = \DB::table('user_menu_permissions')
+        // Obtener permisos personalizados
+        $userMenuPermissions = \DB::table('user_menu_permissions')
             ->where('user_id', $eloquentUser->id)
-            ->pluck('menu_id')
-            ->toArray();
+            ->where('role_id', $roleId)
+            ->get();
 
-        // Obtener todos los menús con sus padres si existen
+        $userMenuIds = $userMenuPermissions->isEmpty()
+            ? $roleMenuIds
+            : $userMenuPermissions->pluck('menu_id')->toArray();
+
+        // Obtener menús
         $allMenus = \App\Models\Menu::whereIn('id', $userMenuIds)
             ->orWhereIn('id', function($query) use ($userMenuIds) {
                 $query->select('parent_id')
@@ -166,10 +313,6 @@ class AuthController extends Controller
             ->orderBy('order')
             ->get();
 
-        // Identificar permisos personalizados
-        $customPermissionIds = array_diff($userMenuIds, $roleMenuIds);
-
-        // Construir estructura jerárquica
         $parentMenus = $allMenus->whereNull('parent_id')->values();
 
         $formattedMenus = $parentMenus->map(function ($menu) use ($allMenus) {
@@ -206,5 +349,14 @@ class AuthController extends Controller
             'user' => new AuthUserResource($user),
             'menus' => $formattedMenus
         ]);
+    }
+
+    protected function respondWithToken($token, $cia_id)
+    {
+        $eloquentUser = Auth::guard('api')->user();
+        $payload = Auth::guard('api')->payload();
+        $roleId = $payload->get('role_id');
+
+        return $this->buildTokenResponse($token, $eloquentUser, $cia_id, $roleId);
     }
 }

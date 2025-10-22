@@ -69,4 +69,17 @@ class EloquentUserAssignmentRepository implements UserAssignmentRepositoryInterf
         EloquentUserAssignment::where('user_id', $userId)->delete();
     }
 
+    public function findBranchesByUser(int $userId, int $companyId): array
+    {
+
+        $branches = EloquentUserAssignment::with('branch')->where('company_id', $companyId)->where('user_id', $userId)->get();
+
+        return $branches->map(function ($branch) {
+            return [
+                'branch_id' => $branch->branch_id,
+                'branch_name' => $branch->branch->name,
+            ];
+        })->toArray();
+    }
+
 }

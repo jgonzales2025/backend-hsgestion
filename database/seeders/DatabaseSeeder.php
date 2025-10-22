@@ -28,13 +28,14 @@ class DatabaseSeeder extends Seeder
             CustomerDocumentTypeSeeder::class,
             MenuSeeder::class,
             RolePermissionSeeder::class,
-            UserSeeder::class,
+            //UserSeeder::class,
+            MenuUserPermission::class,
             BrandSeeder::class,
             DriverSeeder::class,
             TransportCompanySeeder::class,
             CategorySeeder::class,
             SubCategorySeeder::class,
-            ArticleSeeder::class, 
+            ArticleSeeder::class,
             ReferenceCodeSeeder::class,
             IngressReasonSeeder::class,
             BankSeeder::class,
@@ -42,6 +43,7 @@ class DatabaseSeeder extends Seeder
             DigitalWalletSeeder::class,
             VisibleArticlesSeeder::class,
             DispatchNotesSeeder::class
+            SerieSeeder::class
         ]);
     }
 }

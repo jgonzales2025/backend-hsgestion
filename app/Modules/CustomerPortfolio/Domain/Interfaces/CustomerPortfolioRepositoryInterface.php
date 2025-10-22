@@ -10,5 +10,7 @@ interface CustomerPortfolioRepositoryInterface
 
     public function save(CustomerPortfolio $customerPortfolio): CustomerPortfolio;
 
-    public function update($id, $newId): void;
+    public function updateAllCustomersByVendedor($id, $newId): void;
+
+    public function updateCustomerPortfolio($id, $userId): void;
 }

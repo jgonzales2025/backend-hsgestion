@@ -20,24 +20,25 @@ class StoreUserRequest extends FormRequest
             'lastname' => 'required|string|max:60',
             'password' => 'required|string|confirmed|min:8',
             'status' => 'required|integer|in:0,1',
-            'role_id' => 'required|integer|exists:roles,id',
 
-            //Assignments
+            // Assignments
             'assignments' => 'required|array|min:1',
             'assignments.*.company_id' => 'required|integer|exists:companies,id',
             'assignments.*.branch_id' => [
                 'nullable',
                 'integer',
                 function ($attribute, $value, $fail) {
-                    // Solo validar exists si NO es 0
                     if ($value != 0 && !DB::table('branches')->where('id', $value)->exists()) {
                         $fail('La sucursal seleccionada no existe.');
                     }
                 }
             ],
 
-            'custom_permissions' => 'nullable|array',
-            'custom_permissions.*.menu_id' => 'required|exists:menus,id'
+            // User Roles - Nueva estructura
+            'user_roles' => 'required|array|min:1',
+            'user_roles.*.role_id' => 'required|integer|exists:roles,id',
+            'user_roles.*.custom_permissions' => 'nullable|array',
+            'user_roles.*.custom_permissions.*' => 'integer|exists:menus,id'
         ];
     }
 
@@ -103,6 +104,10 @@ class StoreUserRequest extends FormRequest
             'assignments.*.company_id.exists' => 'Una o más compañías no existen',
             'assignments.*.branch_id.required' => 'El ID de la sucursal es obligatorio',
             'assignments.*.branch_id.exists' => 'Una o más sucursales no existen',
+            'user_roles.required' => 'Debe asignar al menos un rol',
+            'user_roles.*.role_id.required' => 'El ID del rol es obligatorio',
+            'user_roles.*.role_id.exists' => 'Uno o más roles no existen',
+            'user_roles.*.custom_permissions.*.exists' => 'Uno o más permisos personalizados no existen',
         ];
     }
 

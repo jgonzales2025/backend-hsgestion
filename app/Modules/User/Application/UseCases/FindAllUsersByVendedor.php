@@ -4,14 +4,9 @@ namespace App\Modules\User\Application\UseCases;
 
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 
-class FindAllUserByVendedor
+readonly class FindAllUsersByVendedor
 {
-    private userRepositoryInterface $userRepository;
-
-    public function __construct(UserRepositoryInterface $userRepository)
-    {
-        $this->userRepository = $userRepository;
-    }
+    public function __construct(private readonly UserRepositoryInterface $userRepository){}
 
     public function execute(): array
     {

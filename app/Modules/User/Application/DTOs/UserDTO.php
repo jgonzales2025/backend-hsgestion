@@ -7,7 +7,7 @@ class UserDTO
     public $username;
     public $firstname;
     public $lastname;
-    public $role;
+    public $userRoles;
     public $password;
     public $status;
 
@@ -15,7 +15,7 @@ class UserDTO
         $this->username = $data['username'] ?? null;
         $this->firstname = $data['firstname'];
         $this->lastname = $data['lastname'];
-        $this->role = $data['role_id'];
+        $this->userRoles = $data['user_roles'] ?? [];
         $this->password = $data['password'] ?? null;
         $this->status = $data['status'];
     }

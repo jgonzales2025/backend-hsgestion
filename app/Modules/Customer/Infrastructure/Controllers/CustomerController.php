@@ -36,10 +36,15 @@ use App\Modules\CustomerPhone\Application\UseCases\UpdateCustomerPhonesUseCase;
 use App\Modules\CustomerPhone\Domain\Interfaces\CustomerPhoneRepositoryInterface;
 use App\Modules\CustomerPhone\Infrastructure\Models\EloquentCustomerPhone;
 use App\Modules\CustomerPhone\Infrastructure\Resources\CustomerPhoneResource;
+use App\Modules\CustomerPortfolio\Application\DTOs\CustomerPortfolioDTO;
+use App\Modules\CustomerPortfolio\Application\UseCases\CreateCustomerPortfolioUseCase;
+use App\Modules\CustomerPortfolio\Domain\Interfaces\CustomerPortfolioRepositoryInterface;
 use App\Modules\Ubigeo\Departments\Domain\Interfaces\DepartmentRepositoryInterface;
 use App\Modules\Ubigeo\Districts\Domain\Interfaces\DistrictRepositoryInterface;
 use App\Modules\Ubigeo\Provinces\Domain\Interfaces\ProvinceRepositoryInterface;
+use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
@@ -52,6 +57,8 @@ class CustomerController extends Controller
         private readonly DepartmentRepositoryInterface $departmentRepository,
         private readonly ProvinceRepositoryInterface $provinceRepository,
         private readonly DistrictRepositoryInterface $districtRepository,
+        private readonly CustomerPortfolioRepositoryInterface $customerPortfolioRepository,
+        private readonly UserRepositoryInterface $userRepository,
     ){}
 
     public function index(): array
@@ -65,10 +72,20 @@ class CustomerController extends Controller
     public function store(StoreCustomerRequest $request): JsonResponse
     {
         $validatedData = $request->validated();
+        $role = request()->get('role');
 
         $customerDTO = new CustomerDTO($validatedData);
         $customerUseCase = new CreateCustomerUseCase($this->customerRepository);
         $customer = $customerUseCase->execute($customerDTO);
+
+        if ($role == 'Vendedor')
+        {
+            Log::info('Creando portfolio para el vendedor');
+            $userId = request()->get('user_id');
+            $customerPortfolioDTO = new CustomerPortfolioDTO(['customer_ids' => [$customer->getId()], 'user_id' => $userId]);
+            $customerPortfolioUseCase = new CreateCustomerPortfolioUseCase($this->customerPortfolioRepository, $this->customerRepository, $this->userRepository);
+            $customerPorfolio = $customerPortfolioUseCase->execute($customerPortfolioDTO);
+        }
 
         // Crear los teléfonos con foreach
         $createPhoneUseCase = new CreateCustomerPhoneUseCase($this->customerPhoneRepository);

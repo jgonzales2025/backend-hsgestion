@@ -14,8 +14,7 @@ class UpdateCustomerPortfolioRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => 'required|integer|exists:users,id',
-            'newUserId' => 'required|integer|exists:users,id',
+            'user_id' => 'required|integer|exists:users,id'
         ];
     }
 }

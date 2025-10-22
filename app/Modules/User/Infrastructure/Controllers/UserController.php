@@ -9,13 +9,17 @@ use App\Modules\User\Application\DTOs\UserDTO;
 use App\Modules\User\Application\UseCases\CreateUserUseCase;
 use App\Modules\User\Application\UseCases\FindAllUserByVendedor;
 use App\Modules\User\Application\UseCases\FindAllUsersByAlmacen;
+use App\Modules\User\Application\UseCases\FindAllUsersByVendedor;
 use App\Modules\User\Application\UseCases\FindAllUsersUseCase;
 use App\Modules\User\Application\UseCases\FindAllUserUseNameCase;
+use App\Modules\User\Application\UseCases\FindByUserNameUseCase;
 use App\Modules\User\Application\UseCases\GetUserByIdUseCase;
+use App\Modules\User\Application\UseCases\UpdateUserStLoginUseCase;
 use App\Modules\User\Application\UseCases\UpdateUserUseCase;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
 use App\Modules\User\Infrastructure\Persistence\EloquentUserRepository;
 use App\Modules\User\Infrastructure\Requests\StoreUserRequest;
+use App\Modules\User\Infrastructure\Requests\UpdateStLoginUserRequest;
 use App\Modules\User\Infrastructure\Requests\UpdateUserRequest;
 use App\Modules\User\Infrastructure\Resources\UserResource;
 use App\Modules\UserAssignment\Application\DTOs\UserAssignmentDTO;
@@ -33,33 +37,48 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request): JsonResponse
     {
+        // 1. Crear usuario
         $userDTO = new UserDTO($request->validated());
         $userUseCase = new CreateUserUseCase($this->userRepository);
         $user = $userUseCase->execute($userDTO);
 
         $eloquentUser = EloquentUser::find($user->getId());
-        $eloquentUser->assignRole($request->role_id);
-        $eloquentUser->load('roles.menus');
 
-        if ($request->has('custom_permissions')) {
-            foreach ($request->custom_permissions as $permission) {
-                \App\Models\UserMenuPermission::create([
-                    'user_id' => $user->getId(),
-                    'menu_id' => $permission['menu_id'],
-                ]);
-            }
-        } else {
-            $role = $eloquentUser->roles->first();
-            if ($role && $role->menus) {
-                foreach ($role->menus as $menu) {
+        // 2. Asignar múltiples roles
+        $roleIds = collect($request->user_roles)->pluck('role_id')->toArray();
+        $eloquentUser->syncRoles($roleIds);
+
+        // 3. Procesar permisos por cada rol
+        foreach ($request->user_roles as $userRole) {
+            $roleId = $userRole['role_id'];
+            $customPermissions = $userRole['custom_permissions'] ?? null;
+
+            if ($customPermissions === null) {
+                // Usar permisos del rol por defecto
+                $role = \App\Models\Role::with('menus')->find($roleId);
+                if ($role && $role->menus) {
+                    foreach ($role->menus as $menu) {
+                        UserMenuPermission::create([
+                            'user_id' => $user->getId(),
+                            'role_id' => $roleId,
+                            'menu_id' => $menu->id,
+                        ]);
+                    }
+                }
+            } elseif (is_array($customPermissions) && count($customPermissions) > 0) {
+                // Usar permisos personalizados
+                foreach ($customPermissions as $menuId) {
                     UserMenuPermission::create([
                         'user_id' => $user->getId(),
-                        'menu_id' => $menu->id,
+                        'role_id' => $roleId,
+                        'menu_id' => $menuId,
                     ]);
                 }
             }
+            // Si custom_permissions es [], no se agregan permisos
         }
 
+        // 4. Crear asignaciones
         $assignmentDTO = new UserAssignmentDTO([
             'user_id' => $user->getId(),
             'assignments' => $request->assignments,
@@ -76,8 +95,6 @@ class UserController extends Controller
             'message' => 'Usuario creado exitosamente',
             'user' => new UserResource($userWithRole)
         ], 201);
-
-
     }
 
     public function show($id): array|JsonResponse
@@ -91,23 +108,28 @@ class UserController extends Controller
 
         $eloquentUser = EloquentUser::find($user->getId());
 
-        // Obtener permisos personalizados del usuario
-        $customPermissions = \App\Models\UserMenuPermission::where('user_id', $id)
-            ->pluck('menu_id')
-            ->toArray();
+        // Obtener roles y permisos agrupados
+        $userRoles = $eloquentUser->roles->map(function ($role) use ($id) {
+            $permissions = UserMenuPermission::where('user_id', $id)
+                ->where('role_id', $role->id)
+                ->pluck('menu_id')
+                ->toArray();
 
-        // Obtener el rol del usuario
-        $role = $eloquentUser->roles->first();
+            return [
+                'role_id' => $role->id,
+                'role_name' => $role->name,
+                'custom_permissions' => count($permissions) > 0 ? $permissions : null
+            ];
+        })->toArray();
 
-        // Formatear las asignaciones
-        $assignments = collect($user->getAssignments())->map(function ($assignment) {
+        $assignments = collect($user->getAssignment())->map(function ($assignment) {
             return [
                 'id' => $assignment['id'],
                 'company_id' => $assignment['company_id'],
                 'company_name' => $assignment['company_name'],
                 'branch_id' => $assignment['branch_id'],
                 'branch_name' => $assignment['branch_name'],
-                'status' => $assignment['status'] == 1 ? 'Activo' : 'Inactivo'
+                'status' => $assignment['status']
             ];
         })->toArray();
 
@@ -116,21 +138,11 @@ class UserController extends Controller
             'username' => $user->getUsername(),
             'firstname' => $user->getFirstname(),
             'lastname' => $user->getLastname(),
-            'role_id' => $role ? $role->id : null,
-            'role_name' => $role ? $role->name : null,
-            'status' => $user->getStatus() == 1 ? 'Activo' : 'Inactivo',
-            'has_custom_permissions' => count($customPermissions) > 0,
-            'custom_permissions' => $customPermissions,
+            'status' => $user->getStatus(),
+            'st_login' => $user->getStLogin(),
+            'user_roles' => $userRoles,
             'assignments' => $assignments
         ]);
-    }
-
-    public function findAllUserName(): JsonResponse
-    {
-        $userUseCase = new FindAllUserUseNameCase($this->userRepository);
-        $users = $userUseCase->execute();
-
-        return response()->json($users);
     }
 
     public function findAllUsers(): array
@@ -141,77 +153,63 @@ class UserController extends Controller
         return UserResource::collection($users)->resolve();
     }
 
-    public function findAllUsersByVendedor(): array
-    {
-        $userUseCase = new FindAllUserByVendedor($this->userRepository);
-        $users = $userUseCase->execute();
-
-        return UserResource::collection($users)->resolve();
-    }
-
-    public function findAllUsersByAlmacen(): array
-    {
-        $userUseCase = new FindAllUsersByAlmacen($this->userRepository);
-        $users = $userUseCase->execute();
-
-        return UserResource::collection($users)->resolve();
-    }
-
     public function update(UpdateUserRequest $request, $id): JsonResponse
     {
         try {
+            // 1. Actualizar usuario
             $data = $request->validated();
-
-            // Hashear la contraseña si se envió desde el frontend
             if (!empty($data['password'])) {
                 $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
             } else {
                 unset($data['password']);
             }
 
-            // 1. Actualizar el usuario
             $userDTO = new UserDTO($request->validated());
-
             $updateUserUseCase = new UpdateUserUseCase($this->userRepository);
             $user = $updateUserUseCase->execute($id, $userDTO);
 
             if (!$user) {
-                return response()->json([
-                    'message' => 'Usuario no encontrado'
-                ], 404);
+                return response()->json(['message' => 'Usuario no encontrado'], 404);
             }
 
-            // 2. Actualizar el rol
             $eloquentUser = EloquentUser::find($id);
-            $eloquentUser->syncRoles([$request->role_id]);
+
+            // 2. Sincronizar múltiples roles
+            $roleIds = collect($request->user_roles)->pluck('role_id')->toArray();
+            $eloquentUser->syncRoles($roleIds);
 
             // 3. Limpiar permisos existentes
             UserMenuPermission::where('user_id', $id)->delete();
 
-            // 4. Agregar menús del rol asignado
-            $eloquentUser->load('roles.menus');
-            $role = $eloquentUser->roles->first();
+            // 4. Procesar permisos por cada rol
+            foreach ($request->user_roles as $userRole) {
+                $roleId = $userRole['role_id'];
+                $customPermissions = $userRole['custom_permissions'] ?? null;
 
-            if ($role && $role->menus) {
-                foreach ($role->menus as $menu) {
-                    UserMenuPermission::create([
-                        'user_id' => $id,
-                        'menu_id' => $menu->id,
-                    ]);
+                if ($customPermissions === null) {
+                    // Usar permisos del rol
+                    $role = \App\Models\Role::with('menus')->find($roleId);
+                    if ($role && $role->menus) {
+                        foreach ($role->menus as $menu) {
+                            UserMenuPermission::create([
+                                'user_id' => $id,
+                                'role_id' => $roleId,
+                                'menu_id' => $menu->id,
+                            ]);
+                        }
+                    }
+                } elseif (is_array($customPermissions) && count($customPermissions) > 0) {
+                    foreach ($customPermissions as $menuId) {
+                        UserMenuPermission::create([
+                            'user_id' => $id,
+                            'role_id' => $roleId,
+                            'menu_id' => $menuId,
+                        ]);
+                    }
                 }
             }
 
-            // 5. Agregar permisos personalizados adicionales
-            if ($request->has('custom_permissions')) {
-                foreach ($request->custom_permissions as $permission) {
-                    UserMenuPermission::create([
-                        'user_id' => $id,
-                        'menu_id' => $permission['menu_id'],
-                    ]);
-                }
-            }
-
-            // 6. Actualizar las asignaciones
+            // 5. Actualizar asignaciones
             $assignmentDTO = new UserAssignmentDTO([
                 'user_id' => $id,
                 'assignments' => $request->assignments,
@@ -222,7 +220,6 @@ class UserController extends Controller
             $updateAssignmentUseCase = new UpdateUserAssignmentUseCase($assignmentRepository);
             $updateAssignmentUseCase->execute($assignmentDTO);
 
-            // 7. Obtener el usuario actualizado
             $userUpdated = $this->userRepository->findById($id);
 
             return response()->json([
@@ -238,4 +235,32 @@ class UserController extends Controller
         }
     }
 
+    public function FindByUserName(string $username): JsonResponse
+    {
+        $userUseCase = new FindByUserNameUseCase($this->userRepository);
+        $user = $userUseCase->execute($username);
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        return response()->json(new UserResource($user), 200);
+    }
+
+    public function updateStLogin(UpdateStLoginUserRequest $request, $id): JsonResponse
+    {
+        $validatedData = $request->validated();
+        $userStLoginUseCase = new UpdateUserStLoginUseCase($this->userRepository);
+        $userStLoginUseCase->execute($id, $validatedData['st_login']);
+
+        return response()->json(['message' => 'Estado de login actualizado correctamente'], 200);
+    }
+
+    public function findAllUsersByVendedor(): array
+    {
+        $userUseCase = new FindAllUsersByVendedor($this->userRepository);
+        $users = $userUseCase->execute();
+
+        return UserResource::collection($users)->resolve();
+    }
 }

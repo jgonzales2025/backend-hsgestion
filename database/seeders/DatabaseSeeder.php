@@ -41,7 +41,8 @@ class DatabaseSeeder extends Seeder
             BankSeeder::class,
             EmissionReasonSeeder::class,
             DigitalWalletSeeder::class,
-            VisibleArticlesSeeder::class
+            VisibleArticlesSeeder::class,
+            SerieSeeder::class
         ]);
     }
 }

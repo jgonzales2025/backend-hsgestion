@@ -16,23 +16,4 @@ class EloquentSerie extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function company(): BelongsTo
-    {
-        return $this->belongsTo(EloquentCompany::class, 'company_id');
-    }
-
-    public function branch(): BelongsTo
-    {
-        return $this->belongsTo(EloquentBranch::class, 'branch_id');
-    }
-
-    public function elecDocumentType(): BelongsTo
-    {
-        return $this->belongsTo(EloquentDocumentType::class, 'elec_document_type_id');
-    }
-
-    public function dirDocumentType(): BelongsTo
-    {
-        return $this->belongsTo(EloquentDocumentType::class, 'dir_document_type_id');
-    }
 }

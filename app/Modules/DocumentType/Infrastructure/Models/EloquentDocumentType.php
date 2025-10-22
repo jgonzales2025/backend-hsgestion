@@ -13,7 +13,7 @@ class EloquentDocumentType extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function toDomain(EloquentDocumentType $eloquentDocumentType): DocumentType
+    public function toDomain(EloquentDocumentType $eloquentDocumentType): ?DocumentType
     {
         return new DocumentType(
             id: $eloquentDocumentType->id,

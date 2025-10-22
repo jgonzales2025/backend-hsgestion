@@ -905,6 +905,17 @@ class MenuSeeder extends Seeder
             'type' => 'item',
         ]);
 
+        Menu::create([
+            'name' => 'tablas_intentos_sesion',
+            'label' => 'Intentos de sesión de usuarios',
+            'route' => '/tablas/intentos-sesion',
+            'permission' => 'tablas.intentos_sesion',
+            'parent_id' => $tabla->id,
+            'order' => 19,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
         // ===== MANTENIMIENTO =====
         $mantenimiento = Menu::create([
             'name' => 'mantenimiento',

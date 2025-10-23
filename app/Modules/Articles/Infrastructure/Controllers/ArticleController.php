@@ -65,70 +65,94 @@ class ArticleController extends Controller
     );
 
   }
-  public function update(UpdateArticleRequest $request, int $id): JsonResponse
-  {
+public function update(UpdateArticleRequest $request, int $id): JsonResponse
+{
     $data = $request->validated();
 
-    //  Buscar el artículo existente
+    // 🔍 Buscar el artículo existente
     $article = $this->articleRepository->findById($id);
     if (!$article) {
-      return response()->json(['message' => 'Artículo no encontrado'], 404);
+        return response()->json(['message' => 'Artículo no encontrado'], 404);
     }
 
-    if ($request->hasFile('image_url')) {
-      $image = $request->file('image_url');
+    // 📸 Manejo de imagen con Storage
+    if ($request->hasFile('image_url') && $request->file('image_url')->isValid()) {
+        $image = $request->file('image_url');
 
+        // Guardar nueva imagen en storage/app/public/articles
+        $path = $image->store('articles', 'public');
+        $data['image_url'] = Storage::url($path);
 
-      $destinationPath = public_path('image');
-      if (!file_exists($destinationPath)) {
-        mkdir($destinationPath, 0777, true);
-      }
-
-      $filename = time() . '_' . $image->getClientOriginalName();
-
-      $image->move($destinationPath, $filename);
-
-      $publicUrl = asset('image/' . $filename);
-      $data['image_url'] = $publicUrl;
-
-      \Log::info(' Imagen actualizada correctamente en: ' . $publicUrl);
-
-      if (!empty($article->getImageUrl())) {
-        $oldImagePath = str_replace(asset('') . '/', public_path('/'), $article->getImageUrl());
-        if (file_exists($oldImagePath)) {
-          unlink($oldImagePath);
-          \Log::info(' Imagen anterior eliminada: ' . $oldImagePath);
+        // Eliminar imagen anterior si existía
+        if ($article->getImageURL()) {
+            $oldImagePath = str_replace('/storage', 'public', $article->getImageURL());
+            if (Storage::disk('public')->exists($oldImagePath)) {
+                Storage::disk('public')->delete($oldImagePath);
+            }
         }
-      }
     } else {
-      $data['image_url'] = $article->getImageUrl();
+        // Mantener la URL existente si no se sube nueva imagen
+        $data['image_url'] = $article->getImageURL();
     }
 
+    //  Crear DTO y ejecutar caso de uso
     $articleDTO = new ArticleDTO($data);
-    $articleUseCase = new UpdateArticleUseCase($this->categoryRepository, $this->articleRepository, $this->measurementUnitRepository, $this->brandRepository, $this->userRepository, $this->currencyTypeRepository, $this->subCategoryRepository, $this->companyRepository);
+    $articleUseCase = new UpdateArticleUseCase(
+        $this->categoryRepository,
+        $this->articleRepository,
+        $this->measurementUnitRepository,
+        $this->brandRepository,
+        $this->userRepository,
+        $this->currencyTypeRepository,
+        $this->subCategoryRepository,
+        $this->companyRepository
+    );
+
     $articleUseCase->execute($id, $articleDTO);
 
-    return response()->json(['message' => 'Artículo actualizado correctamente']);
-  }
+    return response()->json(
+         ["message"=>"se guardo"],200
+    );
+}
+
 
   public function store(StoreArticleRequest $request): JsonResponse
-  {
-      $data = $request->validated();
+{
+    $data = $request->validated();
 
-   if ($request->hasFile('image_url') && $request->file('image_url')->isValid()) {
-    $image = $request->file('image_url');
-    $filename = uniqid() . '.' . $image->getClientOriginalExtension();
-    $image->move(public_path('image'), $filename);
-    $data['image_url'] = asset('image/' . $filename);
-}
+    // 📸 Manejo de imagen con Storage
+    if ($request->hasFile('image_url') && $request->file('image_url')->isValid()) {
+        $image = $request->file('image_url');
+
+        // Guarda en storage/app/public/articles
+        $path = $image->store('articles', 'public');
+
+        // Genera la URL pública (ejemplo: /storage/articles/imagen.png)
+        $data['image_url'] = Storage::url($path);
+    } else {
+        $data['image_url'] = null;
+    }
+
+    //  Crear DTO y ejecutar caso de uso
     $articleDTO = new ArticleDTO($data);
-    $articleUseCase = new CreateArticleUseCase($this->categoryRepository, $this->articleRepository, $this->measurementUnitRepository, $this->brandRepository, $this->userRepository, $this->currencyTypeRepository, $this->subCategoryRepository, $this->companyRepository);
+    $articleUseCase = new CreateArticleUseCase(
+        $this->categoryRepository,
+        $this->articleRepository,
+        $this->measurementUnitRepository,
+        $this->brandRepository,
+        $this->userRepository,
+        $this->currencyTypeRepository,
+        $this->subCategoryRepository,
+        $this->companyRepository
+    );
+
     $article = $articleUseCase->execute($articleDTO);
 
+   
     return response()->json(
-      (new ArticleResource($article))->resolve(),
-      201
+        (new ArticleResource($article))->resolve(),
+        201
     );
-  }
+}
 
 }

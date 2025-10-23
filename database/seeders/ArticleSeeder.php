@@ -40,7 +40,7 @@ class ArticleSeeder extends Seeder
                 'venta' => true,
                 'sub_category_id'=>1,
                 'company_type_id'=>1,
-                'image_url' => 'reference_codes/imagen_ejemplo.jpg',
+               
             ]
             ];
       DB::table('articles')->insert($articles);

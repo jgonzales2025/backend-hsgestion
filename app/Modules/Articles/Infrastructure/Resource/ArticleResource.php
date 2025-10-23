@@ -2,6 +2,7 @@
 namespace App\Modules\Articles\Infrastructure\Resource;
 
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
+use App\Modules\ReferenceCode\Infrastructure\Models\EloquentReferenceCode;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ArticleResource extends JsonResource
@@ -64,7 +65,25 @@ class ArticleResource extends JsonResource
                 'branches' => EloquentBranch::where('cia_id', $this->resource->getCompany()->getId())
                     ->pluck('id'),
             ],
-            'image_url' => $this->getImageURL()
+
+          
+                'reference_codes' => EloquentReferenceCode::where('article_id', $this->resource->getId())
+                    ->get(['id', 'ref_code', 'status', 'date_at'])
+                    ->map(function ($code) {
+                        return [
+                            'id' => $code->id,
+                            'ref_code' => $code->ref_code,
+                            'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
+                            'date_at' => $code->date_at,
+                        ];
+                    })
+                    ->toArray(),
+
+           
+
+            'image_url' => $this->resource->getImageURL()
+                ? url($this->resource->getImageURL())
+                : '',
         ];
     }
 }

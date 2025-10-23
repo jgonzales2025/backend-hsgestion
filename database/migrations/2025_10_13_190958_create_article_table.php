@@ -20,19 +20,20 @@ return new class extends Migration
             $table->unsignedBigInteger('measurement_unit_id');
             $table->unsignedBigInteger('brand_id');
             $table->unsignedBigInteger('category_id');
-
+            
             $table->string('location')->nullable();
             $table->string('warranty')->nullable();
             $table->decimal('tariff_rate', 8, 2)->default(0);
             $table->boolean('igv_applicable')->default(true);
             $table->boolean('plastic_bag_applicable')->default(false);
             $table->unsignedBigInteger('sub_category_id');
-
+            
             $table->integer('min_stock')->default(0);
             $table->unsignedBigInteger('currency_type_id');
             $table->unsignedBigInteger('company_type_id');
-              $table->string('image_url')->nullable(); 
+            $table->string('image_url')->nullable(); 
             
+ 
 
           $table->decimal('purchase_price', 10, 2)->default(0);
             $table->decimal('public_price', 10, 2)->default(0);
@@ -50,6 +51,7 @@ return new class extends Migration
             $table->timestamps();
 
             //  Si existen las tablas relacionadas, puedes agregar las FK:
+          
             $table->foreign('measurement_unit_id')->references('id')->on('measurement_units');
             $table->foreign('brand_id')->references('id')->on('brands');
             $table->foreign('category_id')->references('id')->on('categories');
@@ -57,6 +59,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamp('date_at')->default(DB::raw('CURRENT_TIMESTAMP'))->change();
             $table->foreign('company_type_id')->references('id')->on('companies');
+
          
         });
     }

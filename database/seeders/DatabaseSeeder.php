@@ -36,12 +36,13 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             SubCategorySeeder::class,
             ArticleSeeder::class,
-            ReferenceCodeSeeder::class,
+            ReferenceCodeSeeder::class, 
             IngressReasonSeeder::class,
             BankSeeder::class,
             EmissionReasonSeeder::class,
             DigitalWalletSeeder::class,
             VisibleArticlesSeeder::class,
+            DispatchNotesSeeder::class,
             //DispatchNotesSeeder::class,
             SerieSeeder::class
         ]);

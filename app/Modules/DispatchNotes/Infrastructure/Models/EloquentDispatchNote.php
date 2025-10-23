@@ -6,8 +6,10 @@ use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\Category\Infrastructure\Models\EloquentCategory;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use App\Modules\Driver\Infrastructure\Models\EloquentDriver;
+use App\Modules\EmissionReason\Infrastructure\Models\EloquentEmissionReason;
 use App\Modules\MeasurementUnit\Infrastructure\Models\EloquentMeasurementUnit;
 use App\Modules\SubCategory\Infrastructure\Models\EloquentSubCategory;
+use App\Modules\TransportCompany\Infrastructure\Models\EloquentTransportCompany;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -55,12 +57,17 @@ class EloquentDispatchNote extends Model{
     {
         return $this->belongsTo(EloquentCompany::class, 'cia_id');
     }
-    public function driver():BelongsTo
+    public function conductor():BelongsTo
     {
         return $this->belongsTo(EloquentDriver::class,'cod_conductor');
     }
         public function transport():BelongsTo
     {
-        return $this->belongsTo(EloquentDriver::class,'transport_id');
+        return $this->belongsTo(EloquentTransportCompany::class,'transport_id');
     }
+           public function emission_reason():BelongsTo
+    {
+        return $this->belongsTo(EloquentEmissionReason::class,'emission_reason_id');
+    }
+    
 }

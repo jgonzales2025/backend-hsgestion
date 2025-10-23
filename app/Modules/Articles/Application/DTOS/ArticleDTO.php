@@ -32,7 +32,7 @@ class ArticleDTO
     public bool $venta;
     public int $sub_category_id;
     public int $company_type_id;
-    public ?UploadedFile $image_url;
+    public string $image_url;
 
     public function __construct(array $data)
     {
@@ -44,8 +44,8 @@ class ArticleDTO
         $this->measurement_unit_id = (int)($data['measurement_unit_id'] ?? 0);
         $this->brand_id = (int)($data['brand_id'] ?? 0);
         $this->category_id = (int)($data['category_id'] ?? 0);
-        $this->location = $data['location'] ?? null;
-        $this->warranty = $data['warranty'] ?? null;
+        $this->location = $data['location'] ?? '';
+        $this->warranty = $data['warranty'] ?? '';
         $this->tariff_rate = isset($data['tariff_rate']) ? (float)$data['tariff_rate'] : 0;
         $this->igv_applicable = isset($data['igv_applicable']) ? filter_var($data['igv_applicable'], FILTER_VALIDATE_BOOLEAN) : false;
         $this->plastic_bag_applicable = isset($data['plastic_bag_applicable']) ? filter_var($data['plastic_bag_applicable'], FILTER_VALIDATE_BOOLEAN) : false;

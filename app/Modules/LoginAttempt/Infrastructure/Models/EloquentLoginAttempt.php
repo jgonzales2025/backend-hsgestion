@@ -20,8 +20,7 @@ class EloquentLoginAttempt extends Model
         'failure_reason',
         'failed_attempts_count',
         'company_id',
-        'role_id',
-        'attempted_at'
+        'role_id'
     ];
 
     protected $casts = [

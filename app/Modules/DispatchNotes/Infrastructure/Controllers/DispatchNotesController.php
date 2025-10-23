@@ -8,20 +8,18 @@ use App\Modules\DispatchNotes\Application\UseCases\FindAllDispatchNotesUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Resource\DispatchNoteResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\JsonResource;
-
+ 
 class DispatchNotesController extends Controller{
     public function __construct(private readonly DispatchNotesRepositoryInterface $dispatchNotesRepositoryInterface){}
 
-    public function index():JsonResponse{
-        $dispatchNoteUseCase =new FindAllDispatchNotesUseCase($this->dispatchNotesRepositoryInterface);
-        $dispatchNote = $dispatchNoteUseCase->execute();
+  public function index(): array
+{
+    $dispatchNoteUseCase = new FindAllDispatchNotesUseCase($this->dispatchNotesRepositoryInterface);
+    $dispatchNotes = $dispatchNoteUseCase->execute();
+     \Log::info('info',$dispatchNotes);
 
-        return response()->json(
-            DispatchNoteResource::collection($dispatchNote)->resolve(),200
-
-        );
-    }
+  return DispatchNoteResource::collection($dispatchNotes)->resolve();
+}
     public function show(){
 
     }

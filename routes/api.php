@@ -17,6 +17,7 @@ use App\Modules\CustomerPhone\Infrastructure\Controllers\CustomerPhoneController
 use App\Modules\CustomerPortfolio\Infrastructure\Controllers\CustomerPortfolioController;
 use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
 use App\Modules\DigitalWallet\Infrastructure\Controllers\DigitalWalletController;
+use App\Modules\DispatchNotes\Infrastructure\Controllers\DispatchNotesController;
 use App\Modules\Driver\Infrastructure\Controllers\DriverController;
 use App\Modules\EmissionReason\Infrastructure\Controllers\EmissionReasonController;
 use App\Modules\ExchangeRate\Infrastructure\Controllers\ExchangeRateController;
@@ -165,7 +166,7 @@ Route::get('currency-type',[CurrencyTypeController::class,'index']);
 Route::get('articles',[ArticleController::class,'index']);
 Route::post('articles-save',[ArticleController::class,'store']);
 Route::get('articles/{id}',[ArticleController::class,'show']);
-Route::put('articles/{id}',[ArticleController::class,'update']);
+Route::post('articlesupdate/{id}',[ArticleController::class,'update']);
 
 // Exchange Rates - Tipo de cambio
 Route::get('exchange-rates', [ExchangeRateController::class, 'index']);
@@ -200,6 +201,9 @@ Route::put('digital-wallets/{id}', [DigitalWalletController::class, 'update']);
 Route::post('customer-portfolios', [CustomerPortfolioController::class, 'store']);
 Route::put('customer-portfolios', [CustomerPortfolioController::class, 'updateAllCustomersByVendedor']);
 Route::put('customer-portfolios/{id}', [CustomerPortfolioController::class, 'update']);
+
+//dispatch Notes
+Route::get('dispatchNote', [DispatchNotesController::class, 'index']);
 
 // Logs de sesion
 Route::get('logs-login', [LoginAttemptController::class, 'index']);

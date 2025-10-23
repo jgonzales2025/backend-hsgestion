@@ -15,8 +15,8 @@ return new class extends Migration {
             $table->timestamps();
 
             // Relaciones clave foránea
-            $table->foreignId('cia_id')->constrained('companies')->unique();
-            $table->foreignId('branch_id')->constrained('branches')->unique();
+            $table->foreignId('cia_id')->constrained('companies');
+            $table->foreignId('branch_id')->constrained('branches');
             $table->string('serie')->unique();
             $table->unsignedBigInteger('correlativo')->unique();
             $table->date('date');
@@ -28,6 +28,7 @@ return new class extends Migration {
             $table->string('destination_address_customer');
 
             $table->foreignId('transport_id')->constrained('transport_companies');
+            // $table->foreignId('document_types_id')->constrained('document_types');
             $table->text('observations')->nullable();
 
             $table->string('num_orden_compra', 20)->nullable();

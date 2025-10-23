@@ -53,7 +53,7 @@ class Article
         float $weight,
         bool $with_deduction,
         bool $series_enabled,
-        string $location,
+        ?string $location,
         string $warranty,
         float $tariff_rate,
         bool $igv_applicable,
@@ -241,7 +241,7 @@ class Article
     }
     public function getImageURL(): string
     {
-        return $this->image_url;
+        return $this->image_url ?? '';
     }
 
 }

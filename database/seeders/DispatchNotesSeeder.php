@@ -24,7 +24,7 @@ class DispatchNotesSeeder extends Seeder
                 'description' => 'Traslado de equipos electrónicos',
                 'destination_branch_id' => 2, // id de sucursal destino
                 'destination_address_customer' => 'Av. Los Olivos 456, Lima',
-                'transport_company_id' => 1,
+                'transport_id' => 1, // 🔹 nombre corregido según la migración
                 'observations' => 'Entregar antes de las 6 PM',
                 'num_orden_compra' => 'OC-2025-001',
                 'doc_referencia' => 'FA001-000456',
@@ -32,7 +32,7 @@ class DispatchNotesSeeder extends Seeder
                 'serie_referencia' => 'FA001',
                 'date_referencia' => Carbon::now()->subDays(2),
                 'status' => true,
-                'driver_id' => 1,
+                'cod_conductor' => 1, // 🔹 nombre corregido según la migración
                 'license_plate' => 'ABC-123',
                 'total_weight' => 125.75,
                 'transfer_type' => 'VENTA',
@@ -43,14 +43,14 @@ class DispatchNotesSeeder extends Seeder
             [
                 'cia_id' => 1,
                 'branch_id' => 1,
-                'serie' => 'T001',
+                'serie' => 'T002',
                 'correlativo' => 1002,
                 'date' => Carbon::now(),
-                'emission_reason_id' => 2,
+                'emission_reason_id' => 1,
                 'description' => 'Traslado de mobiliario',
-                'destination_branch_id' => 3,
+                'destination_branch_id' => 1,
                 'destination_address_customer' => 'Jr. San Martín 234, Arequipa',
-                'transport_company_id' => 2,
+                'transport_id' => 1, // 🔹 corregido
                 'observations' => 'Revisar embalaje al recibir',
                 'num_orden_compra' => 'OC-2025-002',
                 'doc_referencia' => 'FA001-000457',
@@ -58,7 +58,7 @@ class DispatchNotesSeeder extends Seeder
                 'serie_referencia' => 'FA001',
                 'date_referencia' => Carbon::now()->subDays(1),
                 'status' => true,
-                'driver_id' => 2,
+                'cod_conductor' => 1, // 🔹 corregido
                 'license_plate' => 'XYZ-987',
                 'total_weight' => 245.40,
                 'transfer_type' => 'ALMACÉN',

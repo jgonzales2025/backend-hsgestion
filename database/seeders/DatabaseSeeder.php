@@ -43,6 +43,7 @@ class DatabaseSeeder extends Seeder
             DigitalWalletSeeder::class,
             VisibleArticlesSeeder::class,
             DispatchNotesSeeder::class,
+            //DispatchNotesSeeder::class,
             SerieSeeder::class
         ]);
     }

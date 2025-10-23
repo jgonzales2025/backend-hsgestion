@@ -26,7 +26,6 @@ readonly class CreateSaleUseCase
         private readonly SaleRepositoryInterface $saleRepository,
         private readonly CompanyRepositoryInterface $companyRepository,
         private readonly UserRepositoryInterface $userRepository,
-        private readonly BranchRepositoryInterface $branchRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
@@ -41,8 +40,8 @@ readonly class CreateSaleUseCase
         $userUseCase = new GetUserByIdUseCase($this->userRepository);
         $user = $userUseCase->execute($saleDTO->user_id);
 
-        $branchUseCase = new FindByIdBranchUseCase($this->branchRepository);
-        $branch = $branchUseCase->execute($saleDTO->branch_id);
+        $userSaleUseCase = new GetUserByIdUseCase($this->userRepository);
+        $userSale = $userSaleUseCase->execute($saleDTO->user_sale_id);
 
         $currencyTypeUseCase = new FindByIdCurrencyTypeUseCase($this->currencyTypeRepository);
         $currencyType = $currencyTypeUseCase->execute($saleDTO->currency_type_id);
@@ -60,7 +59,7 @@ readonly class CreateSaleUseCase
             id: 0,
             company: $company,
             documentType: $documentType,
-            branch: $branch,
+            serie: $saleDTO->serie,
             document_number: $saleDTO->document_number,
             parallel_rate: $saleDTO->parallel_rate,
             customer: $customer,
@@ -68,14 +67,20 @@ readonly class CreateSaleUseCase
             due_date: $saleDTO->due_date,
             days: $saleDTO->days,
             user: $user,
+            user_sale: $userSale,
             paymentType: $paymentType,
             observations: $saleDTO->observations,
             currencyType: $currencyType,
             subtotal: $saleDTO->subtotal,
+            inafecto: $saleDTO->inafecto,
             igv: $saleDTO->igv,
             total: $saleDTO->total,
-            status: $saleDTO->status,
-            is_locked: $saleDTO->is_locked,
+            status: null,
+            payment_status: null,
+            is_locked: null,
+            serie_prof: $saleDTO->serie_prof,
+            correlative_prof: $saleDTO->correlative_prof,
+            purchase_order: $saleDTO->purchase_order
         );
 
         return $this->saleRepository->save($sale);

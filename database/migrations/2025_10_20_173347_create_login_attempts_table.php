@@ -22,7 +22,6 @@ return new class extends Migration
             $table->unsignedInteger('failed_attempts_count')->nullable();
             $table->unsignedBigInteger('company_id')->nullable();
             $table->unsignedBigInteger('role_id')->nullable();
-            $table->timestamp('attempted_at');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

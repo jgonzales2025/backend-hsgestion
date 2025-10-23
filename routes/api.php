@@ -219,6 +219,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Ruta para traer las sucursales asignadas a un usuario
     Route::get('/branches-by-user', [\App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController::class, 'indexBranchesByUser']);
+
+    // Ruta para ventas
+    Route::get('/sales', [\App\Modules\Sale\Infrastructure\Controllers\SaleController::class, 'index']);
+    Route::post('/sales', [\App\Modules\Sale\Infrastructure\Controllers\SaleController::class, 'store']);
 });
 
 Route::middleware('auth:api')->group(function () {

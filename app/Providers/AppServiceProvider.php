@@ -48,10 +48,15 @@ use App\Modules\Menu\Domain\Interfaces\MenuRepositoryInterface;
 use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\Menu\Infrastructure\Persistence\EloquentMenuRepository;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
+use App\Modules\PaymentType\Infrastructure\Persistence\EloquentPaymentTypeRepository;
 use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface;
 use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRepository;
 use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
 use App\Modules\RecordType\Infrastructure\Models\EloquentRecordType;
+use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
+use App\Modules\Sale\Infrastructure\Persistence\EloquentSaleRepository;
+use App\Modules\SaleArticle\Domain\Interfaces\SaleArticleRepositoryInterface;
+use App\Modules\SaleArticle\Infrastructure\Persistence\EloquentSaleArticleRepository;
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Serie\Infrastructure\Persistence\EloquentSerieRepository;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
@@ -115,6 +120,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LoginAttemptRepositoryInterface::class, EloquentLoginAttemptRepository::class);
         $this->app->bind(SerieRepositoryInterface::class, EloquentSerieRepository::class);
         $this->app->bind(UserAssignmentRepositoryInterface::class, EloquentUserAssignmentRepository::class);
+        $this->app->bind(SaleRepositoryInterface::class, EloquentSaleRepository::class);
+        $this->app->bind(PaymentTypeRepositoryInterface::class, EloquentPaymentTypeRepository::class);
+        $this->app->bind(SaleArticleRepositoryInterface::class, EloquentSaleArticleRepository::class);
     }
 
     /**

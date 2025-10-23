@@ -7,9 +7,11 @@ use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\DocumentType\Infrastructure\Models\EloquentDocumentType;
 use App\Modules\PaymentType\Infrastructure\Models\EloquentPaymentType;
+use App\Modules\SaleArticle\Infrastructure\Models\EloquentSaleArticle;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EloquentSale extends Model
 {
@@ -26,17 +28,32 @@ class EloquentSale extends Model
         'due_date',
         'days',
         'user_id',
+        'user_sale_id',
         'payment_type_id',
         'observations',
         'currency_type_id',
         'subtotal',
+        'inafecto',
         'igv',
         'total',
+        'saldo',
         'status',
+        'payment_status',
         'is_locked'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($sale) {
+            if (is_null($sale->saldo)) {
+                $sale->saldo = $sale->total;
+            }
+        });
+    }
 
     public function company(): BelongsTo
     {
@@ -46,6 +63,11 @@ class EloquentSale extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(EloquentUser::class, 'user_id');
+    }
+
+    public function userSale(): BelongsTo
+    {
+        return $this->belongsTo(EloquentUser::class, 'user_sale_id');
     }
 
     public function paymentType(): BelongsTo
@@ -66,5 +88,10 @@ class EloquentSale extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(EloquentCustomer::class, 'customer_id');
+    }
+
+    public function saleArticles(): HasMany
+    {
+        return $this->hasMany(EloquentSaleArticle::class, 'sale_id');
     }
 }

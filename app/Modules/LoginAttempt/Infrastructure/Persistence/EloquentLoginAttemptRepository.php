@@ -27,7 +27,7 @@ class EloquentLoginAttemptRepository implements LoginAttemptRepositoryInterface
                 company: $loginAttempt->company?->toDomain($loginAttempt->company),
                 roleId: $loginAttempt->role_id,
                 roleName: $roleName?->name,
-                attemptAt: $loginAttempt->attempted_at,
+                attemptAt: $loginAttempt->created_at,
             );
         })->toArray();
     }
@@ -43,8 +43,7 @@ class EloquentLoginAttemptRepository implements LoginAttemptRepositoryInterface
             'failure_reason' => $loginAttempt->getFailureReason(),
             'failed_attempts_count' => $loginAttempt->getFailedAttemptsCount(),
             'company_id' => $loginAttempt->getCompany()?->getId(),
-            'role_id' => $loginAttempt->getRoleId(),
-            'attempted_at' => $loginAttempt->getAttemptAt()
+            'role_id' => $loginAttempt->getRoleId()
         ]);
     }
 }

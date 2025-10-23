@@ -14,14 +14,19 @@ class SaleDTO
     public $due_date;
     public $days;
     public $user_id;
+    public $user_sale_id;
     public $payment_type_id;
     public ?string $observations;
     public $currency_type_id;
     public $subtotal;
+    public $inafecto;
     public $igv;
     public $total;
     public ?int $status;
     public ?bool $is_locked;
+    public ?string $serie_prof;
+    public ?string $correlative_prof;
+    public ?string $purchase_order;
 
     public function __construct(array $data)
     {
@@ -35,13 +40,18 @@ class SaleDTO
         $this->due_date = $data['due_date'];
         $this->days = $data['days'];
         $this->user_id = $data['user_id'];
+        $this->user_sale_id = $data['user_sale_id'];
         $this->payment_type_id = $data['payment_type_id'];
         $this->observations = $data['observations'] ?? null;
         $this->currency_type_id = $data['currency_type_id'];
         $this->subtotal = $data['subtotal'];
+        $this->inafecto = $data['inafecto'];
         $this->igv = $data['igv'];
         $this->total = $data['total'];
         $this->status = $data['status'] ?? null;
         $this->is_locked = $data['is_locked'] ?? null;
+        $this->serie_prof = $data['serie_prof'] ?? null;
+        $this->correlative_prof = $data['correlative_prof'] ?? null;
+        $this->purchase_order = $data['purchase_order'] ?? null;
     }
 }

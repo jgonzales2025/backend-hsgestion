@@ -12,6 +12,8 @@ use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
 use App\Modules\Brand\Infrastructure\Persistence\EloquentBrandRepository;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
 use App\Modules\Category\Infrastructure\Persistence\EloquentCategoryRepository;
+use App\Modules\Collections\Domain\Interfaces\CollectionRepositoryInterface;
+use App\Modules\Collections\Infrastructure\Persistence\EloquentCollectionRepository;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Company\Infrastructure\Persistence\EloquentCompanyRepository;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
@@ -49,6 +51,8 @@ use App\Modules\MeasurementUnit\Infrastructure\Persistence\EloquentMeasurementUn
 use App\Modules\Menu\Domain\Interfaces\MenuRepositoryInterface;
 use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\Menu\Infrastructure\Persistence\EloquentMenuRepository;
+use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
+use App\Modules\PaymentMethod\Infrastructure\Persistence\EloquentPaymentMethodRepository;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\PaymentType\Infrastructure\Persistence\EloquentPaymentTypeRepository;
 use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface;
@@ -126,6 +130,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SaleRepositoryInterface::class, EloquentSaleRepository::class);
         $this->app->bind(PaymentTypeRepositoryInterface::class, EloquentPaymentTypeRepository::class);
         $this->app->bind(SaleArticleRepositoryInterface::class, EloquentSaleArticleRepository::class);
+        $this->app->bind(CollectionRepositoryInterface::class, EloquentCollectionRepository::class);
+        $this->app->bind(PaymentMethodRepositoryInterface::class, EloquentPaymentMethodRepository::class);
     }
 
     /**

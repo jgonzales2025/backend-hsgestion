@@ -8,8 +8,8 @@ readonly class FindAllCustomersUseCase
 {
     public function __construct(private CustomerRepositoryInterface $customerRepository) {}
 
-    public function execute(): array
+    public function execute(?string $customerName, ?string $documentNumber): array
     {
-        return $this->customerRepository->findAll();
+        return $this->customerRepository->findAll($customerName, $documentNumber);
     }
 }

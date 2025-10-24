@@ -6,7 +6,7 @@ use App\Modules\Customer\Domain\Entities\Customer;
 
 interface CustomerRepositoryInterface
 {
-    public function findAll(): array;
+    public function findAll(?string $customerName, ?string $documentNumber): array;
     public function save(Customer $customer): ?Customer;
     public function findById(int $id): ?Customer;
     public function update(Customer $customer): ?Customer;

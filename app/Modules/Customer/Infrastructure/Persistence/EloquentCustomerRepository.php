@@ -20,9 +20,18 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
         private readonly CustomerEmailRepositoryInterface $customerEmailRepository,
         private readonly CustomerAddressRepositoryInterface $customerAddressRepository,
     ){}
-    public function findAll(): array
+    public function findAll(?string $customerName, ?string $documentNumber): array
     {
-        $customers = EloquentCustomer::all()->sortByDesc('created_at');
+        $customers = EloquentCustomer::query()
+            ->when($customerName, function ($query, $name) {
+                return $query->where(function ($q) use ($name) {
+                    $q->where('name', 'like', "%{$name}%")
+                        ->orWhere('company_name', 'like', "%{$name}%")
+                        ->orWhere('document_number', 'like', "%{$name}%");
+                });
+            })
+            ->orderByDesc('created_at')
+            ->get();
 
         return $customers->map(function (EloquentCustomer $customer) {
 

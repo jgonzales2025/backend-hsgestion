@@ -12,7 +12,7 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
     public function save(SaleArticle $saleArticle): ?SaleArticle
     {
         $eloquentSaleArticle = EloquentSaleArticle::create([
-            'sale_id' => $saleArticle->getArticleId(),
+            'sale_id' => $saleArticle->getSaleId(),
             'article_id' => $saleArticle->getArticleId(),
             'description' => $saleArticle->getDescription(),
             'quantity' => $saleArticle->getQuantity(),
@@ -31,5 +31,23 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
             public_price: $eloquentSaleArticle->public_price,
             subtotal: $eloquentSaleArticle->subtotal,
         );
+    }
+
+    public function findBySaleId(int $sale_id): array
+    {
+        $eloquentSaleArticles = EloquentSaleArticle::where('sale_id', $sale_id)->get();
+
+        return $eloquentSaleArticles->map(function ($eloquentSaleArticle) {
+            return new SaleArticle(
+                id: $eloquentSaleArticle->id,
+                sale_id: $eloquentSaleArticle->sale_id,
+                article_id: $eloquentSaleArticle->article_id,
+                description: $eloquentSaleArticle->description,
+                quantity: $eloquentSaleArticle->quantity,
+                unit_price: $eloquentSaleArticle->unit_price,
+                public_price: $eloquentSaleArticle->public_price,
+                subtotal: $eloquentSaleArticle->subtotal,
+            );
+        })->toArray();
     }
 }

@@ -100,7 +100,7 @@ class StoreArticleRequest extends FormRequest
         return [
             'image_url.image' => 'El archivo debe ser una imagen.',
             'image_url.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg, gif o webp.',
-            
+
         ];
     }
 }

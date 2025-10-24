@@ -23,5 +23,16 @@ class EloquentPaymentMethodRepository implements PaymentMethodRepositoryInterfac
             );
         })->toArray();
     }
+
+    public function findById(int $id): ?PaymentMethod
+    {
+        $paymentMethod = EloquentPaymentMethod::find($id);
+
+        return $paymentMethod ? new PaymentMethod(
+            id: $paymentMethod->id,
+            description: $paymentMethod->description,
+            status: $paymentMethod->status
+        ) : null;
+    }
 }
 

@@ -32,6 +32,7 @@ return new class extends Migration
             $table->decimal('igv', 8,2);
             $table->decimal('total', 8, 2);
             $table->decimal('saldo', 8, 2)->nullable();
+            $table->decimal('amount_amortized', 8, 2)->nullable();
             $table->integer('status')->default(1);
             $table->integer('payment_status')->default(0);
             $table->boolean('is_locked')->default(0);

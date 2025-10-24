@@ -34,12 +34,22 @@ class SaleController extends Controller
         private readonly SaleArticleRepositoryInterface $saleArticleRepository,
     ){}
 
-    public function index(): array
+    public function index(): JsonResponse
     {
         $saleUseCase = new FindAllSalesUseCase($this->saleRepository);
         $sales = $saleUseCase->execute();
 
-        return SaleResource::collection($sales)->resolve();
+        $result = [];
+        foreach ($sales as $sale) {
+            $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
+
+            $result[] = [
+                'sale' => (new SaleResource($sale))->resolve(),
+                'articles' => SaleArticleResource::collection($articles)->resolve(),
+            ];
+        }
+
+        return response()->json($result, 200);
     }
 
     public function store(StoreSaleRequest $request): JsonResponse

@@ -23,4 +23,29 @@ class EloquentDispatchArticleRepository implements DispatchArticleRepositoryInte
            );
         })->toArray();
     }
+     public function save(DispatchArticle $dispatchArticle): ?DispatchArticle{
+        $dispatchArticle = EloquentDispatchArticle::create(
+           [
+                 'id'=> $dispatchArticle->getId(),
+                 'dispatch_id'=> $dispatchArticle->getDispatchID(),
+                 'article_id'=> $dispatchArticle->getArticleID(),
+                 'quantity'=> $dispatchArticle->getQuantity(),
+                 'weight'=> $dispatchArticle->getWeight(),
+                 'saldo'=> $dispatchArticle->getSaldo(),
+                 'name'=> $dispatchArticle->getName(),
+                 'subtotal_weight'=> $dispatchArticle->getsubTotalWeight()
+           ]
+        );
+
+        return new DispatchArticle(
+                 id:$dispatchArticle->id,
+                 dispatch_id:$dispatchArticle->dispatch_id,
+                 article_id:$dispatchArticle->article_id,
+                 quantity:$dispatchArticle->quantity,
+                 weight:$dispatchArticle->weight,
+                 saldo:$dispatchArticle->saldo,
+                 name:$dispatchArticle->name,
+                 subtotal_weight:$dispatchArticle->subtotal_weight
+        );
+     }
 }

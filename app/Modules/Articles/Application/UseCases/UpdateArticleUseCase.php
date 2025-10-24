@@ -90,7 +90,8 @@ readonly class UpdateArticleUseCase
             venta: $articleDTO->venta ?? false,
             subCategory: $subCategoryType,
             company: $companyType,
-            image_url: $articleDTO->image_url
+            image_url: $articleDTO->image_url,
+             state_modify_article:$articleDTO->state_modify_article
         );
 
         $this->articleRepository->update($article);

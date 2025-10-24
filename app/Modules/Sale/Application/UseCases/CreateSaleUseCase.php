@@ -75,6 +75,8 @@ readonly class CreateSaleUseCase
             inafecto: $saleDTO->inafecto,
             igv: $saleDTO->igv,
             total: $saleDTO->total,
+            saldo: $saleDTO->total,
+            amount_amortized: 0,
             status: null,
             payment_status: null,
             is_locked: null,

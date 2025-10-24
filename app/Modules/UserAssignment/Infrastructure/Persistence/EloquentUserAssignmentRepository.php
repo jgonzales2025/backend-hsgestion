@@ -78,6 +78,7 @@ class EloquentUserAssignmentRepository implements UserAssignmentRepositoryInterf
             return [
                 'branch_id' => $branch->branch_id,
                 'branch_name' => $branch->branch->name,
+                'address' => $branch->branch->address,
             ];
         })->toArray();
     }

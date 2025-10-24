@@ -54,11 +54,14 @@ class SaleResource extends JsonResource
             'currency_type' => [
                 'id' => $this->resource->getCurrencyType()->getId(),
                 'name' => $this->resource->getCurrencyType()->getName(),
+                'reference'=>($this->resource->getCurrencyType()->getName()) == "SOLES" ? "S/" : "$",
             ],
             'subtotal' => $this->resource->getSubtotal(),
             'inafecto' => $this->resource->getInafecto(),
             'igv' => $this->resource->getIgv(),
             'total' => $this->resource->getTotal(),
+            'saldo' => $this->resource->getSaldo(),
+            'amount_amortized' => $this->resource->getAmountAmortized(),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             'payment_status' => ($this->resource->getPaymentStatus()) == 1 ? 'Cancelado' : 'Pendiente',
         ];

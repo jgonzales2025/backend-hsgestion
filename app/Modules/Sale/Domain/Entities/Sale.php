@@ -14,6 +14,7 @@ class Sale
 {
     private int $id;
     private Company $company;
+    private Branch $branch;
     private DocumentType $documentType;
     private string $serie;
     private string $document_number;
@@ -43,6 +44,7 @@ class Sale
     public function __construct(
         int $id,
         Company $company,
+        Branch $branch,
         DocumentType $documentType,
         string $serie,
         string $document_number,
@@ -71,6 +73,7 @@ class Sale
     ){
         $this->id = $id;
         $this->company = $company;
+        $this->branch = $branch;
         $this->documentType = $documentType;
         $this->serie = $serie;
         $this->document_number = $document_number;
@@ -100,6 +103,7 @@ class Sale
 
     public function getId(): int { return $this->id; }
     public function getCompany(): Company { return $this->company; }
+    public function getBranch(): Branch { return $this->branch; }
     public function getDocumentType(): DocumentType { return $this->documentType; }
     public function getSerie(): string { return $this->serie; }
     public function getDocumentNumber(): string { return $this->document_number; }

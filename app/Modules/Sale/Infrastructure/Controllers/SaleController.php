@@ -3,6 +3,7 @@
 namespace App\Modules\Sale\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
@@ -18,8 +19,12 @@ use App\Modules\SaleArticle\Application\DTOs\SaleArticleDTO;
 use App\Modules\SaleArticle\Application\UseCases\CreateSaleArticleUseCase;
 use App\Modules\SaleArticle\Domain\Interfaces\SaleArticleRepositoryInterface;
 use App\Modules\SaleArticle\Infrastructure\Resources\SaleArticleResource;
+use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
+use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
+use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class SaleController extends Controller
 {
@@ -32,6 +37,8 @@ class SaleController extends Controller
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
         private readonly SaleArticleRepositoryInterface $saleArticleRepository,
+        private readonly TransactionLogRepositoryInterface $transactionLogRepository,
+        private readonly BranchRepositoryInterface $branchRepository,
     ){}
 
     public function index(): JsonResponse
@@ -54,8 +61,11 @@ class SaleController extends Controller
 
     public function store(StoreSaleRequest $request): JsonResponse
     {
+        $userId = request()->get('user_id');
+        $role = request()->get('role');
+
         $saleDTO = new SaleDTO($request->validated());
-        $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository);
+        $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository);
         $sale = $saleUseCase->execute($saleDTO);
 
         $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository);
@@ -72,6 +82,23 @@ class SaleController extends Controller
 
             return $createSaleArticleUseCase->execute($saleArticleDTO);
         }, $request->validated()['sale_articles']);
+
+        $transactionLogs = new CreateTransactionLogUseCase($this->transactionLogRepository, $this->userRepository, $this->companyRepository, $this->documentTypeRepository, $this->branchRepository);
+        $transactionDTO = new TransactionLogDTO([
+            'user_id' => $userId,
+            'role_name' => $role,
+            'description_log' => 'Venta',
+            'action' => $request->method(),
+            'company_id' => $sale->getCompany()->getId(),
+            'branch_id' => $sale->getBranch()->getId(),
+            'document_type_id' => $sale->getDocumentType()->getId(),
+            'serie' => $sale->getSerie(),
+            'correlative' => $sale->getDocumentNumber(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        $transactionLogs->execute($transactionDTO);
 
         return response()->json([
             'sale' => (new SaleResource($sale))->resolve(),

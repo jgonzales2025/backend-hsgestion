@@ -12,7 +12,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
     public function save(Article $article): ?Article
     {
-       
+
 
         $eloquentArticle = EloquentArticle::create([
             'cod_fab' => $article->getCodFab(),
@@ -196,7 +196,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             venta: $article->venta,
             subCategory: $article->subCategory->toDomain($article->subCategory) ?? null,
             company: $article->company->toDomain($article->company),
-            image_url: $article->image_url
+            image_url: $article->image_url,
+            state_modify_article:$article->state_modify_article
         );
     }
 
@@ -234,7 +235,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'user_id' => $article->getUser()->getId(),
             'category_id' => $article->getCategory()->getId(),
             'sub_category_id' => $article->getSubCategory()->getId(),
-            'image_url' => $article->getImageURL()
+            'image_url' => $article->getImageURL(),
+            'state_modify_article' =>$article->getstateModifyArticle()
         ]);
     }
 }

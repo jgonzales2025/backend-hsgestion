@@ -19,6 +19,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             return new Sale(
                 id: $sale->id,
                 company: $sale->company->toDomain($sale->company),
+                branch: $sale->branch->toDomain($sale->branch),
                 documentType: $sale->documentType->toDomain($sale->documentType),
                 serie: $sale->serie,
                 document_number: $sale->document_number,
@@ -52,6 +53,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
     {
         $eloquentSale = EloquentSale::create([
             'company_id' => $sale->getCompany()->getId(),
+            'branch_id' => $sale->getBranch()->getId(),
             'document_type_id' => $sale->getDocumentType()->getId(),
             'serie' => $sale->getSerie(),
             'document_number' => $sale->getDocumentNumber(),
@@ -79,6 +81,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         return new Sale(
             id: $eloquentSale->id,
             company: $sale->getCompany(),
+            branch: $sale->getBranch(),
             documentType: $sale->getDocumentType(),
             serie: $eloquentSale->serie,
             document_number: $eloquentSale->document_number,

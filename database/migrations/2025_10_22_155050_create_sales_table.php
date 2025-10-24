@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sales', function (Blueprint $table) {
             $table->id();
             $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
+            $table->foreignId('branch_id')->constrained('branches')->onDelete('cascade');
             $table->foreignId('document_type_id')->constrained('document_types')->onDelete('cascade');
             $table->string('serie', 10);
             $table->string('document_number', 10)->unique();

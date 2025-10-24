@@ -5,6 +5,7 @@ namespace App\Modules\Sale\Application\DTOs;
 class SaleDTO
 {
     public $company_id;
+    public $branch_id;
     public $document_type_id;
     public $serie;
     public ?string $document_number;
@@ -31,6 +32,7 @@ class SaleDTO
     public function __construct(array $data)
     {
         $this->company_id = $data['company_id'];
+        $this->branch_id = $data['branch_id'];
         $this->document_type_id = $data['document_type_id'];
         $this->serie = $data['serie'];
         $this->document_number = $data['document_number'] ?? null;

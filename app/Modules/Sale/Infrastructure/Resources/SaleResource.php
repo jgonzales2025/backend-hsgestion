@@ -14,6 +14,8 @@ class SaleResource extends JsonResource
 
         return [
             'id' => $this->resource->getId(),
+            'company_id' => $this->resource->getCompany()->getId(),
+            'branch_id' => $this->resource->getBranch()->getId(),
             'document_type' => [
                 'id' => $this->resource->getDocumentType()->getId(),
                 'name' => $this->resource->getDocumentType()->getDescription(),

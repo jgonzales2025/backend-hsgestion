@@ -6,6 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
+use App\Modules\DispatchArticle\Application\DTOS\DispatchArticleDTO;
+use App\Modules\DispatchArticle\Application\UseCase\CreateDispatchArticleUseCase;
+use App\Modules\DispatchArticle\Domain\Entities\DispatchArticle;
+use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
+use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
 use App\Modules\DispatchNotes\application\DTOS\DispatchNoteDTO;
 use App\Modules\DispatchNotes\application\UseCases\CreateDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindAllDispatchNotesUseCase;
@@ -30,6 +35,7 @@ class DispatchNotesController extends Controller{
    private readonly TransportCompanyRepositoryInterface  $transportCompany,
     private readonly DocumentTypeRepositoryInterface  $documentTypeRepositoryInterface,
     private readonly DriverRepositoryInterface  $driverRepositoryInterface,
+     private readonly DispatchArticleRepositoryInterface   $dispatchArticleRepositoryInterface,
       ){}
 
   public function index(): array
@@ -44,8 +50,26 @@ class DispatchNotesController extends Controller{
            $dispatchNoteUseCase = new CreateDispatchNoteUseCase($this->dispatchNoteRepository,$this->companyRepositoryInterface,$this->branchRepository,$this->serieRepositoryInterface,$this->emissionReasonRepositoryInterface,$this->transportCompany,$this->documentTypeRepositoryInterface,$this->driverRepositoryInterface);
         $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO); 
 
-        return response()->json(
-          (new DispatchNoteResource($dispatchNotes)),200
+
+        $createSaleArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
+        $saleArticles = array_map(function ($article) use ($dispatchNotes, $createSaleArticleUseCase) {
+            $saleArticleDTO = new DispatchArticleDTO([
+                 'dispatch_id'=>$dispatchNotes->getId(),
+                 'article_id'=> $article['article_id'],
+                 'quantity'=> $article['quantity'],
+                 'weight'=> $article['weight'],
+                 'saldo'=> $article['saldo'],
+                 'name'=> $article['name'],
+                 'subtotal_weight'=> $article['subtotal_weight']
+            ]);
+
+            return $createSaleArticleUseCase->execute($saleArticleDTO);
+        }, $store->validated()['dispatch_articles']);
+
+        return response()->json([
+            'sale' => (new DispatchNoteResource($dispatchNotes))->resolve(),
+            'articles' => DispatchArticleResource::collection($saleArticles)->resolve()
+            ], 201
         );
     }
        public function show(int $id):JsonResponse{

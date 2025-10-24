@@ -23,6 +23,7 @@ use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInter
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -42,10 +43,11 @@ class ArticleController extends Controller
 
   ) {
   }
-  public function index(): array
+  public function index(Request $request): array
   {
     $articleUseCase = new FindAllArticleUseCase($this->articleRepository);
     $article = $articleUseCase->execute();
+    
 
     return ArticleResource::collection($article)->resolve();
   }

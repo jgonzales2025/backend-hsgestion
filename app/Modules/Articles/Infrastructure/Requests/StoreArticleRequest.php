@@ -75,7 +75,7 @@ class StoreArticleRequest extends FormRequest
             'public_price' => 'required|numeric|min:0',
             'distributor_price' => 'required|numeric|min:0',
             'authorized_price' => 'required|numeric|min:0',
-            'status' => 'required|integer|exists:statuses,id',
+            'status' => 'required|integer',
             'user_id' => 'required|integer|exists:users,id',
             'sub_category_id' => 'required|integer|exists:sub_categories,id',
             'venta' => 'required|boolean',

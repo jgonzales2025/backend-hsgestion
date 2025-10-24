@@ -12,8 +12,8 @@ class FindAllArticleUseCase
     {
         $this->articleRepository = $articleRepository;
     }
-    public function execute()
+    public function execute(?string $name, ?string $sku, ?string $serie)
     {
-        return $this->articleRepository->findAllArticle();
+        return $this->articleRepository->findAllArticle($name, $sku,$serie);
     }
 }

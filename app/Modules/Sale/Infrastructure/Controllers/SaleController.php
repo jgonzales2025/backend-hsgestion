@@ -12,6 +12,7 @@ use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Sale\Application\DTOs\SaleDTO;
 use App\Modules\Sale\Application\UseCases\CreateSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllSalesUseCase;
+use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleRequest;
 use App\Modules\Sale\Infrastructure\Resources\SaleResource;
@@ -104,6 +105,21 @@ class SaleController extends Controller
             'sale' => (new SaleResource($sale))->resolve(),
             'articles' => SaleArticleResource::collection($saleArticles)->resolve()
             ], 201
+        );
+    }
+
+    public function show($id): JsonResponse
+    {
+        $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
+        $sale = $saleUseCase->execute($id);
+
+        $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
+
+        return response()->json(
+            [
+                'sale' => (new SaleResource($sale))->resolve(),
+                'articles' => SaleArticleResource::collection($articles)->resolve(),
+            ]
         );
     }
 }

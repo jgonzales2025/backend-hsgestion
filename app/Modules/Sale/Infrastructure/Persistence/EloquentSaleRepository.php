@@ -118,4 +118,44 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 
         return $sale?->document_number;
     }
+
+    public function findById(int $id): ?Sale
+    {
+        $eloquentSale = EloquentSale::find($id);
+
+        if (!$eloquentSale) {
+            return null;
+        }
+
+        return new Sale(
+            id: $eloquentSale->id,
+            company: $eloquentSale->company->toDomain($eloquentSale->company),
+            branch: $eloquentSale->branch->toDomain($eloquentSale->branch),
+            documentType: $eloquentSale->documentType->toDomain($eloquentSale->documentType),
+            serie: $eloquentSale->serie,
+            document_number: $eloquentSale->document_number,
+            parallel_rate: $eloquentSale->parallel_rate,
+            customer: $eloquentSale->customer->toDomain($eloquentSale->customer),
+            date: $eloquentSale->date,
+            due_date: $eloquentSale->due_date,
+            days: $eloquentSale->days,
+            user: $eloquentSale->user->toDomain($eloquentSale->user),
+            user_sale: $eloquentSale->userSale->toDomain($eloquentSale->userSale),
+            paymentType: $eloquentSale->paymentType->toDomain($eloquentSale->paymentType),
+            observations: $eloquentSale->observations,
+            currencyType: $eloquentSale->currencyType->toDomain($eloquentSale->currencyType),
+            subtotal: $eloquentSale->subtotal,
+            inafecto: $eloquentSale->inafecto,
+            igv: $eloquentSale->igv,
+            total: $eloquentSale->total,
+            saldo: $eloquentSale->saldo,
+            amount_amortized: $eloquentSale->amount_amortized,
+            status: $eloquentSale->status,
+            payment_status: $eloquentSale->payment_status,
+            is_locked: $eloquentSale->is_locked,
+            serie_prof: $eloquentSale->series_prof,
+            correlative_prof: $eloquentSale->correlative_prof,
+            purchase_order: $eloquentSale->purchase_order
+        );
+    }
 }

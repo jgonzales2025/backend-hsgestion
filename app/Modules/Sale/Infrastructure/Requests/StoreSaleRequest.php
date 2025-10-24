@@ -26,6 +26,7 @@ class StoreSaleRequest extends FormRequest
     {
         return [
             'company_id' => 'required|integer|exists:companies,id',
+            'branch_id' => 'required|integer|exists:branches,id',
             'document_type_id' => 'required|integer|exists:document_types,id',
             'serie' => 'required|string|max:10',
             'parallel_rate' => 'required|numeric|min:0',

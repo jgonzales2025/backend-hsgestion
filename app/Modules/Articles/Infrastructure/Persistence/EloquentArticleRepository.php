@@ -12,7 +12,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
     public function save(Article $article): ?Article
     {
-       
+
 
         $eloquentArticle = EloquentArticle::create([
             'cod_fab' => $article->getCodFab(),

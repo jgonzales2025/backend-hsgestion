@@ -25,6 +25,7 @@ readonly class CreateSaleUseCase
     public function __construct(
         private readonly SaleRepositoryInterface $saleRepository,
         private readonly CompanyRepositoryInterface $companyRepository,
+        private readonly BranchRepositoryInterface $branchRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
@@ -48,6 +49,9 @@ readonly class CreateSaleUseCase
         $companyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
         $company = $companyUseCase->execute($saleDTO->company_id);
 
+        $branchUseCase = new FindByIdBranchUseCase($this->branchRepository);
+        $branch = $branchUseCase->execute($saleDTO->branch_id);
+
         $userUseCase = new GetUserByIdUseCase($this->userRepository);
         $user = $userUseCase->execute($saleDTO->user_id);
 
@@ -69,6 +73,7 @@ readonly class CreateSaleUseCase
         $sale = new Sale(
             id: 0,
             company: $company,
+            branch: $branch,
             documentType: $documentType,
             serie: $saleDTO->serie,
             document_number: $saleDTO->document_number,

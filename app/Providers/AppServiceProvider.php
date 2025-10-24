@@ -71,6 +71,9 @@ use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Serie\Infrastructure\Persistence\EloquentSerieRepository;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\SubCategory\Infrastructure\Persistence\EloquentSubCategoryRepository;
+use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
+use App\Modules\TransactionLog\Infrastructure\Models\EloquentTransactionLog;
+use App\Modules\TransactionLog\Infrastructure\Persistence\EloquentTransactionLogRepository;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
 use App\Modules\TransportCompany\Infrastructure\Persistence\EloquentTransportCompanyRepository;
 use App\Modules\Ubigeo\Departments\Domain\Interfaces\DepartmentRepositoryInterface;
@@ -138,6 +141,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DispatchArticleRepositoryInterface::class, EloquentDispatchArticleRepository::class);
         $this->app->bind(CollectionRepositoryInterface::class, EloquentCollectionRepository::class);
         $this->app->bind(PaymentMethodRepositoryInterface::class, EloquentPaymentMethodRepository::class);
+        $this->app->bind(TransactionLogRepositoryInterface::class, EloquentTransactionLogRepository::class);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sale\Infrastructure\Models;
 
+use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
@@ -19,6 +20,7 @@ class EloquentSale extends Model
 
     protected $fillable = [
         'company_id',
+        'branch_id',
         'document_type_id',
         'serie',
         'document_number',
@@ -48,6 +50,11 @@ class EloquentSale extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(EloquentCompany::class, 'company_id');
+    }
+
+    public function branch(): BelongsTo
+    {
+        return $this->belongsTo(EloquentBranch::class, 'branch_id');
     }
 
     public function user(): BelongsTo

@@ -16,10 +16,14 @@ class CurrencyTypeSeeder extends Seeder
         $currencyTypes = [
             [
                 'name' => 'SOLES',
+                'commercial_symbol' => 'S/.',
+                'sunat_symbol' => 'PEN',
                 'status' => 1
             ],
             [
                 'name' => 'DOLARES',
+                'commercial_symbol' => '$',
+                'sunat_symbol' => 'USD',
                 'status' => 1
             ]
         ];

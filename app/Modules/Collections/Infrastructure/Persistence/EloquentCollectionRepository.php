@@ -72,6 +72,7 @@ class EloquentCollectionRepository implements CollectionRepositoryInterface
 
         $sale = $eloquentCollection->sale->fresh();
         $sale->payment_status = $sale->saldo == 0 ? 1 : 0;
+        $sale->amount_amortized = $sale->total - $sale->saldo;
         $sale->save();
 
         return new Collection(

@@ -9,7 +9,8 @@ class CurrentTypeResource extends JsonResource{
             return [
                 'id'=>$this->resource->getId(),
                  'name'=>($this->resource->getName()),
-                'reference'=>($this->resource->getName())=="SOLES" ? "S/" : "$",
+                'commercial_symbol'=>$this->resource->getCommercialSymbol(),
+                'sunat_symbol'=>$this->resource->getSunatSymbol(),
                 'status'=>$this->resource->getStatus()
             ];
         }

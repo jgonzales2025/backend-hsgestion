@@ -8,4 +8,5 @@ interface SaleRepositoryInterface
 {
     public function findAll(): array;
     public function save(Sale $sale): ?Sale;
+    public function getLastDocumentNumber(): ?string;
 }

@@ -106,4 +106,13 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             purchase_order: $eloquentSale->purchase_order
         );
     }
+
+    public function getLastDocumentNumber(): ?string
+    {
+        $sale = EloquentSale::all()
+            ->sortByDesc('document_number')
+            ->first();
+
+        return $sale?->document_number;
+    }
 }

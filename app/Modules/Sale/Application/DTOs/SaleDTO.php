@@ -7,7 +7,7 @@ class SaleDTO
     public $company_id;
     public $document_type_id;
     public $serie;
-    public $document_number;
+    public ?string $document_number;
     public $parallel_rate;
     public $customer_id;
     public $date;
@@ -33,7 +33,7 @@ class SaleDTO
         $this->company_id = $data['company_id'];
         $this->document_type_id = $data['document_type_id'];
         $this->serie = $data['serie'];
-        $this->document_number = $data['document_number'];
+        $this->document_number = $data['document_number'] ?? null;
         $this->parallel_rate = $data['parallel_rate'];
         $this->customer_id = $data['customer_id'];
         $this->date = $data['date'];

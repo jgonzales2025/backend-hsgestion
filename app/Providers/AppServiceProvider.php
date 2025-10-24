@@ -34,10 +34,14 @@ use App\Modules\CustomerType\Domain\Interfaces\CustomerTypeRepositoryInterface;
 use App\Modules\CustomerType\Infrastructure\Persistence\EloquentCustomerTypeRepository;
 use App\Modules\DigitalWallet\Domain\Interfaces\DigitalWalletRepositoryInterface;
 use App\Modules\DigitalWallet\Infrastructure\Persistence\EloquentDigitalWalletRepository;
+use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
+use App\Modules\DispatchArticle\Infrastructure\Persistence\EloquentDispatchArticleRepository;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Persistence\EloquentDIspatchNoteRepository;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\DocumentType\Infrastructure\Persistence\EloquentDocumentTypeRepository;
+use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
+use App\Modules\Driver\Infrastructure\Persistence\EloquentDriverRepository;
 use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterface;
 use App\Modules\EmissionReason\Infrastructure\Persistence\EloquentEmissionReasonRepository;
 use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
@@ -130,6 +134,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SaleRepositoryInterface::class, EloquentSaleRepository::class);
         $this->app->bind(PaymentTypeRepositoryInterface::class, EloquentPaymentTypeRepository::class);
         $this->app->bind(SaleArticleRepositoryInterface::class, EloquentSaleArticleRepository::class);
+        $this->app->bind(DriverRepositoryInterface::class, EloquentDriverRepository::class);
+        $this->app->bind(DispatchArticleRepositoryInterface::class, EloquentDispatchArticleRepository::class);
         $this->app->bind(CollectionRepositoryInterface::class, EloquentCollectionRepository::class);
         $this->app->bind(PaymentMethodRepositoryInterface::class, EloquentPaymentMethodRepository::class);
     }

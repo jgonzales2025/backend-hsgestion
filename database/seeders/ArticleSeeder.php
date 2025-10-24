@@ -41,6 +41,38 @@ class ArticleSeeder extends Seeder
                 'sub_category_id'=>1,
                 'company_type_id'=>1,
                
+            ],
+               [
+                'cod_fab' => 'ART-002',
+                'description' => 'Lavadora',
+                'weight' => 3.5,
+                'with_deduction' => false,
+                'series_enabled' => false,
+                'measurement_unit_id' => 1,
+                'brand_id' => 1,
+                'category_id' => 1,
+                'location' => 'A1-01',
+                'warranty' => '2 año',
+                'tariff_rate' => 18.00,
+                'igv_applicable' => true,
+                'plastic_bag_applicable' => false,
+                'min_stock' => 10,
+                'currency_type_id' => 1,
+                'purchase_price' => 50.00,
+                'public_price' => 57.00,
+                'distributor_price' => 55.00,
+                'authorized_price' => 54.00,
+                'public_price_percent' => 10.0,
+                'distributor_price_percent' => 5.0,
+                'authorized_price_percent' => 3.0,
+                'status' => 1,
+                'user_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+                'venta' => true,
+                'sub_category_id'=>1,
+                'company_type_id'=>1,
+               
             ]
             ];
       DB::table('articles')->insert($articles);

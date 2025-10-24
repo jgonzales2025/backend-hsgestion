@@ -17,8 +17,8 @@ return new class extends Migration {
             // Relaciones clave foránea
             $table->foreignId('cia_id')->constrained('companies');
             $table->foreignId('branch_id')->constrained('branches');
-            $table->string('serie')->unique();
-            $table->unsignedBigInteger('correlativo')->unique();
+            $table->string('serie');
+            $table->string('correlativo');
             $table->date('date');
 
             $table->foreignId('emission_reason_id')->constrained('emission_reasons');
@@ -36,7 +36,6 @@ return new class extends Migration {
             // Documento de referencia
             $table->string('doc_referencia')->nullable();
             $table->string('num_referencia')->nullable();
-            $table->string('serie_referencia')->nullable();
             $table->date('date_referencia')->nullable();
 
             $table->boolean('status')->default(true);
@@ -47,7 +46,8 @@ return new class extends Migration {
 
             $table->string('transfer_type');
             $table->string('vehicle_type');
-
+            $table->foreignId('document_type_id')->constrained('document_types');
+            $table->foreignId('destination_branch_client')->constrained('branches');
 
 
         });

@@ -25,4 +25,16 @@ class EloquentEmissionReasonRepository implements EmissionReasonRepositoryInterf
             );
         })->toArray();
     }
+    public function findById($id):?EmissionReason{
+        $eloquentEmissionReason = EloquentEmissionReason::find($id);
+
+        if (!$eloquentEmissionReason) {
+             return null;
+        }
+         return new EmissionReason(
+            id:$id,
+            description: $eloquentEmissionReason->description,
+            status: $eloquentEmissionReason->status
+         );
+    }
 }

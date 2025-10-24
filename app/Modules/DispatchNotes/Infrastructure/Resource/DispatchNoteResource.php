@@ -2,14 +2,20 @@
 
 namespace App\Modules\DispatchNotes\Infrastructure\Resource;
 
+use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
+use App\Modules\DocumentType\Infrastructure\Models\EloquentDocumentType;
+use App\Modules\RecordType\Infrastructure\Models\EloquentRecordType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Log;
 
 class DispatchNoteResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+       $documentType = $this->resource->getDocumentType();
 
+$allowedTypes = ['FAC', 'BOL'];
         return [
             'id' => $this->resource->getId(),
 
@@ -42,9 +48,9 @@ class DispatchNoteResource extends JsonResource
             'num_orden_compra' => $this->resource->getNumOrdenCompra(),
             'doc_referencia' => $this->resource->getDocReferencia(),
             'num_referencia' => $this->resource->getNumReferencia(),
-            'serie_referencia' => $this->resource->getSerieReferencia(),
+            // 'serie_referencia' => $this->resource->getSerieReferencia(),
             'date_referencia' => $this->resource->getDateReferencia(),
-            'status' => $this->resource->isStatus(),
+            'status' => $this->resource->getStatus(),
             'conductor'=> [
                 'id' =>$this->resource->getConductor()->getId(),
                 'status'=>$this->resource->getConductor()->getStatus()
@@ -53,6 +59,13 @@ class DispatchNoteResource extends JsonResource
             'total_weight' => $this->resource->getTotalWeight(),
             'transfer_type' => $this->resource->getTransferType(),
             'vehicle_type' => $this->resource->getVehicleType(),
+            'document_type' =>[
+                'id' => $this->resource->getDocumentType()->getId(),
+                'status' => ($this->resource->getDocumentType()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+                'description' => $this->resource->getDocumentType()->getDescription(),
+            ],
+           'destination_branch_client_id' =>$this->resource->getdestination_branch_client()
+
         ];
     }
 }

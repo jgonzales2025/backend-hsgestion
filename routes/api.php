@@ -17,6 +17,7 @@ use App\Modules\CustomerPhone\Infrastructure\Controllers\CustomerPhoneController
 use App\Modules\CustomerPortfolio\Infrastructure\Controllers\CustomerPortfolioController;
 use App\Modules\CustomerType\Infrastructure\Controllers\CustomerTypeController;
 use App\Modules\DigitalWallet\Infrastructure\Controllers\DigitalWalletController;
+use App\Modules\DispatchArticle\Infrastructure\Controllers\DispatchArticleController;
 use App\Modules\DispatchNotes\Infrastructure\Controllers\DispatchNotesController;
 use App\Modules\Driver\Infrastructure\Controllers\DriverController;
 use App\Modules\EmissionReason\Infrastructure\Controllers\EmissionReasonController;
@@ -141,6 +142,8 @@ Route::get('customer-types', [CustomerTypeController::class, 'index']);
 //customer
 Route::get('customer-document-types', [CustomerDocumentTypeController::class, 'index']);
 
+//dispatchArticle
+Route::get('dispatch-Article', [DispatchArticleController::class, 'index']);
 
 // Customers - Clientes
 Route::get('customers', [CustomerController::class, 'index']);
@@ -178,6 +181,7 @@ Route::get('/payment-methods', [PaymentMethodController::class, 'findAllPaymentM
 
 // Emission Reasons - Motivos de emisión
 Route::get('emission-reasons', [EmissionReasonController::class, 'index']);
+Route::get('emission-reason/{id}', [EmissionReasonController::class, 'show']);
 
 // Ingress Reasons - Motivos de ingreso
 Route::get('ingress-reasons', [IngressReasonController::class, 'index']);
@@ -204,6 +208,8 @@ Route::put('customer-portfolios/{id}', [CustomerPortfolioController::class, 'upd
 
 //dispatch Notes
 Route::get('dispatchNote', [DispatchNotesController::class, 'index']);
+Route::post('dispatchNote-save', [DispatchNotesController::class, 'store']);
+Route::get('dispatchNote/{id}', [DispatchNotesController::class, 'show']);
 
 // Logs de sesion
 Route::get('logs-login', [LoginAttemptController::class, 'index']);

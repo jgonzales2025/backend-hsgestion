@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             CustomerDocumentTypeSeeder::class,
             MenuSeeder::class,
             RolePermissionSeeder::class,
-            //UserSeeder::class,
+            UserSeeder::class,
             MenuUserPermission::class,
             BrandSeeder::class,
             DriverSeeder::class,
@@ -42,9 +42,9 @@ class DatabaseSeeder extends Seeder
             EmissionReasonSeeder::class,
             DigitalWalletSeeder::class,
             VisibleArticlesSeeder::class,
-            DispatchNotesSeeder::class,
-            //DispatchNotesSeeder::class,
-            SerieSeeder::class
+             DispatchNotesSeeder::class,
+            SerieSeeder::class,
+             DispatchArticle::class,
         ]);
     }
 }

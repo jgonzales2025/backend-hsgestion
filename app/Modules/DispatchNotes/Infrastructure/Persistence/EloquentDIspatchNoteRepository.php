@@ -15,8 +15,9 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'company',
             'branch',
             'emission_reason',
-             'transport',
+            'transport',
             'conductor',
+            'document_type'
         ])->get();
 
         return $dispatchNotes->map(function ($dispatch) {
@@ -36,7 +37,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
                 num_orden_compra: $dispatch->num_orden_compra,
                 doc_referencia: $dispatch->doc_referencia,
                 num_referencia: $dispatch->num_referencia,
-                serie_referencia: $dispatch->serie_referencia,
                 date_referencia: $dispatch->date_referencia,
                 status: $dispatch->status,
                 conductor: $dispatch->conductor->toDomain($dispatch->conductor),
@@ -44,7 +44,102 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
                 total_weight: $dispatch->total_weight,
                 transfer_type: $dispatch->transfer_type,
                 vehicle_type: $dispatch->vehicle_type,
+                document_type: $dispatch->document_type->toDomain($dispatch->document_type),
+                destination_branch_client: $dispatch->destination_branch_client
+
+
             );
         })->toArray();
+    }
+    public function save(DispatchNote $dispatchNote): ?DispatchNote
+    {
+        $dispatchNote = EloquentDispatchNote::create([
+            'cia_id' => $dispatchNote->getCompany() ? $dispatchNote->getCompany()->getId() : null,
+            'branch_id' => $dispatchNote->getBranch() ? $dispatchNote->getBranch()->getId() : null,
+            'serie' => $dispatchNote->getSerie(),
+            'correlativo' => (
+                ($dispatchNote->getDocumentType() ? strtoupper(substr($dispatchNote->getDocumentType()->getAbbreviation(), 0, 1)) : '') .
+                '00' .
+                ($dispatchNote->getBranch() ? strtoupper(substr($dispatchNote->getBranch()->getId(), 0, 1)) : '')
+            ),
+
+            'date' => $dispatchNote->getDate(),
+            'emission_reason_id' => $dispatchNote->getEmissionReason() ? $dispatchNote->getEmissionReason()->getId() : null,
+            'description' => $dispatchNote->getDescription(),
+            'destination_branch_id' => $dispatchNote->getDestinationBranch() ? $dispatchNote->getDestinationBranch()->getId() : null,
+            'destination_address_customer' => $dispatchNote->getDestinationAddressCustomer(),
+            'transport_id' => $dispatchNote->getTransport() ? $dispatchNote->getTransport()->getId() : null,
+            'observations' => $dispatchNote->getObservations(),
+            'num_orden_compra' => $dispatchNote->getNumOrdenCompra(),
+            'doc_referencia' => $dispatchNote->getDocReferencia(),
+            'num_referencia' => $dispatchNote->getNumReferencia(),
+            'date_referencia' => $dispatchNote->getDateReferencia(),
+            'status' => $dispatchNote->getStatus(),
+            'cod_conductor' => $dispatchNote->getConductor()->getId(),
+            'license_plate' => $dispatchNote->getLicensePlate(),
+            'total_weight' => $dispatchNote->getTotalWeight(),
+            'transfer_type' => $dispatchNote->getTransferType(),
+            'vehicle_type' => $dispatchNote->getVehicleType(),
+            'document_type_id' => $dispatchNote->getDocumentType() ? $dispatchNote->getDocumentType()->getId() : null,
+            'destination_branch_client' => $dispatchNote->getdestination_branch_client()
+        ]);
+
+        return new DispatchNote(
+            id: $dispatchNote->id,
+            company: $dispatchNote->company->toDomain($dispatchNote->company),
+            branch: $dispatchNote->branch->toDomain($dispatchNote->branch),
+            serie: $dispatchNote->serie,
+            correlativo: $dispatchNote->correlativo,
+            date: $dispatchNote->date,
+            emission_reason: $dispatchNote->emission_reason->toDomain($dispatchNote->emission_reason),
+            description: $dispatchNote->description,
+            destination_branch: $dispatchNote->destination_branch->toDomain($dispatchNote->destination_branch),
+            destination_address_customer: $dispatchNote->destination_address_customer,
+            transport: $dispatchNote->transport->toDomain($dispatchNote->transport),
+            observations: $dispatchNote->observations,
+            num_orden_compra: $dispatchNote->num_orden_compra,
+            doc_referencia: $dispatchNote->doc_referencia,
+            num_referencia: $dispatchNote->num_referencia,
+            date_referencia: $dispatchNote->date_referencia,
+            status: $dispatchNote->status,
+            conductor: $dispatchNote->conductor->toDomain($dispatchNote->conductor),
+            license_plate: $dispatchNote->license_plate,
+            total_weight: $dispatchNote->total_weight,
+            transfer_type: $dispatchNote->transfer_type,
+            vehicle_type: $dispatchNote->vehicle_type,
+            document_type: $dispatchNote->document_type->toDomain($dispatchNote->document_type),
+            destination_branch_client: $dispatchNote->destination_branch_client
+        );
+    }
+    public function findById($id): ?DispatchNote
+    {
+        $dispatchNote = EloquentDispatchNote::find($id);
+
+        return new DispatchNote(
+            id: $dispatchNote->id,
+            company: $dispatchNote->company->toDomain($dispatchNote->company),
+            branch: $dispatchNote->branch->toDomain($dispatchNote->branch),
+            serie: $dispatchNote->serie,
+            correlativo: $dispatchNote->correlativo,
+            date: $dispatchNote->date,
+            emission_reason: $dispatchNote->emission_reason->toDomain($dispatchNote->emission_reason),
+            description: $dispatchNote->description,
+            destination_branch: $dispatchNote->destination_branch->toDomain($dispatchNote->destination_branch),
+            destination_address_customer: $dispatchNote->destination_address_customer,
+            transport: $dispatchNote->transport->toDomain($dispatchNote->transport),
+            observations: $dispatchNote->observations,
+            num_orden_compra: $dispatchNote->num_orden_compra,
+            doc_referencia: $dispatchNote->doc_referencia,
+            num_referencia: $dispatchNote->num_referencia,
+            date_referencia: $dispatchNote->date_referencia,
+            status: $dispatchNote->status,
+            conductor: $dispatchNote->conductor->toDomain($dispatchNote->conductor),
+            license_plate: $dispatchNote->license_plate,
+            total_weight: $dispatchNote->total_weight,
+            transfer_type: $dispatchNote->transfer_type,
+            vehicle_type: $dispatchNote->vehicle_type,
+            document_type: $dispatchNote->document_type->toDomain($dispatchNote->document_type),
+            destination_branch_client: $dispatchNote->destination_branch_client
+        );
     }
 }

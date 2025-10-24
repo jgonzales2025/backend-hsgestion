@@ -40,6 +40,7 @@ class ArticleSeeder extends Seeder
                 'venta' => true,
                 'sub_category_id'=>1,
                 'company_type_id'=>1,
+                'state_modify_article'=>0
                
             ],
                [
@@ -72,6 +73,7 @@ class ArticleSeeder extends Seeder
                 'venta' => true,
                 'sub_category_id'=>1,
                 'company_type_id'=>1,
+                'state_modify_article'=>0
                
             ]
             ];

@@ -10,7 +10,7 @@ class DispatchArticleDTO{
     public float $weight;
     public float $saldo;
     public string $name;
-    public float $subTotal_weight;
+    public float $subtotal_weight;
 
     public function __construct(array $data){
         $this->dispatch_id = $data['dispatch_id'];
@@ -19,7 +19,7 @@ class DispatchArticleDTO{
         $this->weight = $data['weight'];
         $this->saldo = $data['saldo'];
         $this->name = $data['name'];
-        $this->subTotal_weight = $data['subTotal_weight'];
+        $this->subtotal_weight = $data['subtotal_weight'];
 
     }
 }

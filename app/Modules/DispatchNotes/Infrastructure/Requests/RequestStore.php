@@ -49,8 +49,9 @@ class RequestStore extends FormRequest
             'total_weight' => ['required', 'numeric'],
             'transfer_type' => ['required', 'string', 'max:50'],
             'vehicle_type' => ['required', 'string', 'max:50'],
-             'document_type_id' => ['required', 'integer', 'exists:document_types,id'],
-             'destination_branch_client_id' => ['required', 'integer', 'exists:branches,id']
+            'document_type_id' => ['required', 'integer', 'exists:document_types,id'],
+            'destination_branch_client_id' => ['required', 'integer', 'exists:branches,id'],
+            'dispatch_articles' => 'required|array|min:1',
         ];
     }
 

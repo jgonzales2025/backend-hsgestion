@@ -68,8 +68,7 @@ class ArticleResource extends JsonResource
 
           
                 'reference_codes' => EloquentReferenceCode::where('article_id', $this->resource->getId())
-                    ->get(['id', 'ref_code', 'status', 'date_at'])
-                    ->map(function ($code) {
+                    ->get()->map(function ($code) {
                         return [
                             'id' => $code->id,
                             'ref_code' => $code->ref_code,

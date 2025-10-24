@@ -10,6 +10,7 @@ class CollectionResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->resource->getId(),
             'company_id' => $this->resource->getCompanyId(),
             'sale_id' => $this->resource->getSaleId(),
             'sale_document_type_id' => $this->resource->getSaleDocumentTypeId(),

@@ -12,6 +12,8 @@ class EloquentCurrencyType extends Model{
 
     protected $fillable = [
         'name',
+        'commercial_symbol',
+        'sunat_symbol',
         'status'
     ];
       protected $hidden = ['created_at', 'updated_at'];
@@ -26,6 +28,8 @@ class EloquentCurrencyType extends Model{
           return new CurrencyType(
               id: $eloquentCurrencyType->id,
               name: $eloquentCurrencyType->name,
+              commercial_symbol: $eloquentCurrencyType->commercial_symbol,
+              sunat_symbol: $eloquentCurrencyType->sunat_symbol,
               status: $eloquentCurrencyType->status
           );
       }

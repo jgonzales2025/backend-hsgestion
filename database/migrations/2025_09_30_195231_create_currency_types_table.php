@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::create('currency_types', function (Blueprint $table) {
             $table->id();
             $table->string('name', 20);
+            $table->string('commercial_symbol', 4);
+            $table->string('sunat_symbol', 4);
             $table->integer('status')->default(1);
             $table->timestamps();
         });

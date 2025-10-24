@@ -28,7 +28,6 @@ class StoreSaleRequest extends FormRequest
             'company_id' => 'required|integer|exists:companies,id',
             'document_type_id' => 'required|integer|exists:document_types,id',
             'serie' => 'required|string|max:10',
-            'document_number' => 'required|string|max:10',
             'parallel_rate' => 'required|numeric|min:0',
             'customer_id' => 'required|integer|exists:customers,id',
             'date' => 'required|date',

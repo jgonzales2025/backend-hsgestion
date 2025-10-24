@@ -34,6 +34,17 @@ readonly class CreateSaleUseCase
 
     public function execute(SaleDTO $saleDTO): ?Sale
     {
+        $lastDocumentNumber = $this->saleRepository->getLastDocumentNumber();
+
+        if ($lastDocumentNumber === null) {
+            $documentNumber = '00001';
+        } else {
+            $nextNumber = intval($lastDocumentNumber) + 1;
+            $documentNumber = str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+        }
+
+        $saleDTO->document_number = $documentNumber;
+
         $companyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
         $company = $companyUseCase->execute($saleDTO->company_id);
 

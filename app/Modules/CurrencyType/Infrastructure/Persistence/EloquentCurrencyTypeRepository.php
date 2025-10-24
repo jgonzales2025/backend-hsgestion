@@ -16,6 +16,8 @@ class EloquentCurrencyTypeRepository implements CurrencyTypeRepositoryInterface{
               => new CurrencyType(
                     id:$currencyType->id,
                     name:$currencyType->name,
+                    commercial_symbol: $currencyType->commercial_symbol,
+                    sunat_symbol: $currencyType->sunat_symbol,
                     status:$currencyType->status
                 ))->toArray();
          }
@@ -31,6 +33,8 @@ class EloquentCurrencyTypeRepository implements CurrencyTypeRepositoryInterface{
              return new CurrencyType(
                  id: $eloquentCurrencyType->id,
                  name: $eloquentCurrencyType->name,
+                 commercial_symbol: $eloquentCurrencyType->commercial_symbol,
+                 sunat_symbol: $eloquentCurrencyType->sunat_symbol,
                  status: $eloquentCurrencyType->status
              );
          }

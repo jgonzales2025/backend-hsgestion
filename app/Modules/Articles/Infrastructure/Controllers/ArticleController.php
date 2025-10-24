@@ -45,8 +45,13 @@ class ArticleController extends Controller
   }
   public function index(Request $request): array
   {
+   $name= $request->query("name");
+   $sku = $request->query("sku");
+   $serie = $request->query('serie');
+
     $articleUseCase = new FindAllArticleUseCase($this->articleRepository);
-    $article = $articleUseCase->execute();
+
+    $article = $articleUseCase->execute($name, $sku,$serie);
     
 
     return ArticleResource::collection($article)->resolve();

@@ -98,7 +98,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticle(): array
+    public function findAllArticle(?string $name, ?string $sku, ?string $serie): array
     {
         $payload = auth('api')->payload();
         $companyId = $payload->get('company_id');
@@ -112,7 +112,17 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'user',
             'company',
         ])->where('company_type_id', $companyId)
-            ->get();
+            ->when($name, function($query, $name){
+                 return $query->where(function($q)use($name){
+                       $q->where('description','like', "%{$name}")
+                       ->orwhere('sku','like',"%{$name}")
+                           ->orWhere('brand_id', function ($subQuery) use ($name) {
+                    $subQuery->select('id')
+                        ->from('brands')
+                        ->where('name', 'like', "%{$name}%");
+              });;
+                 });
+            })->orderByDesc('created_at')->get();
 
 
         return $articles->map(function ($article) {

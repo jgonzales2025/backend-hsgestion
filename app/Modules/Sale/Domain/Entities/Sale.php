@@ -31,6 +31,8 @@ class Sale
     private float $inafecto;
     private float $igv;
     private float $total;
+    private ?float $saldo;
+    private ?float $amount_amortized;
     private ?int $status;
     private ?int $payment_status;
     private ?bool $is_locked;
@@ -58,6 +60,8 @@ class Sale
         float $inafecto,
         float $igv,
         float $total,
+        ?float $saldo,
+        ?float $amount_amortized,
         ?int $status,
         ?int $payment_status,
         ?bool $is_locked,
@@ -84,6 +88,8 @@ class Sale
         $this->inafecto = $inafecto;
         $this->igv = $igv;
         $this->total = $total;
+        $this->saldo = $saldo;
+        $this->amount_amortized = $amount_amortized;
         $this->status = $status;
         $this->payment_status = $payment_status;
         $this->is_locked = $is_locked;
@@ -111,6 +117,8 @@ class Sale
     public function getInafecto(): float { return $this->inafecto; }
     public function getIgv(): float { return $this->igv; }
     public function getTotal(): float { return $this->total; }
+    public function getSaldo(): ?float { return $this->saldo; }
+    public function getAmountAmortized(): ?float { return $this->amount_amortized; }
     public function getStatus(): ?int { return $this->status; }
     public function getPaymentStatus(): ?int { return $this->payment_status; }
     public function getIsLocked(): ?bool { return $this->is_locked; }

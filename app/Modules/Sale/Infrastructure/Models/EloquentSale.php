@@ -37,23 +37,13 @@ class EloquentSale extends Model
         'igv',
         'total',
         'saldo',
+        'amount_amortized',
         'status',
         'payment_status',
         'is_locked'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($sale) {
-            if (is_null($sale->saldo)) {
-                $sale->saldo = $sale->total;
-            }
-        });
-    }
 
     public function company(): BelongsTo
     {

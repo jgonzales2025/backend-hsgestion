@@ -233,6 +233,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Ruta para ventas
     Route::get('/sales', [\App\Modules\Sale\Infrastructure\Controllers\SaleController::class, 'index']);
     Route::post('/sales', [\App\Modules\Sale\Infrastructure\Controllers\SaleController::class, 'store']);
+
+    // Ruta para cobranzas
+    Route::get('/collections', [\App\Modules\Collections\Infrastructure\Controllers\CollectionController::class, 'index']);
+    Route::post('/collections', [\App\Modules\Collections\Infrastructure\Controllers\CollectionController::class, 'store']);
 });
 
 Route::middleware('auth:api')->group(function () {

@@ -44,6 +44,7 @@ use App\Modules\Ubigeo\Districts\Domain\Interfaces\DistrictRepositoryInterface;
 use App\Modules\Ubigeo\Provinces\Domain\Interfaces\ProvinceRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
@@ -61,10 +62,12 @@ class CustomerController extends Controller
         private readonly UserRepositoryInterface $userRepository,
     ){}
 
-    public function index(): array
+    public function index(Request $request): array
     {
+        $customerName = $request->query('customer_name');
+        $documentNumber = $request->query('document_number');
         $customersUseCase = new FindAllCustomersUseCase($this->customerRepository);
-        $customers = $customersUseCase->execute();
+        $customers = $customersUseCase->execute($customerName, $documentNumber);
 
         return CustomerAllResource::collection($customers)->resolve();
     }

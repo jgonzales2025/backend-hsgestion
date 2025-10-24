@@ -33,6 +33,8 @@ class ArticleDTO
     public int $sub_category_id;
     public int $company_type_id;
     public string $image_url;
+    public int $state_modify_article;
+    
 
     public function __construct(array $data)
     {
@@ -64,5 +66,8 @@ class ArticleDTO
         $this->sub_category_id = (int)($data['sub_category_id'] ?? 0);
         $this->company_type_id = (int)($data['company_type_id'] ?? 0);
         $this->image_url = $data['image_url'] ?? '';
+         $this->state_modify_article = $data['state_modify_article'] ??0;
+
+        
     }
 }

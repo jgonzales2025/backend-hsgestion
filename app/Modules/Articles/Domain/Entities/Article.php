@@ -246,7 +246,7 @@ class Article
     {
         return $this->image_url ?? '';
     }
-    public function getstateModifyArticle():int{
+    public function getstateModifyArticle():int|null{
         return $this->state_modify_article;
     }
 

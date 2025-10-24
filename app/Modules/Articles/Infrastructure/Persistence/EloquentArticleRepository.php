@@ -42,7 +42,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'category_id' => $article->getCategory()->getId(),
             'sub_category_id' => $article->getSubCategory()->getId(),
             'company_type_id' => $article->getCompany()->getId(),
-            'image_url' => $article->getImageURL()
+            'image_url' => $article->getImageURL(),
+            'state_modify_article' =>$article->getstateModifyArticle()
         ]);
 
         $payload = auth('api')->payload();

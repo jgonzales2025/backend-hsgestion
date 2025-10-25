@@ -23,7 +23,10 @@ class SaleDTO
     public $inafecto;
     public $igv;
     public $total;
+    public ?float $saldo;
+    public ?float $amount_amortized;
     public ?int $status;
+    public ?int $payment_status;
     public ?bool $is_locked;
     public ?string $serie_prof;
     public ?string $correlative_prof;
@@ -50,7 +53,10 @@ class SaleDTO
         $this->inafecto = $data['inafecto'];
         $this->igv = $data['igv'];
         $this->total = $data['total'];
+        $this->saldo = $data['saldo'] ?? null;
+        $this->amount_amortized = $data['amount_amortized'] ?? null;
         $this->status = $data['status'] ?? null;
+        $this->payment_status = $data['payment_status'] ?? null;
         $this->is_locked = $data['is_locked'] ?? null;
         $this->serie_prof = $data['serie_prof'] ?? null;
         $this->correlative_prof = $data['correlative_prof'] ?? null;

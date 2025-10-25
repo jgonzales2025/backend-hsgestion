@@ -13,8 +13,10 @@ use App\Modules\Sale\Application\DTOs\SaleDTO;
 use App\Modules\Sale\Application\UseCases\CreateSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllSalesUseCase;
 use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
+use App\Modules\Sale\Application\UseCases\UpdateSaleUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleRequest;
+use App\Modules\Sale\Infrastructure\Requests\UpdateSaleRequest;
 use App\Modules\Sale\Infrastructure\Resources\SaleResource;
 use App\Modules\SaleArticle\Application\DTOs\SaleArticleDTO;
 use App\Modules\SaleArticle\Application\UseCases\CreateSaleArticleUseCase;
@@ -121,5 +123,17 @@ class SaleController extends Controller
                 'articles' => SaleArticleResource::collection($articles)->resolve(),
             ]
         );
+    }
+
+    public function update(UpdateSaleRequest $request, $id): JsonResponse
+    {
+        $userId = request()->get('user_id');
+        $role = request()->get('role');
+
+        $saleDTO = new SaleDTO($request->validated());
+        $saleUseCase = new UpdateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository);
+        $saleUpdated = $saleUseCase->execute($saleDTO, $id);
+
+
     }
 }

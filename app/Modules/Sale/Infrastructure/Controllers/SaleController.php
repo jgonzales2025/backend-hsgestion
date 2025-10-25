@@ -88,6 +88,10 @@ class SaleController extends Controller
         $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
         $sale = $saleUseCase->execute($id);
 
+        if (!$sale) {
+            return response()->json(['message' => 'Venta no encontrada'], 404);
+        }
+
         $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
 
         return response()->json(

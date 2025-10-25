@@ -108,7 +108,7 @@ class EloquentUserRepository implements UserRepositoryInterface
 
     public function findAllUsers(): array
     {
-        $users = EloquentUser::with('roles', 'assignments')->get();
+        $users = EloquentUser::with('roles', 'assignments')->orderBy('created_at', 'desc')->get();
 
         if ($users->isEmpty()) {
             return [];

@@ -27,6 +27,7 @@ public string $transfer_type;
 public string $vehicle_type;
 public int $document_type_id;
  public int $destination_branch_client_id;
+ public int $customer_id;
 
   
    public function __construct(array $date){
@@ -53,6 +54,8 @@ public int $document_type_id;
     $this->vehicle_type = $date['vehicle_type'];
     $this->document_type_id = $date['document_type_id']??1;
      $this->destination_branch_client_id = $date['destination_branch_client_id']??1;
-   }
+       $this->customer_id = $date['customer_id']??1;
+   
+    }
 
 }

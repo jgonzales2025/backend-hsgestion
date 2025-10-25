@@ -34,6 +34,7 @@ class DispatchNote
     private string $vehicle_type;
     private ?DocumentType $document_type;
     private int $destination_branch_client;
+    private int $customer_id;
 
     public function __construct(
         ?int $id,
@@ -59,7 +60,8 @@ class DispatchNote
         string $transfer_type,
         string $vehicle_type,
         ?DocumentType $document_type,
-        int $destination_branch_client
+        int $destination_branch_client,
+        int $customer_id
     
     ) {
         $this->id = $id;
@@ -86,6 +88,7 @@ class DispatchNote
         $this->vehicle_type = $vehicle_type;
         $this->document_type = $document_type;
         $this->destination_branch_client= $destination_branch_client;
+           $this->customer_id = $customer_id;
     }
 
     // Getters
@@ -113,4 +116,5 @@ class DispatchNote
     public function getVehicleType(): string { return $this->vehicle_type; }
     public function getDocumentType(): ?DocumentType { return $this->document_type; }
     public function getdestination_branch_client():int{return $this->destination_branch_client;}
+    public function getCustomerId():int{return $this->customer_id;}
 }

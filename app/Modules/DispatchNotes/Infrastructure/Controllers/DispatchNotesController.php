@@ -38,7 +38,7 @@ class DispatchNotesController extends Controller{
      private readonly DispatchArticleRepositoryInterface   $dispatchArticleRepositoryInterface,
       ){}
 
-  public function index(): array
+  public function index(): JsonResponse
 {
     $dispatchNoteUseCase = new FindAllDispatchNotesUseCase($this->dispatchNoteRepository);
     $dispatchNotes = $dispatchNoteUseCase->execute();
@@ -47,13 +47,12 @@ class DispatchNotesController extends Controller{
     foreach ($dispatchNotes as $articlesNote) {
        $dispatch = $this->dispatchArticleRepositoryInterface->findById($articlesNote->getId());
      $result[] = [
-   
+        'dispatchNote' => (new DispatchNoteResource($articlesNote))->resolve(),
+        'dispatchArticle' => DispatchArticleResource::collection($dispatch)->resolve()
      ];
       } 
 
-
-
-  return DispatchNoteResource::collection($dispatchNotes)->resolve();
+  return response()->json($result,200);
 }
     public function store(RequestStore $store):JsonResponse{
           $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
@@ -82,12 +81,22 @@ class DispatchNotesController extends Controller{
             ], 201
         );
     }
-       public function show(int $id):JsonResponse{
+       public function show($id):JsonResponse{
            $dispatchNoteUseCase = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
         $dispatchNotes = $dispatchNoteUseCase->execute($id); 
 
         return response()->json(
-          (new DispatchNoteResource($dispatchNotes)),200
+          new DispatchNoteResource($dispatchNotes),
+          200
         );
+        // $dispatchArticle = $this->dispatchArticleRepositoryInterface->findById($dispatchNotes->getId());
+
+
+        // return response()->json(
+        //   [
+        //   'dispatchNote' => (new DispatchNoteResource($dispatchNotes))->resolve(),
+        //   'dispatchArticle' =>  DispatchArticleResource::collection($dispatchArticle)->resolve()
+        //   ]
+        // );
     }
 }

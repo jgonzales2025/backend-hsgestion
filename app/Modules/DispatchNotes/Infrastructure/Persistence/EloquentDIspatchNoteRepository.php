@@ -45,7 +45,8 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
                 transfer_type: $dispatch->transfer_type,
                 vehicle_type: $dispatch->vehicle_type,
                 document_type: $dispatch->document_type->toDomain($dispatch->document_type),
-                destination_branch_client: $dispatch->destination_branch_client
+                destination_branch_client: $dispatch->destination_branch_client,
+                customer_id: $dispatch->customer_id
 
 
             );
@@ -81,7 +82,8 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'transfer_type' => $dispatchNote->getTransferType(),
             'vehicle_type' => $dispatchNote->getVehicleType(),
             'document_type_id' => $dispatchNote->getDocumentType() ? $dispatchNote->getDocumentType()->getId() : null,
-            'destination_branch_client' => $dispatchNote->getdestination_branch_client()
+            'destination_branch_client' => $dispatchNote->getdestination_branch_client(),
+            'customer_id' => $dispatchNote->getCustomerId()
         ]);
 
         return new DispatchNote(
@@ -108,38 +110,45 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             transfer_type: $dispatchNote->transfer_type,
             vehicle_type: $dispatchNote->vehicle_type,
             document_type: $dispatchNote->document_type->toDomain($dispatchNote->document_type),
-            destination_branch_client: $dispatchNote->destination_branch_client
+            destination_branch_client: $dispatchNote->destination_branch_client,
+            customer_id: $dispatchNote->customer_id
         );
     }
-    public function findById($id): ?DispatchNote
-    {
-        $dispatchNote = EloquentDispatchNote::find($id);
+  public function findById(int $id): ?DispatchNote
+{
+    $dispatchNote = EloquentDispatchNote::find($id);
 
-        return new DispatchNote(
-            id: $dispatchNote->id,
-            company: $dispatchNote->company->toDomain($dispatchNote->company),
-            branch: $dispatchNote->branch->toDomain($dispatchNote->branch),
-            serie: $dispatchNote->serie,
-            correlativo: $dispatchNote->correlativo,
-            date: $dispatchNote->date,
-            emission_reason: $dispatchNote->emission_reason->toDomain($dispatchNote->emission_reason),
-            description: $dispatchNote->description,
-            destination_branch: $dispatchNote->destination_branch->toDomain($dispatchNote->destination_branch),
-            destination_address_customer: $dispatchNote->destination_address_customer,
-            transport: $dispatchNote->transport->toDomain($dispatchNote->transport),
-            observations: $dispatchNote->observations,
-            num_orden_compra: $dispatchNote->num_orden_compra,
-            doc_referencia: $dispatchNote->doc_referencia,
-            num_referencia: $dispatchNote->num_referencia,
-            date_referencia: $dispatchNote->date_referencia,
-            status: $dispatchNote->status,
-            conductor: $dispatchNote->conductor->toDomain($dispatchNote->conductor),
-            license_plate: $dispatchNote->license_plate,
-            total_weight: $dispatchNote->total_weight,
-            transfer_type: $dispatchNote->transfer_type,
-            vehicle_type: $dispatchNote->vehicle_type,
-            document_type: $dispatchNote->document_type->toDomain($dispatchNote->document_type),
-            destination_branch_client: $dispatchNote->destination_branch_client
-        );
+    if (!$dispatchNote) {
+        return null;
     }
+
+    return new DispatchNote(
+        id: $dispatchNote->id,
+        company: $dispatchNote->company?->toDomain($dispatchNote->company),
+        branch: $dispatchNote->branch->toDomain($dispatchNote->branch),
+        serie: $dispatchNote->serie,
+        correlativo: $dispatchNote->correlativo,
+        date: $dispatchNote->date,
+        emission_reason: $dispatchNote->emission_reason?->toDomain($dispatchNote->emission_reason),
+        description: $dispatchNote->description,
+        destination_branch: $dispatchNote->destination_branch?->toDomain($dispatchNote->destination_branch),
+        destination_address_customer: $dispatchNote->destination_address_customer,
+        transport: $dispatchNote->transport?->toDomain($dispatchNote->transport),
+        observations: $dispatchNote->observations,
+        num_orden_compra: $dispatchNote->num_orden_compra,
+        doc_referencia: $dispatchNote->doc_referencia,
+        num_referencia: $dispatchNote->num_referencia,
+        date_referencia: $dispatchNote->date_referencia,
+        status: $dispatchNote->status,
+        conductor: $dispatchNote->conductor->toDomain($dispatchNote->conductor),
+        license_plate: $dispatchNote->license_plate,
+        total_weight: $dispatchNote->total_weight,
+        transfer_type: $dispatchNote->transfer_type,
+        vehicle_type: $dispatchNote->vehicle_type,
+        document_type: $dispatchNote->document_type?->toDomain($dispatchNote->document_type),
+        destination_branch_client: $dispatchNote->destination_branch_client,
+        customer_id: $dispatchNote->customer_id
+    );
+}
+
 }

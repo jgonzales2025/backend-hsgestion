@@ -2,6 +2,7 @@
 
 namespace App\Modules\DispatchNotes\Application\UseCases;
 
+use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 
 class FindByIdDispatchNoteUseCase{
@@ -9,7 +10,7 @@ class FindByIdDispatchNoteUseCase{
         
     }
 
-    public function execute($id){
+    public function execute($id):?DispatchNote{
           return $this->dispatchNotesRepositoryInterface->findById($id);
     }
 }

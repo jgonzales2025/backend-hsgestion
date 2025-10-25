@@ -83,7 +83,8 @@ class CreateDispatchNoteUseCase
           transfer_type:$data->transfer_type,
           vehicle_type:$data->vehicle_type,
           document_type:$documentType,
-          destination_branch_client:$data->destination_branch_client_id   
+          destination_branch_client:$data->destination_branch_client_id,
+          customer_id:$data->customer_id   
             
         );
        return $this->dispatchNoteRepository->save($dispatchNote);

@@ -13,9 +13,9 @@ class DispatchNoteResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-       $documentType = $this->resource->getDocumentType();
+//        $documentType = $this->resource->getDocumentType();
 
-$allowedTypes = ['FAC', 'BOL'];
+// $allowedTypes = ['FAC', 'BOL'];
         return [
             'id' => $this->resource->getId(),
 
@@ -64,8 +64,8 @@ $allowedTypes = ['FAC', 'BOL'];
                 'status' => ($this->resource->getDocumentType()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
                 'description' => $this->resource->getDocumentType()->getDescription(),
             ],
-           'destination_branch_client_id' =>$this->resource->getdestination_branch_client()
-
+           'destination_branch_client_id' =>$this->resource->getdestination_branch_client(),
+                   'customer_id' => $this->resource->getCustomerId()
         ];
     }
 }

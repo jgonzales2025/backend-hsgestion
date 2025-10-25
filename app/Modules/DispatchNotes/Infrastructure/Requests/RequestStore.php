@@ -52,6 +52,7 @@ class RequestStore extends FormRequest
             'document_type_id' => ['required', 'integer', 'exists:document_types,id'],
             'destination_branch_client_id' => ['required', 'integer', 'exists:branches,id'],
             'dispatch_articles' => 'required|array|min:1',
+            'customer_id' =>'required|integer|exists:customers,id'
         ];
     }
 

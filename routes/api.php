@@ -39,6 +39,10 @@ use App\Modules\Ubigeo\Districts\Infrastructure\Controllers\DistrictController;
 use App\Modules\PaymentMethod\Infrastructure\Controllers\PaymentMethodController;
 use App\Modules\DocumentType\Infrastructure\Controllers\DocumentTypeController;
 use App\Modules\LoginAttempt\Infrastructure\Controllers\LoginAttemptController;
+use App\Modules\Sale\Infrastructure\Controllers\SaleController;
+use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
+use App\Modules\Serie\Infrastructure\Controllers\SerieController;
+use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -226,19 +230,19 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('customers', [CustomerController::class, 'store']);
 
     // Series
-    Route::get('/serie-number', [\App\Modules\Serie\Infrastructure\Controllers\SerieController::class, 'findByDocumentType']);
+    Route::get('/serie-number', [SerieController::class, 'findByDocumentType']);
 
     // Ruta para traer las sucursales asignadas a un usuario
-    Route::get('/branches-by-user', [\App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController::class, 'indexBranchesByUser']);
+    Route::get('/branches-by-user', [UserAssignmentController::class, 'indexBranchesByUser']);
 
     // Ruta para ventas
-    Route::get('/sales', [\App\Modules\Sale\Infrastructure\Controllers\SaleController::class, 'index']);
-    Route::post('/sales', [\App\Modules\Sale\Infrastructure\Controllers\SaleController::class, 'store']);
-    Route::get('/sales/{id}', [\App\Modules\Sale\Infrastructure\Controllers\SaleController::class, 'show']);
+    Route::get('/sales', [SaleController::class, 'index']);
+    Route::post('/sales', [SaleController::class, 'store']);
+    Route::get('/sales/{id}', [SaleController::class, 'show']);
 
     // Ruta para cobranzas
-    Route::get('/collections', [\App\Modules\Collections\Infrastructure\Controllers\CollectionController::class, 'index']);
-    Route::post('/collections', [\App\Modules\Collections\Infrastructure\Controllers\CollectionController::class, 'store']);
+    Route::get('/collections', [CollectionController::class, 'index']);
+    Route::post('/collections', [CollectionController::class, 'store']);
 });
 
 Route::middleware('auth:api')->group(function () {

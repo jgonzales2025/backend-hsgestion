@@ -29,6 +29,7 @@ class EloquentCollection extends Model
         'operation_number',
         'lote_number',
         'for_digits',
+        'status'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

@@ -249,6 +249,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/collections', [CollectionController::class, 'store']);
     Route::get('/collections/{id}', [CollectionController::class, 'showBySaleId']);
     Route::put('/collections/{id}', [CollectionController::class, 'cancelCharge']);
+
+    // Ruta para traer los logs transaccionales
+    Route::get('/logs-transaction', [\App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController::class, 'index']);
 });
 
 Route::middleware('auth:api')->group(function () {

@@ -9,6 +9,28 @@ use App\Modules\TransactionLog\Infrastructure\Models\EloquentTransactionLog;
 
 class EloquentTransactionLogRepository implements TransactionLogRepositoryInterface
 {
+    public function findAll(): array
+    {
+        $eloquentTransactionLog = EloquentTransactionLog::all()->sortByDesc('created_at');
+
+        return $eloquentTransactionLog->map(function ($eloquentTransactionLog){
+            return new TransactionLog(
+                id:  $eloquentTransactionLog->id,
+                user: $eloquentTransactionLog->user->toDomain($eloquentTransactionLog->user),
+                roleId: $eloquentTransactionLog->role_id,
+                role_name: $eloquentTransactionLog->role_name,
+                description_log: $eloquentTransactionLog->description_log,
+                action: $eloquentTransactionLog->action,
+                company: $eloquentTransactionLog->company->toDomain($eloquentTransactionLog->company),
+                branch: $eloquentTransactionLog->branch->toDomain($eloquentTransactionLog->branch),
+                documentType: $eloquentTransactionLog->documentType->toDomain($eloquentTransactionLog->documentType),
+                serie: $eloquentTransactionLog->serie,
+                correlative: $eloquentTransactionLog->correlative,
+                ipAddress: $eloquentTransactionLog->ip_address,
+                userAgent: $eloquentTransactionLog->user_agent,
+            );
+        })->toArray();
+    }
 
     public function save(TransactionLog $transactionLog): void
     {

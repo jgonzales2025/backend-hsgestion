@@ -9,6 +9,7 @@ use App\Modules\User\Domain\Entities\User;
 
 class TransactionLog
 {
+    private ?int $id;
     private User $user;
     private ?int $roleId;
     private string $role_name;
@@ -22,8 +23,9 @@ class TransactionLog
     private string $ipAddress;
     private ?string $userAgent;
 
-    public function __construct(User $user, ?int $roleId, string $role_name, string $description_log, string $action, Company $company, Branch $branch, DocumentType $documentType, string $serie, string $correlative, string $ipAddress, ?string $userAgent)
+    public function __construct(?int $id,User $user, ?int $roleId, string $role_name, string $description_log, string $action, Company $company, Branch $branch, DocumentType $documentType, string $serie, string $correlative, string $ipAddress, ?string $userAgent)
     {
+        $this->id = $id;
         $this->user = $user;
         $this->roleId = $roleId;
         $this->role_name = $role_name;
@@ -38,6 +40,7 @@ class TransactionLog
         $this->userAgent = $userAgent;
     }
 
+    public function getId(): ?int { return $this->id; }
     public function getUser(): User { return $this->user; }
     public function getRoleId(): ?int { return $this->roleId; }
     public function getRoleName(): string { return $this->role_name; }

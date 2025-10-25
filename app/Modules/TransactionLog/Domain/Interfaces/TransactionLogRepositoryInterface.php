@@ -6,5 +6,6 @@ use App\Modules\TransactionLog\Domain\Entities\TransactionLog;
 
 interface TransactionLogRepositoryInterface
 {
+    public function findAll(): array;
     public function save(TransactionLog $transactionLog): void;
 }

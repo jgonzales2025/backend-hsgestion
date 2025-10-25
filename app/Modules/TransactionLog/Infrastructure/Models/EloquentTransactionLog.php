@@ -2,6 +2,7 @@
 
 namespace App\Modules\TransactionLog\Infrastructure\Models;
 
+use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use App\Modules\DocumentType\Infrastructure\Models\EloquentDocumentType;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
@@ -42,7 +43,7 @@ class EloquentTransactionLog extends Model
 
     public function branch(): BelongsTo
     {
-        return $this->belongsTo(EloquentCompany::class, 'branch_id');
+        return $this->belongsTo(EloquentBranch::class, 'branch_id');
     }
 
     public function documentType(): BelongsTo

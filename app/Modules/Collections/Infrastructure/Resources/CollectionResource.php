@@ -30,7 +30,8 @@ class CollectionResource extends JsonResource
             'operation_date' => $this->resource->getOperationDate(),
             'operation_number' => $this->resource->getOperationNumber(),
             'lote_number' => $this->resource->getLoteNumber(),
-            'for_digits' => $this->resource->getForDigits()
+            'for_digits' => $this->resource->getForDigits(),
+            'status' => $this->resource->getStatus(),
         ];
     }
 }

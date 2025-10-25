@@ -24,6 +24,7 @@ class Collection
     private ?string $operation_number;
     private ?string $lote_number;
     private ?string $for_digits;
+    private int $status;
 
     public function __construct(
         int $id,
@@ -44,6 +45,7 @@ class Collection
         ?string $operation_number,
         ?string $lote_number,
         ?string $for_digits,
+        int $status = 1
     ){
         $this->id = $id;
         $this->company_id = $company_id;
@@ -63,6 +65,7 @@ class Collection
         $this->operation_number = $operation_number;
         $this->lote_number = $lote_number;
         $this->for_digits = $for_digits;
+        $this->status = $status;
     }
 
     public function getId(): int { return $this->id; }
@@ -83,5 +86,6 @@ class Collection
     public function getOperationNumber(): ?string { return $this->operation_number; }
     public function getLoteNumber(): ?string { return $this->lote_number; }
     public function getForDigits(): ?string { return $this->for_digits; }
+    public function getStatus(): int { return $this->status; }
 
 }

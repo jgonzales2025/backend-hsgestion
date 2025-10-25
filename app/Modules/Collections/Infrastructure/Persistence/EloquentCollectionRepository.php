@@ -94,6 +94,41 @@ class EloquentCollectionRepository implements CollectionRepositoryInterface
             operation_number: $eloquentCollection->operation_number,
             lote_number: $eloquentCollection->lote_number,
             for_digits: $eloquentCollection->for_digits,
+            status: $eloquentCollection->status,
         );
+    }
+
+    public function findBySaleId(int $saleId): array
+    {
+        $eloquentCollections = EloquentCollection::where('sale_id', $saleId)->get();
+
+        return $eloquentCollections->map(function ($collection) {
+            return new Collection(
+                id: $collection->id,
+                company_id: $collection->company_id,
+                sale_id: $collection->sale_id,
+                sale_document_type_id: $collection->sale_document_type_id,
+                sale_serie: $collection->sale_serie,
+                sale_correlative: $collection->sale_correlative,
+                payment_method: $collection->paymentMethod->toDomain($collection->paymentMethod),
+                payment_date: $collection->payment_date,
+                currency_type_id: $collection->currency_type_id,
+                parallel_rate: $collection->parallel_rate,
+                amount: $collection->amount,
+                change: $collection->change,
+                digital_wallet_id: $collection->digital_wallet_id,
+                bank_id: $collection->bank_id,
+                operation_date: $collection->operation_date,
+                operation_number: $collection->operation_number,
+                lote_number: $collection->lote_number,
+                for_digits: $collection->for_digits,
+                status: $collection->status
+            );
+        })->toArray();
+    }
+
+    public function findById(int $id): ?Collection
+    {
+        // TODO: Implement findById() method.
     }
 }

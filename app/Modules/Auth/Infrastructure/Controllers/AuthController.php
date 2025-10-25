@@ -58,7 +58,9 @@ class AuthController extends Controller
                 'userId' => $eloquentUser->id,
                 'failureReason' => 'Cuenta bloqueada',
                 'failedAttemptsCount' => $eloquentUser->failed_attempts,
-                'attemptAt' => now()->toDateString()
+                'attemptAt' => now()->toDateString(),
+                'companyId' => $request->cia_id,
+                'roleId' => $request->role_id
             ]);
             $loginAttemptUseCase->execute($loginAttemptDTO);
             return response()->json(['error' => 'Cantidad de intentos superado, contacte al administrador.'], 401);
@@ -81,7 +83,9 @@ class AuthController extends Controller
                     'userId' => $eloquentUser->id,
                     'failureReason' => 'Cuenta bloqueada por intentos excedidos',
                     'failedAttemptsCount' => 3,
-                    'attemptAt' => now()->toDateString()
+                    'attemptAt' => now()->toDateString(),
+                    'companyId' => $request->cia_id,
+                    'roleId' => $request->role_id
                 ]);
                 $loginAttemptUseCase->execute($loginAttemptDTO);
 
@@ -98,7 +102,9 @@ class AuthController extends Controller
                 'userId' => $eloquentUser->id,
                 'failureReason' => 'Credenciales inválidas',
                 'failedAttemptsCount' => $eloquentUser->failed_attempts,
-                'attemptAt' => now()->toDateString()
+                'attemptAt' => now()->toDateString(),
+                'companyId' => $request->cia_id,
+                'roleId' => $request->role_id
             ]);
             $loginAttemptUseCase->execute($loginAttemptDTO);
 

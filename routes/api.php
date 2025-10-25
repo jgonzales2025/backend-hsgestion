@@ -244,6 +244,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Ruta para cobranzas
     Route::get('/collections', [CollectionController::class, 'index']);
     Route::post('/collections', [CollectionController::class, 'store']);
+    Route::get('/collections/{id}', [CollectionController::class, 'showBySaleId']);
 });
 
 Route::middleware('auth:api')->group(function () {

@@ -7,6 +7,7 @@ use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Collections\Application\DTOs\CollectionDTO;
 use App\Modules\Collections\Application\UseCases\CreateCollectionUseCase;
 use App\Modules\Collections\Application\UseCases\FindAllCollectionsUseCase;
+use App\Modules\Collections\Application\UseCases\FindBySaleIdCollectionUseCase;
 use App\Modules\Collections\Domain\Interfaces\CollectionRepositoryInterface;
 use App\Modules\Collections\Infrastructure\Requests\StoreCollectionRequest;
 use App\Modules\Collections\Infrastructure\Resources\CollectionResource;
@@ -68,5 +69,16 @@ class CollectionController extends Controller
         $transactionLogs->execute($transactionDTO);
 
         return response()->json((new CollectionResource($collection))->resolve(), 201);
+    }
+
+    public function showBySaleId(int $id): JsonResponse
+    {
+        $collectionUseCase = new FindBySaleIdCollectionUseCase($this->collectionRepository);
+        $collection = $collectionUseCase->execute($id);
+
+        return response()->json(
+            CollectionResource::collection($collection)->resolve(),
+             200
+        );
     }
 }

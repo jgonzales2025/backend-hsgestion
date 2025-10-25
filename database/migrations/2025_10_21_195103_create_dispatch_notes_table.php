@@ -48,7 +48,7 @@ return new class extends Migration {
             $table->string('vehicle_type');
             $table->foreignId('document_type_id')->constrained('document_types');
             $table->foreignId('destination_branch_client')->constrained('branches');
-
+            $table->foreignId('customer_id')->constrained('customers');
 
         });
     }

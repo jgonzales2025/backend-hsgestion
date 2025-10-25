@@ -39,7 +39,8 @@ class DispatchNotesSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
                 'document_type_id'=>1,
-                'destination_branch_client'=>1
+                'destination_branch_client'=>1,
+                'customer_id'=>1
             ],
             [
                 'cia_id' => 1,
@@ -66,7 +67,8 @@ class DispatchNotesSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
                 'document_type_id'=>1,
-                 'destination_branch_client'=>1
+                 'destination_branch_client'=>1,
+                   'customer_id'=>1
             ],
         ];
 

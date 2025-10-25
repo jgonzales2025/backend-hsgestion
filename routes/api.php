@@ -193,6 +193,7 @@ Route::get('ingress-reasons', [IngressReasonController::class, 'index']);
 
 // Tipos de documentos
 Route::get('document-types', [DocumentTypeController::class, 'index']);
+Route::get('document-types/sales', [DocumentTypeController::class, 'indexSales']);
 
 // Banks - Bancos
 Route::get('banks', [BankController::class, 'index']);
@@ -237,9 +238,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Ruta para ventas
     Route::get('/sales', [SaleController::class, 'index']);
-    Route::post('/sales', [SaleController::class, 'store']);
+    Route::get('/sales/by-document', [SaleController::class, 'showDocumentSale']);
     Route::get('/sales/{id}', [SaleController::class, 'show']);
-    Route::get('/sales/document/sale', [SaleController::class, 'showDocumentSale']);
+    Route::post('/sales', [SaleController::class, 'store']);
     Route::put('/sales/{id}', [SaleController::class, 'update']);
 
 

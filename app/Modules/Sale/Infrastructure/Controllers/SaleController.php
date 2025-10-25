@@ -71,37 +71,8 @@ class SaleController extends Controller
         $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository);
         $sale = $saleUseCase->execute($saleDTO);
 
-        $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository);
-        $saleArticles = array_map(function ($article) use ($sale, $createSaleArticleUseCase) {
-            $saleArticleDTO = new SaleArticleDTO([
-                'sale_id' => $sale->getId(),
-                'article_id' => $article['article_id'],
-                'description' => $article['description'],
-                'quantity' => $article['quantity'],
-                'unit_price' => $article['unit_price'],
-                'public_price' => $article['public_price'],
-                'subtotal' => $article['subtotal'],
-            ]);
-
-            return $createSaleArticleUseCase->execute($saleArticleDTO);
-        }, $request->validated()['sale_articles']);
-
-        $transactionLogs = new CreateTransactionLogUseCase($this->transactionLogRepository, $this->userRepository, $this->companyRepository, $this->documentTypeRepository, $this->branchRepository);
-        $transactionDTO = new TransactionLogDTO([
-            'user_id' => $userId,
-            'role_name' => $role,
-            'description_log' => 'Venta',
-            'action' => $request->method(),
-            'company_id' => $sale->getCompany()->getId(),
-            'branch_id' => $sale->getBranch()->getId(),
-            'document_type_id' => $sale->getDocumentType()->getId(),
-            'serie' => $sale->getSerie(),
-            'correlative' => $sale->getDocumentNumber(),
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-        ]);
-
-        $transactionLogs->execute($transactionDTO);
+        $saleArticles = $this->createSaleArticles($sale, $request->validated()['sale_articles']);
+        $this->logTransaction($request, $sale);
 
         return response()->json([
             'sale' => (new SaleResource($sale))->resolve(),
@@ -134,6 +105,61 @@ class SaleController extends Controller
         $saleUseCase = new UpdateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository);
         $saleUpdated = $saleUseCase->execute($saleDTO, $id);
 
+        $this->saleArticleRepository->deleteBySaleId($saleUpdated->getId());
 
+        $saleArticles = $this->createSaleArticles($saleUpdated, $request->validated()['sale_articles']);
+        $this->logTransaction($request, $saleUpdated);
+
+        return response()->json([
+            'sale' => (new SaleResource($saleUpdated))->resolve(),
+            'articles' => SaleArticleResource::collection($saleArticles)->resolve()
+            ], 200
+        );
+    }
+
+    private function createSaleArticles($sale, array $articlesData): array
+    {
+        $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository);
+
+        return array_map(function ($article) use ($sale, $createSaleArticleUseCase) {
+            $saleArticleDTO = new SaleArticleDTO([
+                'sale_id' => $sale->getId(),
+                'article_id' => $article['article_id'],
+                'description' => $article['description'],
+                'quantity' => $article['quantity'],
+                'unit_price' => $article['unit_price'],
+                'public_price' => $article['public_price'],
+                'subtotal' => $article['subtotal'],
+            ]);
+
+            return $createSaleArticleUseCase->execute($saleArticleDTO);
+        }, $articlesData);
+    }
+
+    private function logTransaction($request, $sale): void
+    {
+        $transactionLogs = new CreateTransactionLogUseCase(
+            $this->transactionLogRepository,
+            $this->userRepository,
+            $this->companyRepository,
+            $this->documentTypeRepository,
+            $this->branchRepository
+        );
+
+        $transactionDTO = new TransactionLogDTO([
+            'user_id' => request()->get('user_id'),
+            'role_name' => request()->get('role'),
+            'description_log' => 'Venta',
+            'action' => $request->method(),
+            'company_id' => $sale->getCompany()->getId(),
+            'branch_id' => $sale->getBranch()->getId(),
+            'document_type_id' => $sale->getDocumentType()->getId(),
+            'serie' => $sale->getSerie(),
+            'correlative' => $sale->getDocumentNumber(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        $transactionLogs->execute($transactionDTO);
     }
 }

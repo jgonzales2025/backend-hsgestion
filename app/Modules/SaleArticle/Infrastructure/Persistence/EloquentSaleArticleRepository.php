@@ -50,4 +50,9 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
             );
         })->toArray();
     }
+
+    public function deleteBySaleId(int $id): void
+    {
+        EloquentSaleArticle::where('sale_id', $id)->delete();
+    }
 }

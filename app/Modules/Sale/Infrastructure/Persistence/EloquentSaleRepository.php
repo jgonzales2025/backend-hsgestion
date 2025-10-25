@@ -5,6 +5,7 @@ namespace App\Modules\Sale\Infrastructure\Persistence;
 use App\Modules\Sale\Domain\Entities\Sale;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
+use Illuminate\Support\Facades\Log;
 
 class EloquentSaleRepository implements SaleRepositoryInterface
 {
@@ -53,6 +54,20 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         return $this->buildDomainSale($eloquentSale, $sale);
     }
 
+    public function findByDocumentSale(int $documentTypeId, string $serie, string $correlative): ?Sale
+    {
+        $eloquentSale = EloquentSale::where('document_type_id', $documentTypeId)
+            ->where('serie', $serie)
+            ->where('document_number', $correlative)
+            ->first();
+
+        if (!$eloquentSale) {
+            return null;
+        }
+
+        return $this->mapToDomain($eloquentSale);
+    }
+
     private function mapToArray(Sale $sale): array
     {
         return [
@@ -76,6 +91,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'igv' => $sale->getIgv(),
             'total' => $sale->getTotal(),
             'saldo' => $sale->getSaldo(),
+            'status' => $sale->getStatus(),
             'amount_amortized' => $sale->getAmountAmortized(),
             'series_prof' => $sale->getSerieProf(),
             'correlative_prof' => $sale->getCorrelativeProf(),

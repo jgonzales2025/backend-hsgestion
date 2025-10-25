@@ -239,12 +239,15 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/sales', [SaleController::class, 'index']);
     Route::post('/sales', [SaleController::class, 'store']);
     Route::get('/sales/{id}', [SaleController::class, 'show']);
+    Route::get('/sales/document/sale', [SaleController::class, 'showDocumentSale']);
     Route::put('/sales/{id}', [SaleController::class, 'update']);
+
 
     // Ruta para cobranzas
     Route::get('/collections', [CollectionController::class, 'index']);
     Route::post('/collections', [CollectionController::class, 'store']);
     Route::get('/collections/{id}', [CollectionController::class, 'showBySaleId']);
+    Route::put('/collections/{id}', [CollectionController::class, 'cancelCharge']);
 });
 
 Route::middleware('auth:api')->group(function () {

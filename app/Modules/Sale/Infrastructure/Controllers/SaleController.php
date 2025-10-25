@@ -12,6 +12,7 @@ use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Sale\Application\DTOs\SaleDTO;
 use App\Modules\Sale\Application\UseCases\CreateSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllSalesUseCase;
+use App\Modules\Sale\Application\UseCases\FindByDocumentSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateSaleUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
@@ -27,6 +28,7 @@ use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
 use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class SaleController extends Controller
@@ -115,6 +117,26 @@ class SaleController extends Controller
             'articles' => SaleArticleResource::collection($saleArticles)->resolve()
             ], 200
         );
+    }
+
+    public function showDocumentSale(Request $request): JsonResponse
+    {
+        $documentTypeId = $request->query('document_type_id');
+        $serie = $request->query('serie');
+        $correlative = $request->query('correlative');
+
+        $saleUseCase = new FindByDocumentSaleUseCase($this->saleRepository);
+        $sale = $saleUseCase->execute($documentTypeId, $serie, $correlative);
+        if (!$sale) {
+            return response()->json(['message' => 'Venta no encontrada'], 404);
+        }
+
+        $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
+
+        return response()->json([
+            'sale' => (new SaleResource($sale))->resolve(),
+            'articles' => SaleArticleResource::collection($articles)->resolve()
+        ]);
     }
 
     private function createSaleArticles($sale, array $articlesData): array

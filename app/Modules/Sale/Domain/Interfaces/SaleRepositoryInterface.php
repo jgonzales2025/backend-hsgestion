@@ -11,4 +11,6 @@ interface SaleRepositoryInterface
     public function getLastDocumentNumber(): ?string;
     public function findById(int $id): ?Sale;
     public function update(Sale $sale): ?Sale;
+
+    public function findByDocumentSale(int $documentTypeId, string $serie, string $correlative): ?Sale;
 }

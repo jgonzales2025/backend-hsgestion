@@ -48,4 +48,17 @@ class EloquentDispatchArticleRepository implements DispatchArticleRepositoryInte
                  subtotal_weight:$dispatchArticle->subtotal_weight
         );
      }
+     public function findById(int $id): ?DispatchArticle{
+      $dispatchArticle = EloquentDispatchArticle::find($id);
+      return new DispatchArticle(
+                 id:$dispatchArticle->id,
+                 dispatch_id:$dispatchArticle->dispatch_id,
+                 article_id:$dispatchArticle->article_id,
+                 quantity:$dispatchArticle->quantity,
+                 weight:$dispatchArticle->weight,
+                 saldo:$dispatchArticle->saldo,
+                 name:$dispatchArticle->name,
+                 subtotal_weight:$dispatchArticle->subtotal_weight
+      );
+     }
 }

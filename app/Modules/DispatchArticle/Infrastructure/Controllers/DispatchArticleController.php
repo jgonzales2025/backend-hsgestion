@@ -4,6 +4,7 @@ namespace App\Modules\DispatchArticle\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\DispatchArticle\Application\UseCase\FindAllDispatchArticleUseCase;
+use App\Modules\DispatchArticle\Application\UseCase\FindByIdDispatchArticle;
 use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
 use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
 use Illuminate\Http\JsonResponse;
@@ -19,6 +20,16 @@ class DispatchArticleController extends Controller{
         Log::info("dispatchArticle",$dispatchArticle);
 
        return DispatchArticleResource::collection($dispatchArticle)->resolve();
+
+    }
+      public function show($id):JsonResponse{
+        $dispatchArticleUseCase = new FindByIdDispatchArticle($this->dispatchArticleRepositoryInterface);
+        $dispatchArticle = $dispatchArticleUseCase->execute($id);
+        // Log::info("dispatchArticle",$dispatchArticle);
+
+       return response()->json(
+         (new DispatchArticleResource($dispatchArticle))->resolve(),200
+       );
 
     }
 }

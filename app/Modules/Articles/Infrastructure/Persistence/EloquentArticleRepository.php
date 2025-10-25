@@ -98,34 +98,33 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticle(?string $name, ?string $sku, ?string $serie): array
-    {
-        $payload = auth('api')->payload();
-        $companyId = $payload->get('company_id');
+  public function findAllArticle(?string $description): array
+{
+    $payload = auth('api')->payload();
+    $companyId = $payload->get('company_id');
 
-        $articles = EloquentArticle::with([
-            'measurementUnit',
-            'brand',
-            'category',
-            'currencyType',
-            'subCategory',
-            'user',
-            'company',
-        ])->where('company_type_id', $companyId)
-            ->when($name, function($query, $name){
-                 return $query->where(function($q)use($name){
-                       $q->where('description','like', "%{$name}")
-                       ->orwhere('sku','like',"%{$name}")
-                           ->orWhere('brand_id', function ($subQuery) use ($name) {
-                    $subQuery->select('id')
-                        ->from('brands')
-                        ->where('name', 'like', "%{$name}%");
-              });;
-                 });
-            })->orderByDesc('created_at')->get();
+    $articles = EloquentArticle::with([
+        'measurementUnit',
+        'brand',
+        'category',
+        'currencyType',
+        'subCategory',
+        'user',
+        'company',
+    ])
+    ->where('company_type_id', $companyId)
+    ->when($description, function($query, $name) {
+        return $query->where(function($q) use ($name) {
+            $q->where('description', 'like', "%{$name}%")
+              ->orWhere('cod_fab', 'like', "%{$name}%");
+        });
+    })
+    ->orderByDesc('created_at')
+    ->get();
 
 
         return $articles->map(function ($article) {
+
 
             return new Article(
                 id: $article->id,

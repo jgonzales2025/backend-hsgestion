@@ -43,6 +43,16 @@ class DispatchNotesController extends Controller{
     $dispatchNoteUseCase = new FindAllDispatchNotesUseCase($this->dispatchNoteRepository);
     $dispatchNotes = $dispatchNoteUseCase->execute();
 
+    $result= [];
+    foreach ($dispatchNotes as $articlesNote) {
+       $dispatch = $this->dispatchArticleRepositoryInterface->findById($articlesNote->getId());
+     $result[] = [
+   
+     ];
+      } 
+
+
+
   return DispatchNoteResource::collection($dispatchNotes)->resolve();
 }
     public function store(RequestStore $store):JsonResponse{

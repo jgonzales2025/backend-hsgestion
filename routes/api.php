@@ -144,6 +144,7 @@ Route::get('customer-document-types', [CustomerDocumentTypeController::class, 'i
 
 //dispatchArticle
 Route::get('dispatch-Article', [DispatchArticleController::class, 'index']);
+Route::get('dispatch-Article/{id}', [DispatchArticleController::class, 'show']);
 
 // Customers - Clientes
 Route::get('customers', [CustomerController::class, 'index']);

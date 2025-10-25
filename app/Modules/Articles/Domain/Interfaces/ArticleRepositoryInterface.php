@@ -8,7 +8,7 @@ use Illuminate\Http\UploadedFile;
 interface ArticleRepositoryInterface
 {
     public function save(Article $article): ?Article;
-    public function findAllArticle(?string $name, ?string $sku , ?string $serie): array;
+    public function findAllArticle(?string $name): array;
     public function findById(int $id): ?Article;
     public function update(Article $article): void;
 

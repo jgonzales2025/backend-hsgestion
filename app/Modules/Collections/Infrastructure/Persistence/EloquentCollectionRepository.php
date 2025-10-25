@@ -61,6 +61,7 @@ class EloquentCollectionRepository implements CollectionRepositoryInterface
             'operation_number' => $collection->getOperationNumber(),
             'lote_number' => $collection->getLoteNumber(),
             'for_digits' => $collection->getForDigits(),
+            'status' => $collection->getStatus()
         ]);
 
         DB::statement('CALL sp_actualiza_saldo_venta(?, ?, ?, ?)', [
@@ -129,6 +130,51 @@ class EloquentCollectionRepository implements CollectionRepositoryInterface
 
     public function findById(int $id): ?Collection
     {
-        // TODO: Implement findById() method.
+        $eloquentCollection = EloquentCollection::find($id);
+
+        if (!$eloquentCollection) {
+            return null;
+        }
+
+        return new Collection(
+            id: $eloquentCollection->id,
+            company_id: $eloquentCollection->company_id,
+            sale_id: $eloquentCollection->sale_id,
+            sale_document_type_id: $eloquentCollection->sale_document_type_id,
+            sale_serie: $eloquentCollection->sale_serie,
+            sale_correlative: $eloquentCollection->sale_correlative,
+            payment_method: $eloquentCollection->paymentMethod->toDomain($eloquentCollection->paymentMethod),
+            payment_date: $eloquentCollection->payment_date,
+            currency_type_id: $eloquentCollection->currency_type_id,
+            parallel_rate: $eloquentCollection->parallel_rate,
+            amount: $eloquentCollection->amount,
+            change: $eloquentCollection->change,
+            digital_wallet_id: $eloquentCollection->digital_wallet_id,
+            bank_id: $eloquentCollection->bank_id,
+            operation_date: $eloquentCollection->operation_date,
+            operation_number: $eloquentCollection->operation_number,
+            lote_number: $eloquentCollection->lote_number,
+            for_digits: $eloquentCollection->for_digits,
+            status: $eloquentCollection->status
+        );
+    }
+
+    public function cancelCharge(int $id): void
+    {
+        $eloquentCollection = EloquentCollection::findOrFail($id);
+        $eloquentCollection->update(['status' => 0]);
+
+        DB::statement('CALL sp_actualiza_saldo_venta(?, ?, ?, ?)', [
+            $eloquentCollection->company_id,
+            $eloquentCollection->sale_document_type_id,
+            $eloquentCollection->sale_serie,
+            $eloquentCollection->sale_correlative
+        ]);
+
+        $sale = $eloquentCollection->sale->fresh();
+        $sale->payment_status = $sale->saldo == 0 ? 1 : 0;
+        $sale->amount_amortized = $sale->total - $sale->saldo;
+        $sale->save();
+
     }
 }

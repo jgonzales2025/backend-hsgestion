@@ -243,6 +243,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/sales', [SaleController::class, 'store']);
     Route::put('/sales/{id}', [SaleController::class, 'update']);
 
+    // Ruta para proformas
+    Route::get('/sales-proformas', [SaleController::class, 'indexProformas']);
 
     // Ruta para cobranzas
     Route::get('/collections', [CollectionController::class, 'index']);

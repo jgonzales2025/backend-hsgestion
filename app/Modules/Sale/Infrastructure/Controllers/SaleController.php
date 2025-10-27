@@ -105,12 +105,20 @@ class SaleController extends Controller
 
     public function update(UpdateSaleRequest $request, $id): JsonResponse
     {
-        $userId = request()->get('user_id');
-        $role = request()->get('role');
+        $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
+        $sale = $saleUseCase->execute($id);
+
+        if (!$sale) {
+            return response()->json(['message' => 'Venta no encontrada'], 404);
+        }
+
+        if ($sale->getIsLocked() == 0) {
+            return response()->json(['message' => 'La venta no se puede actualizar por cierre de mes'], 200);
+        }
 
         $saleDTO = new SaleDTO($request->validated());
         $saleUseCase = new UpdateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository);
-        $saleUpdated = $saleUseCase->execute($saleDTO, $id);
+        $saleUpdated = $saleUseCase->execute($saleDTO, $sale);
 
         $this->saleArticleRepository->deleteBySaleId($saleUpdated->getId());
 

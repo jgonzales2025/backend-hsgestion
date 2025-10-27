@@ -33,14 +33,8 @@ readonly class UpdateSaleUseCase
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
     ){}
 
-    public function execute(SaleDTO $saleDTO, int $id): ?Sale
+    public function execute(SaleDTO $saleDTO, Sale $sale): ?Sale
     {
-        $sale = $this->saleRepository->findById($id);
-
-        if (!$sale) {
-            return null;
-        }
-
         $company = $this->companyRepository->findById($saleDTO->company_id);
         $branch = $this->branchRepository->findById($saleDTO->branch_id);
         $documentType = $this->documentTypeRepository->findById($saleDTO->document_type_id);
@@ -51,7 +45,7 @@ readonly class UpdateSaleUseCase
         $currencyType = $this->currencyTypeRepository->findById($saleDTO->currency_type_id);
 
         $sale = new Sale(
-            id: $id,
+            id: $sale->getId(),
             company: $company,
             branch: $branch,
             documentType: $documentType,

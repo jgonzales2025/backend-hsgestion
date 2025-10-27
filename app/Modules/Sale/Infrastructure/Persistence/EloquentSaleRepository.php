@@ -47,8 +47,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 
     public function update(Sale $sale): ?Sale
     {
-
         $eloquentSale = EloquentSale::find($sale->getId());
+
         $eloquentSale->update($this->mapToArray($sale));
 
         return $this->buildDomainSale($eloquentSale, $sale);

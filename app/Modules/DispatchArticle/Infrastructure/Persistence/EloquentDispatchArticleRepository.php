@@ -64,5 +64,9 @@ class EloquentDispatchArticleRepository implements DispatchArticleRepositoryInte
                  subtotal_weight:$dispatchArticle->subtotal_weight
         );
         })->toArray();
-    
-}}
+    }
+        public function deleteBySaleId(int $id): void
+    {
+        EloquentDispatchArticle::where('dispatch_id', $id)->delete();
+    }
+}

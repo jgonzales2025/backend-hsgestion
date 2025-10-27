@@ -15,8 +15,10 @@ use App\Modules\DispatchNotes\application\DTOS\DispatchNoteDTO;
 use App\Modules\DispatchNotes\application\UseCases\CreateDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindAllDispatchNotesUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindByIdDispatchNoteUseCase;
+use App\Modules\DispatchNotes\application\UseCases\UpdateDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Requests\RequestStore;
+use App\Modules\DispatchNotes\Infrastructure\Requests\RequestUpdate;
 use App\Modules\DispatchNotes\Infrastructure\Resource\DispatchNoteResource;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterface;
@@ -58,8 +60,9 @@ class DispatchNotesController extends Controller{
           $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
            $dispatchNoteUseCase = new CreateDispatchNoteUseCase($this->dispatchNoteRepository,$this->companyRepositoryInterface,$this->branchRepository,$this->serieRepositoryInterface,$this->emissionReasonRepositoryInterface,$this->transportCompany,$this->documentTypeRepositoryInterface,$this->driverRepositoryInterface);
         $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO); 
-
-
+        
+        $pdfGenerator = 
+        
         $createSaleArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
         $saleArticles = array_map(function ($article) use ($dispatchNotes, $createSaleArticleUseCase) {
             $saleArticleDTO = new DispatchArticleDTO([
@@ -85,18 +88,50 @@ class DispatchNotesController extends Controller{
            $dispatchNoteUseCase = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
         $dispatchNotes = $dispatchNoteUseCase->execute($id); 
 
+        $dispatchArticle = $this->dispatchArticleRepositoryInterface->findById($dispatchNotes->getId());
+
+
         return response()->json(
-          new DispatchNoteResource($dispatchNotes),
-          200
+          [
+          'dispatchNote' => (new DispatchNoteResource($dispatchNotes))->resolve(),
+          'dispatchArticle' =>  DispatchArticleResource::collection($dispatchArticle)->resolve()
+          ]
         );
-        // $dispatchArticle = $this->dispatchArticleRepositoryInterface->findById($dispatchNotes->getId());
+    }
 
+       public function update(RequestUpdate $store,$id):JsonResponse{
 
-        // return response()->json(
-        //   [
-        //   'dispatchNote' => (new DispatchNoteResource($dispatchNotes))->resolve(),
-        //   'dispatchArticle' =>  DispatchArticleResource::collection($dispatchArticle)->resolve()
-        //   ]
-        // );
+          $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
+           $dispatchNoteUseCase = new UpdateDispatchNoteUseCase($this->dispatchNoteRepository,$this->companyRepositoryInterface,$this->branchRepository,$this->serieRepositoryInterface,$this->emissionReasonRepositoryInterface,$this->transportCompany,$this->documentTypeRepositoryInterface,$this->driverRepositoryInterface);
+        $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO,$id); 
+
+        $this->dispatchArticleRepositoryInterface->deleteBySaleId($dispatchNotes->getId());
+        
+        $dispatchArticle = $this->createDispatchArticles($dispatchNotes,$store->validated()['dispatch_articles']);
+
+     return response()->json([
+            'sale' => (new DispatchNoteResource($dispatchNotes))->resolve(),
+            'articles' => DispatchArticleResource::collection($dispatchArticle)->resolve()
+            ], 201
+        );
+    }
+            private function createDispatchArticles($sale, array $articlesData): array
+    {
+      
+        $createSaleArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
+
+        return array_map(function ($article) use ($sale, $createSaleArticleUseCase) {
+             $saleArticleDTO = new DispatchArticleDTO([
+                 'dispatch_id'=>$sale->getId(),
+                 'article_id'=> $article['article_id'],
+                 'quantity'=> $article['quantity'],
+                 'weight'=> $article['weight'],
+                 'saldo'=> $article['saldo'],
+                 'name'=> $article['name'],
+                 'subtotal_weight'=> $article['subtotal_weight']
+            ]);
+
+            return $createSaleArticleUseCase->execute($saleArticleDTO);
+        }, $articlesData);
     }
 }

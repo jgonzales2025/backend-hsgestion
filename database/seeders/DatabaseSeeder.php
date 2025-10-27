@@ -42,9 +42,9 @@ class DatabaseSeeder extends Seeder
             EmissionReasonSeeder::class,
             DigitalWalletSeeder::class,
             VisibleArticlesSeeder::class,
-             DispatchNotesSeeder::class,
+             //DispatchNotesSeeder::class,
             SerieSeeder::class,
-             DispatchArticle::class,
+             //DispatchArticle::class,
         ]);
     }
 }

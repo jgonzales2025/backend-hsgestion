@@ -8,14 +8,30 @@ use App\Modules\RecordType\Infrastructure\Models\EloquentRecordType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class DispatchNoteResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-//        $documentType = $this->resource->getDocumentType();
-
-// $allowedTypes = ['FAC', 'BOL'];
+        // Generar URL del PDF
+        $pdfUrl = null;
+        
+        try {
+            $pdf = Pdf::loadView('invoice', ['dispatchNote' => $this->resource]);
+            $filename = 'dispatch_note_' . $this->resource->getId() . '.pdf';
+            $path = 'pdf/' . $filename;
+            
+            // Guardar en storage
+            Storage::disk('public')->put($path, $pdf->output());
+            
+            // Obtener URL pública
+            $pdfUrl = asset('storage/' . $path);
+            
+        } catch (\Throwable $e) {
+            Log::error('Error generando PDF: ' . $e->getMessage());
+        }
         return [
             'id' => $this->resource->getId(),
 
@@ -65,7 +81,8 @@ class DispatchNoteResource extends JsonResource
                 'description' => $this->resource->getDocumentType()->getDescription(),
             ],
            'destination_branch_client_id' =>$this->resource->getdestination_branch_client(),
-                   'customer_id' => $this->resource->getCustomerId()
+                   'customer_id' => $this->resource->getCustomerId(),
+                'pdf' => $pdfUrl,
         ];
     }
 }

@@ -150,6 +150,7 @@ Route::get('customer-document-types', [CustomerDocumentTypeController::class, 'i
 Route::get('dispatch-Article', [DispatchArticleController::class, 'index']);
 Route::get('dispatch-Article/{id}', [DispatchArticleController::class, 'show']);
 
+
 // Customers - Clientes
 Route::get('customers', [CustomerController::class, 'index']);
 Route::get('customers/unassigned', [CustomerController::class, 'findAllUnassigned']);
@@ -216,6 +217,7 @@ Route::put('customer-portfolios/{id}', [CustomerPortfolioController::class, 'upd
 Route::get('dispatchNote', [DispatchNotesController::class, 'index']);
 Route::post('dispatchNote-save', [DispatchNotesController::class, 'store']);
 Route::get('dispatchNote/{id}', [DispatchNotesController::class, 'show']);
+Route::put('dispatchNote-update/{id}', [DispatchNotesController::class, 'update']);
 
 // Logs de sesion
 Route::get('logs-login', [LoginAttemptController::class, 'index']);

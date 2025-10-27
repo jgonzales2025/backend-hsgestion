@@ -24,6 +24,7 @@ use App\Modules\EmissionReason\Infrastructure\Controllers\EmissionReasonControll
 use App\Modules\ExchangeRate\Infrastructure\Controllers\ExchangeRateController;
 use App\Modules\IngressReason\Infrastructure\Controllers\IngressReasonController;
 use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
+use App\Modules\MonthlyClosure\Infrastructure\Controllers\MonthlyClosureController;
 use App\Modules\PaymentType\Infrastructure\Controllers\PaymentTypeController;
 use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
 use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
@@ -265,3 +266,8 @@ Route::middleware('auth:api')->group(function () {
 
 Route::post('/refresh', [AuthController::class, 'refresh']);
 
+// Rutas para el modulo de cierres mensuales
+Route::get('/monthly-closures', [MonthlyClosureController::class, 'index']);
+Route::post('/monthly-closures', [MonthlyClosureController::class, 'store']);
+Route::get('/monthly-closures/{id}', [MonthlyClosureController::class, 'show']);
+Route::put('/monthly-closures-sales/{id}', [MonthlyClosureController::class, 'updateStSales']);

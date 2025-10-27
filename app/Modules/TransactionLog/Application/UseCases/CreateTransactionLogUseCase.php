@@ -39,6 +39,7 @@ readonly class CreateTransactionLogUseCase
         $documentType = $documentTypeUseCase->execute($transactionLogDTO->document_type_id);
 
         $transactionLog = new TransactionLog(
+            id: 0,
             user: $user,
             roleId: null,
             role_name: $transactionLogDTO->role_name,

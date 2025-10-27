@@ -66,6 +66,7 @@ class SaleResource extends JsonResource
             'amount_amortized' => $this->resource->getAmountAmortized(),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             'payment_status' => ($this->resource->getPaymentStatus()) == 1 ? 'Cancelado' : 'Pendiente',
+            'is_locked' => $this->resource->getIsLocked()
         ];
     }
 }

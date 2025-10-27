@@ -26,7 +26,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('user_sale_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('payment_type_id')->constrained('payment_types')->onDelete('cascade');
-            $table->text('observations');
+            $table->text('observations')->nullable();
             $table->foreignId('currency_type_id')->constrained('currency_types')->onDelete('cascade');
             $table->decimal('subtotal', 8, 2);
             $table->decimal('inafecto', 8, 2);

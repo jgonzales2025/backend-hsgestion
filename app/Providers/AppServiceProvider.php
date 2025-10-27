@@ -55,6 +55,8 @@ use App\Modules\MeasurementUnit\Infrastructure\Persistence\EloquentMeasurementUn
 use App\Modules\Menu\Domain\Interfaces\MenuRepositoryInterface;
 use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\Menu\Infrastructure\Persistence\EloquentMenuRepository;
+use App\Modules\MonthlyClosure\Domain\Interfaces\MonthlyClosureRepositoryInterface;
+use App\Modules\MonthlyClosure\Infrastructure\Persistence\EloquentMonthlyClosureRepository;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
 use App\Modules\PaymentMethod\Infrastructure\Persistence\EloquentPaymentMethodRepository;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
@@ -142,6 +144,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CollectionRepositoryInterface::class, EloquentCollectionRepository::class);
         $this->app->bind(PaymentMethodRepositoryInterface::class, EloquentPaymentMethodRepository::class);
         $this->app->bind(TransactionLogRepositoryInterface::class, EloquentTransactionLogRepository::class);
+        $this->app->bind(MonthlyClosureRepositoryInterface::class, EloquentMonthlyClosureRepository::class);;
     }
 
     /**

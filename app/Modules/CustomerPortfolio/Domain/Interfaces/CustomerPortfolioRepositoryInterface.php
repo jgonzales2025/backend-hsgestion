@@ -3,6 +3,7 @@
 namespace App\Modules\CustomerPortfolio\Domain\Interfaces;
 
 use App\Modules\CustomerPortfolio\Domain\Entities\CustomerPortfolio;
+use App\Modules\User\Domain\Entities\User;
 
 interface CustomerPortfolioRepositoryInterface
 {
@@ -13,4 +14,6 @@ interface CustomerPortfolioRepositoryInterface
     public function updateAllCustomersByVendedor($id, $newId): void;
 
     public function updateCustomerPortfolio($id, $userId): void;
+
+    public function findUserByCustomerId($customerId): null|User|array;
 }

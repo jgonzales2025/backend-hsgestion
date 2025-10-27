@@ -9,6 +9,7 @@ use App\Modules\CustomerPortfolio\Application\DTOs\UpdateAllCustomerPortfolioDTO
 use App\Modules\CustomerPortfolio\Application\DTOs\UpdateCustomerPortfolioDTO;
 use App\Modules\CustomerPortfolio\Application\UseCases\CreateCustomerPortfolioUseCase;
 use App\Modules\CustomerPortfolio\Application\UseCases\FindAllCustomerPortfoliosUseCase;
+use App\Modules\CustomerPortfolio\Application\UseCases\FindUserByCustomerIdUseCase;
 use App\Modules\CustomerPortfolio\Application\UseCases\UpdateAllCustomersByVendedorUseCase;
 use App\Modules\CustomerPortfolio\Application\UseCases\UpdateCustomerPorfolioUseCase;
 use App\Modules\CustomerPortfolio\Domain\Interfaces\CustomerPortfolioRepositoryInterface;
@@ -17,7 +18,9 @@ use App\Modules\CustomerPortfolio\Infrastructure\Requests\UpdateAllRequest;
 use App\Modules\CustomerPortfolio\Infrastructure\Requests\UpdateCustomerPortfolioRequest;
 use App\Modules\CustomerPortfolio\Infrastructure\Resources\CustomerPortfolioResource;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
+use App\Modules\User\Infrastructure\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
+use function PHPUnit\Framework\isArray;
 
 class CustomerPortfolioController extends Controller
 {
@@ -60,5 +63,21 @@ class CustomerPortfolioController extends Controller
         $customerPortfolioUseCase->execute($id, $customerPortfolioDTO);
 
         return response()->json(['message' => 'Registro actualizado con éxito'], 200);
+    }
+
+    public function showUserByCustomer($id): JsonResponse|array
+    {
+        $customerPortfolioUseCase = new FindUserByCustomerIdUseCase($this->customerPortfolioRepository);
+        $user = $customerPortfolioUseCase->execute($id);
+
+        if (!$user) {
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
+        }
+
+        if (is_array($user)) {
+            return UserResource::collection($user)->resolve();
+        } else {
+            return response()->json((new UserResource($user))->resolve());
+        }
     }
 }

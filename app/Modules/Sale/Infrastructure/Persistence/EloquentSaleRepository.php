@@ -68,6 +68,17 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         return $this->mapToDomain($eloquentSale);
     }
 
+    public function findAllProformas(): array
+    {
+        $eloquentSalesProformas = EloquentSale::where('document_type_id', 16)->orderBy('created_at', 'desc')->get();
+
+        if ($eloquentSalesProformas->isEmpty()) {
+            return [];
+        }
+
+        return $eloquentSalesProformas->map(fn($sale) => $this->mapToDomain($sale))->toArray();
+    }
+
     private function mapToArray(Sale $sale): array
     {
         return [
@@ -166,4 +177,6 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             purchase_order: $eloquentSale->purchase_order
         );
     }
+
+
 }

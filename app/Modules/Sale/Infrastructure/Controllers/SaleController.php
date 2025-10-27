@@ -11,6 +11,7 @@ use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Sale\Application\DTOs\SaleDTO;
 use App\Modules\Sale\Application\UseCases\CreateSaleUseCase;
+use App\Modules\Sale\Application\UseCases\FindAllProformasUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllSalesUseCase;
 use App\Modules\Sale\Application\UseCases\FindByDocumentSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
@@ -187,5 +188,13 @@ class SaleController extends Controller
         ]);
 
         $transactionLogs->execute($transactionDTO);
+    }
+
+    public function indexProformas(): array
+    {
+        $saleUseCase = new FindAllProformasUseCase($this->saleRepository);
+        $sales = $saleUseCase->execute();
+
+        return SaleResource::collection($sales)->resolve();
     }
 }

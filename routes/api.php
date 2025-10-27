@@ -44,6 +44,7 @@ use App\Modules\Sale\Infrastructure\Controllers\SaleController;
 use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
 use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
+use App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -224,6 +225,7 @@ Route::get('logs-login', [LoginAttemptController::class, 'index']);
 Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Customer portfolios - Cartera de clientes
     Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index']);
+    Route::get('/customer-portfolios-user/{id}', [CustomerPortfolioController::class, 'showUserByCustomer']);
 
     // Digital Wallets - Billeteras digitales
     Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
@@ -254,7 +256,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/collections/{id}', [CollectionController::class, 'cancelCharge']);
 
     // Ruta para traer los logs transaccionales
-    Route::get('/logs-transaction', [\App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController::class, 'index']);
+    Route::get('/logs-transaction', [TransactionLogController::class, 'index']);
 });
 
 Route::middleware('auth:api')->group(function () {

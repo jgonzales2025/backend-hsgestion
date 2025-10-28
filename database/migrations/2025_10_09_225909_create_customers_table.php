@@ -26,6 +26,7 @@ return new class extends Migration
             $table->boolean('is_withholding_applicable')->default(false);
             $table->integer('status')->default(1);
             $table->integer('st_assigned')->default(0);
+            $table->boolean('st_sales')->default(1);
             $table->timestamps();
         });
     }

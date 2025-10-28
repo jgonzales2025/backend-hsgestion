@@ -235,6 +235,8 @@ class CustomerController extends Controller
         $customerUseCase = new FindCustomerCompanyUseCase($this->customerRepository);
         $customer = $customerUseCase->execute();
 
-        return response()->json((new CustomerCompanyResource($customer))->resolve());
+        return response()->json([
+            'customer' => (new CustomerCompanyResource($customer))->resolve(),
+            'addresses' => CustomerAddressResource::collection($customer->getAddresses())->resolve(),]);
     }
 }

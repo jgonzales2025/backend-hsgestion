@@ -5,6 +5,8 @@ namespace App\Modules\DispatchNotes\Infrastructure\Persistence;
 use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Models\EloquentDispatchNote;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
 {
@@ -46,14 +48,17 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
                 vehicle_type: $dispatch->vehicle_type,
                 document_type: $dispatch->document_type->toDomain($dispatch->document_type),
                 destination_branch_client: $dispatch->destination_branch_client,
-                customer_id: $dispatch->customer_id
+                customer_id: $dispatch->customer_id,
 
 
             );
         })->toArray();
     }
+
     public function save(DispatchNote $dispatchNote): ?DispatchNote
     {
+ 
+
         $dispatchNote = EloquentDispatchNote::create([
             'cia_id' => $dispatchNote->getCompany() ? $dispatchNote->getCompany()->getId() : null,
             'branch_id' => $dispatchNote->getBranch() ? $dispatchNote->getBranch()->getId() : null,
@@ -61,9 +66,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'correlativo' => (
                 ($dispatchNote->getDocumentType() ? strtoupper(substr($dispatchNote->getDocumentType()->getAbbreviation(), 0, 1)) : '') .
                 '00' .
-                ($dispatchNote->getBranch() ? strtoupper(substr($dispatchNote->getBranch()->getId(), 0, 1)) : '')
-            ),
-
+                ($dispatchNote->getBranch() ? strtoupper(substr($dispatchNote->getBranch()->getId(), 0, 1)) : '')),
             'date' => $dispatchNote->getDate(),
             'emission_reason_id' => $dispatchNote->getEmissionReason() ? $dispatchNote->getEmissionReason()->getId() : null,
             'description' => $dispatchNote->getDescription(),
@@ -83,7 +86,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'vehicle_type' => $dispatchNote->getVehicleType(),
             'document_type_id' => $dispatchNote->getDocumentType() ? $dispatchNote->getDocumentType()->getId() : null,
             'destination_branch_client' => $dispatchNote->getdestination_branch_client(),
-            'customer_id' => $dispatchNote->getCustomerId()
+            'customer_id' => $dispatchNote->getCustomerId(),
         ]);
 
         return new DispatchNote(
@@ -111,7 +114,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             vehicle_type: $dispatchNote->vehicle_type,
             document_type: $dispatchNote->document_type->toDomain($dispatchNote->document_type),
             destination_branch_client: $dispatchNote->destination_branch_client,
-            customer_id: $dispatchNote->customer_id
+            customer_id: $dispatchNote->customer_id,
         );
     }
   public function findById(int $id): ?DispatchNote
@@ -147,7 +150,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
         vehicle_type: $dispatchNote->vehicle_type,
         document_type: $dispatchNote->document_type?->toDomain($dispatchNote->document_type),
         destination_branch_client: $dispatchNote->destination_branch_client,
-        customer_id: $dispatchNote->customer_id
+        customer_id: $dispatchNote->customer_id,
     );
 }
    public function update(DispatchNote $dispatchNote):?DispatchNote{
@@ -210,7 +213,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             vehicle_type: $dispatchNotess->vehicle_type,
             document_type: $dispatchNotess->document_type->toDomain($dispatchNotess->document_type),
             destination_branch_client: $dispatchNotess->destination_branch_client,
-            customer_id: $dispatchNotess->customer_id
+            customer_id: $dispatchNotess->customer_id,
         );
          
    }

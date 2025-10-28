@@ -41,7 +41,8 @@ class EloquentDispatchNote extends Model
         'vehicle_type',
         'document_type_id',
         'destination_branch_client',
-        'customer_id'
+        'customer_id',
+        'pdf'
     ];
     protected $hidden = ['created_at', 'update_at'];
 

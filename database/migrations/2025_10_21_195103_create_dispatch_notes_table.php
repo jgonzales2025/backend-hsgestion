@@ -45,7 +45,7 @@ return new class extends Migration {
             $table->decimal('total_weight', 10, 2);
 
             $table->string('transfer_type');
-            $table->string('vehicle_type');
+            $table->integer('vehicle_type')->boolean();
             $table->foreignId('document_type_id')->constrained('document_types');
             $table->foreignId('destination_branch_client')->constrained('branches');
             $table->foreignId('customer_id')->constrained('customers');

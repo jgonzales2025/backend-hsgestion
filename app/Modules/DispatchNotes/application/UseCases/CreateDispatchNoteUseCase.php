@@ -18,6 +18,8 @@ use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterfa
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\TransportCompany\Application\UseCases\FindByIdTransportCompanyUseCase;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class CreateDispatchNoteUseCase
 {
@@ -84,7 +86,7 @@ class CreateDispatchNoteUseCase
           vehicle_type:$data->vehicle_type,
           document_type:$documentType,
           destination_branch_client:$data->destination_branch_client_id,
-          customer_id:$data->customer_id   
+          customer_id:$data->customer_id,
             
         );
        return $this->dispatchNoteRepository->save($dispatchNote);

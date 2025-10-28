@@ -26,6 +26,8 @@ use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
  
 class DispatchNotesController extends Controller{
     public function __construct(
@@ -42,6 +44,7 @@ class DispatchNotesController extends Controller{
 
   public function index(): JsonResponse
 {
+    
     $dispatchNoteUseCase = new FindAllDispatchNotesUseCase($this->dispatchNoteRepository);
     $dispatchNotes = $dispatchNoteUseCase->execute();
 
@@ -59,9 +62,11 @@ class DispatchNotesController extends Controller{
     public function store(RequestStore $store):JsonResponse{
           $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
            $dispatchNoteUseCase = new CreateDispatchNoteUseCase($this->dispatchNoteRepository,$this->companyRepositoryInterface,$this->branchRepository,$this->serieRepositoryInterface,$this->emissionReasonRepositoryInterface,$this->transportCompany,$this->documentTypeRepositoryInterface,$this->driverRepositoryInterface);
-        $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO); 
-        
-        $pdfGenerator = 
+
+     
+          $dispatchNotesDTO->pdf = '1234';
+          $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO); 
+
         
         $createSaleArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
         $saleArticles = array_map(function ($article) use ($dispatchNotes, $createSaleArticleUseCase) {
@@ -85,6 +90,7 @@ class DispatchNotesController extends Controller{
         );
     }
        public function show($id):JsonResponse{
+        
            $dispatchNoteUseCase = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
         $dispatchNotes = $dispatchNoteUseCase->execute($id); 
 

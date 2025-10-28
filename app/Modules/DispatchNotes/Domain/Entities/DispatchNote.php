@@ -15,7 +15,6 @@ class DispatchNote
     private ?Branch $branch;
     private string $serie;
     private string $correlativo;
-    private string $date;
     private ?EmissionReason $emission_reason;
     private ?string $description;
     private ?Branch $destination_branch;
@@ -31,7 +30,7 @@ class DispatchNote
     private string $license_plate;
     private float $total_weight;
     private string $transfer_type;
-    private string $vehicle_type;
+    private bool $vehicle_type;
     private ?DocumentType $document_type;
     private int $destination_branch_client;
     private int $customer_id;
@@ -41,8 +40,7 @@ class DispatchNote
         ?Company $company,
         ?Branch $branch,
         string $serie,
-        string $correlativo,
-        string $date,
+        string $correlativo, 
         ?EmissionReason $emission_reason,
         ?string $description,
         ?Branch $destination_branch,
@@ -58,7 +56,7 @@ class DispatchNote
         string $license_plate,
         float $total_weight,
         string $transfer_type,
-        string $vehicle_type,
+        bool $vehicle_type,
         ?DocumentType $document_type,
         int $destination_branch_client,
         int $customer_id,
@@ -69,7 +67,6 @@ class DispatchNote
         $this->branch = $branch;
         $this->serie = $serie;
         $this->correlativo = $correlativo;
-        $this->date = $date;
         $this->emission_reason = $emission_reason;
         $this->description = $description;
         $this->destination_branch = $destination_branch;
@@ -88,7 +85,7 @@ class DispatchNote
         $this->vehicle_type = $vehicle_type;
         $this->document_type = $document_type;
         $this->destination_branch_client= $destination_branch_client;
-           $this->customer_id = $customer_id;
+        $this->customer_id = $customer_id;
     }
 
     // Getters
@@ -97,7 +94,6 @@ class DispatchNote
     public function getBranch(): Branch|null { return $this->branch; }
     public function getSerie(): string { return $this->serie; }
     public function getCorrelativo(): string { return $this->correlativo; }
-    public function getDate(): string { return $this->date; }
     public function getEmissionReason(): EmissionReason|null { return $this->emission_reason; }
     public function getDescription(): ?string { return $this->description; }
     public function getDestinationBranch(): Branch|null { return $this->destination_branch; }
@@ -113,7 +109,7 @@ class DispatchNote
     public function getLicensePlate(): string { return $this->license_plate; }
     public function getTotalWeight(): float { return $this->total_weight; }
     public function getTransferType(): string { return $this->transfer_type; }
-    public function getVehicleType(): string { return $this->vehicle_type; }
+    public function getVehicleType(): bool { return $this->vehicle_type; }
     public function getDocumentType(): ?DocumentType { return $this->document_type; }
     public function getdestination_branch_client():int{return $this->destination_branch_client;}
     public function getCustomerId():int{return $this->customer_id;}

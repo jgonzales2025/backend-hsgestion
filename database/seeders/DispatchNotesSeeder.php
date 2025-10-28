@@ -19,7 +19,7 @@ class DispatchNotesSeeder extends Seeder
                 'branch_id' => 1, 
                 'serie' => 'T001',
                 'correlativo' => "1001",
-                'date' => Carbon::now(),
+               
                 'emission_reason_id' => 1, 
                 'description' => 'Traslado de equipos electrónicos',
                 'destination_branch_id' => 2, 
@@ -47,7 +47,7 @@ class DispatchNotesSeeder extends Seeder
                 'branch_id' => 1,
                 'serie' => 'T002',
                 'correlativo' => "1002",
-                'date' => Carbon::now(),
+             
                 'emission_reason_id' => 1,
                 'description' => 'Traslado de mobiliario',
                 'destination_branch_id' => 1,

@@ -53,15 +53,15 @@ class EloquentArticle extends Model
     public function measurementUnit(): BelongsTo
     {
         return $this->belongsTo(EloquentMeasurementUnit::class, 'measurement_unit_id');
-    } 
+    }
     public function brand(): BelongsTo
     {
         return $this->belongsTo(EloquentBrand::class, 'brand_id');
-    } 
+    }
     public function category(): BelongsTo
     {
         return $this->belongsTo(EloquentCategory::class, 'category_id');
-    } 
+    }
     public function currencyType(): BelongsTo
     {
         return $this->belongsTo(EloquentCurrencyType::class, 'currency_type_id');
@@ -69,7 +69,7 @@ class EloquentArticle extends Model
     public function subCategory(): BelongsTo
     {
         return $this->belongsTo(EloquentSubCategory::class, 'sub_category_id');
-    } 
+    }
     public function user(): BelongsTo
     {
         return $this->belongsTo(EloquentUser::class, 'user_id');

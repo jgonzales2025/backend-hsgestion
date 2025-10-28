@@ -8,12 +8,14 @@ use App\Modules\Customer\Application\UseCases\CreateCustomerUseCase;
 use App\Modules\Customer\Application\UseCases\FindAllCustomersUseCase;
 use App\Modules\Customer\Application\UseCases\FindAllUnassignedCustomerUseCase;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
+use App\Modules\Customer\Application\UseCases\FindCustomerCompanyUseCase;
 use App\Modules\Customer\Application\UseCases\UpdateCustomerUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\Customer\Infrastructure\Persistence\EloquentCustomerRepository;
 use App\Modules\Customer\Infrastructure\Requests\StoreCustomerRequest;
 use App\Modules\Customer\Infrastructure\Requests\UpdateCustomerRequest;
 use App\Modules\Customer\Infrastructure\Resources\CustomerAllResource;
+use App\Modules\Customer\Infrastructure\Resources\CustomerCompanyResource;
 use App\Modules\Customer\Infrastructure\Resources\CustomerResource;
 use App\Modules\CustomerAddress\Application\DTOs\CustomerAddressDTO;
 use App\Modules\CustomerAddress\Application\UseCases\CreateCustomerAddressUseCase;
@@ -226,5 +228,13 @@ class CustomerController extends Controller
         $customers = $customersUseCase->execute();
 
         return CustomerAllResource::collection($customers)->resolve();
+    }
+
+    public function findCustomerCompany(): JsonResponse
+    {
+        $customerUseCase = new FindCustomerCompanyUseCase($this->customerRepository);
+        $customer = $customerUseCase->execute();
+
+        return response()->json((new CustomerCompanyResource($customer))->resolve());
     }
 }

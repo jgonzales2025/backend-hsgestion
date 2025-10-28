@@ -30,6 +30,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
                         ->orWhere('document_number', 'like', "%{$name}%");
                 });
             })
+            ->where('status', 1)
             ->orderByDesc('created_at')
             ->get();
 
@@ -230,5 +231,35 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
                 addresses: $addresses,
             );
         })->toArray();
+    }
+
+    public function findCustomerCompany(): ?Customer
+    {
+        $companyId = request()->get('company_id');
+
+        $customerCompany = EloquentCustomer::where('id', $companyId)->first();
+
+        $addressUseCase = new FindByIdCustomerAddressUseCase($this->customerAddressRepository);
+        $addresses = $addressUseCase->execute($customerCompany->id);
+
+        return new Customer(
+            id: $customerCompany->id,
+            record_type_id: $customerCompany->record_type_id,
+            record_type_name: $customerCompany->recordType->name,
+            customer_document_type_id: $customerCompany->customer_document_type_id,
+            customer_document_type_name: $customerCompany->customerDocumentType->description,
+            customer_document_type_abbreviation: $customerCompany->customerDocumentType->abbreviation,
+            document_number: $customerCompany->document_number,
+            company_name: $customerCompany->company_name,
+            name: $customerCompany->name,
+            lastname: $customerCompany->lastname,
+            second_lastname: $customerCompany->second_lastname,
+            customer_type_id: $customerCompany->customer_type_id,
+            customer_type_name: $customerCompany->customerType->description,
+            contact: $customerCompany->contact,
+            is_withholding_applicable: $customerCompany->is_withholding_applicable,
+            status: $customerCompany->status,
+            addresses: $addresses
+        );
     }
 }

@@ -11,4 +11,5 @@ interface CustomerRepositoryInterface
     public function findById(int $id): ?Customer;
     public function update(Customer $customer): ?Customer;
     public function findAllUnassigned(): array;
+    public function findCustomerCompany(): ?Customer;
 }

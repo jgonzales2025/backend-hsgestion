@@ -115,10 +115,11 @@ public function update(UpdateArticleRequest $request, int $id): JsonResponse
         $this->companyRepository
     );
 
-    $articleUseCase->execute($id, $articleDTO);
+   $result = $articleUseCase->execute($id, $articleDTO);
 
-    return response()->json(
-         ["message"=>"se guardo"],200
+      return response()->json(
+      (new ArticleResource($result))->resolve(),
+      200
     );
 }
 

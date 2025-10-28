@@ -210,7 +210,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function update(Article $article): void
+    public function update(Article $article): ?Article
     {
         $eloquentArticle = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory'])->find($article->getId());
 
@@ -246,7 +246,41 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'sub_category_id' => $article->getSubCategory()->getId(),
             'image_url' => $article->getImageURL(),
              'state_modify_article' =>$article->getstateModifyArticle()
-            
         ]);
+           return new Article(
+            id: $eloquentArticle->id,
+            cod_fab: $eloquentArticle->cod_fab,
+            description: $eloquentArticle->description,
+            weight: (float) $eloquentArticle->weight,
+            with_deduction: (bool) $eloquentArticle->with_deduction,
+            series_enabled: (bool) $eloquentArticle->series_enabled,
+            location: $eloquentArticle->location,
+            warranty: $eloquentArticle->warranty,
+            tariff_rate: (float) $eloquentArticle->tariff_rate,
+            igv_applicable: (bool) $eloquentArticle->igv_applicable,
+            plastic_bag_applicable: (bool) $eloquentArticle->plastic_bag_applicable,
+            min_stock: $eloquentArticle->min_stock,
+            purchase_price: (float) $eloquentArticle->purchase_price,
+            public_price: (float) $eloquentArticle->public_price,
+            distributor_price: (float) $eloquentArticle->distributor_price,
+            authorized_price: (float) $eloquentArticle->authorized_price,
+            public_price_percent: (float) $eloquentArticle->public_price_percent,
+            distributor_price_percent: (float) $eloquentArticle->distributor_price_percent,
+            authorized_price_percent: isset($eloquentArticle->authorized_price_percent) ? (float) $eloquentArticle->authorized_price_percent : 0,
+            status: $eloquentArticle->status,
+            brand: $eloquentArticle->brand->toDomain($eloquentArticle->brand),
+            category: $eloquentArticle->category->toDomain($eloquentArticle->category),
+            currencyType: $eloquentArticle->currencyType->toDomain($eloquentArticle->currencyType),
+            measurementUnit: $eloquentArticle->measurementUnit->toDomain($eloquentArticle->measurementUnit),
+            user: $eloquentArticle->user->toDomain($eloquentArticle->user),
+            precioIGv: isset($eloquentArticle->purchase_price, $eloquentArticle->tariff_rate)
+            ? (float) ($eloquentArticle->purchase_price + ($eloquentArticle->purchase_price * $eloquentArticle->tariff_rate / 100))
+            : 0,
+            venta: (bool) $eloquentArticle->venta,
+            subCategory: $eloquentArticle->subCategory->toDomain($eloquentArticle->subCategory),
+            company: $eloquentArticle->company->toDomain($eloquentArticle->company),
+            image_url: $eloquentArticle->image_url,
+            state_modify_article:$eloquentArticle->state_modify_article
+        );
     }
 }

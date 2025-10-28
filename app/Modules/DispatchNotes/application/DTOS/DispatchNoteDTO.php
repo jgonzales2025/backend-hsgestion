@@ -53,8 +53,9 @@ public int $document_type_id;
     $this->transfer_type = $date['transfer_type'];
     $this->vehicle_type = $date['vehicle_type'];
     $this->document_type_id = $date['document_type_id']??1;
-     $this->destination_branch_client_id = $date['destination_branch_client_id']??1;
-       $this->customer_id = $date['customer_id']??1;
+    $this->destination_branch_client_id = $date['destination_branch_client_id']??1;
+    $this->customer_id = $date['customer_id']??1;
+
    
     }
 

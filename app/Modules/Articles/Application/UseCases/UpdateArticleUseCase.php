@@ -36,7 +36,7 @@ readonly class UpdateArticleUseCase
         private readonly CompanyRepositoryInterface $companyRepository,
     ) {
     }
-    public function execute(int $id, ArticleDTO $articleDTO): void
+    public function execute(int $id, ArticleDTO $articleDTO): Article
     {
         $categoryUseCase = new FindByIdCategoryUseCase($this->categoryRepository);
         $categoryType = $categoryUseCase->execute($articleDTO->category_id);
@@ -94,6 +94,6 @@ readonly class UpdateArticleUseCase
              state_modify_article:$articleDTO->state_modify_article
         );
 
-        $this->articleRepository->update($article);
+     return   $this->articleRepository->update($article);
     }
 }

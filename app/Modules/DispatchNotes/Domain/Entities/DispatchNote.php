@@ -61,7 +61,7 @@ class DispatchNote
         string $vehicle_type,
         ?DocumentType $document_type,
         int $destination_branch_client,
-        int $customer_id
+        int $customer_id,
     
     ) {
         $this->id = $id;

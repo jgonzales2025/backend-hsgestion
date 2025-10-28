@@ -19,7 +19,6 @@ return new class extends Migration {
             $table->foreignId('branch_id')->constrained('branches');
             $table->string('serie');
             $table->string('correlativo');
-            $table->date('date');
 
             $table->foreignId('emission_reason_id')->constrained('emission_reasons');
             $table->text('description')->nullable();

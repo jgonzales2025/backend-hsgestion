@@ -52,7 +52,6 @@ class DispatchNoteResource extends JsonResource
             ],
             'serie' => $this->resource->getSerie(),
             'correlativo' => $this->resource->getCorrelativo(),
-            'date' => $this->resource->getDate(),
             'description' => $this->resource->getDescription(),
             'destination_address_customer' => $this->resource->getDestinationAddressCustomer(),
             'transport' => [

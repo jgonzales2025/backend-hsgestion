@@ -29,7 +29,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
                 branch: $dispatch->branch?->toDomain($dispatch->branch),
                 serie: $dispatch->serie,
                 correlativo: $dispatch->correlativo,
-                date: $dispatch->date,
                 emission_reason: $dispatch->emission_reason->toDomain($dispatch->emission_reason),
                 description: $dispatch->description,
                 destination_branch: $dispatch->branch?->toDomain($dispatch->branch),
@@ -67,7 +66,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
                 ($dispatchNote->getDocumentType() ? strtoupper(substr($dispatchNote->getDocumentType()->getAbbreviation(), 0, 1)) : '') .
                 '00' .
                 ($dispatchNote->getBranch() ? strtoupper(substr($dispatchNote->getBranch()->getId(), 0, 1)) : '')),
-            'date' => $dispatchNote->getDate(),
             'emission_reason_id' => $dispatchNote->getEmissionReason() ? $dispatchNote->getEmissionReason()->getId() : null,
             'description' => $dispatchNote->getDescription(),
             'destination_branch_id' => $dispatchNote->getDestinationBranch() ? $dispatchNote->getDestinationBranch()->getId() : null,
@@ -95,11 +93,10 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             branch: $dispatchNote->branch->toDomain($dispatchNote->branch),
             serie: $dispatchNote->serie,
             correlativo: $dispatchNote->correlativo,
-            date: $dispatchNote->date,
             emission_reason: $dispatchNote->emission_reason->toDomain($dispatchNote->emission_reason),
             description: $dispatchNote->description,
             destination_branch: $dispatchNote->destination_branch->toDomain($dispatchNote->destination_branch),
-            destination_address_customer: $dispatchNote->destination_address_customer,
+            destination_address_customer: $dispatchNote->destination_address_customer ?? '',
             transport: $dispatchNote->transport->toDomain($dispatchNote->transport),
             observations: $dispatchNote->observations,
             num_orden_compra: $dispatchNote->num_orden_compra,
@@ -131,7 +128,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
         branch: $dispatchNote->branch->toDomain($dispatchNote->branch),
         serie: $dispatchNote->serie,
         correlativo: $dispatchNote->correlativo,
-        date: $dispatchNote->date,
         emission_reason: $dispatchNote->emission_reason?->toDomain($dispatchNote->emission_reason),
         description: $dispatchNote->description,
         destination_branch: $dispatchNote->destination_branch?->toDomain($dispatchNote->destination_branch),
@@ -165,8 +161,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
                 '00' .
                 ($dispatchNote->getBranch() ? strtoupper(substr($dispatchNote->getBranch()->getId(), 0, 1)) : '')
             ),
-
-            'date' => $dispatchNote->getDate(),
             'emission_reason_id' => $dispatchNote->getEmissionReason() ? $dispatchNote->getEmissionReason()->getId() : null,
             'description' => $dispatchNote->getDescription(),
             'destination_branch_id' => $dispatchNote->getDestinationBranch() ? $dispatchNote->getDestinationBranch()->getId() : null,
@@ -194,7 +188,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             branch: $dispatchNotess->branch->toDomain($dispatchNotess->branch),
             serie: $dispatchNotess->serie,
             correlativo: $dispatchNotess->correlativo,
-            date: $dispatchNotess->date,
             emission_reason: $dispatchNotess->emission_reason->toDomain($dispatchNotess->emission_reason),
             description: $dispatchNotess->description,
             destination_branch: $dispatchNotess->destination_branch->toDomain($dispatchNotess->destination_branch),

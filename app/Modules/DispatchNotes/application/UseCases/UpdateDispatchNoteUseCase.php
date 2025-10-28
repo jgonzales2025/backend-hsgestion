@@ -65,7 +65,6 @@ class UpdateDispatchNoteUseCase
           branch:$branch,
           serie:$data->serie,
           correlativo:$data->correlativo,
-          date:$data->date,
           emission_reason:$emissionReason,
           description:$data->description,
           destination_branch:$destination,

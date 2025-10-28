@@ -20,7 +20,7 @@ class CustomerSeeder extends Seeder
                 'document_number' => '20537005514',
                 'company_name' => 'GRUPO COMPUTEL S.A.C.',
                 'customer_type_id' => 1,
-                'status' => 0
+                'st_sales' => 0
             ],
             [
                 'record_type_id' => 1,
@@ -28,7 +28,7 @@ class CustomerSeeder extends Seeder
                 'document_number' => '20608449320',
                 'company_name' => 'CORPORACION COMPUTEL E.I.R.L.',
                 'customer_type_id' => 1,
-                'status' => 0
+                'st_sales' => 0
             ],
         ];
 

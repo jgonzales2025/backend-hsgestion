@@ -235,6 +235,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Crear cliente
     Route::post('customers', [CustomerController::class, 'store']);
     Route::get('customers-company', [CustomerController::class, 'findCustomerCompany']);
+    Route::get('customers-no-company', [CustomerController::class, 'findAllCustomersExceptionCompanies']);
 
     // Series
     Route::get('/serie-number', [SerieController::class, 'findByDocumentType']);

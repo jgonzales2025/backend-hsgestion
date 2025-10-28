@@ -5,6 +5,7 @@ namespace App\Modules\Customer\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Customer\Application\DTOs\CustomerDTO;
 use App\Modules\Customer\Application\UseCases\CreateCustomerUseCase;
+use App\Modules\Customer\Application\UseCases\FindAllCustomersExcludingCompaniesUseCase;
 use App\Modules\Customer\Application\UseCases\FindAllCustomersUseCase;
 use App\Modules\Customer\Application\UseCases\FindAllUnassignedCustomerUseCase;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
@@ -238,5 +239,15 @@ class CustomerController extends Controller
         return response()->json([
             'customer' => (new CustomerCompanyResource($customer))->resolve(),
             'addresses' => CustomerAddressResource::collection($customer->getAddresses())->resolve(),]);
+    }
+
+    public function findAllCustomersExceptionCompanies(Request $request):array
+    {
+        $customerName = $request->query('customer_name');
+
+        $customersUseCase = new FindAllCustomersExcludingCompaniesUseCase($this->customerRepository);
+        $customers = $customersUseCase->execute($customerName);
+
+        return CustomerAllResource::collection($customers)->resolve();
     }
 }

@@ -22,17 +22,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
     ){}
     public function findAll(?string $customerName, ?string $documentNumber): array
     {
-        $customers = EloquentCustomer::query()
-            ->when($customerName, function ($query, $name) {
-                return $query->where(function ($q) use ($name) {
-                    $q->where('name', 'like', "%{$name}%")
-                        ->orWhere('company_name', 'like', "%{$name}%")
-                        ->orWhere('document_number', 'like', "%{$name}%");
-                });
-            })
-            ->where('status', 1)
-            ->orderByDesc('created_at')
-            ->get();
+        $customers = EloquentCustomer::all();
 
         return $customers->map(function (EloquentCustomer $customer) {
 
@@ -261,5 +251,54 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             status: $customerCompany->status,
             addresses: $addresses
         );
+    }
+
+    public function findAllCustomerExceptionCompanies(?string $customerName): array
+    {
+        $customers = EloquentCustomer::query()
+            ->when($customerName, function ($query, $name) {
+                return $query->where(function ($q) use ($name) {
+                    $q->where('name', 'like', "%{$name}%")
+                        ->orWhere('company_name', 'like', "%{$name}%")
+                        ->orWhere('document_number', 'like', "%{$name}%");
+                });
+            })
+            ->where('st_sales', 1)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return $customers->map(function (EloquentCustomer $customer) {
+
+            $phoneUseCase = new FindByCustomerIdPhoneUseCase($this->customerPhoneRepository);
+            $phones = $phoneUseCase->execute($customer->id);
+
+            $emailUseCase = new FindByCustomerIdEmailUseCase($this->customerEmailRepository);
+            $emails = $emailUseCase->execute($customer->id);
+
+            $addressUseCase = new FindByIdCustomerAddressUseCase($this->customerAddressRepository);;
+            $addresses = $addressUseCase->execute($customer->id);
+
+            return new Customer(
+                id: $customer->id,
+                record_type_id: $customer->record_type_id,
+                record_type_name: $customer->recordType->name,
+                customer_document_type_id: $customer->customer_document_type_id,
+                customer_document_type_name: $customer->customerDocumentType->description,
+                customer_document_type_abbreviation: $customer->customerDocumentType->abbreviation,
+                document_number: $customer->document_number,
+                company_name: $customer->company_name,
+                name: $customer->name,
+                lastname: $customer->lastname,
+                second_lastname: $customer->second_lastname,
+                customer_type_id: $customer->customer_type_id,
+                customer_type_name: $customer->customerType->description,
+                contact: $customer->contact,
+                is_withholding_applicable: $customer->is_withholding_applicable,
+                status: $customer->status,
+                phones: $phones,
+                emails: $emails,
+                addresses: $addresses,
+            );
+        })->toArray();
     }
 }

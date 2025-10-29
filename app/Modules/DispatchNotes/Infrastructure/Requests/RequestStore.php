@@ -28,7 +28,7 @@ class RequestStore extends FormRequest
             'serie' => ['required', 'string', 'max:10'],
             'emission_reason_id' => ['required', 'integer', 'exists:emission_reasons,id'],
             'description' => ['nullable', 'string', 'max:255'],
-            'destination_branch_id' => ['required', 'integer', 'exists:branches,id'],
+            'destination_branch_id' => ['nullable', 'integer', 'exists:branches,id'],
             'destination_address_customer' => ['string', 'max:255'],
             'transport_id' => ['required', 'integer'],
             'observations' => ['nullable', 'string', 'max:255'],
@@ -43,7 +43,7 @@ class RequestStore extends FormRequest
             'transfer_type' => ['required', 'string', 'max:50'],
             'vehicle_type' => ['required', 'boolean'],
             'document_type_id' => ['required', 'integer', 'exists:document_types,id'],
-            'destination_branch_client_id' => ['required', 'integer', 'exists:branches,id'],
+            'destination_branch_client_id' => ['nullable', 'integer', 'exists:branches,id'],
             'dispatch_articles' => 'required|array|min:1',
             'customer_id' => 'required|integer|exists:customers,id',
         ];

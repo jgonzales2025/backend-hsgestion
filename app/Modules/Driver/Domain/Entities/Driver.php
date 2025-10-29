@@ -4,7 +4,7 @@ namespace App\Modules\Driver\Domain\Entities;
 
 class Driver
 {
-    private int $id;
+    private ?int $id;
     private int $customer_document_type_id;
     private string $doc_number;
     private string $name;
@@ -25,7 +25,7 @@ class Driver
      * @param string $license
      * @param string|null $document_type_name
      */
-    public function __construct(int $id, int $customer_document_type_id, string $doc_number, string $name, string $pat_surname, string $mat_surname, int $status, string $license, ?string $document_type_name)
+    public function __construct(?int $id, int $customer_document_type_id, string $doc_number, string $name, string $pat_surname, string $mat_surname, int $status, string $license, ?string $document_type_name)
     {
         $this->id = $id;
         $this->customer_document_type_id = $customer_document_type_id;
@@ -38,7 +38,7 @@ class Driver
         $this->document_type_name = $document_type_name;
     }
 
-    public function getId(): int
+    public function getId(): int|null
     {
         return $this->id;
     }

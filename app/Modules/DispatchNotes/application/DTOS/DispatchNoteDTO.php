@@ -19,7 +19,7 @@ class DispatchNoteDTO
   public ?string $num_referencia;
   public ?string $date_referencia;
   public bool $status;
-  public int $cod_conductor;
+  public ?int $cod_conductor;
   public string $license_plate;
   public float $total_weight;
   public string $transfer_type;
@@ -46,7 +46,7 @@ class DispatchNoteDTO
     $this->num_referencia = $date['num_referencia']??'';
     $this->date_referencia = $date['date_referencia']??'';
     $this->status = $date['status'];
-    $this->cod_conductor = $date['cod_conductor'] ?? 1;
+    $this->cod_conductor = $date['cod_conductor'] ?? null;
     $this->license_plate = $date['license_plate'];
     $this->total_weight = $date['total_weight'];
     $this->transfer_type = $date['transfer_type'];

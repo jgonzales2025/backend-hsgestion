@@ -65,8 +65,8 @@ class DispatchNoteResource extends JsonResource
             'date_referencia' => $this->resource->getDateReferencia(),
             'status' => $this->resource->getStatus(),
             'conductor' => [
-                'id' => $this->resource->getConductor()->getId(),
-                'status' => $this->resource->getConductor()->getStatus()
+                'id' => $this->resource->getConductor()?->getId(),
+                'status' => $this->resource->getConductor()?->getStatus()
             ],
             'license_plate' => $this->resource->getLicensePlate(),
             'total_weight' => $this->resource->getTotalWeight(),

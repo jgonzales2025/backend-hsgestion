@@ -18,8 +18,7 @@ use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInter
 use App\Modules\SubCategory\Application\UseCases\FindByIdSubCategoryUseCase;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\User\Application\UseCases\GetUserByIdUseCase;
-use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
-use Illuminate\Support\Facades\Log;
+use App\Modules\User\Domain\Interfaces\UserRepositoryInterface; 
 
 readonly class UpdateArticleUseCase
 {
@@ -91,9 +90,9 @@ readonly class UpdateArticleUseCase
             subCategory: $subCategoryType,
             company: $companyType,
             image_url: $articleDTO->image_url,
-             state_modify_article:$articleDTO->state_modify_article
+            state_modify_article: $articleDTO->state_modify_article
         );
 
-     return   $this->articleRepository->update($article);
+        return $this->articleRepository->update($article);
     }
 }

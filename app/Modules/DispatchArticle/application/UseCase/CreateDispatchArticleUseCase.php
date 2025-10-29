@@ -23,7 +23,7 @@ class CreateDispatchArticleUseCase
             weight: $dispatchArticle->weight,
             saldo: $dispatchArticle->saldo,
             name: $dispatchArticle->name,
-            subtotal_weight:$dispatchArticle->subtotal_weight
+            subtotal_weight: $dispatchArticle->subtotal_weight
         );
 
         return $this->dispatchArticlesRepositoryInterface->save($dispatchArticle);

@@ -2,9 +2,7 @@
 
 namespace App\Modules\Articles\Domain\Interfaces;
 
-use App\Modules\Articles\Domain\Entities\Article;
-use Illuminate\Http\UploadedFile;
-
+use App\Modules\Articles\Domain\Entities\Article; 
 interface ArticleRepositoryInterface
 {
     public function save(Article $article): ?Article;

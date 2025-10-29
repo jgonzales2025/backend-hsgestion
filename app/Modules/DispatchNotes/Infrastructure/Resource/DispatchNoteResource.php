@@ -10,27 +10,27 @@ class DispatchNoteResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-       
+
         $pdfUrl = null;
-        
-        $incluyePDF = $request->query('include_pdf',false);
+
+        $incluyePDF = $request->query('include_pdf', false);
         if ($incluyePDF == "true") {
             try {
                 $pdf = Pdf::loadView('invoice', ['dispatchNote' => $this->resource]);
                 $filename = 'dispatch_note_' . $this->resource->getId() . '.pdf';
                 $path = 'pdf/' . $filename;
-    
+
                 // Guardar en storage
                 Storage::disk('public')->put($path, $pdf->output());
-    
+
                 // Obtener URL pública
                 $pdfUrl = asset('storage/' . $path);
-    
+
             } catch (\Throwable $e) {
                 \Log::error('Error generando PDF: ' . $e->getMessage());
             }
-        } 
- 
+        }
+
         return [
             'id' => $this->resource->getId(),
 

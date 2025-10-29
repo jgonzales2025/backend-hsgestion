@@ -10,8 +10,7 @@ use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
 use App\Modules\Category\Application\UseCases\FindByIdCategoryUseCase;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
 use App\Modules\Company\Application\UseCases\FindByIdCompanyUseCase;
-use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
-use App\Modules\CurrencyType\Application\UseCases\FindAllCurrencyTypeUseCase;
+use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface; 
 use App\Modules\CurrencyType\Application\UseCases\FindByIdCurrencyTypeUseCase;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\MeasurementUnit\Application\UseCases\FindByIdMeasurementUnit;
@@ -93,8 +92,8 @@ readonly class CreateArticleUseCase
             venta: $articleDTO->venta ?? false,
             subCategory: $subCategoryType,
             company: $companyType,
-            image_url:$articleDTO->image_url,
-            state_modify_article:$articleDTO->state_modify_article
+            image_url: $articleDTO->image_url,
+            state_modify_article: $articleDTO->state_modify_article
 
         );
 

@@ -5,6 +5,7 @@ namespace App\Modules\Sale\Infrastructure\Persistence;
 use App\Modules\Sale\Domain\Entities\Sale;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class EloquentSaleRepository implements SaleRepositoryInterface
@@ -49,7 +50,12 @@ class EloquentSaleRepository implements SaleRepositoryInterface
     {
         $eloquentSale = EloquentSale::find($sale->getId());
 
+        Log::info('sale', $eloquentSale->toArray());
+
         $eloquentSale->update($this->mapToArray($sale));
+        $eloquentSale->fresh();
+
+        $this->updateSaleBalance($eloquentSale);
 
         return $this->buildDomainSale($eloquentSale, $sale);
     }
@@ -101,9 +107,6 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'inafecto' => $sale->getInafecto(),
             'igv' => $sale->getIgv(),
             'total' => $sale->getTotal(),
-            'saldo' => $sale->getSaldo(),
-            'status' => $sale->getStatus(),
-            'amount_amortized' => $sale->getAmountAmortized(),
             'series_prof' => $sale->getSerieProf(),
             'correlative_prof' => $sale->getCorrelativeProf(),
             'purchase_order' => $sale->getPurchaseOrder()
@@ -176,6 +179,22 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             correlative_prof: $eloquentSale->correlative_prof,
             purchase_order: $eloquentSale->purchase_order
         );
+    }
+
+    private function updateSaleBalance(EloquentSale $sale): void
+    {
+        DB::statement('CALL sp_actualiza_saldo_venta(?, ?, ?, ?)', [
+            $sale->company_id,
+            $sale->document_type_id,
+            $sale->serie,
+            $sale->document_number
+        ]);
+
+        $sale->fresh();
+        Log::info('sale', $sale->toArray());
+        $sale->payment_status = $sale->saldo == 0 ? 1 : 0;
+        $sale->amount_amortized = $sale->total - $sale->saldo;
+        $sale->save();
     }
 
 

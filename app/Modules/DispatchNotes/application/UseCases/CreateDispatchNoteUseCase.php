@@ -45,9 +45,14 @@ class CreateDispatchNoteUseCase
 
     $emissionReasonUseCase = new FindByIdEmissionReasonUseCase($this->emissionReasonRepositoryInterface);
     $emissionReason = $emissionReasonUseCase->execute($data->emission_reason_id);
+    
+    if ($data->destination_branch_id != null) {
 
-    $destinationUseCase = new FindByIdBranchUseCase($this->branchRepository);
-    $destination = $destinationUseCase->execute($data->destination_branch_id);
+      $destinationUseCase = new FindByIdBranchUseCase($this->branchRepository);
+      $destination = $destinationUseCase->execute($data->destination_branch_id);
+    }else{
+      $destination = null;
+    }
 
     if($data->cod_conductor != null){
       $driverUseCase = new FindByIdDriverUseCase($this->driverRepositoryInterface);
@@ -55,7 +60,7 @@ class CreateDispatchNoteUseCase
     } else {
       $driver = null;
     }
-
+   
 
     $transportCompanyUseCase = new FindByIdTransportCompanyUseCase($this->transportCompany);
     $transportCompany = $transportCompanyUseCase->execute($data->transport_id);

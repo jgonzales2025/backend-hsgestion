@@ -10,7 +10,7 @@ class DispatchNoteDTO
   public string $correlativo;
   public int $emission_reason_id;
   public ?string $description;
-  public int $destination_branch_id;
+  public ?int $destination_branch_id;
   public string $destination_address_customer;
   public int $transport_id;
   public ?string $observations;
@@ -25,19 +25,19 @@ class DispatchNoteDTO
   public string $transfer_type;
   public bool $vehicle_type;
   public int $document_type_id;
-  public int $destination_branch_client_id;
+  public ?int $destination_branch_client_id;
   public int $customer_id;
 
 
   public function __construct(array $date)
   {
-    $this->cia_id = $date['cia_id'] ?? 1;
-    $this->branch_id = $date['branch_id'] ?? 1;
-    $this->serie = $date['serie'] ?? 2;
+    $this->cia_id = $date['cia_id'];
+    $this->branch_id = $date['branch_id'];
+    $this->serie = $date['serie'] ;
     $this->correlativo = $date['correlativo'] ?? '';
     $this->emission_reason_id = $date['emission_reason_id'] ?? 1;
     $this->description = $date['description']??'';
-    $this->destination_branch_id = $date['destination_branch_id'] ?? 1;
+    $this->destination_branch_id = $date['destination_branch_id'] ?? null;
     $this->destination_address_customer = $date['destination_address_customer'] ?? '';
     $this->transport_id = $date['transport_id'] ?? 1;
     $this->observations = $date['observations'] ?? '';
@@ -52,7 +52,7 @@ class DispatchNoteDTO
     $this->transfer_type = $date['transfer_type'];
     $this->vehicle_type = $date['vehicle_type'];
     $this->document_type_id = $date['document_type_id'] ?? 1;
-    $this->destination_branch_client_id = $date['destination_branch_client_id'] ?? 1;
+    $this->destination_branch_client_id = $date['destination_branch_client_id'] ?? null;
     $this->customer_id = $date['customer_id'] ?? 1;
 
   }

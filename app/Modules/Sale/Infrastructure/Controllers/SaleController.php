@@ -4,6 +4,7 @@ namespace App\Modules\Sale\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\Collections\Infrastructure\Models\EloquentCollection;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
@@ -17,6 +18,7 @@ use App\Modules\Sale\Application\UseCases\FindByDocumentSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateSaleUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
+use App\Modules\Sale\Infrastructure\Models\EloquentSale;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleRequest;
 use App\Modules\Sale\Infrastructure\Requests\UpdateSaleRequest;
 use App\Modules\Sale\Infrastructure\Resources\SaleResource;
@@ -30,6 +32,7 @@ use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterfa
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class SaleController extends Controller
@@ -112,7 +115,7 @@ class SaleController extends Controller
             return response()->json(['message' => 'Venta no encontrada'], 404);
         }
 
-        if ($sale->getIsLocked() == 0) {
+        if ($sale->getIsLocked() == 1) {
             return response()->json(['message' => 'La venta no se puede actualizar por cierre de mes'], 200);
         }
 
@@ -205,4 +208,5 @@ class SaleController extends Controller
 
         return SaleResource::collection($sales)->resolve();
     }
+
 }

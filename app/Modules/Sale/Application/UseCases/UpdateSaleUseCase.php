@@ -67,7 +67,7 @@ readonly class UpdateSaleUseCase
             total: $saleDTO->total,
             saldo: $saleDTO->saldo,
             amount_amortized: $saleDTO->amount_amortized,
-            status: $saleDTO->status,
+            status: null,
             payment_status: $saleDTO->payment_status,
             is_locked: $sale->getIsLocked(),
             serie_prof: $saleDTO->serie_prof,

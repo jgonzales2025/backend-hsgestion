@@ -55,10 +55,17 @@ class MeasurementUnitController extends Controller
 
     public function update(int $id, UpdateMeasurementUnitRequest $request): JsonResponse
     {
-        $measurementUnitDTO = new MeasurementUnitDTO($request->validated());
-        $measurementUnitUseCase = new UpdateMeasurementUnitUseCase($this->measurementUnitRepository);
-        $measurementUnit = $measurementUnitUseCase->execute($id, $measurementUnitDTO);
+        $measurementUnitUseCase = new FindByIdMeasurementUnit($this->measurementUnitRepository);
+        $measurementUnit = $measurementUnitUseCase->execute($id);
 
-        return response()->json(new MeasurementUnitResource($measurementUnit));
+        if (!$measurementUnit) {
+            return response()->json(['message' => 'Unidad de medida no encontrada'], 404);
+        }
+
+        $measurementUnitDTO = new MeasurementUnitDTO($request->validated());
+        $measurementUnitUpdateUseCase = new UpdateMeasurementUnitUseCase($this->measurementUnitRepository);
+        $measurementUnitUpdate = $measurementUnitUpdateUseCase->execute($measurementUnit, $measurementUnitDTO);
+
+        return response()->json(new MeasurementUnitResource($measurementUnitUpdate));
     }
 }

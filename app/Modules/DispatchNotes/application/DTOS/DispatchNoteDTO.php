@@ -44,7 +44,7 @@ class DispatchNoteDTO
     $this->num_orden_compra = $date['num_orden_compra']??"";
     $this->doc_referencia = $date['doc_referencia']??'';
     $this->num_referencia = $date['num_referencia']??'';
-    $this->date_referencia = $date['date_referencia']??'';
+    $this->date_referencia = $date['date_referencia']??null;
     $this->status = $date['status'];
     $this->cod_conductor = $date['cod_conductor'] ?? null;
     $this->license_plate = $date['license_plate'];

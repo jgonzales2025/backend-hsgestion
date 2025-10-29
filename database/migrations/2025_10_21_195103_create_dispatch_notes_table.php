@@ -39,8 +39,8 @@ return new class extends Migration {
 
             $table->boolean('status')->default(true);
 
-            $table->foreignId('cod_conductor')->constrained('drivers');
-            $table->string('license_plate');
+           $table->foreignId('cod_conductor')->nullable()->constrained('drivers');
+          $table->string('license_plate');
             $table->decimal('total_weight', 10, 2);
 
             $table->string('transfer_type');

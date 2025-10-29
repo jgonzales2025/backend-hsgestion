@@ -115,7 +115,7 @@ class Article
         $this->subCategory = $subCategory;
         $this->company = $company;
         $this->image_url = $image_url;
-         $this->state_modify_article = $state_modify_article;
+        $this->state_modify_article = $state_modify_article;
     }
 
     public function calculatePrecioIGV(): float
@@ -246,7 +246,8 @@ class Article
     {
         return $this->image_url ?? '';
     }
-    public function getstateModifyArticle():int|null{
+    public function getstateModifyArticle(): int|null
+    {
         return $this->state_modify_article;
     }
 

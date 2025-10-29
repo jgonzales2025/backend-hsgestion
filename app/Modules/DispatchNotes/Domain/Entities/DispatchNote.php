@@ -40,7 +40,7 @@ class DispatchNote
         ?Company $company,
         ?Branch $branch,
         string $serie,
-        string $correlativo, 
+        string $correlativo,
         ?EmissionReason $emission_reason,
         ?string $description,
         ?Branch $destination_branch,
@@ -60,7 +60,7 @@ class DispatchNote
         ?DocumentType $document_type,
         int $destination_branch_client,
         int $customer_id,
-    
+
     ) {
         $this->id = $id;
         $this->company = $company;
@@ -84,33 +84,105 @@ class DispatchNote
         $this->transfer_type = $transfer_type;
         $this->vehicle_type = $vehicle_type;
         $this->document_type = $document_type;
-        $this->destination_branch_client= $destination_branch_client;
+        $this->destination_branch_client = $destination_branch_client;
         $this->customer_id = $customer_id;
     }
 
     // Getters
-    public function getId(): int|null { return $this->id; }
-    public function getCompany(): Company|null { return $this->company; }
-    public function getBranch(): Branch|null { return $this->branch; }
-    public function getSerie(): string { return $this->serie; }
-    public function getCorrelativo(): string { return $this->correlativo; }
-    public function getEmissionReason(): EmissionReason|null { return $this->emission_reason; }
-    public function getDescription(): ?string { return $this->description; }
-    public function getDestinationBranch(): Branch|null { return $this->destination_branch; }
-    public function getDestinationAddressCustomer(): string { return $this->destination_address_customer; }
-    public function getTransport(): TransportCompany|null { return $this->transport; }
-    public function getObservations(): ?string { return $this->observations; }
-    public function getNumOrdenCompra(): ?string { return $this->num_orden_compra; }
-    public function getDocReferencia(): ?string { return $this->doc_referencia; }
-    public function getNumReferencia(): ?string { return $this->num_referencia; }
-    public function getDateReferencia(): ?string { return $this->date_referencia; }
-    public function getStatus(): bool { return $this->status; }
-    public function getConductor(): Driver|null { return $this->conductor; }
-    public function getLicensePlate(): string { return $this->license_plate; }
-    public function getTotalWeight(): float { return $this->total_weight; }
-    public function getTransferType(): string { return $this->transfer_type; }
-    public function getVehicleType(): bool { return $this->vehicle_type; }
-    public function getDocumentType(): ?DocumentType { return $this->document_type; }
-    public function getdestination_branch_client():int{return $this->destination_branch_client;}
-    public function getCustomerId():int{return $this->customer_id;}
+    public function getId(): int|null
+    {
+        return $this->id;
+    }
+    public function getCompany(): Company|null
+    {
+        return $this->company;
+    }
+    public function getBranch(): Branch|null
+    {
+        return $this->branch;
+    }
+    public function getSerie(): string
+    {
+        return $this->serie;
+    }
+    public function getCorrelativo(): string
+    {
+        return $this->correlativo;
+    }
+    public function getEmissionReason(): EmissionReason|null
+    {
+        return $this->emission_reason;
+    }
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+    public function getDestinationBranch(): Branch|null
+    {
+        return $this->destination_branch;
+    }
+    public function getDestinationAddressCustomer(): string
+    {
+        return $this->destination_address_customer;
+    }
+    public function getTransport(): TransportCompany|null
+    {
+        return $this->transport;
+    }
+    public function getObservations(): ?string
+    {
+        return $this->observations;
+    }
+    public function getNumOrdenCompra(): ?string
+    {
+        return $this->num_orden_compra;
+    }
+    public function getDocReferencia(): ?string
+    {
+        return $this->doc_referencia;
+    }
+    public function getNumReferencia(): ?string
+    {
+        return $this->num_referencia;
+    }
+    public function getDateReferencia(): ?string
+    {
+        return $this->date_referencia;
+    }
+    public function getStatus(): bool
+    {
+        return $this->status;
+    }
+    public function getConductor(): Driver|null
+    {
+        return $this->conductor;
+    }
+    public function getLicensePlate(): string
+    {
+        return $this->license_plate;
+    }
+    public function getTotalWeight(): float
+    {
+        return $this->total_weight;
+    }
+    public function getTransferType(): string
+    {
+        return $this->transfer_type;
+    }
+    public function getVehicleType(): bool
+    {
+        return $this->vehicle_type;
+    }
+    public function getDocumentType(): ?DocumentType
+    {
+        return $this->document_type;
+    }
+    public function getdestination_branch_client(): int
+    {
+        return $this->destination_branch_client;
+    }
+    public function getCustomerId(): int
+    {
+        return $this->customer_id;
+    }
 }

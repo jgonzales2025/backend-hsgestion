@@ -5,36 +5,30 @@ namespace App\Modules\DispatchNotes\Infrastructure\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RequestStore extends FormRequest
-{
-    /**
-     * Determina si el usuario está autorizado para hacer esta solicitud.
-     */
+{ 
     public function authorize(): bool
     {
         return true;
     }
-   protected function prepareForValidation(): void
+    protected function prepareForValidation(): void
     {
         $payload = auth('api')->payload();
         $companyId = $payload->get('company_id');
 
-        $this->merge([
-            // 'user_id' => auth('api')->id(),
+        $this->merge([ 
             'cia_id' => $companyId,
         ]);
     }
-    /**
-     * Reglas de validación para crear una nota de despacho.
-     */
+
     public function rules(): array
     {
         return [
-             'cia_id' => 'integer|exists:companies,id',
-             'branch_id' => ['required', 'integer', 'exists:branches,id'],
+            'cia_id' => 'integer|exists:companies,id',
+            'branch_id' => ['required', 'integer', 'exists:branches,id'],
             'serie' => ['required', 'string', 'max:10'],
-             'emission_reason_id' => ['required', 'integer', 'exists:emission_reasons,id'],
+            'emission_reason_id' => ['required', 'integer', 'exists:emission_reasons,id'],
             'description' => ['nullable', 'string', 'max:255'],
-             'destination_branch_id' => ['required', 'integer', 'exists:branches,id'],
+            'destination_branch_id' => ['required', 'integer', 'exists:branches,id'],
             'destination_address_customer' => ['string', 'max:255'],
             'transport_id' => ['required', 'integer'],
             'observations' => ['nullable', 'string', 'max:255'],
@@ -42,8 +36,8 @@ class RequestStore extends FormRequest
             'doc_referencia' => ['nullable', 'string', 'max:50'],
             'num_referencia' => ['nullable', 'string', 'max:50'],
             'date_referencia' => ['nullable', 'date'],
-             'status' => ['required', 'boolean'],
-             'cod_conductor' => ['required', 'integer', 'exists:drivers,id'],
+            'status' => ['required', 'boolean'],
+            'cod_conductor' => ['required', 'integer', 'exists:drivers,id'],
             'license_plate' => ['required', 'string', 'max:15'],
             'total_weight' => ['required', 'numeric'],
             'transfer_type' => ['required', 'string', 'max:50'],
@@ -51,13 +45,9 @@ class RequestStore extends FormRequest
             'document_type_id' => ['required', 'integer', 'exists:document_types,id'],
             'destination_branch_client_id' => ['required', 'integer', 'exists:branches,id'],
             'dispatch_articles' => 'required|array|min:1',
-            'customer_id' =>'required|integer|exists:customers,id',
+            'customer_id' => 'required|integer|exists:customers,id',
         ];
-    }
-
-    /**
-     * Mensajes personalizados (opcional).
-     */
+    } 
     public function messages(): array
     {
         return [

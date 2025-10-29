@@ -24,8 +24,9 @@ class EloquentDispatchArticle extends Model
 
     protected $hidden = ['created_at', 'updated_at'];
 
-    public function dispatchArticle():BelongsTo{
-          return $this->belongsTo(EloquentDispatchNote::class,'dispatch_id');
+    public function dispatchArticle(): BelongsTo
+    {
+        return $this->belongsTo(EloquentDispatchNote::class, 'dispatch_id');
     }
 
     public function article(): BelongsTo

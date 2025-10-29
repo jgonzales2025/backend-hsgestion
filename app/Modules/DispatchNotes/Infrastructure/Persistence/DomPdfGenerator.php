@@ -17,14 +17,14 @@ class DomPdfGenerator implements PdfGeneratorInterface
             $pdf = Pdf::loadView('invoice', [
                 'dispatchNote' => $dispatchNote
             ]);
-            
-            
+
+
             $filename = 'dispatch_note_' . $dispatchNote->getId() . '.pdf';
             $path = 'pdf/' . $filename;
-            
+
             // Guardar el PDF en storage/app/public/pdf/
             Storage::disk('public')->put($path, $pdf->output());
-            
+
             return $path;
         } catch (\Throwable $e) {
             Log::error('Error generando PDF: ' . $e->getMessage(), [

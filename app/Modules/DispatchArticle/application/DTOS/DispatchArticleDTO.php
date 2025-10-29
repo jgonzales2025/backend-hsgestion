@@ -1,8 +1,9 @@
-<?php 
+<?php
 
 namespace App\Modules\DispatchArticle\Application\DTOS;
 
-class DispatchArticleDTO{
+class DispatchArticleDTO
+{
 
     public int $dispatch_id;
     public int $article_id;
@@ -12,7 +13,8 @@ class DispatchArticleDTO{
     public string $name;
     public float $subtotal_weight;
 
-    public function __construct(array $data){
+    public function __construct(array $data)
+    {
         $this->dispatch_id = $data['dispatch_id'];
         $this->article_id = $data['article_id'];
         $this->quantity = $data['quantity'];

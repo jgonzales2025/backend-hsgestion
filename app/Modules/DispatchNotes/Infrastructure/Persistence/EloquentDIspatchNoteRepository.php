@@ -161,6 +161,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
                 '00' .
                 ($dispatchNote->getBranch() ? strtoupper(substr($dispatchNote->getBranch()->getId(), 0, 1)) : '')
             ),
+
             'emission_reason_id' => $dispatchNote->getEmissionReason() ? $dispatchNote->getEmissionReason()->getId() : null,
             'description' => $dispatchNote->getDescription(),
             'destination_branch_id' => $dispatchNote->getDestinationBranch() ? $dispatchNote->getDestinationBranch()->getId() : null,

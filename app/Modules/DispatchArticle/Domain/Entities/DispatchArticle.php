@@ -35,28 +35,36 @@ class DispatchArticle
         $this->subtotal_weight = $subtotal_weight;
 
     }
-    public function getId():int|null{
+    public function getId(): int|null
+    {
         return $this->id;
     }
-     public function getDispatchID():int{
+    public function getDispatchID(): int
+    {
         return $this->dispatch_id;
     }
-     public function getArticleID():int{
+    public function getArticleID(): int
+    {
         return $this->article_id;
     }
-     public function getQuantity():float{
+    public function getQuantity(): float
+    {
         return $this->quantity;
     }
-     public function getWeight():float{
+    public function getWeight(): float
+    {
         return $this->weight;
     }
-     public function getSaldo():float{
+    public function getSaldo(): float
+    {
         return $this->saldo;
     }
-     public function getName():string{
+    public function getName(): string
+    {
         return $this->name;
     }
-     public function getsubTotalWeight():float{
+    public function getsubTotalWeight(): float
+    {
         return $this->subtotal_weight;
     }
 }

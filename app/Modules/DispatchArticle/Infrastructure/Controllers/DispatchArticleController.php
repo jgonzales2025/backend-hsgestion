@@ -10,26 +10,30 @@ use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
-class DispatchArticleController extends Controller{
-     
-    public function __construct(private readonly DispatchArticleRepositoryInterface $dispatchArticleRepositoryInterface){}
+class DispatchArticleController extends Controller
+{
 
-    public function index():array{
-        $dispatchArticleUseCase = new FindAllDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
-        $dispatchArticle = $dispatchArticleUseCase->execute();
-        Log::info("dispatchArticle",$dispatchArticle);
+  public function __construct(private readonly DispatchArticleRepositoryInterface $dispatchArticleRepositoryInterface)
+  {
+  }
 
-       return DispatchArticleResource::collection($dispatchArticle)->resolve();
+  public function index(): array
+  {
+    $dispatchArticleUseCase = new FindAllDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
+    $dispatchArticle = $dispatchArticleUseCase->execute();
 
-    }
-      public function show($id):JsonResponse{
-        $dispatchArticleUseCase = new FindByIdDispatchArticle($this->dispatchArticleRepositoryInterface);
-        $dispatchArticle = $dispatchArticleUseCase->execute($id);
-        // Log::info("dispatchArticle",$dispatchArticle);
+    return DispatchArticleResource::collection($dispatchArticle)->resolve();
 
-       return response()->json(
-         (new DispatchArticleResource($dispatchArticle))->resolve(),200
-       );
+  }
+  public function show($id): JsonResponse
+  {
+    $dispatchArticleUseCase = new FindByIdDispatchArticle($this->dispatchArticleRepositoryInterface);
+    $dispatchArticle = $dispatchArticleUseCase->execute($id);
 
-    }
+    return response()->json(
+      (new DispatchArticleResource($dispatchArticle))->resolve(),
+      200
+    );
+
+  }
 }

@@ -23,10 +23,8 @@ use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInter
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Http\Request; 
+use Illuminate\Support\Facades\Storage; 
 class ArticleController extends Controller
 {
 
@@ -45,9 +43,7 @@ class ArticleController extends Controller
   }
   public function index(Request $request): array
   {
-    $name = $request->query("name");
-    //  $sku = $request->query("sku");
-    //  $serie = $request->query('serie');
+    $name = $request->query("name"); 
 
     $articleUseCase = new FindAllArticleUseCase($this->articleRepository);
 

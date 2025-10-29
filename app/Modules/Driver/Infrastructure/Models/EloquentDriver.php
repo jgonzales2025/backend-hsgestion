@@ -28,7 +28,7 @@ class EloquentDriver extends Model
     {
         return $this->belongsTo(EloquentCustomerDocumentType::class, 'customer_document_type_id');
     }
-        public function toDomain(EloquentDriver $drive): Driver
+        public function toDomain(EloquentDriver $drive): ?Driver
     {
         return new Driver(
             id:$drive->id,

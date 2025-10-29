@@ -2,6 +2,7 @@
 
 namespace App\Modules\Driver\Application\UseCases;
 
+use App\Modules\Driver\Domain\Entities\Driver;
 use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
 
 class FindByIdDriverUseCase
@@ -13,7 +14,7 @@ class FindByIdDriverUseCase
         $this->driverRepository = $driverRepository;
     }
 
-    public function execute(int $id)
+    public function execute(int $id): ?Driver
     {
         return $this->driverRepository->findById($id);
     }

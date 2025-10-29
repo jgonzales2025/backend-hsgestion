@@ -49,8 +49,12 @@ class CreateDispatchNoteUseCase
     $destinationUseCase = new FindByIdBranchUseCase($this->branchRepository);
     $destination = $destinationUseCase->execute($data->destination_branch_id);
 
-    $driverUseCase = new FindByIdDriverUseCase($this->driverRepositoryInterface);
-    $driver = $driverUseCase->execute($data->cod_conductor);
+    if($data->cod_conductor != null){
+      $driverUseCase = new FindByIdDriverUseCase($this->driverRepositoryInterface);
+      $driver = $driverUseCase->execute($data->cod_conductor);
+    } else {
+      $driver = null;
+    }
 
 
     $transportCompanyUseCase = new FindByIdTransportCompanyUseCase($this->transportCompany);

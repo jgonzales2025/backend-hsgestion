@@ -5,8 +5,10 @@ namespace App\Modules\TransportCompany\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\TransportCompany\Application\DTOs\TransportCompanyDTO;
 use App\Modules\TransportCompany\Application\UseCases\CreateTransportCompanyUseCase;
+use App\Modules\TransportCompany\Application\UseCases\FindAllPublicTransportUseCase;
 use App\Modules\TransportCompany\Application\UseCases\FindAllTransportCompaniesUseCase;
 use App\Modules\TransportCompany\Application\UseCases\FindByIdTransportCompanyUseCase;
+use App\Modules\TransportCompany\Application\UseCases\FindPrivateTransportUseCase;
 use App\Modules\TransportCompany\Application\UseCases\UpdateTransportCompanyUseCase;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
 use App\Modules\TransportCompany\Infrastructure\Requests\StoreTransportCompanyRequest;
@@ -56,15 +58,39 @@ class TransportCompanyController extends Controller
 
     public function update(UpdateTransportCompanyRequest $request, $id): JsonResponse
     {
-        $transportCompanyDTO = new TransportCompanyDTO($request->validated());
-        $transportUseCase = new UpdateTransportCompanyUseCase($this->transportCompanyRepository);
-        $transportUseCase->execute($id, $transportCompanyDTO);
+        $transportUseCase = new FindByIdTransportCompanyUseCase($this->transportCompanyRepository);
+        $transportCompany = $transportUseCase->execute($id);
 
-        $transportCompany = $this->transportCompanyRepository->findById($id);
+        if (!$transportCompany) {
+            return response()->json(['message' => 'Transporte no encontrado'], 404);
+        }
+
+        $transportCompanyDTO = new TransportCompanyDTO($request->validated());
+        $transportUpdateUseCase = new UpdateTransportCompanyUseCase($this->transportCompanyRepository);
+        $transportUpdate = $transportUpdateUseCase->execute($transportCompany, $transportCompanyDTO);
+
+        return response()->json(
+            (new TransportCompanyResource($transportUpdate))->resolve(),
+              200
+        );
+    }
+
+    public function findPrivateTransport(): JsonResponse
+    {
+        $transportUseCase = new FindPrivateTransportUseCase($this->transportCompanyRepository);
+        $transportCompany = $transportUseCase->execute();
 
         return response()->json(
             (new TransportCompanyResource($transportCompany))->resolve(),
-              200
+               200
         );
+    }
+
+    public function indexPublicTransport(): array
+    {
+        $transportUseCase = new FindAllPublicTransportUseCase($this->transportCompanyRepository);
+        $transportCompanies = $transportUseCase->execute();
+
+        return TransportCompanyResource::collection($transportCompanies)->resolve();
     }
 }

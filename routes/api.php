@@ -261,6 +261,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Ruta para traer los logs transaccionales
     Route::get('/logs-transaction', [TransactionLogController::class, 'index']);
+
+    // Ruta para empresa de transportes
+    Route::get('/private-transport', [TransportCompanyController::class, 'findPrivateTransport']);
+    Route::get('/public-transport', [TransportCompanyController::class, 'indexPublicTransport']);
 });
 
 Route::middleware('auth:api')->group(function () {

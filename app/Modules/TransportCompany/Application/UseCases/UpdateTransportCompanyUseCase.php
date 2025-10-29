@@ -15,16 +15,10 @@ class UpdateTransportCompanyUseCase
         $this->transportCompanyRepository = $transportCompanyRepository;
     }
 
-    public function execute(int $id, TransportCompanyDTO $transportCompanyDTO)
+    public function execute(TransportCompany $transportCompany, TransportCompanyDTO $transportCompanyDTO): ?TransportCompany
     {
-        $existingTransport = $this->transportCompanyRepository->findById($id);
-
-        if (!$existingTransport) {
-            return null;
-        }
-
         $transport = new TransportCompany(
-            id: $id,
+            id: $transportCompany->getId(),
             ruc: $transportCompanyDTO->ruc,
             company_name: $transportCompanyDTO->company_name,
             address: $transportCompanyDTO->address,
@@ -32,6 +26,6 @@ class UpdateTransportCompanyUseCase
             status: $transportCompanyDTO->status,
         );
 
-        $this->transportCompanyRepository->update($transport);
+        return $this->transportCompanyRepository->update($transport);
     }
 }

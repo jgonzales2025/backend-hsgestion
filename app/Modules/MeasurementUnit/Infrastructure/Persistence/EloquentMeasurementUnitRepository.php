@@ -17,14 +17,7 @@ class EloquentMeasurementUnitRepository implements MeasurementUnitRepositoryInte
             return [];
         }
 
-        return $measurementUnits->map(function ($measurementUnit) {
-            return new MeasurementUnit(
-                id: $measurementUnit->id,
-                name: $measurementUnit->name,
-                abbreviation: $measurementUnit->abbreviation,
-                status: $measurementUnit->status,
-            );
-        })->toArray();
+        return $measurementUnits->map(fn ($eloquentMeasurementUnit) => $this->mapToEntity($eloquentMeasurementUnit))->toArray();
     }
 
     public function save(MeasurementUnit $measurementUnit): MeasurementUnit
@@ -35,12 +28,7 @@ class EloquentMeasurementUnitRepository implements MeasurementUnitRepositoryInte
             'status' => $measurementUnit->getStatus(),
         ]);
 
-        return new MeasurementUnit(
-            id: $eloquentMeasurementUnit->id,
-            name: $eloquentMeasurementUnit->name,
-            abbreviation: $eloquentMeasurementUnit->abbreviation,
-            status: $eloquentMeasurementUnit->status,
-        );
+        return $this->mapToEntity($eloquentMeasurementUnit);
     }
 
     public function findById(int $id): ?MeasurementUnit
@@ -51,12 +39,7 @@ class EloquentMeasurementUnitRepository implements MeasurementUnitRepositoryInte
             return null;
         }
 
-        return new MeasurementUnit(
-            id: $eloquentMeasurementUnit->id,
-            name: $eloquentMeasurementUnit->name,
-            abbreviation: $eloquentMeasurementUnit->abbreviation,
-            status: $eloquentMeasurementUnit->status,
-        );
+        return $this->mapToEntity($eloquentMeasurementUnit);
     }
 
     public function update(MeasurementUnit $measurementUnit): MeasurementUnit
@@ -69,6 +52,11 @@ class EloquentMeasurementUnitRepository implements MeasurementUnitRepositoryInte
             'status' => $measurementUnit->getStatus(),
         ]);
 
+        return $this->mapToEntity($eloquentMeasurementUnit);
+    }
+
+    private function mapToEntity($eloquentMeasurementUnit): MeasurementUnit
+    {
         return new MeasurementUnit(
             id: $eloquentMeasurementUnit->id,
             name: $eloquentMeasurementUnit->name,

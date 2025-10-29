@@ -17,13 +17,7 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
             return [];
         }
 
-        return $categories->map(function ($category) {
-            return new Category(
-                id: $category->id,
-                name: $category->name,
-                status: $category->status,
-            );
-        })->toArray();
+        return $categories->map(fn ($eloquentCategory) => $this->mapToEntity($categories))->toArray();
     }
 
     public function save(Category $category): Category
@@ -33,26 +27,18 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
             'status' => $category->getStatus(),
         ]);
 
-        return new Category(
-            id: $eloquentCategory->id,
-            name: $eloquentCategory->name,
-            status: $eloquentCategory->status,
-        );
+        return $this->mapToEntity($eloquentCategory);
     }
 
-    public function findById($id): Category
+    public function findById($id): ?Category
     {
         $eloquentCategory = EloquentCategory::find($id);
 
         if (!$eloquentCategory) {
-            throw new \Exception("Categoria no encontrada");
+            return null;
         }
 
-        return new Category(
-            id: $eloquentCategory->id,
-            name: $eloquentCategory->name,
-            status: $eloquentCategory->status,
-        );
+        return $this->mapToEntity($eloquentCategory);
     }
 
     public function update(Category $category): ?Category
@@ -68,6 +54,11 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
             'status' => $category->getStatus(),
         ]);
 
+        return $this->mapToEntity($eloquentCategory);
+    }
+
+    private function mapToEntity($eloquentCategory): Category
+    {
         return new Category(
             id: $eloquentCategory->id,
             name: $eloquentCategory->name,

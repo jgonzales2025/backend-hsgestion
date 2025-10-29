@@ -14,7 +14,7 @@ class FindByIdCategoryUseCase
         $this->categoryRepository = $categoryRepository;
     }
 
-    public function execute(int $id): Category
+    public function execute(int $id): ?Category
     {
         return $this->categoryRepository->findById($id);
     }

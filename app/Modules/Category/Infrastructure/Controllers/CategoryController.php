@@ -2,6 +2,7 @@
 
 namespace App\Modules\Category\Infrastructure\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Modules\Category\Application\DTOs\CategoryDTO;
 use App\Modules\Category\Application\UseCases\CreateCategoryUseCase;
 use App\Modules\Category\Application\UseCases\FindAllCategoriesUseCase;
@@ -13,14 +14,9 @@ use App\Modules\Category\Infrastructure\Requests\UpdateCategoryRequest;
 use App\Modules\Category\Infrastructure\Resources\CategoryResource;
 use Illuminate\Http\JsonResponse;
 
-class CategoryController
+class CategoryController extends Controller
 {
-    protected $categoryRepository;
-
-    public function __construct(CategoryRepositoryInterface $categoryRepository)
-    {
-        $this->categoryRepository = $categoryRepository;
-    }
+    public function __construct(private readonly CategoryRepositoryInterface $categoryRepository){}
 
     public function index(): array
     {
@@ -47,6 +43,10 @@ class CategoryController
         $categoryUseCase = new FindByIdCategoryUseCase($this->categoryRepository);
         $category = $categoryUseCase->execute($id);
 
+        if (!$category) {
+            return response()->json(["message" => "Categoría no encontrada"]);
+        }
+
         return response()->json(
             (new CategoryResource($category))->resolve(),
              200
@@ -55,9 +55,16 @@ class CategoryController
 
     public function update(UpdateCategoryRequest $request, $id): JsonResponse
     {
+        $categoryUseCase = new FindByIdCategoryUseCase($this->categoryRepository);
+        $category = $categoryUseCase->execute($id);
+
+        if (!$category) {
+            return response()->json(["message" => "Categoría no encontrada"]);
+        }
+
         $categoryDTO = new CategoryDTO($request->validated());
-        $categoryUseCase = new UpdateCategoryUseCase($this->categoryRepository);
-        $categoryUpdate = $categoryUseCase->execute($id, $categoryDTO);
+        $categoryUpdateUseCase = new UpdateCategoryUseCase($this->categoryRepository);
+        $categoryUpdate = $categoryUpdateUseCase->execute($id, $categoryDTO);
 
         return response()->json(
             (new CategoryResource($categoryUpdate))->resolve(),

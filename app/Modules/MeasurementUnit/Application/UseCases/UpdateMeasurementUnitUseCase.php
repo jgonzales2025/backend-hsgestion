@@ -15,10 +15,10 @@ class UpdateMeasurementUnitUseCase
         $this->measurementUnitRepository = $measurementUnitRepository;
     }
 
-    public function execute(int $id, MeasurementUnitDTO $measurementUnitDTO): ?MeasurementUnit
+    public function execute(MeasurementUnit $measurementUnit, MeasurementUnitDTO $measurementUnitDTO): ?MeasurementUnit
     {
         $updatedMeasurementUnit = new MeasurementUnit(
-            $id,
+            $measurementUnit->getId(),
             $measurementUnitDTO->name,
             $measurementUnitDTO->abbreviation,
             $measurementUnitDTO->status

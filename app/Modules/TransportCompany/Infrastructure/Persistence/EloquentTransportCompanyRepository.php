@@ -17,16 +17,7 @@ class EloquentTransportCompanyRepository implements TransportCompanyRepositoryIn
             return [];
         }
 
-        return $eloquentTransportCompanies->map(function ($eloquentTransportCompany) {
-           return new TransportCompany(
-               id: $eloquentTransportCompany->id,
-               ruc: $eloquentTransportCompany->ruc,
-               company_name: $eloquentTransportCompany->company_name,
-               address: $eloquentTransportCompany->address,
-               nro_reg_mtc: $eloquentTransportCompany->nro_reg_mtc,
-               status: $eloquentTransportCompany->status,
-           ) ;
-        })->toArray();
+        return $eloquentTransportCompanies->map(fn($company) => $this->mapToEntity($company))->toArray();
     }
 
     public function save(TransportCompany $transportCompany): TransportCompany
@@ -39,14 +30,7 @@ class EloquentTransportCompanyRepository implements TransportCompanyRepositoryIn
             'status' => $transportCompany->getStatus(),
         ]);
 
-        return new TransportCompany(
-            id: $eloquentTransport->id,
-            ruc: $eloquentTransport->ruc,
-            company_name: $eloquentTransport->company_name,
-            address: $eloquentTransport->address,
-            nro_reg_mtc: $eloquentTransport->nro_reg_mtc,
-            status: $eloquentTransport->status,
-        );
+        return $this->mapToEntity($eloquentTransport);
     }
 
     public function findById(int $id): ?TransportCompany
@@ -57,23 +41,12 @@ class EloquentTransportCompanyRepository implements TransportCompanyRepositoryIn
             return null;
         }
 
-        return new TransportCompany(
-            id: $eloquentTransport->id,
-            ruc: $eloquentTransport->ruc,
-            company_name: $eloquentTransport->company_name,
-            address: $eloquentTransport->address,
-            nro_reg_mtc: $eloquentTransport->nro_reg_mtc,
-            status: $eloquentTransport->status,
-        );
+        return $this->mapToEntity($eloquentTransport);
     }
 
-    public function update(TransportCompany $transportCompany): void
+    public function update(TransportCompany $transportCompany): ?TransportCompany
     {
         $eloquentTransport = EloquentTransportCompany::find($transportCompany->getId());
-
-        if (!$eloquentTransport) {
-            throw new \Exception("Transporte no encontrado");
-        }
 
         $eloquentTransport->update([
             'ruc' => $transportCompany->getRuc(),
@@ -82,5 +55,35 @@ class EloquentTransportCompanyRepository implements TransportCompanyRepositoryIn
             'nro_reg_mtc' => $transportCompany->getNroRegMtc(),
             'status' => $transportCompany->getStatus(),
         ]);
+
+        return $this->mapToEntity($eloquentTransport);
+    }
+
+    public function findPrivateTransport(): ?TransportCompany
+    {
+        $companyId = request()->get('company_id');
+
+        $transportCompany = EloquentTransportCompany::where('id', $companyId)->first();
+
+        return $this->mapToEntity($transportCompany);
+    }
+
+    public function findAllPublicTransport(): array
+    {
+        $transportCompanies = EloquentTransportCompany::where('st_private', 0)->get();
+
+        return $transportCompanies->map(fn($company) => $this->mapToEntity($company))->toArray();
+    }
+
+    private function mapToEntity($eloquentTransportCompany): TransportCompany
+    {
+        return new TransportCompany(
+            id: $eloquentTransportCompany->id,
+            ruc: $eloquentTransportCompany->ruc,
+            company_name: $eloquentTransportCompany->company_name,
+            address: $eloquentTransportCompany->address,
+            nro_reg_mtc: $eloquentTransportCompany->nro_reg_mtc,
+            status: $eloquentTransportCompany->status,
+        );
     }
 }

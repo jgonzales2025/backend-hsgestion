@@ -22,40 +22,16 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
     ){}
     public function findAll(?string $customerName, ?string $documentNumber): array
     {
-        $customers = EloquentCustomer::all();
+        $customers = EloquentCustomer::all()->sortByDesc('created_at');
 
         return $customers->map(function (EloquentCustomer $customer) {
 
-            $phoneUseCase = new FindByCustomerIdPhoneUseCase($this->customerPhoneRepository);
-            $phones = $phoneUseCase->execute($customer->id);
+            $contactData = $this->getCustomerContactData($customer->id);
+            $phones = $contactData['phones'];
+            $emails = $contactData['emails'];
+            $addresses = $contactData['addresses'];
 
-            $emailUseCase = new FindByCustomerIdEmailUseCase($this->customerEmailRepository);
-            $emails = $emailUseCase->execute($customer->id);
-
-            $addressUseCase = new FindByIdCustomerAddressUseCase($this->customerAddressRepository);;
-            $addresses = $addressUseCase->execute($customer->id);
-
-            return new Customer(
-                id: $customer->id,
-                record_type_id: $customer->record_type_id,
-                record_type_name: $customer->recordType->name,
-                customer_document_type_id: $customer->customer_document_type_id,
-                customer_document_type_name: $customer->customerDocumentType->description,
-                customer_document_type_abbreviation: $customer->customerDocumentType->abbreviation,
-                document_number: $customer->document_number,
-                company_name: $customer->company_name,
-                name: $customer->name,
-                lastname: $customer->lastname,
-                second_lastname: $customer->second_lastname,
-                customer_type_id: $customer->customer_type_id,
-                customer_type_name: $customer->customerType->description,
-                contact: $customer->contact,
-                is_withholding_applicable: $customer->is_withholding_applicable,
-                status: $customer->status,
-                phones: $phones,
-                emails: $emails,
-                addresses: $addresses,
-            );
+            return $this->buildCustomer($customer, $phones, $emails, $addresses);
         })->toArray();
     }
 
@@ -76,24 +52,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             'st_assigned' => $customer->getStAssigned()
         ]);
 
-        return new Customer(
-            id: $eloquentCustomer->id,
-            record_type_id: $eloquentCustomer->record_type_id,
-            record_type_name: $eloquentCustomer->recordType->name,
-            customer_document_type_id: $eloquentCustomer->customer_document_type_id,
-            customer_document_type_name: $eloquentCustomer->customerDocumentType->description,
-            customer_document_type_abbreviation: $eloquentCustomer->customerDocumentType->abbreviation,
-            document_number: $eloquentCustomer->document_number,
-            company_name: $eloquentCustomer->company_name,
-            name: $eloquentCustomer->name,
-            lastname: $eloquentCustomer->lastname,
-            second_lastname: $eloquentCustomer->second_lastname,
-            customer_type_id: $eloquentCustomer->customer_type_id,
-            customer_type_name: $eloquentCustomer->customerType->description,
-            contact: $eloquentCustomer->contact,
-            is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
-            status: $eloquentCustomer->status
-        );
+        return $this->buildCustomer($eloquentCustomer, [], [], []);
     }
 
     public function findById(int $id): ?Customer
@@ -104,39 +63,12 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             return null;
         }
 
-        // Cargar teléfonos
-        $phoneUseCase = new FindByCustomerIdPhoneUseCase($this->customerPhoneRepository);
-        $phones = $phoneUseCase->execute($eloquentCustomer->id);
+        $contactData = $this->getCustomerContactData($eloquentCustomer->id);
+        $phones = $contactData['phones'];
+        $emails = $contactData['emails'];
+        $addresses = $contactData['addresses'];
 
-        // Cargar emails
-        $emailUseCase = new FindByCustomerIdEmailUseCase($this->customerEmailRepository);
-        $emails = $emailUseCase->execute($eloquentCustomer->id);
-
-        // Cargar direcciones - AGREGAR ESTO
-        $addressUseCase = new FindByIdCustomerAddressUseCase($this->customerAddressRepository);
-        $addresses = $addressUseCase->execute($eloquentCustomer->id);
-
-        return new Customer(
-            id: $eloquentCustomer->id,
-            record_type_id: $eloquentCustomer->record_type_id,
-            record_type_name: $eloquentCustomer->recordType->name,
-            customer_document_type_id: $eloquentCustomer->customer_document_type_id,
-            customer_document_type_name: $eloquentCustomer->customerDocumentType->description,
-            customer_document_type_abbreviation: $eloquentCustomer->customerDocumentType->abbreviation,
-            document_number: $eloquentCustomer->document_number,
-            company_name: $eloquentCustomer->company_name,
-            name: $eloquentCustomer->name,
-            lastname: $eloquentCustomer->lastname,
-            second_lastname: $eloquentCustomer->second_lastname,
-            customer_type_id: $eloquentCustomer->customer_type_id,
-            customer_type_name: $eloquentCustomer->customerType->description,
-            contact: $eloquentCustomer->contact,
-            is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
-            status: $eloquentCustomer->status,
-            phones: $phones,
-            emails: $emails,
-            addresses: $addresses
-        );
+        return $this->buildCustomer($eloquentCustomer, $phones, $emails, $addresses);
     }
 
     public function update(Customer $customer): ?Customer
@@ -161,24 +93,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             'status' => $customer->getStatus(),
         ]);
 
-        return new Customer(
-            id: $eloquentCustomer->id,
-            record_type_id: $eloquentCustomer->record_type_id,
-            record_type_name: $eloquentCustomer->recordType->name,
-            customer_document_type_id: $eloquentCustomer->customer_document_type_id,
-            customer_document_type_name: $eloquentCustomer->customerDocumentType->description,
-            customer_document_type_abbreviation: $eloquentCustomer->customerDocumentType->abbreviation,
-            document_number: $eloquentCustomer->document_number,
-            company_name: $eloquentCustomer->company_name,
-            name: $eloquentCustomer->name,
-            lastname: $eloquentCustomer->lastname,
-            second_lastname: $eloquentCustomer->second_lastname,
-            customer_type_id: $eloquentCustomer->customer_type_id,
-            customer_type_name: $eloquentCustomer->customerType->description,
-            contact: $eloquentCustomer->contact,
-            is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
-            status: $eloquentCustomer->status
-        );
+        return $this->buildCustomer($eloquentCustomer, [], [], []);
     }
 
     public function findAllUnassigned(): array
@@ -187,39 +102,12 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
 
         return $customerUnassigned->map(function (EloquentCustomer $customer) {
 
-            // Cargar teléfonos
-            $phoneUseCase = new FindByCustomerIdPhoneUseCase($this->customerPhoneRepository);
-            $phones = $phoneUseCase->execute($customer->id);
+            $contactData = $this->getCustomerContactData($customer->id);
+            $phones = $contactData['phones'];
+            $emails = $contactData['emails'];
+            $addresses = $contactData['addresses'];
 
-            // Cargar emails
-            $emailUseCase = new FindByCustomerIdEmailUseCase($this->customerEmailRepository);
-            $emails = $emailUseCase->execute($customer->id);
-
-            // Cargar direcciones - AGREGAR ESTO
-            $addressUseCase = new FindByIdCustomerAddressUseCase($this->customerAddressRepository);
-            $addresses = $addressUseCase->execute($customer->id);
-
-            return new Customer(
-                id: $customer->id,
-                record_type_id: $customer->record_type_id,
-                record_type_name: $customer->recordType->name,
-                customer_document_type_id: $customer->customer_document_type_id,
-                customer_document_type_name: $customer->customerDocumentType->description,
-                customer_document_type_abbreviation: $customer->customerDocumentType->abbreviation,
-                document_number: $customer->document_number,
-                company_name: $customer->company_name,
-                name: $customer->name,
-                lastname: $customer->lastname,
-                second_lastname: $customer->second_lastname,
-                customer_type_id: $customer->customer_type_id,
-                customer_type_name: $customer->customerType->description,
-                contact: $customer->contact,
-                is_withholding_applicable: $customer->is_withholding_applicable,
-                status: $customer->status,
-                phones: $phones,
-                emails: $emails,
-                addresses: $addresses,
-            );
+            return $this->buildCustomer($customer, $phones, $emails, $addresses);
         })->toArray();
     }
 
@@ -232,25 +120,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
         $addressUseCase = new FindByIdCustomerAddressUseCase($this->customerAddressRepository);
         $addresses = $addressUseCase->execute($customerCompany->id);
 
-        return new Customer(
-            id: $customerCompany->id,
-            record_type_id: $customerCompany->record_type_id,
-            record_type_name: $customerCompany->recordType->name,
-            customer_document_type_id: $customerCompany->customer_document_type_id,
-            customer_document_type_name: $customerCompany->customerDocumentType->description,
-            customer_document_type_abbreviation: $customerCompany->customerDocumentType->abbreviation,
-            document_number: $customerCompany->document_number,
-            company_name: $customerCompany->company_name,
-            name: $customerCompany->name,
-            lastname: $customerCompany->lastname,
-            second_lastname: $customerCompany->second_lastname,
-            customer_type_id: $customerCompany->customer_type_id,
-            customer_type_name: $customerCompany->customerType->description,
-            contact: $customerCompany->contact,
-            is_withholding_applicable: $customerCompany->is_withholding_applicable,
-            status: $customerCompany->status,
-            addresses: $addresses
-        );
+        return $this->buildCustomer($customerCompany, [], [], $addresses);
     }
 
     public function findAllCustomerExceptionCompanies(?string $customerName): array
@@ -269,36 +139,55 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
 
         return $customers->map(function (EloquentCustomer $customer) {
 
-            $phoneUseCase = new FindByCustomerIdPhoneUseCase($this->customerPhoneRepository);
-            $phones = $phoneUseCase->execute($customer->id);
+            $contactData = $this->getCustomerContactData($customer->id);
+            $phones = $contactData['phones'];
+            $emails = $contactData['emails'];
+            $addresses = $contactData['addresses'];
 
-            $emailUseCase = new FindByCustomerIdEmailUseCase($this->customerEmailRepository);
-            $emails = $emailUseCase->execute($customer->id);
-
-            $addressUseCase = new FindByIdCustomerAddressUseCase($this->customerAddressRepository);;
-            $addresses = $addressUseCase->execute($customer->id);
-
-            return new Customer(
-                id: $customer->id,
-                record_type_id: $customer->record_type_id,
-                record_type_name: $customer->recordType->name,
-                customer_document_type_id: $customer->customer_document_type_id,
-                customer_document_type_name: $customer->customerDocumentType->description,
-                customer_document_type_abbreviation: $customer->customerDocumentType->abbreviation,
-                document_number: $customer->document_number,
-                company_name: $customer->company_name,
-                name: $customer->name,
-                lastname: $customer->lastname,
-                second_lastname: $customer->second_lastname,
-                customer_type_id: $customer->customer_type_id,
-                customer_type_name: $customer->customerType->description,
-                contact: $customer->contact,
-                is_withholding_applicable: $customer->is_withholding_applicable,
-                status: $customer->status,
-                phones: $phones,
-                emails: $emails,
-                addresses: $addresses,
-            );
+            return $this->buildCustomer($customer, $phones, $emails, $addresses);
         })->toArray();
+    }
+
+    private function buildCustomer(EloquentCustomer $customer, $phones = [], $emails = [], $addresses = []): Customer
+    {
+        return new Customer(
+            id: $customer->id,
+            record_type_id: $customer->record_type_id,
+            record_type_name: $customer->recordType->name,
+            customer_document_type_id: $customer->customer_document_type_id,
+            customer_document_type_name: $customer->customerDocumentType->description,
+            customer_document_type_abbreviation: $customer->customerDocumentType->abbreviation,
+            document_number: $customer->document_number,
+            company_name: $customer->company_name,
+            name: $customer->name,
+            lastname: $customer->lastname,
+            second_lastname: $customer->second_lastname,
+            customer_type_id: $customer->customer_type_id,
+            customer_type_name: $customer->customerType->description,
+            contact: $customer->contact,
+            is_withholding_applicable: $customer->is_withholding_applicable,
+            status: $customer->status,
+            phones: $phones,
+            emails: $emails,
+            addresses: $addresses,
+        );
+    }
+
+    private function getCustomerContactData(int $customerId): array
+    {
+        $phoneUseCase = new FindByCustomerIdPhoneUseCase($this->customerPhoneRepository);
+        $phones = $phoneUseCase->execute($customerId);
+
+        $emailUseCase = new FindByCustomerIdEmailUseCase($this->customerEmailRepository);
+        $emails = $emailUseCase->execute($customerId);
+
+        $addressUseCase = new FindByIdCustomerAddressUseCase($this->customerAddressRepository);
+        $addresses = $addressUseCase->execute($customerId);
+
+        return [
+            'phones' => $phones,
+            'emails' => $emails,
+            'addresses' => $addresses,
+        ];
     }
 }

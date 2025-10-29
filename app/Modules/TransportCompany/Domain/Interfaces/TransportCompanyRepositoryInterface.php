@@ -12,5 +12,9 @@ interface TransportCompanyRepositoryInterface
 
     public function findById(int $id): ?TransportCompany;
 
-    public function update(TransportCompany $transportCompany): void;
+    public function update(TransportCompany $transportCompany): ?TransportCompany;
+
+    public function findPrivateTransport(): ?TransportCompany;
+
+    public function findAllPublicTransport(): array;
 }

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('address', 255);
             $table->string('nro_reg_mtc', 10);
             $table->integer('status')->default(1);
+            $table->boolean('st_private')->default(0);
             $table->timestamps();
         });
     }

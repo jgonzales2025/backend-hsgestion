@@ -23,7 +23,7 @@ return new class extends Migration {
             $table->foreignId('emission_reason_id')->constrained('emission_reasons');
             $table->text('description')->nullable();
 
-            $table->foreignId('destination_branch_id')->constrained('branches');
+            $table->foreignId('destination_branch_id')->nullable()->constrained('branches');
             $table->string('destination_address_customer');
 
             $table->foreignId('transport_id')->constrained('transport_companies');
@@ -46,7 +46,7 @@ return new class extends Migration {
             $table->string('transfer_type');
             $table->integer('vehicle_type')->boolean();
             $table->foreignId('document_type_id')->constrained('document_types');
-            $table->foreignId('destination_branch_client')->constrained('branches');
+            $table->foreignId('destination_branch_client')->nullable()->constrained('branches');
             $table->foreignId('customer_id')->constrained('customers');
 
         });

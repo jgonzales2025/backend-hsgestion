@@ -47,8 +47,8 @@ class DispatchNoteResource extends JsonResource
                 'status' => ($this->resource->getEmissionReason()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             ],
             'destination_branch' => [
-                'id' => $this->resource->getDestinationBranch()->getId(),
-                'status' => $this->resource->getDestinationBranch()->getStatus()
+                'id' => $this->resource->getDestinationBranch()?->getId(),
+                'status' => $this->resource->getDestinationBranch()?->getStatus()
             ],
             'serie' => $this->resource->getSerie(),
             'correlativo' => $this->resource->getCorrelativo(),

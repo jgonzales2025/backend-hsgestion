@@ -32,7 +32,7 @@ class DispatchNote
     private string $transfer_type;
     private bool $vehicle_type;
     private ?DocumentType $document_type;
-    private int $destination_branch_client;
+    private ?int $destination_branch_client;
     private int $customer_id;
 
     public function __construct(
@@ -58,7 +58,7 @@ class DispatchNote
         string $transfer_type,
         bool $vehicle_type,
         ?DocumentType $document_type,
-        int $destination_branch_client,
+        ?int $destination_branch_client,
         int $customer_id,
 
     ) {
@@ -177,7 +177,7 @@ class DispatchNote
     {
         return $this->document_type;
     }
-    public function getdestination_branch_client(): int
+    public function getdestination_branch_client(): int|null
     {
         return $this->destination_branch_client;
     }

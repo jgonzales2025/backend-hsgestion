@@ -53,7 +53,7 @@ readonly class CreateArticleUseCase
 
         $currencyType = new FindByIdCurrencyTypeUseCase($this->currencyTypeRepository);
         $currencyType = $currencyType->execute($articleDTO->currency_type_id);
-
+        \Log::info("currency_type",[$currencyType]);
         $subCategoryUseCase = new FindByIdSubCategoryUseCase($this->subCategoryRepository);
         $subCategoryType = $subCategoryUseCase->execute($articleDTO->sub_category_id);
 

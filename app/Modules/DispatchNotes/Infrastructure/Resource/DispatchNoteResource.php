@@ -2,6 +2,8 @@
 
 namespace App\Modules\DispatchNotes\Infrastructure\Resource;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
+use App\Modules\Customer\Domain\Entities\Customer;
+use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -84,16 +86,16 @@ class DispatchNoteResource extends JsonResource
                 'description' => $this->resource->getDocumentType()->getDescription(),
             ],
             'destination_branch_client_id' => (function () {
-                $code = EloquentBranch::where('id', $this->resource->getdestination_branch_client())->first(); // 👈 nota los paréntesis ()
+                $code = EloquentCustomer::where('id', $this->resource->getdestination_branch_client())->first(); // 👈 nota los paréntesis ()
     
                 if (!$code) {
-                    return (object) [];
+                    return  [];
                 }
-
+                 
                 return (object) [
-                    'id' => $code->id,
-                    'name' => $code->name,
+                     'id' => $code->id,
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
+                    'name' => $code->address[0]['address'],
 
                 ];
             })(),

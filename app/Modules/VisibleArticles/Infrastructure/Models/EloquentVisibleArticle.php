@@ -36,4 +36,5 @@ class EloquentVisibleArticle extends Model
     {
         return $this->belongsTo(EloquentArticle::class, 'article_id');
     }
+    
 }

@@ -13,14 +13,16 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
     public function findAll(): array
     {
 
-        $dispatchNotes = EloquentDispatchNote::with([
-            'company',
-            'branch',
-            'emission_reason',
-            'transport',
-            'conductor',
-            'document_type'
-        ])->get();
+     $dispatchNotes = EloquentDispatchNote::with([
+    'company',
+    'branch',
+    'emission_reason',
+    'transport',
+    'conductor',
+    'document_type'
+])
+->orderByDesc('id') 
+->get();
     
         return $dispatchNotes->map(function ($dispatch) {
         $entity = new DispatchNote(

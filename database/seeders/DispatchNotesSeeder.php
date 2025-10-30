@@ -18,7 +18,7 @@ class DispatchNotesSeeder extends Seeder
                 'cia_id' => 1,
                 'branch_id' => 1, 
                 'serie' => 'T001',
-                'correlativo' => "1001",
+                'correlativo' => "00001",
                
                 'emission_reason_id' => 1, 
                 'description' => 'Traslado de equipos electrónicos',
@@ -46,7 +46,7 @@ class DispatchNotesSeeder extends Seeder
                 'cia_id' => 1,
                 'branch_id' => 1,
                 'serie' => 'T002',
-                'correlativo' => "1002",
+                'correlativo' => "00002",
              
                 'emission_reason_id' => 1,
                 'description' => 'Traslado de mobiliario',

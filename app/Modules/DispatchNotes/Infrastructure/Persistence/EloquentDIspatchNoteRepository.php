@@ -5,6 +5,8 @@ namespace App\Modules\DispatchNotes\Infrastructure\Persistence;
 use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Models\EloquentDispatchNote;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 
 class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
 {
@@ -30,8 +32,9 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
                 emission_reason: $dispatch->emission_reason->toDomain($dispatch->emission_reason),
                 description: $dispatch->description,
                 destination_branch: $dispatch->branch?->toDomain($dispatch->branch),
-                transport: $dispatch->transport?->toDomain($dispatch->transport), 
-                observations: $dispatch->observations, 
+                destination_address_customer: $dispatch->destination_address_customer,
+                transport: $dispatch->transport?->toDomain($dispatch->transport),
+                observations: $dispatch->observations,
                 num_orden_compra: $dispatch->num_orden_compra,
                 doc_referencia: $dispatch->doc_referencia,
                 num_referencia: $dispatch->num_referencia,
@@ -71,6 +74,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'emission_reason_id' => $dispatchNote->getEmissionReason() ? $dispatchNote->getEmissionReason()->getId() : null,
             'description' => $dispatchNote->getDescription(),
             'destination_branch_id' => $dispatchNote->getDestinationBranch() ? $dispatchNote->getDestinationBranch()->getId() : null,
+            'destination_address_customer' => $dispatchNote->getDestinationAddressCustomer(),
             'transport_id' => $dispatchNote->getTransport() ? $dispatchNote->getTransport()->getId() : null,
             'observations' => $dispatchNote->getObservations(),
             'num_orden_compra' => $dispatchNote->getNumOrdenCompra(),
@@ -97,6 +101,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             emission_reason: $dispatchNote->emission_reason->toDomain($dispatchNote->emission_reason),
             description: $dispatchNote->description,
             destination_branch: $dispatchNote->destination_branch?->toDomain($dispatchNote->destination_branch),
+            destination_address_customer: $dispatchNote->destination_address_customer ?? '',
             transport: $dispatchNote->transport->toDomain($dispatchNote->transport),
             observations: $dispatchNote->observations,
             num_orden_compra: $dispatchNote->num_orden_compra,
@@ -131,6 +136,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
         emission_reason: $dispatchNote->emission_reason?->toDomain($dispatchNote->emission_reason),
         description: $dispatchNote->description,
         destination_branch: $dispatchNote->destination_branch?->toDomain($dispatchNote->destination_branch),
+        destination_address_customer: $dispatchNote->destination_address_customer,
         transport: $dispatchNote->transport?->toDomain($dispatchNote->transport),
         observations: $dispatchNote->observations,
         num_orden_compra: $dispatchNote->num_orden_compra,
@@ -164,6 +170,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'emission_reason_id' => $dispatchNote->getEmissionReason() ? $dispatchNote->getEmissionReason()->getId() : null,
             'description' => $dispatchNote->getDescription(),
             'destination_branch_id' => $dispatchNote->getDestinationBranch() ? $dispatchNote->getDestinationBranch()->getId() : null,
+            'destination_address_customer' => $dispatchNote->getDestinationAddressCustomer(),
             'transport_id' => $dispatchNote->getTransport() ? $dispatchNote->getTransport()->getId() : null,
             'observations' => $dispatchNote->getObservations(),
             'num_orden_compra' => $dispatchNote->getNumOrdenCompra(),
@@ -190,6 +197,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             emission_reason: $dispatchNotess->emission_reason->toDomain($dispatchNotess->emission_reason),
             description: $dispatchNotess->description,
             destination_branch: $dispatchNotess->destination_branch->toDomain($dispatchNotess->destination_branch),
+            destination_address_customer: $dispatchNotess->destination_address_customer,
             transport: $dispatchNotess->transport->toDomain($dispatchNotess->transport),
             observations: $dispatchNotess->observations,
             num_orden_compra: $dispatchNotess->num_orden_compra,

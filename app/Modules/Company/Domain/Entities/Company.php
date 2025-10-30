@@ -10,7 +10,6 @@ class Company {
     private string $start_date;
     private string $ubigeo;
     private int $status;
-    private ?string $password_item;
 
     /**
      * @param int $id
@@ -20,12 +19,11 @@ class Company {
      * @param string $start_date
      * @param string $ubigeo
      * @param int $status
-     * @param ?string $password_item
      */
 
     public function __construct(int $id, string $ruc,
     string $company_name, string $address, string $start_date,
-     string $ubigeo, int $status, ?string $password_item = null
+     string $ubigeo, int $status,
     ){
     $this->id = $id;
     $this->ruc = $ruc;
@@ -34,7 +32,6 @@ class Company {
     $this->start_date = $start_date;
     $this->ubigeo = $ubigeo;
     $this->status = $status;
-    $this->password_item = $password_item;
     }
         public function getId(): int
     {
@@ -69,8 +66,4 @@ class Company {
         return $this->status;
     }
 
-    public function getPasswordItem(): ?string
-    {
-        return $this->password_item;
-    }
 }

@@ -19,7 +19,6 @@ return new class extends Migration
             $table->date('start_date');
             $table->string('ubigeo', 6);
             $table->integer('status')->default(1);
-            $table->string('password_item')->nullable();
             $table->timestamps();
         });
     }

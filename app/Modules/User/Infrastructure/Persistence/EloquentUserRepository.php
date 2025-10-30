@@ -5,6 +5,7 @@ namespace App\Modules\User\Infrastructure\Persistence;
 use App\Modules\User\Domain\Entities\User;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
+use Illuminate\Support\Facades\Hash;
 
 class EloquentUserRepository implements UserRepositoryInterface
 {
@@ -16,7 +17,8 @@ class EloquentUserRepository implements UserRepositoryInterface
             'firstname' => $user->getFirstname(),
             'lastname' => $user->getLastname(),
             'password' => password_hash($user->getPassword(), PASSWORD_BCRYPT),
-            'status' => $user->getStatus()
+            'status' => $user->getStatus(),
+            'password_item' => Hash::make($user->getPasswordItem()),
         ]);
 
         return new User(
@@ -28,7 +30,8 @@ class EloquentUserRepository implements UserRepositoryInterface
             status: $eloquentUser->status,
             roles: null,
             assignment: null,
-            st_login: $eloquentUser->st_login
+            st_login: $eloquentUser->st_login,
+            password_item: $eloquentUser->password_item
         );
     }
 
@@ -100,6 +103,13 @@ class EloquentUserRepository implements UserRepositoryInterface
             && $user->getPassword() !== $eloquentUser->password
             && !str_starts_with($user->getPassword(), '$2y$')) {
             $data['password'] = password_hash($user->getPassword(), PASSWORD_BCRYPT);
+        }
+
+        if ($user->getPasswordItem() !== null
+            && $user->getPasswordItem() !== $eloquentUser->password_item
+            && !str_starts_with($user->getPasswordItem(), '$2y$'))
+        {
+            $data['password_item'] = Hash::make($user->getPasswordItem());
         }
 
         $eloquentUser->update($data);

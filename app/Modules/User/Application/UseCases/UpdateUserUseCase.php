@@ -33,7 +33,8 @@ class UpdateUserUseCase
             status: $userDTO->status,
             roles: $userDTO->userRoles,
             assignment: null,
-            st_login: null
+            st_login: null,
+            password_item: $userDTO->password ?? $existingUser->getPasswordItem()
         );
 
         $this->userRepository->update($user);

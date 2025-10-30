@@ -20,7 +20,8 @@ class UserSeeder extends Seeder
             'firstname' => 'Walter',
             'lastname' => 'Jave',
             'password' => Hash::make('123456789'),
-            'status' => 1
+            'status' => 1,
+            'password_item' => null
         ]);
         $user->assignRole('Gerente', 'Vendedor', 'Contador');
 
@@ -35,7 +36,8 @@ class UserSeeder extends Seeder
             'firstname' => 'Erick',
             'lastname' => 'Carrillo',
             'password' => Hash::make('123456789'),
-            'status' => 1
+            'status' => 1,
+            'password_item' => null
         ]);
         $user2->assignRole('Contador','Cajero');
 
@@ -50,7 +52,8 @@ class UserSeeder extends Seeder
             'firstname' => 'Antonio',
             'lastname' => 'Aranibar',
             'password' => Hash::make('123456789'),
-            'status' => 1
+            'status' => 1,
+            'password_item' => null
         ]);
         $user3->assignRole('Cajero');
 
@@ -65,7 +68,8 @@ class UserSeeder extends Seeder
             'firstname' => 'vendedor1',
             'lastname' => 'vendedor1',
             'password' => Hash::make('123456789'),
-            'status' => 1
+            'status' => 1,
+            'password_item' => null
         ]);
 
         $user4->assignRole('Vendedor');
@@ -80,6 +84,7 @@ class UserSeeder extends Seeder
             'firstname' => 'vendedor2',
             'lastname' => 'vendedor2',
             'password' => Hash::make('123456789'),
+            'password_item' => null
         ]);
 
         $user5->assignRole('Vendedor');
@@ -94,6 +99,7 @@ class UserSeeder extends Seeder
             'firstname' => 'almacen1',
             'lastname' => 'almacen1',
             'password' => Hash::make('123456789'),
+            'password_item' => null
         ]);
         $user6->assignRole('Almacenero');
         $user6->assignments()->create([

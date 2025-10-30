@@ -27,6 +27,7 @@ use App\Modules\UserAssignment\Application\UseCases\CreateUserAssignmentUseCase;
 use App\Modules\UserAssignment\Application\UseCases\UpdateUserAssignmentUseCase;
 use App\Modules\UserAssignment\Infrastructure\Persistence\EloquentUserAssignmentRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -162,6 +163,12 @@ class UserController extends Controller
                 $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
             } else {
                 unset($data['password']);
+            }
+
+            if (!empty($data['password_item'])) {
+                $data['password_item'] = Hash::make($data['password_item']);
+            } else {
+                unset($data['password_item']);
             }
 
             $userDTO = new UserDTO($request->validated());

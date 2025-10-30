@@ -33,7 +33,7 @@ class UpdateDispatchNoteUseCase
   ) {
   }
 
-  public function execute(DispatchNoteDTO $data, $id): DispatchNote
+  public function execute(DispatchNoteDTO $data, DispatchNote $dispatchNote): DispatchNote
   {
     $companyUseCase = new FindByIdCompanyUseCase($this->companyRepositoryInterface);
     $company = $companyUseCase->execute($data->cia_id);
@@ -58,11 +58,11 @@ class UpdateDispatchNoteUseCase
     $documentType = $documentTypeUseCase->execute($data->document_type_id);
 
     $dispatchNote = new DispatchNote(
-      id: $id,
+      id: $dispatchNote->getId(),
       company: $company,
       branch: $branch,
       serie: $data->serie,
-      correlativo: $data->correlativo,
+      correlativo: $dispatchNote->getCorrelativo(),
       emission_reason: $emissionReason,
       description: $data->description,
       destination_branch: $destination,

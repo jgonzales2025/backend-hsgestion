@@ -111,10 +111,19 @@ class DispatchNotesController extends Controller
 
     public function update(RequestUpdate $store, $id): JsonResponse
     {
+      $saleUseCase = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
+        $dispatchNote = $saleUseCase->execute($id);
+
+        if (!$dispatchNote) {
+            return response()->json(['message' => 'Venta no encontrada'], 404);
+        }
+
+      
 
         $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
         $dispatchNoteUseCase = new UpdateDispatchNoteUseCase($this->dispatchNoteRepository, $this->companyRepositoryInterface, $this->branchRepository, $this->serieRepositoryInterface, $this->emissionReasonRepositoryInterface, $this->transportCompany, $this->documentTypeRepositoryInterface, $this->driverRepositoryInterface);
-        $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO, $id);
+        $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO, $dispatchNote);
+        
 
         $this->dispatchArticleRepositoryInterface->deleteBySaleId($dispatchNotes->getId());
 

@@ -37,6 +37,17 @@ class CreateDispatchNoteUseCase
 
   public function execute(DispatchNoteDTO $data): DispatchNote
   {
+    $lastDispatchNote = $this->dispatchNoteRepository->getLastDocumentNumber();
+
+    if ($lastDispatchNote === null) {
+       $DispatchNoteN = '00001';
+    }else{
+      $nextNumber = intval($lastDispatchNote) + 1;
+      $DispatchNoteN = str_pad($nextNumber,5,'0',STR_PAD_LEFT);
+    }
+ 
+    $data->correlativo = $DispatchNoteN;
+
     $companyUseCase = new FindByIdCompanyUseCase($this->companyRepositoryInterface);
     $company = $companyUseCase->execute($data->cia_id);
 
@@ -67,6 +78,7 @@ class CreateDispatchNoteUseCase
 
     $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepositoryInterface);
     $documentType = $documentTypeUseCase->execute($data->document_type_id);
+     
 
     $dispatchNote = new DispatchNote(
       id: 0,
@@ -77,7 +89,6 @@ class CreateDispatchNoteUseCase
       emission_reason: $emissionReason,
       description: $data->description,
       destination_branch: $destination,
-      destination_address_customer: $data->destination_address_customer ?? '',
       transport: $transportCompany,
       observations: $data->observations,
       num_orden_compra: $data->num_orden_compra,

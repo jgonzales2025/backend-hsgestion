@@ -29,7 +29,6 @@ class RequestStore extends FormRequest
             'emission_reason_id' => ['required', 'integer', 'exists:emission_reasons,id'],
             'description' => ['nullable', 'string', 'max:255'],
             'destination_branch_id' => ['nullable', 'integer', 'exists:branches,id'],
-            'destination_address_customer' => ['string', 'max:255'],
             'transport_id' => ['required', 'integer'],
             'observations' => ['nullable', 'string', 'max:255'],
             'num_orden_compra' => ['nullable', 'string', 'max:50'],
@@ -55,8 +54,7 @@ class RequestStore extends FormRequest
             'branch_id.required' => 'El campo sucursal es obligatorio.',
             'serie.required' => 'Debe indicar la serie del documento.',
             'date.required' => 'Debe ingresar una fecha.',
-            'destination_address_customer.required' => 'Debe ingresar la dirección de destino.',
-            'license_plate.required' => 'Debe ingresar la placa del vehículo.',
+            'license_plate.required' => 'Debe ingresar la placa del vehículo.', 
             'total_weight.required' => 'Debe ingresar el peso total.',
         ];
     }

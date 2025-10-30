@@ -10,7 +10,7 @@ class DispatchNoteDTO
   public string $correlativo;
   public int $emission_reason_id;
   public ?string $description;
-  public int $destination_branch_id;
+  public ?int $destination_branch_id;
   public string $destination_address_customer;
   public int $transport_id;
   public ?string $observations;
@@ -37,7 +37,7 @@ class DispatchNoteDTO
     $this->correlativo = $date['correlativo'] ?? '';
     $this->emission_reason_id = $date['emission_reason_id'] ?? 1;
     $this->description = $date['description'] ?? '';
-    $this->destination_branch_id = $date['destination_branch_id'] ?? 1;
+    $this->destination_branch_id = $date['destination_branch_id'] ?? null;
     $this->destination_address_customer = $date['destination_address_customer'] ?? '';
     $this->transport_id = $date['transport_id'] ?? 1;
     $this->observations = $date['observations'] ?? '';

@@ -32,7 +32,7 @@ class EloquentDispatchNote extends Model
         'num_orden_compra',
         'doc_referencia',
         'num_referencia',
-        'date_referencia',
+     
         'status',
         'cod_conductor',
         'license_plate',

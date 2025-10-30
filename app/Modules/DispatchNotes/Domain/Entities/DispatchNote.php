@@ -18,6 +18,7 @@ class DispatchNote
     private ?EmissionReason $emission_reason;
     private ?string $description;
     private ?Branch $destination_branch;
+    private string $destination_address_customer;
     private ?TransportCompany $transport;
     private ?string $observations;
     private ?string $num_orden_compra;
@@ -43,6 +44,7 @@ class DispatchNote
         ?EmissionReason $emission_reason,
         ?string $description,
         ?Branch $destination_branch,
+        string $destination_address_customer,
         ?TransportCompany $transport,
         ?string $observations,
         ?string $num_orden_compra,
@@ -67,7 +69,8 @@ class DispatchNote
         $this->correlativo = $correlativo;
         $this->emission_reason = $emission_reason;
         $this->description = $description;
-        $this->destination_branch = $destination_branch; 
+        $this->destination_branch = $destination_branch;
+        $this->destination_address_customer = $destination_address_customer;
         $this->transport = $transport;
         $this->observations = $observations;
         $this->num_orden_compra = $num_orden_compra;
@@ -117,7 +120,11 @@ class DispatchNote
     public function getDestinationBranch(): Branch|null
     {
         return $this->destination_branch;
-    } 
+    }
+    public function getDestinationAddressCustomer(): string
+    {
+        return $this->destination_address_customer;
+    }
     public function getTransport(): TransportCompany|null
     {
         return $this->transport;

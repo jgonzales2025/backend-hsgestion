@@ -37,17 +37,17 @@ class CreateDispatchNoteUseCase
 
   public function execute(DispatchNoteDTO $data): DispatchNote
   {
-    $lastDispatchNote = $this->dispatchNoteRepository->getLastDocumentNumber();
+         $lastDocumentNumber = $this->dispatchNoteRepository->getLastDocumentNumber();
 
-    if ($lastDispatchNote === null) {
-       $DispatchNoteN = '00001';
-    }else{
-      $nextNumber = intval($lastDispatchNote) + 1;
-      $DispatchNoteN = str_pad($nextNumber,5,'0',STR_PAD_LEFT);
-    }
+        if ($lastDocumentNumber === null) {
+            $documentNumber = '00001';
+        } else {
+            $nextNumber = intval($lastDocumentNumber) + 1;
+            $documentNumber = str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+        }
+
+ $data->correlativo = $documentNumber;
  
-    $data->correlativo = $DispatchNoteN;
-
     $companyUseCase = new FindByIdCompanyUseCase($this->companyRepositoryInterface);
     $company = $companyUseCase->execute($data->cia_id);
 
@@ -56,29 +56,19 @@ class CreateDispatchNoteUseCase
 
     $emissionReasonUseCase = new FindByIdEmissionReasonUseCase($this->emissionReasonRepositoryInterface);
     $emissionReason = $emissionReasonUseCase->execute($data->emission_reason_id);
-    
-    if ($data->destination_branch_id != null) {
 
-      $destinationUseCase = new FindByIdBranchUseCase($this->branchRepository);
-      $destination = $destinationUseCase->execute($data->destination_branch_id);
-    }else{
-      $destination = null;
-    }
+    $destinationUseCase = new FindByIdBranchUseCase($this->branchRepository);
+    $destination = $destinationUseCase->execute($data->destination_branch_id);
 
-    if($data->cod_conductor != null){
-      $driverUseCase = new FindByIdDriverUseCase($this->driverRepositoryInterface);
-      $driver = $driverUseCase->execute($data->cod_conductor);
-    } else {
-      $driver = null;
-    }
-   
+    $driverUseCase = new FindByIdDriverUseCase($this->driverRepositoryInterface);
+    $driver = $driverUseCase->execute($data->cod_conductor);
+
 
     $transportCompanyUseCase = new FindByIdTransportCompanyUseCase($this->transportCompany);
     $transportCompany = $transportCompanyUseCase->execute($data->transport_id);
 
     $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepositoryInterface);
     $documentType = $documentTypeUseCase->execute($data->document_type_id);
-     
 
     $dispatchNote = new DispatchNote(
       id: 0,
@@ -89,6 +79,7 @@ class CreateDispatchNoteUseCase
       emission_reason: $emissionReason,
       description: $data->description,
       destination_branch: $destination,
+      destination_address_customer: $data->destination_address_customer ?? '',
       transport: $transportCompany,
       observations: $data->observations,
       num_orden_compra: $data->num_orden_compra,

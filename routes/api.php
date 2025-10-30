@@ -269,6 +269,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Ruta para actualizar y validar contraseña de cia
     Route::put('/update-password', [CompanyController::class, 'updatePassword']);
     Route::get('/validate-password', [CompanyController::class, 'passwordValidation']);
+
+    // Ruta para articulos para ventas
+    Route::get('/articles-price-convertion', [ArticleController::class, 'indexArticlesForSales']);
 });
 
 Route::middleware('auth:api')->group(function () {

@@ -5,6 +5,7 @@ namespace App\Modules\Articles\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Articles\Application\DTOs\ArticleDTO;
 use App\Modules\Articles\Application\UseCases\CreateArticleUseCase;
+use App\Modules\Articles\Application\UseCases\FindAllArticlesPriceConvertionUseCase;
 use App\Modules\Articles\Application\UseCases\FindAllArticleUseCase;
 use App\Modules\Articles\Application\UseCases\FindByIdArticleUseCase;
 use App\Modules\Articles\Application\UseCases\UpdateArticleUseCase;
@@ -23,8 +24,8 @@ use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInter
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request; 
-use Illuminate\Support\Facades\Storage; 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 class ArticleController extends Controller
 {
 
@@ -43,7 +44,7 @@ class ArticleController extends Controller
   }
   public function index(Request $request): array
   {
-    $name = $request->query("name"); 
+    $name = $request->query("name");
 
     $articleUseCase = new FindAllArticleUseCase($this->articleRepository);
 
@@ -157,6 +158,21 @@ class ArticleController extends Controller
       (new ArticleResource($article))->resolve(),
       201
     );
+  }
+
+  public function indexArticlesForSales(Request $request): array
+  {
+    $description = $request->query("description");
+
+    $validatedData = $request->validate([
+        'date' => 'date|required',
+        'currency_type_id' => 'integer|required|exists:currency_types,id'
+    ]);
+
+    $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);
+    $articles = $articlesUseCase->execute($validatedData['date'], $validatedData['currency_type_id'], $description);
+
+    return ArticleResource::collection($articles)->resolve();
   }
 
 }

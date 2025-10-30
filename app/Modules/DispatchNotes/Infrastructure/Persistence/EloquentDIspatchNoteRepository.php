@@ -21,9 +21,9 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'conductor',
             'document_type'
         ])->get();
-
+    
         return $dispatchNotes->map(function ($dispatch) {
-            return new DispatchNote(
+        $entity =new DispatchNote(
                 id: $dispatch->id,
                 company: $dispatch->company?->toDomain($dispatch->company),
                 branch: $dispatch->branch?->toDomain($dispatch->branch),
@@ -31,7 +31,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
                 correlativo: $dispatch->correlativo,
                 emission_reason: $dispatch->emission_reason->toDomain($dispatch->emission_reason),
                 description: $dispatch->description,
-                destination_branch: $dispatch->branch?->toDomain($dispatch->branch),
+                destination_branch: $dispatch->destination_branch?->toDomain($dispatch->destination_branch),
                 destination_address_customer: $dispatch->destination_address_customer,
                 transport: $dispatch->transport?->toDomain($dispatch->transport),
                 observations: $dispatch->observations,
@@ -51,7 +51,11 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
 
 
             );
-        })->toArray();
+            $entity->setCreatedAt($dispatch->created_at?->format('Y-m-d H:i:s'));
+
+        return $entity;   
+        }
+        )->toArray();
     }
     public function getLastDocumentNumber(): ?string
     {
@@ -191,7 +195,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             correlativo: $dispatchNotess->correlativo,
             emission_reason: $dispatchNotess->emission_reason->toDomain($dispatchNotess->emission_reason),
             description: $dispatchNotess->description,
-            destination_branch: $dispatchNotess->destination_branch->toDomain($dispatchNotess->destination_branch),
+            destination_branch: $dispatchNotess->destination_branch?->toDomain($dispatchNotess->destination_branch),
             destination_address_customer: $dispatchNotess->destination_address_customer,
             transport: $dispatchNotess->transport->toDomain($dispatchNotess->transport),
             observations: $dispatchNotess->observations,

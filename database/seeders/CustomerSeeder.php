@@ -30,6 +30,22 @@ class CustomerSeeder extends Seeder
                 'customer_type_id' => 1,
                 'st_sales' => 0
             ],
+            [
+                'record_type_id' => 1,
+                'customer_document_type_id' => 2,
+                'document_number' => '20100073723',
+                'company_name' => 'CORPORACION PERUANA DE PRODUCTOS QUIMICOS S.A.',
+                'customer_type_id' => 1,
+                'st_sales' => 1
+            ],
+            [
+                'record_type_id' => 1,
+                'customer_document_type_id' => 2,
+                'document_number' => '20493918541',
+                'company_name' => 'INVERSIONES MUÑOZ S.A.C.',
+                'customer_type_id' => 1,
+                'st_sales' => 1
+            ]
         ];
 
         DB::table('customers')->insert($customers);

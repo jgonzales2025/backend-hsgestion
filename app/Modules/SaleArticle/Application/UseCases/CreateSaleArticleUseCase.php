@@ -8,13 +8,16 @@ use App\Modules\SaleArticle\Domain\Interfaces\SaleArticleRepositoryInterface;
 
 readonly class CreateSaleArticleUseCase
 {
-    public function __construct(private readonly SaleArticleRepositoryInterface $saleArticleRepository){}
+    public function __construct(
+        private readonly SaleArticleRepositoryInterface $saleArticleRepository,
+    ){}
 
     public function execute(SaleArticleDTO $saleArticleDTO): ?SaleArticle
     {
         $saleArticle = new SaleArticle(
             id: 0,
             sale_id: $saleArticleDTO->sale_id,
+            sku: null,
             article_id: $saleArticleDTO->article_id,
             description: $saleArticleDTO->description,
             quantity: $saleArticleDTO->quantity,

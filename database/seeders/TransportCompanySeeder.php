@@ -37,6 +37,14 @@ class TransportCompanySeeder extends Seeder
                 'nro_reg_mtc' => 204063,
                 'status' => 1,
                 'st_private' => 0,
+            ],
+            [
+                'ruc' => '20600968574',
+                'company_name' => 'SERVICIOS Y TRANSPORTE HERMANOS UNIDOS E.I.R.L.',
+                'address' => 'CAL.GARCI CARBAJAL NRO. 511 URB. IV CENTENARIO AREQUIPA - AREQUIPA - AREQUIPA',
+                'nro_reg_mtc' => 179652,
+                'status' => 1,
+                'st_private' => 0,
             ]
         ];
 

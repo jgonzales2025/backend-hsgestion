@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 
 use App\Modules\Company\Application\UseCases\FindAllCompanyUseCase;
 use App\Modules\Company\Application\UseCases\FindByIdCompanyUseCase;
+use App\Modules\Company\Application\UseCases\PasswordValidationUseCase;
+use App\Modules\Company\Application\UseCases\UpdatePasswordUseCase;
 use App\Modules\Company\Domain\Entities\Company;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use App\Modules\Company\Infrastructure\Persistence\EloquentCompanyRepository;
@@ -33,7 +35,7 @@ class CompanyController extends Controller
             // Log::info('companys', $company);
         return CompanyResource::collection($company)->resolve();
     }
-     
+
     public function indexByUser(Request $request): JsonResource
     {
         $user_id = $request->query('user_id');
@@ -47,7 +49,7 @@ class CompanyController extends Controller
         return CompanyByUserResource    ::collection($company);
     }
 
-   public function show(int $id): JsonResponse 
+   public function show(int $id): JsonResponse
     {
         $branchUseCase = new FindByIdCompanyUseCase($this->companieRepository);
         $branch = $branchUseCase->execute($id);
@@ -56,5 +58,35 @@ class CompanyController extends Controller
             (new CompanyResource($branch))->resolve(),
             200
         );
+    }
+
+    public function updatePassword(Request $request): JsonResponse
+    {
+        $companyId = request()->get('company_id');
+
+        $validatedData = $request->validate([
+            'password' => 'string|required',
+        ]);
+
+        $companyUseCase = new UpdatePasswordUseCase($this->companieRepository);
+        $companyUseCase->execute($companyId, $validatedData['password']);
+
+        return response()->json(['message' => 'Contraseña actualizada correctamente']);
+    }
+
+    public function passwordValidation(Request $request): JsonResponse
+    {
+        $companyId = request()->get('company_id');
+
+        $validatedData = $request->validate([
+            'password' => 'string|required',
+        ]);
+
+        $companyUseCase = new PasswordValidationUseCase($this->companieRepository);
+        $status = $companyUseCase->execute($companyId, $validatedData['password']);
+
+        return response()->json([
+            'status' => $status,
+        ]);
     }
 }

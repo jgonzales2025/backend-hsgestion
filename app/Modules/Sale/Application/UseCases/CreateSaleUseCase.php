@@ -35,7 +35,7 @@ readonly class CreateSaleUseCase
 
     public function execute(SaleDTO $saleDTO): ?Sale
     {
-        $lastDocumentNumber = $this->saleRepository->getLastDocumentNumber();
+        $lastDocumentNumber = $this->saleRepository->getLastDocumentNumber($saleDTO->serie);
 
         if ($lastDocumentNumber === null) {
             $documentNumber = '00001';

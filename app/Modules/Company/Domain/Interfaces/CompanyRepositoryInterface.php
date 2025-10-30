@@ -9,5 +9,7 @@ interface CompanyRepositoryInterface
     public function findAllCompanys(): array;
     public function findById(int $id): ?Company;
     public function indexByUser(int $userId): array;
+    public function updatePassword(int $id, string $newPassword): void;
+    public function passwordValidation(int $id, string $password): bool;
 
 }

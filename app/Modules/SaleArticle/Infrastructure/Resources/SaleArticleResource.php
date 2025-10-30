@@ -11,6 +11,7 @@ class SaleArticleResource extends JsonResource
         return [
             'id' => $this->resource->getId(),
             'sale_id' => $this->resource->getSaleId(),
+            'sku' => $this->resource->getSku(),
             'article_id' => $this->resource->getArticleId(),
             'description' => $this->resource->getDescription(),
             'quantity' => $this->resource->getQuantity(),

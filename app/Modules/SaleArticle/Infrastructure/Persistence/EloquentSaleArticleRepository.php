@@ -24,6 +24,7 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
         return new SaleArticle(
             id: $eloquentSaleArticle->id,
             sale_id: $eloquentSaleArticle->sale_id,
+            sku: $eloquentSaleArticle->article->cod_fab,
             article_id: $eloquentSaleArticle->article_id,
             description: $eloquentSaleArticle->description,
             quantity: $eloquentSaleArticle->quantity,
@@ -41,6 +42,7 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
             return new SaleArticle(
                 id: $eloquentSaleArticle->id,
                 sale_id: $eloquentSaleArticle->sale_id,
+                sku: $eloquentSaleArticle->article->cod_fab,
                 article_id: $eloquentSaleArticle->article_id,
                 description: $eloquentSaleArticle->description,
                 quantity: $eloquentSaleArticle->quantity,

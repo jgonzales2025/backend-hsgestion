@@ -4,6 +4,7 @@ namespace App\Modules\Company\Infrastructure\Persistence;
 use App\Modules\Company\Domain\Entities\Company;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 
@@ -14,29 +15,27 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
        $companys = EloquentCompany::with('branches')->orderBy('created_at')->get();
        if ($companys->isEmpty()) {
           return [];
-       }  
+       }
 
-         
-    return $companys->map(function($company){
-        return new Company(
-            id:$company->id,
-            ruc:$company->ruc,
-            company_name:$company->company_name,
-            address:$company->address,
-            start_date:$company->start_date,
-            ubigeo:$company->ubigeo,
-            status:$company->status
-
-        );
-        
-    })->toArray();
+        return $companys->map(function($company){
+            return new Company(
+                id:$company->id,
+                ruc:$company->ruc,
+                company_name:$company->company_name,
+                address:$company->address,
+                start_date:$company->start_date,
+                ubigeo:$company->ubigeo,
+                status:$company->status
+            );
+           })->toArray();
     }
     public function findById(int $id):?Company{
         $company = EloquentCompany::with('assignments')->find($id);
         if (!$company) {
             return null;
         }
-                //  Log::info('companys', $company->toArray());
+
+        //  Log::info('companys', $company->toArray());
         return new Company(
             id:$company->id,
             ruc:$company->ruc,
@@ -46,29 +45,43 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
             ubigeo:$company->ubigeo,
             status:$company->status
         );
-              
     }
    public function indexByUser(int $userId): array
-{
-    $companies = EloquentCompany::with('assignments')
-        ->whereHas('assignments', function ($query) use ($userId) {
-            $query->where('user_id', $userId);
-        })->get();
+    {
+        $companies = EloquentCompany::with('assignments')
+            ->whereHas('assignments', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })->get();
 
-    if ($companies->isEmpty()) {
-        return [];
+        if ($companies->isEmpty()) {
+            return [];
+        }
+
+        return $companies->map(function ($company) {
+            return new Company(
+                id: $company->id,
+                ruc: $company->ruc,
+                company_name: $company->company_name,
+                address: $company->address,
+                start_date: $company->start_date,
+                ubigeo: $company->ubigeo,
+                status: $company->status
+            );
+        })->toArray();
     }
 
-    return $companies->map(function ($company) {
-        return new Company(
-            id: $company->id,
-            ruc: $company->ruc,
-            company_name: $company->company_name,
-            address: $company->address,
-            start_date: $company->start_date,
-            ubigeo: $company->ubigeo,
-            status: $company->status
-        );
-    })->toArray();
-}
+    public function updatePassword(int $id, string $newPassword): void
+    {
+        $company = EloquentCompany::find($id);
+
+        $company->password_item = Hash::make($newPassword);
+        $company->save();
+    }
+
+    public function passwordValidation(int $id, string $password): bool
+    {
+        $company = EloquentCompany::find($id);
+
+        return Hash::check($password, $company->password_item);
+    }
 }

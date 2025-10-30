@@ -53,9 +53,9 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         Log::info('sale', $eloquentSale->toArray());
 
         $eloquentSale->update($this->mapToArray($sale));
-        $eloquentSale->fresh();
 
         $this->updateSaleBalance($eloquentSale);
+        $eloquentSale = $eloquentSale->fresh();
 
         return $this->buildDomainSale($eloquentSale, $sale);
     }
@@ -107,6 +107,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'inafecto' => $sale->getInafecto(),
             'igv' => $sale->getIgv(),
             'total' => $sale->getTotal(),
+            'saldo' => $sale->getTotal(),
             'series_prof' => $sale->getSerieProf(),
             'correlative_prof' => $sale->getCorrelativeProf(),
             'purchase_order' => $sale->getPurchaseOrder()
@@ -183,6 +184,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 
     private function updateSaleBalance(EloquentSale $sale): void
     {
+        $sale = $sale->fresh();
+        Log::info('sale', $sale->toArray());
         DB::statement('CALL sp_actualiza_saldo_venta(?, ?, ?, ?)', [
             $sale->company_id,
             $sale->document_type_id,
@@ -190,7 +193,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             $sale->document_number
         ]);
 
-        $sale->fresh();
+        $sale = $sale->fresh();
         Log::info('sale', $sale->toArray());
         $sale->payment_status = $sale->saldo == 0 ? 1 : 0;
         $sale->amount_amortized = $sale->total - $sale->saldo;

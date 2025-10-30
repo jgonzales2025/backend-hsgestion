@@ -9,4 +9,5 @@ class CompanyDTO{
     public $start_date;
     public $ubigeo;
     public $status;
+    public $password_item;
 }

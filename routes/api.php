@@ -265,6 +265,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Ruta para empresa de transportes
     Route::get('/private-transport', [TransportCompanyController::class, 'findPrivateTransport']);
     Route::get('/public-transport', [TransportCompanyController::class, 'indexPublicTransport']);
+
+    // Ruta para actualizar y validar contraseña de cia
+    Route::put('/update-password', [CompanyController::class, 'updatePassword']);
+    Route::get('/validate-password', [CompanyController::class, 'passwordValidation']);
 });
 
 Route::middleware('auth:api')->group(function () {

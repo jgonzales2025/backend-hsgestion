@@ -5,7 +5,11 @@ use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
-use App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle; 
+use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
+use App\Modules\ExchangeRate\Infrastructure\Models\EloquentExchangeRate;
+use App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle;
+use Illuminate\Support\Facades\Log;
+
 class EloquentArticleRepository implements ArticleRepositoryInterface
 {
     public function save(Article $article): ?Article
@@ -275,5 +279,74 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             image_url: $eloquentArticle->image_url,
             state_modify_article: $eloquentArticle->state_modify_article
         );
+    }
+
+    public function findAllArticlePriceConvertion(string $date, int $currencyTypeId, ?string $description): array
+    {
+        $companyId = request()->get('company_id');
+        $exchangeRate = EloquentExchangeRate::select('parallel_rate')->where('date', $date)->first();
+
+        $articles = EloquentArticle::where('company_type_id', $companyId)
+            ->when($description, function ($query, $name) {
+                return $query->where(function ($q) use ($name) {
+                    $q->where('description', 'like', "%{$name}%")
+                        ->orWhere('cod_fab', 'like', "%{$name}%");
+                });
+            })
+            ->orderByDesc('created_at')
+            ->get();
+
+        return $articles->map(function ($article) use ($exchangeRate, $currencyTypeId) {
+            $convert = function($price, $fromCurrency, $toCurrency) use ($exchangeRate) {
+                if (!$exchangeRate) return $price;
+                if ($fromCurrency == 2 && $toCurrency == 1) {
+                    return round($price * $exchangeRate->parallel_rate, 2);
+                }
+                if ($fromCurrency == 1 && $toCurrency == 2) {
+                    return round($price / $exchangeRate->parallel_rate, 2);
+                }
+                return $price;
+            };
+
+            $purchasePrice = $convert($article->purchase_price, $article->currency_type_id, $currencyTypeId);
+            $publicPrice = $convert($article->public_price, $article->currency_type_id, $currencyTypeId);
+            $distributorPrice = $convert($article->distributor_price, $article->currency_type_id, $currencyTypeId);
+            $authorizedPrice = $convert($article->authorized_price, $article->currency_type_id, $currencyTypeId);
+
+            return new Article(
+                id: $article->id,
+                cod_fab: $article->cod_fab,
+                description: $article->description,
+                weight: $article->weight,
+                with_deduction: $article->with_deduction,
+                series_enabled: $article->series_enabled,
+                location: $article->location,
+                warranty: $article->warranty,
+                tariff_rate: $article->tariff_rate,
+                igv_applicable: $article->igv_applicable,
+                plastic_bag_applicable: $article->plastic_bag_applicable,
+                min_stock: $article->min_stock,
+                purchase_price: $purchasePrice,
+                public_price: $publicPrice,
+                distributor_price: $distributorPrice,
+                authorized_price: $authorizedPrice,
+                public_price_percent: $article->public_price_percent,
+                distributor_price_percent: $article->distributor_price_percent,
+                authorized_price_percent: $article->authorized_price_percent,
+                status: $article->status,
+                brand: $article->brand->toDomain($article->brand),
+                category: $article->category->toDomain($article->category),
+                currencyType: $article->currencyType->toDomain($article->currencyType),
+                measurementUnit: $article->measurementUnit->toDomain($article->measurementUnit),
+                user: $article->user->toDomain($article->user),
+                precioIGv: $purchasePrice + ($purchasePrice * ($article->tariff_rate / 100)),
+                venta: $article->venta,
+                subCategory: $article->subCategory->toDomain($article->subCategory),
+                company: $article->company->toDomain($article->company),
+                image_url: $article->image_url,
+                state_modify_article: $article->state_modify_article
+            );
+        })->toArray();
+
     }
 }

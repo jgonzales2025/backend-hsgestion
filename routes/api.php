@@ -220,6 +220,7 @@ Route::get('dispatchNote', [DispatchNotesController::class, 'index']);
 Route::post('dispatchNote-save', [DispatchNotesController::class, 'store']);
 Route::get('dispatchNote/{id}', [DispatchNotesController::class, 'show']);
 Route::put('dispatchNote-update/{id}', [DispatchNotesController::class, 'update']);
+Route::get('dispatchNote-PDF/{id}', [DispatchNotesController::class, 'generate']);
 
 // Logs de sesion
 Route::get('logs-login', [LoginAttemptController::class, 'index']);

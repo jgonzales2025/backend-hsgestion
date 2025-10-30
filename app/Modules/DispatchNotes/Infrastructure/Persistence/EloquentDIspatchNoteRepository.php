@@ -23,7 +23,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
         ])->get();
     
         return $dispatchNotes->map(function ($dispatch) {
-        $entity =new DispatchNote(
+        $entity = new DispatchNote(
                 id: $dispatch->id,
                 company: $dispatch->company?->toDomain($dispatch->company),
                 branch: $dispatch->branch?->toDomain($dispatch->branch),
@@ -51,9 +51,10 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
 
 
             );
-            $entity->setCreatedAt($dispatch->created_at?->format('Y-m-d H:i:s'));
-
-        return $entity;   
+              $entity->setCreatedAt($dispatch->created_at ? $dispatch->created_at->format('Y-m-d H:i:s') : null);
+             \Log::info("fecha",[$entity]);
+           return $entity; 
+    
         }
         )->toArray();
     }

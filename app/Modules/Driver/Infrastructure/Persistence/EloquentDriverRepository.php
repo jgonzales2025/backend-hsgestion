@@ -30,6 +30,7 @@ class EloquentDriverRepository implements DriverRepositoryInterface
                 document_type_name: $driver->customerDocumentType?->abbreviation
             );
         })->toArray();
+        
     }
 
     public function save(Driver $driver): ?Driver

@@ -37,7 +37,7 @@ class RequestStore extends FormRequest
             'date_referencia' => ['nullable', 'date'],
             'status' => ['required', 'boolean'],
             'cod_conductor' => ['nullable', 'integer', 'exists:drivers,id'],
-
+            'license_plate' =>'string',
             'total_weight' => ['required', 'numeric'],
             'transfer_type' => ['required', 'string', 'max:50'],
             'vehicle_type' => ['required', 'boolean'],

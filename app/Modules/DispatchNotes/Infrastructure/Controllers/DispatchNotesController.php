@@ -15,6 +15,7 @@ use App\Modules\DispatchNotes\application\DTOS\DispatchNoteDTO;
 use App\Modules\DispatchNotes\application\UseCases\CreateDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindAllDispatchNotesUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindByIdDispatchNoteUseCase;
+use App\Modules\DispatchNotes\Application\UseCases\GenerateDispatchNotePdfUseCase;
 use App\Modules\DispatchNotes\application\UseCases\UpdateDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Requests\RequestStore;
@@ -39,7 +40,8 @@ class DispatchNotesController extends Controller
         private readonly DocumentTypeRepositoryInterface $documentTypeRepositoryInterface,
         private readonly DriverRepositoryInterface $driverRepositoryInterface,
         private readonly DispatchArticleRepositoryInterface $dispatchArticleRepositoryInterface,
-    ) {
+        //   private readonly GenerateDispatchNotePdfUseCase $generatePdfUseCase
+        ) {
     }
 
     public function index(): JsonResponse
@@ -117,7 +119,7 @@ class DispatchNotesController extends Controller
         if (!$dispatchNote) {
             return response()->json(['message' => 'Venta no encontrada'], 404);
         }
-
+    
       
 
         $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
@@ -137,6 +139,27 @@ class DispatchNotesController extends Controller
             201
         );
     }
+
+
+    //     public function generate(int $id): JsonResponse
+    // {
+    //     try {
+    //         $pdfUrl = $this->generatePdfUseCase->execute($id);
+            
+    //         return response()->json([
+    //             'success' => true,
+    //             'pdf_url' => $pdfUrl
+    //         ]);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'success' => false,
+    //             'message' => $e->getMessage()
+    //         ], 200);
+    //     }
+    // }
+
+
+    
     private function createDispatchArticles($sale, array $articlesData): array
     {
 

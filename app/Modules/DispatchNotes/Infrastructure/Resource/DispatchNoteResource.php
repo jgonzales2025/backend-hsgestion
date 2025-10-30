@@ -46,12 +46,12 @@ class DispatchNoteResource extends JsonResource
             'emission_reason' => [
                 'id' => $this->resource->getEmissionReason()->getId(),
                 'status' => ($this->resource->getEmissionReason()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
-                'name'=>$this->resource->getEmissionReason()->getDescription()
+                'name' => $this->resource->getEmissionReason()->getDescription()
             ],
             'destination_branch' => [
                 'id' => $this->resource->getDestinationBranch()?->getId(),
                 'status' => $this->resource->getDestinationBranch()?->getStatus(),
-                 'name' =>$this->resource->getDestinationBranch()?->getName()
+                'name' => $this->resource->getDestinationBranch()?->getName()
             ],
             'serie' => $this->resource->getSerie(),
             'correlativo' => $this->resource->getCorrelativo(),
@@ -60,19 +60,19 @@ class DispatchNoteResource extends JsonResource
             'transport' => [
                 'id' => $this->resource->getTransport()->getId(),
                 'status' => $this->resource->getTransport()->getStatus(),
-                'name' =>$this->resource->getTransport()?->getAddress()
-                
+                'name' => $this->resource->getTransport()?->getCompanyName()
+
             ],
             'observations' => $this->resource->getObservations(),
             'num_orden_compra' => $this->resource->getNumOrdenCompra(),
             'doc_referencia' => $this->resource->getDocReferencia(),
             'num_referencia' => $this->resource->getNumReferencia(),
             'date_referencia' => $this->resource->getDateReferencia(),
-            'status' => $this->resource->getStatus() == "true" ? "Activo": "Inactivo",
+            'status' => $this->resource->getStatus() == "true" ? "Activo" : "Inactivo",
             'conductor' => [
                 'id' => $this->resource->getConductor()?->getId(),
-                'status' => $this->resource->getConductor()?->getStatus() == 1 ? 'Activo':'Inactivo',
-                'name' =>$this->resource->getConductor()?->getName()
+                'status' => $this->resource->getConductor()?->getStatus() == 1 ? 'Activo' : 'Inactivo',
+                'name' => $this->resource->getConductor()?->getName()
             ],
             'license_plate' => $this->resource->getLicensePlate(),
             'total_weight' => $this->resource->getTotalWeight(),
@@ -83,17 +83,23 @@ class DispatchNoteResource extends JsonResource
                 'status' => ($this->resource->getDocumentType()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
                 'description' => $this->resource->getDocumentType()->getDescription(),
             ],
-            'destination_branch_client_id' => EloquentBranch::where('id', $this->resource->getdestination_branch_client())
-                ->get()->map(function ($code) {
-                    return [
-                        'id' => $code->id,
-                        'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
-                        'name' => $code->name,
-                    ];
-                })
-                ->toArray(),
-            'customer_id' => $this->resource->getCustomerId(),
+            'destination_branch_client_id' => (function () {
+                $code = EloquentBranch::where('id', $this->resource->getdestination_branch_client())->first(); // 👈 nota los paréntesis ()
+    
+                if (!$code) {
+                    return (object) [];
+                }
 
+                return (object) [
+                    'id' => $code->id,
+                    'name' => $code->name,
+                    'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
+
+                ];
+            })(),
+
+            'date' => $this->resource->getCreatedFecha(),
+         
             'pdf_url' => $pdfUrl
         ];
     }

@@ -32,7 +32,7 @@ class EloquentDispatchNote extends Model
         'num_orden_compra',
         'doc_referencia',
         'num_referencia',
-     
+        'date_referencia',
         'status',
         'cod_conductor',
         'license_plate',
@@ -44,7 +44,8 @@ class EloquentDispatchNote extends Model
         'customer_id',
         'pdf'
     ];
-    protected $hidden = ['created_at', 'update_at'];
+  public $timestamps = true;
+
 
     public function measurementUnit(): BelongsTo
     {

@@ -37,7 +37,7 @@ class RequestStore extends FormRequest
             'date_referencia' => ['nullable', 'date'],
             'status' => ['required', 'boolean'],
             'cod_conductor' => ['nullable', 'integer', 'exists:drivers,id'],
-            'license_plate' => ['required', 'string', 'max:15'],
+
             'total_weight' => ['required', 'numeric'],
             'transfer_type' => ['required', 'string', 'max:50'],
             'vehicle_type' => ['required', 'boolean'],
@@ -54,7 +54,6 @@ class RequestStore extends FormRequest
             'branch_id.required' => 'El campo sucursal es obligatorio.',
             'serie.required' => 'Debe indicar la serie del documento.',
             'date.required' => 'Debe ingresar una fecha.',
-            'license_plate.required' => 'Debe ingresar la placa del vehículo.', 
             'total_weight.required' => 'Debe ingresar el peso total.',
         ];
     }

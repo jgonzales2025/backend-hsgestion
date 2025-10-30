@@ -26,10 +26,10 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         return $this->buildDomainSale($eloquentSale, $sale);
     }
 
-    public function getLastDocumentNumber(): ?string
+    public function getLastDocumentNumber(string $serie): ?string
     {
-        $sale = EloquentSale::all()
-            ->sortByDesc('document_number')
+        $sale = EloquentSale::where('serie', $serie)
+            ->orderBy('document_number', 'desc')
             ->first();
 
         return $sale?->document_number;

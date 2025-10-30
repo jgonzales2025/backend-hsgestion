@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignId('branch_id')->constrained('branches')->onDelete('cascade');
             $table->foreignId('document_type_id')->constrained('document_types')->onDelete('cascade');
             $table->string('serie', 10);
-            $table->string('document_number', 10)->unique();
+            $table->string('document_number', 10);
             $table->decimal('parallel_rate', 8, 2);
             $table->foreignId('customer_id')->constrained('customers')->onDelete('cascade');
             $table->date('date');

@@ -161,12 +161,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'cia_id' => $dispatchNote->getCompany() ? $dispatchNote->getCompany()->getId() : null,
             'branch_id' => $dispatchNote->getBranch() ? $dispatchNote->getBranch()->getId() : null,
             'serie' => $dispatchNote->getSerie(),
-            'correlativo' => (
-                ($dispatchNote->getDocumentType() ? strtoupper(substr($dispatchNote->getDocumentType()->getAbbreviation(), 0, 1)) : '') .
-                '00' .
-                ($dispatchNote->getBranch() ? strtoupper(substr($dispatchNote->getBranch()->getId(), 0, 1)) : '')
-            ),
-
+            'correlativo' => $dispatchNote->getCorrelativo(),
             'emission_reason_id' => $dispatchNote->getEmissionReason() ? $dispatchNote->getEmissionReason()->getId() : null,
             'description' => $dispatchNote->getDescription(),
             'destination_branch_id' => $dispatchNote->getDestinationBranch() ? $dispatchNote->getDestinationBranch()->getId() : null,

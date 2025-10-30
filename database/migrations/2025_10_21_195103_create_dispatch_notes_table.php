@@ -24,7 +24,7 @@ return new class extends Migration {
             $table->text('description')->nullable();
 
             $table->foreignId('destination_branch_id')->nullable()->constrained('branches');
-            $table->string('destination_address_customer');
+        
 
             $table->foreignId('transport_id')->constrained('transport_companies');
             // $table->foreignId('document_types_id')->constrained('document_types');

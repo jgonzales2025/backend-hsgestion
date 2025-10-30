@@ -26,7 +26,6 @@ class EloquentDispatchNote extends Model
         'emission_reason_id',
         'description',
         'destination_branch_id',
-        'destination_address_customer',
         'transport_id',
         'observations',
         'num_orden_compra',

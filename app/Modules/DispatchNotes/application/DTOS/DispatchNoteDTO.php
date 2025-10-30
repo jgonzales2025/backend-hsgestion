@@ -11,7 +11,6 @@ class DispatchNoteDTO
   public int $emission_reason_id;
   public ?string $description;
   public ?int $destination_branch_id;
-  public string $destination_address_customer;
   public int $transport_id;
   public ?string $observations;
   public ?string $num_orden_compra;
@@ -38,7 +37,6 @@ class DispatchNoteDTO
     $this->emission_reason_id = $date['emission_reason_id'] ?? 1;
     $this->description = $date['description']??'';
     $this->destination_branch_id = $date['destination_branch_id'] ?? null;
-    $this->destination_address_customer = $date['destination_address_customer'] ?? '';
     $this->transport_id = $date['transport_id'] ?? 1;
     $this->observations = $date['observations'] ?? '';
     $this->num_orden_compra = $date['num_orden_compra']??"";
@@ -47,7 +45,7 @@ class DispatchNoteDTO
     $this->date_referencia = $date['date_referencia']??null;
     $this->status = $date['status'];
     $this->cod_conductor = $date['cod_conductor'] ?? null;
-    $this->license_plate = $date['license_plate'];
+    $this->license_plate = $date['license_plate']??'';
     $this->total_weight = $date['total_weight'];
     $this->transfer_type = $date['transfer_type'];
     $this->vehicle_type = $date['vehicle_type'];

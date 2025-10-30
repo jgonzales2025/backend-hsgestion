@@ -10,5 +10,6 @@ interface DispatchNotesRepositoryInterface
     public function save(DispatchNote $dispatchNote): ?DispatchNote;
     public function findById(int $id): ?DispatchNote;
     public function update(DispatchNote $dispatchNote): ?DispatchNote;
+        public function getLastDocumentNumber(): ?string;
 
 }

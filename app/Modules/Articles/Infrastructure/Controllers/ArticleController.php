@@ -15,6 +15,7 @@ use App\Modules\Articles\Domain\Interfaces\FileStoragePort;
 use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
 use App\Modules\Articles\Infrastructure\Requests\StoreArticleRequest;
 use App\Modules\Articles\Infrastructure\Requests\UpdateArticleRequest;
+use App\Modules\Articles\Infrastructure\Resource\ArticleForSalesResource;
 use App\Modules\Articles\Infrastructure\Resource\ArticleResource;
 use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
@@ -165,14 +166,13 @@ class ArticleController extends Controller
     $description = $request->query("description");
 
     $validatedData = $request->validate([
-        'date' => 'date|required',
-        'currency_type_id' => 'integer|required|exists:currency_types,id'
+        'date' => 'date|required'
     ]);
 
     $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);
-    $articles = $articlesUseCase->execute($validatedData['date'], $validatedData['currency_type_id'], $description);
+    $articles = $articlesUseCase->execute($validatedData['date'], $description);
 
-    return ArticleResource::collection($articles)->resolve();
+    return ArticleForSalesResource::collection($articles)->resolve();
   }
 
 }

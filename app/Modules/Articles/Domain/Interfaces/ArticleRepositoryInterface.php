@@ -9,6 +9,6 @@ interface ArticleRepositoryInterface
     public function findAllArticle(?string $name): array;
     public function findById(int $id): ?Article;
     public function update(Article $article): ?Article;
-    public function findAllArticlePriceConvertion(string $date, int $currencyTypeId, ?string $description): array;
+    public function findAllArticlePriceConvertion(string $date, ?string $description): array;
 
 }

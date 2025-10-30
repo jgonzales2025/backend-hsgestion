@@ -2,6 +2,7 @@
 namespace App\Modules\Articles\Infrastructure\Persistence;
 
 use App\Modules\Articles\Domain\Entities\Article;
+use App\Modules\Articles\Domain\Entities\ArticleForSale;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
@@ -281,7 +282,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticlePriceConvertion(string $date, int $currencyTypeId, ?string $description): array
+    public function findAllArticlePriceConvertion(string $date, ?string $description): array
     {
         $companyId = request()->get('company_id');
         $exchangeRate = EloquentExchangeRate::select('parallel_rate')->where('date', $date)->first();
@@ -296,24 +297,44 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             ->orderByDesc('created_at')
             ->get();
 
-        return $articles->map(function ($article) use ($exchangeRate, $currencyTypeId) {
-            $convert = function($price, $fromCurrency, $toCurrency) use ($exchangeRate) {
-                if (!$exchangeRate) return $price;
-                if ($fromCurrency == 2 && $toCurrency == 1) {
-                    return round($price * $exchangeRate->parallel_rate, 2);
-                }
-                if ($fromCurrency == 1 && $toCurrency == 2) {
-                    return round($price / $exchangeRate->parallel_rate, 2);
-                }
-                return $price;
+        return $articles->map(function ($article) use ($exchangeRate) {
+            // Función para convertir precios
+            $convertToUsd = function($price) use ($exchangeRate) {
+                if (!$exchangeRate || $exchangeRate->parallel_rate == 0) return $price;
+                return round($price / $exchangeRate->parallel_rate, 2);
             };
 
-            $purchasePrice = $convert($article->purchase_price, $article->currency_type_id, $currencyTypeId);
-            $publicPrice = $convert($article->public_price, $article->currency_type_id, $currencyTypeId);
-            $distributorPrice = $convert($article->distributor_price, $article->currency_type_id, $currencyTypeId);
-            $authorizedPrice = $convert($article->authorized_price, $article->currency_type_id, $currencyTypeId);
+            $convertToPen = function($price) use ($exchangeRate) {
+                if (!$exchangeRate) return $price;
+                return round($price * $exchangeRate->parallel_rate, 2);
+            };
 
-            return new Article(
+            // Si el artículo está en Soles (currency_type_id = 1)
+            if ($article->currency_type_id == 1) {
+                $purchasePricePen = $article->purchase_price;
+                $publicPricePen = $article->public_price;
+                $distributorPricePen = $article->distributor_price;
+                $authorizedPricePen = $article->authorized_price;
+
+                $purchasePriceUsd = $convertToUsd($article->purchase_price);
+                $publicPriceUsd = $convertToUsd($article->public_price);
+                $distributorPriceUsd = $convertToUsd($article->distributor_price);
+                $authorizedPriceUsd = $convertToUsd($article->authorized_price);
+            }
+            // Si el artículo está en Dólares (currency_type_id = 2)
+            else {
+                $purchasePriceUsd = $article->purchase_price;
+                $publicPriceUsd = $article->public_price;
+                $distributorPriceUsd = $article->distributor_price;
+                $authorizedPriceUsd = $article->authorized_price;
+
+                $purchasePricePen = $convertToPen($article->purchase_price);
+                $publicPricePen = $convertToPen($article->public_price);
+                $distributorPricePen = $convertToPen($article->distributor_price);
+                $authorizedPricePen = $convertToPen($article->authorized_price);
+            }
+
+            return new ArticleForSale(
                 id: $article->id,
                 cod_fab: $article->cod_fab,
                 description: $article->description,
@@ -326,10 +347,14 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 igv_applicable: $article->igv_applicable,
                 plastic_bag_applicable: $article->plastic_bag_applicable,
                 min_stock: $article->min_stock,
-                purchase_price: $purchasePrice,
-                public_price: $publicPrice,
-                distributor_price: $distributorPrice,
-                authorized_price: $authorizedPrice,
+                purchase_price_pen: $purchasePricePen,
+                public_price_pen: $publicPricePen,
+                distributor_price_pen: $distributorPricePen,
+                authorized_price_pen: $authorizedPricePen,
+                purchase_price_usd: $purchasePriceUsd,
+                public_price_usd: $publicPriceUsd,
+                distributor_price_usd: $distributorPriceUsd,
+                authorized_price_usd: $authorizedPriceUsd,
                 public_price_percent: $article->public_price_percent,
                 distributor_price_percent: $article->distributor_price_percent,
                 authorized_price_percent: $article->authorized_price_percent,
@@ -339,7 +364,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 currencyType: $article->currencyType->toDomain($article->currencyType),
                 measurementUnit: $article->measurementUnit->toDomain($article->measurementUnit),
                 user: $article->user->toDomain($article->user),
-                precioIGv: $purchasePrice + ($purchasePrice * ($article->tariff_rate / 100)),
                 venta: $article->venta,
                 subCategory: $article->subCategory->toDomain($article->subCategory),
                 company: $article->company->toDomain($article->company),

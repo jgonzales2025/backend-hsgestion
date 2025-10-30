@@ -35,6 +35,7 @@ class StoreArticleRequest extends FormRequest
             'public_price' => isset($this->public_price) ? (float) $this->public_price : 0,
             'distributor_price' => isset($this->distributor_price) ? (float) $this->distributor_price : 0,
             'authorized_price' => isset($this->authorized_price) ? (float) $this->authorized_price : 0,
+            'currency_type_id' => isset($this->currency_type_id) ? (int) $this->currency_type_id : 0,
         ]);
     }
 

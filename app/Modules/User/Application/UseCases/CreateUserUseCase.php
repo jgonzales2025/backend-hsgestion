@@ -26,7 +26,8 @@ class CreateUserUseCase
             status: $userDTO->status,
             roles: $userDTO->userRoles,
             assignment: null,
-            st_login: null
+            st_login: null,
+            password_item: $userDTO->password
         );
 
         return $this->userRepository->save($user);

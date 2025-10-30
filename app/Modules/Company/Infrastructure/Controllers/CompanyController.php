@@ -60,33 +60,4 @@ class CompanyController extends Controller
         );
     }
 
-    public function updatePassword(Request $request): JsonResponse
-    {
-        $companyId = request()->get('company_id');
-
-        $validatedData = $request->validate([
-            'password' => 'string|required',
-        ]);
-
-        $companyUseCase = new UpdatePasswordUseCase($this->companieRepository);
-        $companyUseCase->execute($companyId, $validatedData['password']);
-
-        return response()->json(['message' => 'Contraseña actualizada correctamente']);
-    }
-
-    public function passwordValidation(Request $request): JsonResponse
-    {
-        $companyId = request()->get('company_id');
-
-        $validatedData = $request->validate([
-            'password' => 'string|required',
-        ]);
-
-        $companyUseCase = new PasswordValidationUseCase($this->companieRepository);
-        $status = $companyUseCase->execute($companyId, $validatedData['password']);
-
-        return response()->json([
-            'status' => $status,
-        ]);
-    }
 }

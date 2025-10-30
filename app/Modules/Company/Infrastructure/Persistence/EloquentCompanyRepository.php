@@ -70,18 +70,4 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
         })->toArray();
     }
 
-    public function updatePassword(int $id, string $newPassword): void
-    {
-        $company = EloquentCompany::find($id);
-
-        $company->password_item = Hash::make($newPassword);
-        $company->save();
-    }
-
-    public function passwordValidation(int $id, string $password): bool
-    {
-        $company = EloquentCompany::find($id);
-
-        return Hash::check($password, $company->password_item);
-    }
 }

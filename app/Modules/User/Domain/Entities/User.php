@@ -17,6 +17,7 @@ class User
     private array|string|null $roles;
     private ?array $assignment;
     private ?int $st_login;
+    private ?string $password_item;
 
     /**
      * @param int $id
@@ -28,8 +29,9 @@ class User
      * @param array|string|null $roles
      * @param array|null $assignment
      * @param int|null $st_login
+     * @param string|null $password_item
      */
-    public function __construct(int $id, ?string $username, string $firstname, string $lastname, ?string $password, int $status, array|string|null $roles, array|null $assignment, int|null $st_login)
+    public function __construct(int $id, ?string $username, string $firstname, string $lastname, ?string $password, int $status, array|string|null $roles, array|null $assignment, int|null $st_login, string|null $password_item = null)
     {
         $this->id = $id;
         $this->username = $username;
@@ -51,6 +53,7 @@ class User
     public function getRoles(): array|string|null { return $this->roles; }
     public function getAssignment(): ?array { return $this->assignment; }
     public function getStLogin(): ?int { return $this->st_login; }
+    public function getPasswordItem(): ?string { return $this->password_item; }
 
 
     // --- Perfil básico

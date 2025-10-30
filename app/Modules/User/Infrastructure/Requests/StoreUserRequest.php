@@ -19,6 +19,7 @@ class StoreUserRequest extends FormRequest
             'firstname' => 'required|string|max:30',
             'lastname' => 'required|string|max:60',
             'password' => 'required|string|confirmed|min:8',
+            'password_item' => 'nullable|string',
             'status' => 'required|integer|in:0,1',
 
             // Assignments

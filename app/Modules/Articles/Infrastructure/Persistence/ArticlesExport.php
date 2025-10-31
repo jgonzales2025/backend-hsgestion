@@ -20,15 +20,19 @@ class ArticlesExport implements FromCollection, WithHeadings, WithMapping, WithS
          return $this->articles;
     }
 
-    public function headings(): array
+        public function headings(): array
     {
         return [
             'ID',
-            'Nombre',
-            'Precio',
-            'Stock',
+            'Código Fabricante',
             'Descripción',
-            'Fecha Creación'
+            'Precio Compra',
+            'Precio Público',
+            'Stock Mínimo',
+            'Categoría',
+            'Marca',
+            'Moneda',
+            'Unidad Medida',
         ];
     }
 

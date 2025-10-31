@@ -22,7 +22,7 @@ class EloquentUser extends Authenticatable implements JWTSubject
 
     protected $guard_name = 'api';
 
-    protected $fillable = ['username', 'firstname', 'lastname', 'password', 'status', 'st_login', 'failed_attempts'];
+    protected $fillable = ['username', 'firstname', 'lastname', 'password', 'status', 'st_login', 'failed_attempts', 'password_item'];
 
     protected $hidden = ['password', 'remember_token'];
 

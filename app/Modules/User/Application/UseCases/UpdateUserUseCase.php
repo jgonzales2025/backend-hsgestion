@@ -20,10 +20,6 @@ class UpdateUserUseCase
     {
         $existingUser = $this->userRepository->findById($id);
 
-        if (!$existingUser) {
-            return null;
-        }
-
         $user = new User(
             id: $id,
             username: $existingUser->getUsername(),
@@ -34,7 +30,7 @@ class UpdateUserUseCase
             roles: $userDTO->userRoles,
             assignment: null,
             st_login: null,
-            password_item: $userDTO->password ?? $existingUser->getPasswordItem()
+            password_item: $userDTO->password_item ?? $existingUser->getPasswordItem()
         );
 
         $this->userRepository->update($user);

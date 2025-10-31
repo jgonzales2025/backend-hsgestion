@@ -30,6 +30,7 @@ use App\Modules\UserAssignment\Infrastructure\Persistence\EloquentUserAssignment
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -159,8 +160,17 @@ class UserController extends Controller
     public function update(UpdateUserRequest $request, $id): JsonResponse
     {
         try {
+
+            $userUseCase = new GetUserByIdUseCase($this->userRepository);
+            $user = $userUseCase->execute($id);
+
+            if (!$user) {
+                return response()->json(['message' => 'Usuario no encontrado'], 404);
+            }
+
             // 1. Actualizar usuario
             $data = $request->validated();
+
             if (!empty($data['password'])) {
                 $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
             } else {
@@ -168,12 +178,23 @@ class UserController extends Controller
             }
 
             if (!empty($data['password_item'])) {
+                $userValidatePassword = new PasswordValidationUseCase($this->userRepository);
+                $isValid = $userValidatePassword->execute($data['password_item']);
+
+                if (is_array($isValid)) {
+                    if ($isValid['user_id'] !== $id) {
+                        return response()->json([
+                            'message' => 'La contraseña ya está siendo usada por otro usuario.'
+                        ], 422);
+                    }
+                }
+
                 $data['password_item'] = Hash::make($data['password_item']);
             } else {
                 unset($data['password_item']);
             }
 
-            $userDTO = new UserDTO($request->validated());
+            $userDTO = new UserDTO($data);
             $updateUserUseCase = new UpdateUserUseCase($this->userRepository);
             $user = $updateUserUseCase->execute($id, $userDTO);
 

@@ -86,14 +86,14 @@ class DispatchNoteResource extends JsonResource
                 'description' => $this->resource->getDocumentType()->getDescription(),
             ],
             'destination_branch_client_id' => (function () {
-                $code = EloquentCustomer::where('id', $this->resource->getdestination_branch_client())->first(); // 👈 nota los paréntesis ()
+                $code = EloquentCustomer::where('id', $this->resource->getdestination_branch_client())->first(); 
     
                 if (!$code) {
-                    return  [];
+                    return [];
                 }
-                 
+
                 return (object) [
-                     'id' => $code->id,
+                    'id' => $code->id,
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
                     'name' => $code->address[0]['address'],
 
@@ -101,8 +101,23 @@ class DispatchNoteResource extends JsonResource
             })(),
 
             'date' => $this->resource->getCreatedFecha(),
-         
-            'pdf_url' => $pdfUrl
+
+            'pdf_url' => $pdfUrl,
+            'customer' =>(function () {
+                $code = EloquentCustomer::where('id', $this->resource->getCustomerId())->first(); 
+    
+                if (!$code) {
+                    return [];
+                }
+
+                return (object) [
+                    'id' => $code->id,
+                    'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
+                    'name' => $code->name,
+
+                ];
+            })(),
+
         ];
     }
 }

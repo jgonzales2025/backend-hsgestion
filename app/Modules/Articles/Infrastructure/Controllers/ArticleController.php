@@ -41,29 +41,29 @@ class ArticleController extends Controller
     private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
     private readonly SubCategoryRepositoryInterface $subCategoryRepository,
     private readonly CompanyRepositoryInterface $companyRepository,
-      // private ExportArticlesToExcelUseCase $exportUseCase
+      private ExportArticlesToExcelUseCase $exportUseCase
 
   ) {
   }
-// public function export(int $id)
-// {
-//     try {
-//         $filePath = $this->exportUseCase->execute($id);
+public function export(int $id)
+{
+    try {
+        $filePath = $this->exportUseCase->execute($id);
         
-//         return response()->download(
-//             storage_path('app/public/' . $filePath),
-//             basename($filePath),
-//             [
-//                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-//             ]
-//         )->deleteFileAfterSend(true);
+        return response()->download(
+            storage_path('app/public/' . $filePath),
+            basename($filePath),
+            [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]
+        )->deleteFileAfterSend(true);
         
-//     } catch (\Exception $e) {
-//         return response()->json([
-//             'error' => $e->getMessage()
-//         ], 404);
-//     }
-// }
+    } catch (\Exception $e) {
+        return response()->json([
+            'error' => $e->getMessage()
+        ], 404);
+    }
+}
 
   public function index(Request $request): array
   {

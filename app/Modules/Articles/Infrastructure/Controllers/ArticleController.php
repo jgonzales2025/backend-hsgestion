@@ -41,33 +41,29 @@ class ArticleController extends Controller
     private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
     private readonly SubCategoryRepositoryInterface $subCategoryRepository,
     private readonly CompanyRepositoryInterface $companyRepository,
-    //  private ExportArticlesToExcelUseCase $exportUseCase
+      // private ExportArticlesToExcelUseCase $exportUseCase
 
   ) {
   }
-  //  public function export(Request $request)
-  //   {
-  //       $validated = $request->validate([
-  //           'id' => 'required|int|min:1',
-  //       ]);
-
-  //       try {
-  //           $filePath = $this->exportUseCase->execute($validated['id']);
-            
-  //           return response()->download(
-  //               storage_path('app/public/' . $filePath),
-  //               basename($filePath),
-  //               [
-  //                   'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  //               ]
-  //           )->deleteFileAfterSend(true);
-            
-  //       } catch (\Exception $e) {
-  //           return response()->json([
-  //               'error' => $e->getMessage()
-  //           ], $e->getMessage() === 'No se encontraron artículos con los IDs proporcionados' ? 404 : 500);
-  //       }
-  //   }
+// public function export(int $id)
+// {
+//     try {
+//         $filePath = $this->exportUseCase->execute($id);
+        
+//         return response()->download(
+//             storage_path('app/public/' . $filePath),
+//             basename($filePath),
+//             [
+//                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+//             ]
+//         )->deleteFileAfterSend(true);
+        
+//     } catch (\Exception $e) {
+//         return response()->json([
+//             'error' => $e->getMessage()
+//         ], 404);
+//     }
+// }
 
   public function index(Request $request): array
   {

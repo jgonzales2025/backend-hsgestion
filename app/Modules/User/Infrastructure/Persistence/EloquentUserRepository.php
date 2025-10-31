@@ -206,4 +206,21 @@ class EloquentUserRepository implements UserRepositoryInterface
             );
         })->toArray();
     }
+
+    public function passwordValidation(string $password): bool|array
+    {
+        $users = EloquentUser::whereNotNull('password_item')->get();
+
+        foreach ($users as $user) {
+            if (Hash::check($password, $user->password_item)) {
+                return [
+                    'status' => true,
+                    'user_id' => $user->id,
+                    'username' => $user->username,
+                ];
+            }
+        }
+
+        return false;
+    }
 }

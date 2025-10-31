@@ -20,8 +20,7 @@ class CompanySeeder extends Seeder
                 'address' => 'AV. GARCILAZO DE LA VEGA NRO. 1348 TDA 1A-178-179 LIMA - LIMA - LIMA',
                 'ubigeo' => '150115',
                 'start_date' => '2018-08-20',
-                'status' => 1,
-                'password_item' => null
+                'status' => 1
             ],
             [
                 'ruc' => '20608449320',
@@ -29,8 +28,7 @@ class CompanySeeder extends Seeder
                 'address' => 'AV. GARCILAZO DE LA VEGA NRO. 1348 TDA 1A-178-179 LIMA - LIMA - LIMA',
                 'ubigeo' => '150115',
                 'start_date' => '2021-09-10',
-                'status' => 1,
-                'password_item' => null
+                'status' => 1
             ]
         ];
 

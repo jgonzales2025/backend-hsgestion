@@ -20,7 +20,7 @@ return new class extends Migration
             $table->integer('status')->default(1);
             $table->integer('st_login')->default(1);
             $table->integer('failed_attempts')->default(0);
-            $table->string('password_item')->nullable();
+            $table->string('password_item')->nullable()->unique();
             $table->rememberToken();
             $table->timestamps();
         });

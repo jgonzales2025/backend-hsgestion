@@ -12,12 +12,12 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class ArticlesExport implements FromCollection, WithHeadings, WithMapping, WithStyles
 {
-    public function __construct(private Article $article) {}
+    public function __construct(private Collection $articles) {}
 
     public function collection(): Collection
     {
         // Convertir el artículo único en una colección
-        return collect([$this->article]);
+         return $this->articles;
     }
 
     public function headings(): array
@@ -32,17 +32,22 @@ class ArticlesExport implements FromCollection, WithHeadings, WithMapping, WithS
         ];
     }
 
-    public function map($article): array
-    {
-        return [
-            $article->id,
-            $article->nombre,
-            number_format($article->precio, 2),
-            $article->stock,
-            $article->descripcion ?? '',
-            $article->created_at->format('d/m/Y H:i')
-        ];
-    }
+  public function map($article): array
+{
+    return [
+        $article->getId(),
+        $article->getCodFab(),
+        $article->getDescription(),
+        number_format($article->getPurchasePrice(), 2),
+        $article->getPublicPrice(),
+        $article->getMinStock(),
+        $article->getCategory()?->getName() ?? '',
+        $article->getBrand()?->getName() ?? '',
+        $article->getCurrencyType()?->getName() ?? '',
+        $article->getMeasurementUnit()?->getName() ?? '',
+    ];
+}
+
 
     public function styles(Worksheet $sheet)
     {

@@ -49,7 +49,6 @@ public function export(int $id)
 {
     try {
         $filePath = $this->exportUseCase->execute($id);
-        
         return response()->download(
             storage_path('app/public/' . $filePath),
             basename($filePath),
@@ -59,6 +58,7 @@ public function export(int $id)
         )->deleteFileAfterSend(true);
         
     } catch (\Exception $e) {
+      \Log::info("info",[$e]);
         return response()->json([
             'error' => $e->getMessage()
         ], 404);

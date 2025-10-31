@@ -3,22 +3,25 @@ namespace App\Modules\Articles\Infrastructure\Persistence;
 
 use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\Articles\Domain\Interfaces\ArticleExporterInterface;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Facades\Excel;
-
 
 class ExcelArticleExporter implements ArticleExporterInterface
 {
-    public function export(Article $articles): string
+    public function export(Article $article): string
     {
-        $fileName = 'articulos_' . now()->format('Y-m-d_His') . '.xlsx';
+        $fileName = 'articulo_' . now()->format('Y-m-d_His') . '.xlsx';
         $filePath = 'exports/' . $fileName;
-        
+
+        // Convertir el artículo único en una colección
+        $collection = collect([$article]);
+
         Excel::store(
-            new ArticlesExport($articles), 
+            new ArticlesExport($collection), 
             $filePath, 
             'public'
         );
-        
+
         return $filePath;
     }
 }

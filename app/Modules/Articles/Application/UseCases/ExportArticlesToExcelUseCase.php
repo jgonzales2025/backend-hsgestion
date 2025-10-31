@@ -4,6 +4,7 @@ namespace App\Modules\Articles\Application\UseCases;
 
 use App\Modules\Articles\Domain\Interfaces\ArticleExporterInterface;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
+use Illuminate\Support\Collection;
 
 
 

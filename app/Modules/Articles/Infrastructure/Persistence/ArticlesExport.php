@@ -3,27 +3,27 @@
 namespace App\Modules\Articles\Infrastructure\Persistence;
 
 use App\Modules\Articles\Domain\Entities\Article;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-
-
 class ArticlesExport implements FromCollection, WithHeadings, WithMapping, WithStyles
 {
-    public function __construct(private Article  $articles) {}
+    public function __construct(private Article $article) {}
 
-    public function collection(): ?Article
+    public function collection(): Collection
     {
-        return $this->articles;
+        // Convertir el artículo único en una colección
+        return collect([$this->article]);
     }
 
     public function headings(): array
     {
         return [
-            'id',
+            'ID',
             'Nombre',
             'Precio',
             'Stock',
@@ -39,7 +39,7 @@ class ArticlesExport implements FromCollection, WithHeadings, WithMapping, WithS
             $article->nombre,
             number_format($article->precio, 2),
             $article->stock,
-            $article->descripcion,
+            $article->descripcion ?? '',
             $article->created_at->format('d/m/Y H:i')
         ];
     }

@@ -2,10 +2,11 @@
 
 namespace App\Providers;
 
-use App\Domain\Article\Ports\ArticleExporterInterface;
-use App\Infrastructure\Adapters\ArticlesExport;
+use App\Modules\Articles\Domain\Interfaces\ArticleExporterInterface;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
+use App\Modules\Articles\Infrastructure\Persistence\ArticlesExport;
 use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
+use App\Modules\Articles\Infrastructure\Persistence\ExcelArticleExporter;
 use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface;
 use App\Modules\Bank\Infrastructure\Persistence\EloquentBankRepository;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
@@ -151,7 +152,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransactionLogRepositoryInterface::class, EloquentTransactionLogRepository::class);
         $this->app->bind(MonthlyClosureRepositoryInterface::class, EloquentMonthlyClosureRepository::class);
         $this->app->bind(MonthlyClosureRepositoryInterface::class, EloquentMonthlyClosureRepository::class);
+        $this->app->bind(ArticleExporterInterface::class,ExcelArticleExporter::class);
         $this->app->bind(PdfGeneratorInterface::class,DomPdfGenerator::class);
+   
     }
 
     /**

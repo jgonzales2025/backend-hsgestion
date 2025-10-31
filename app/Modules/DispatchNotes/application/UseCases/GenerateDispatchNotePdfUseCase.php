@@ -3,7 +3,7 @@
 namespace App\Modules\DispatchNotes\Application\UseCases;
 
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
-use App\Modules\DispatchNotes\Domain\Services\PdfGeneratorInterface;
+use App\Modules\DispatchNotes\Domain\Interfaces\PdfGeneratorInterface;
 
 class GenerateDispatchNotePdfUseCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\DispatchNotes\Domain\Services;
+namespace App\Modules\DispatchNotes\Domain\Interfaces;
 
 use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 

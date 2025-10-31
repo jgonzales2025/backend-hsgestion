@@ -40,7 +40,7 @@ class DispatchNotesController extends Controller
         private readonly DocumentTypeRepositoryInterface $documentTypeRepositoryInterface,
         private readonly DriverRepositoryInterface $driverRepositoryInterface,
         private readonly DispatchArticleRepositoryInterface $dispatchArticleRepositoryInterface,
-        //   private readonly GenerateDispatchNotePdfUseCase $generatePdfUseCase
+        private readonly GenerateDispatchNotePdfUseCase $generatePdfUseCase
         ) {
     }
 
@@ -141,22 +141,22 @@ class DispatchNotesController extends Controller
     }
 
 
-    //     public function generate(int $id): JsonResponse
-    // {
-    //     try {
-    //         $pdfUrl = $this->generatePdfUseCase->execute($id);
+        public function generate(int $id): JsonResponse
+    {
+        try {
+            $pdfUrl = $this->generatePdfUseCase->execute($id);
             
-    //         return response()->json([
-    //             'success' => true,
-    //             'pdf_url' => $pdfUrl
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         return response()->json([
-    //             'success' => false,
-    //             'message' => $e->getMessage()
-    //         ], 200);
-    //     }
-    // }
+            return response()->json([
+                'success' => true,
+                'pdf_url' => $pdfUrl
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 200);
+        }
+    }
 
 
     

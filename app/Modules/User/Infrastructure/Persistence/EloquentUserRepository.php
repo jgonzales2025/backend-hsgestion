@@ -205,8 +205,7 @@ class EloquentUserRepository implements UserRepositoryInterface
             if (Hash::check($password, $user->password_item)) {
                 return [
                     'status' => true,
-                    'user_id' => $user->id,
-                    'username' => $user->username,
+                    'user_id' => $user->id
                 ];
             }
         }

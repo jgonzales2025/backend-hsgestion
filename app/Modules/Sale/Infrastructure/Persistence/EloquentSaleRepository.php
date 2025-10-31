@@ -110,7 +110,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'saldo' => $sale->getTotal(),
             'series_prof' => $sale->getSerieProf(),
             'correlative_prof' => $sale->getCorrelativeProf(),
-            'purchase_order' => $sale->getPurchaseOrder()
+            'purchase_order' => $sale->getPurchaseOrder(),
+            'user_authorized_id' => $sale->getUserAuthorized()?->getId(),
         ];
     }
 
@@ -144,7 +145,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             is_locked: $eloquentSale->is_locked,
             serie_prof: $eloquentSale->series_prof,
             correlative_prof: $eloquentSale->correlative_prof,
-            purchase_order: $eloquentSale->purchase_order
+            purchase_order: $eloquentSale->purchase_order,
+            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized)
         );
     }
 
@@ -178,7 +180,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             is_locked: $eloquentSale->is_locked,
             serie_prof: $eloquentSale->series_prof,
             correlative_prof: $eloquentSale->correlative_prof,
-            purchase_order: $eloquentSale->purchase_order
+            purchase_order: $eloquentSale->purchase_order,
+            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized)
         );
     }
 

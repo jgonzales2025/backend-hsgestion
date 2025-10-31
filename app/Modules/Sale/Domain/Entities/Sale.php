@@ -40,6 +40,7 @@ class Sale
     private ?string $serie_prof;
     private ?string $correlative_prof;
     private ?string $purchase_order;
+    private ?User $user_authorized;
 
     public function __construct(
         int $id,
@@ -69,7 +70,8 @@ class Sale
         ?bool $is_locked,
         ?string $serie_prof,
         ?string $correlative_prof,
-        ?string $purchase_order
+        ?string $purchase_order,
+        ?User $user_authorized
     ){
         $this->id = $id;
         $this->company = $company;
@@ -99,6 +101,7 @@ class Sale
         $this->serie_prof = $serie_prof;
         $this->correlative_prof = $correlative_prof;
         $this->purchase_order = $purchase_order;
+        $this->user_authorized = $authorized_user;
     }
 
     public function getId(): int { return $this->id; }
@@ -129,4 +132,5 @@ class Sale
     public function getSerieProf(): string|null { return $this->serie_prof; }
     public function getCorrelativeProf(): string|null { return $this->correlative_prof; }
     public function getPurchaseOrder(): string|null { return $this->purchase_order; }
+    public function getUserAuthorized(): ?User { return $this->user_authorized; }
 }

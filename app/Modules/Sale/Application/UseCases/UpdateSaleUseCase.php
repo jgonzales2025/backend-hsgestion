@@ -43,6 +43,7 @@ readonly class UpdateSaleUseCase
         $userSale = $this->userRepository->findById($saleDTO->user_sale_id ?? $saleDTO->user_id);
         $paymentType = $this->paymentTypeRepository->findById($saleDTO->payment_type_id);
         $currencyType = $this->currencyTypeRepository->findById($saleDTO->currency_type_id);
+        $userAuthorized = $this->userRepository->findById($saleDTO->user_authorized_id);
 
         $sale = new Sale(
             id: $sale->getId(),
@@ -73,6 +74,7 @@ readonly class UpdateSaleUseCase
             serie_prof: $saleDTO->serie_prof,
             correlative_prof: $saleDTO->correlative_prof,
             purchase_order: $saleDTO->purchase_order,
+            user_authorized: $userAuthorized
         );
 
         return $this->saleRepository->update($sale);

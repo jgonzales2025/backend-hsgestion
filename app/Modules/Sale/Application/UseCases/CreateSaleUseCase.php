@@ -70,6 +70,9 @@ readonly class CreateSaleUseCase
         $paymentTypeUseCase = new FindByIdPaymentTypeUseCase($this->paymentTypeRepository);
         $paymentType = $paymentTypeUseCase->execute($saleDTO->payment_type_id);
 
+        $userAuthorizedUseCase = new GetUserByIdUseCase($this->userRepository);
+        $userAuthorized = $userAuthorizedUseCase->execute($saleDTO->user_authorized_id);
+
         $sale = new Sale(
             id: 0,
             company: $company,
@@ -98,7 +101,8 @@ readonly class CreateSaleUseCase
             is_locked: null,
             serie_prof: $saleDTO->serie_prof,
             correlative_prof: $saleDTO->correlative_prof,
-            purchase_order: $saleDTO->purchase_order
+            purchase_order: $saleDTO->purchase_order,
+            user_authorized: $userAuthorized
         );
 
         return $this->saleRepository->save($sale);

@@ -184,7 +184,7 @@ class UserController extends Controller
                 if (is_array($isValid)) {
                     if ($isValid['user_id'] !== $id) {
                         return response()->json([
-                            'message' => 'La contraseña ya está siendo usada por otro usuario.'
+                            'message' => 'Contraseña no válida, ingrese otra contraseña.'
                         ], 422);
                     }
                 }

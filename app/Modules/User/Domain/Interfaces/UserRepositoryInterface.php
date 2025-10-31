@@ -13,4 +13,5 @@ interface UserRepositoryInterface
     public function findByUserName(string $userName): ?User;
     public function updateStLogin(int $id, int $stLogin): void;
     public function findAllUsersByVendedor(): array;
+    public function passwordValidation(string $password): bool|array;
 }

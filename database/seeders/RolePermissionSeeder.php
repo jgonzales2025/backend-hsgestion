@@ -405,7 +405,7 @@ class RolePermissionSeeder extends Seeder
                 'lastname'  => 'Admin',
                 'password'  => Hash::make('123456789'),
                 'status'    => 1,
-                'password_item' => null
+                'password_item' => Hash::make('123456789'),
             ]
         );
 

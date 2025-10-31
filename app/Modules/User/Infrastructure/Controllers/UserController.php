@@ -14,6 +14,7 @@ use App\Modules\User\Application\UseCases\FindAllUsersUseCase;
 use App\Modules\User\Application\UseCases\FindAllUserUseNameCase;
 use App\Modules\User\Application\UseCases\FindByUserNameUseCase;
 use App\Modules\User\Application\UseCases\GetUserByIdUseCase;
+use App\Modules\User\Application\UseCases\PasswordValidationUseCase;
 use App\Modules\User\Application\UseCases\UpdateUserStLoginUseCase;
 use App\Modules\User\Application\UseCases\UpdateUserUseCase;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
@@ -27,6 +28,7 @@ use App\Modules\UserAssignment\Application\UseCases\CreateUserAssignmentUseCase;
 use App\Modules\UserAssignment\Application\UseCases\UpdateUserAssignmentUseCase;
 use App\Modules\UserAssignment\Infrastructure\Persistence\EloquentUserAssignmentRepository;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -269,5 +271,25 @@ class UserController extends Controller
         $users = $userUseCase->execute();
 
         return UserResource::collection($users)->resolve();
+    }
+
+    public function validatedPassword(Request $request): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'password_item' => 'required|string'
+        ]);
+
+        $userUseCase = new PasswordValidationUseCase($this->userRepository);
+        $isValid = $userUseCase->execute($validatedData['password_item']);
+
+        if (is_bool($isValid)) {
+            return response()->json(['status' => $isValid], 200);
+        } else {
+            return response()->json([
+                'status' => $isValid['status'],
+                'user_authorized_id' => $isValid['user_id'],
+                'user_authorized_name' => $isValid['username'],
+            ], 200);
+        }
     }
 }

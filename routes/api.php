@@ -178,6 +178,7 @@ Route::get('articles',[ArticleController::class,'index']);
 Route::post('articles-save',[ArticleController::class,'store']);
 Route::get('articles/{id}',[ArticleController::class,'show']);
 Route::post('articlesupdate/{id}',[ArticleController::class,'update']);
+Route::get('article-excel/{id}',[ArticleController::class,'export']);
 
 // Exchange Rates - Tipo de cambio
 Route::get('exchange-rates', [ExchangeRateController::class, 'index']);

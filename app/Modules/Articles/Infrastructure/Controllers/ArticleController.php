@@ -5,6 +5,7 @@ namespace App\Modules\Articles\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Articles\Application\DTOs\ArticleDTO;
 use App\Modules\Articles\Application\UseCases\CreateArticleUseCase;
+use App\Modules\Articles\Application\UseCases\ExportArticlesToExcelUseCase;
 use App\Modules\Articles\Application\UseCases\FindAllArticlesPriceConvertionUseCase;
 use App\Modules\Articles\Application\UseCases\FindAllArticleUseCase;
 use App\Modules\Articles\Application\UseCases\FindByIdArticleUseCase;
@@ -40,9 +41,34 @@ class ArticleController extends Controller
     private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
     private readonly SubCategoryRepositoryInterface $subCategoryRepository,
     private readonly CompanyRepositoryInterface $companyRepository,
+    private ExportArticlesToExcelUseCase $exportUseCase
 
   ) {
   }
+   public function export(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|int|min:1',
+        ]);
+
+        try {
+            $filePath = $this->exportUseCase->execute($validated['id']);
+            
+            return response()->download(
+                storage_path('app/public/' . $filePath),
+                basename($filePath),
+                [
+                    'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ]
+            )->deleteFileAfterSend(true);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], $e->getMessage() === 'No se encontraron artículos con los IDs proporcionados' ? 404 : 500);
+        }
+    }
+
   public function index(Request $request): array
   {
     $name = $request->query("name");

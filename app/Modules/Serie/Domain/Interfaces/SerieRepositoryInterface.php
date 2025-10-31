@@ -6,5 +6,5 @@ use App\Modules\Serie\Domain\Entities\Serie;
 
 interface SerieRepositoryInterface
 {
-    public function findByDocumentType(int $documentType, int $branch_id): ?Serie;
+    public function findByDocumentType(int $documentType, int $branch_id, ?int $referenceDocumentType): ?Serie;
 }

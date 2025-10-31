@@ -47,6 +47,7 @@ class DatabaseSeeder extends Seeder
              //DispatchNotesSeeder::class,
             SerieSeeder::class,
              //DispatchArticle::class,
+            NoteReasonSeeder::class,
         ]);
     }
 }

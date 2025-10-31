@@ -45,6 +45,7 @@ use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
 use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
 use App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController;
+use App\Modules\NoteReason\Infrastructure\Controllers\NoteReasonController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -273,6 +274,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Ruta para articulos para ventas
     Route::get('/articles-price-convertion', [ArticleController::class, 'indexArticlesForSales']);
+
+    // Ruta para traer los motivos de notas de credito o debito
+    Route::get('/note-reasons', [NoteReasonController::class, 'index']);
 });
 
 Route::middleware('auth:api')->group(function () {

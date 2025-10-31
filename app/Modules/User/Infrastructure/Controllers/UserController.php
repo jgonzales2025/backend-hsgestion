@@ -308,8 +308,7 @@ class UserController extends Controller
         } else {
             return response()->json([
                 'status' => $isValid['status'],
-                'user_authorized_id' => $isValid['user_id'],
-                'user_authorized_name' => $isValid['username'],
+                'user_authorized_id' => $isValid['user_id']
             ], 200);
         }
     }

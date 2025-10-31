@@ -1,10 +1,8 @@
 <?php
 
 namespace App\Modules\Articles\Application\UseCases;
-
-
-use App\Modules\Articles\Domain\Interfaces\ArticleExporterInterface;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
+use App\Modules\Articles\Domain\Interfaces\ArticleExporterInterface;
 
 class ExportArticlesToExcelUseCase
 {
@@ -13,14 +11,14 @@ class ExportArticlesToExcelUseCase
         private ArticleExporterInterface $excelExporter
     ) {}
 
-    public function execute(int $articleIds): string
+    public function execute(int $articleId): string
     {
-        $articles = $this->articleRepository->findById($articleIds);
+        $article = $this->articleRepository->findById($articleId);
         
-        if (!$articles) {
-            throw new \Exception('No se encontraron artículos con los IDs proporcionados');
+        if (!$article) {
+            throw new \Exception('No se encontró el artículo con el ID proporcionado');
         }
         
-        return $this->excelExporter->export($articles);
+        return $this->excelExporter->export($article);
     }
 }

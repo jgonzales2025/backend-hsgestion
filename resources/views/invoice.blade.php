@@ -56,7 +56,7 @@
 
     <table>
         <tr>
-            <td><strong>FECHA EMISIÓN:</strong> {{ $dispatchNote->getDate() ? date('d/m/Y', strtotime($dispatchNote->getDate())) : 'NO ESPECIFICADA' }}</td>
+            <td><strong>FECHA EMISIÓN:</strong> {{ $dispatchNote->getCreatedFecha() ? date('d/m/Y', strtotime($dispatchNote->getCreatedFecha())) : 'NO ESPECIFICADA' }}</td>
             <td><strong>MOTIVO:</strong> {{ $dispatchNote->getEmissionReason()?->getDescription() ?? 'VENTA' }}</td>
         </tr>
         <tr>

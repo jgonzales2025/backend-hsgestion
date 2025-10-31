@@ -2,6 +2,8 @@
 
 namespace App\Modules\DispatchNotes\Infrastructure\Persistence;
 
+use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
+use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
 use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 
 use App\Modules\DispatchNotes\Domain\Interfaces\PdfGeneratorInterface;
@@ -11,30 +13,47 @@ use Illuminate\Support\Facades\Log;
 
 class DomPdfGenerator implements PdfGeneratorInterface
 {
-    public function generate(DispatchNote $dispatchNote): string
-    {
-        try {
-            // Cargar tu vista Blade con los datos de la guía de remisión
-            $pdf = Pdf::loadView('invoice', [
-                'dispatchNote' => $dispatchNote
-            ]);
+  public function generate(DispatchNote $dispatchNote): string
+{
+    try {
+        // Obtener los artículos asociados a esta guía
+        $dispatchArticles = (function () use ($dispatchNote) {
+            try {
+                $articles = app(DispatchArticleRepositoryInterface::class)
+                    ->findById($dispatchNote->getId());
 
+                return DispatchArticleResource::collection($articles)->resolve();
+            } catch (\Throwable $e) {
+                \Log::error("Error obteniendo artículos: " . $e->getMessage());
+                return [];
+            }
+        })();
 
-            $filename = 'dispatch_note_' . $dispatchNote->getId() . '.pdf';
-            $path = 'pdf/' . $filename;
+        // Cargar la vista Blade con los datos de la guía y los artículos
+        $pdf = Pdf::loadView('invoice', [
+            'dispatchNote' => $dispatchNote,
+            'dispatchArticles' => $dispatchArticles,
+        ]);
 
-            // Guardar el PDF en storage/app/public/pdf/
-            Storage::disk('public')->put($path, $pdf->output());
+        // Generar el nombre y la ruta del PDF
+        $filename = 'dispatch_note_' . $dispatchNote->getId() . '.pdf';
+        $path = 'pdf/' . $filename;
 
-            return $path;
-        } catch (\Throwable $e) {
-            Log::error('Error generando PDF: ' . $e->getMessage(), [
-                'dispatch_note_id' => $dispatchNote->getId(),
-                'trace' => $e->getTraceAsString()
-            ]);
-            throw new \RuntimeException('No se pudo generar el PDF: ' . $e->getMessage());
-        }
+        // Guardar el PDF en storage/app/public/pdf/
+        Storage::disk('public')->put($path, $pdf->output());
+
+        return $path;
+
+    } catch (\Throwable $e) {
+        \Log::error('Error generando PDF: ' . $e->getMessage(), [
+            'dispatch_note_id' => $dispatchNote->getId(),
+            'trace' => $e->getTraceAsString()
+        ]);
+
+        throw new \RuntimeException('No se pudo generar el PDF: ' . $e->getMessage());
     }
+}
+
 
     public function exists(string $path): bool
     {

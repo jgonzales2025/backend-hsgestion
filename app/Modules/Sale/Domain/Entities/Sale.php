@@ -101,7 +101,7 @@ class Sale
         $this->serie_prof = $serie_prof;
         $this->correlative_prof = $correlative_prof;
         $this->purchase_order = $purchase_order;
-        $this->user_authorized = $authorized_user;
+        $this->user_authorized = $user_authorized;
     }
 
     public function getId(): int { return $this->id; }

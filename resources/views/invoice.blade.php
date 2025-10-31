@@ -1,23 +1,56 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Guía de Remisión Electrónica</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 10px; color: #000; margin: 0; padding: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        th, td { border: 1px solid #000; padding: 5px; text-align: left; }
-        .header td { border: none; padding: 2px 0; }
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .no-border { border: none !important; }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            color: #000;
+            margin: 0;
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: left;
+        }
+
+        .header td {
+            border: none;
+            padding: 2px 0;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .no-border {
+            border: none !important;
+        }
     </style>
 </head>
+
 <body>
     <table class="header">
         <tr>
             <td width="60%">
-                <strong>EMPRESA: {{ $dispatchNote->getCompany()?->getCompanyName() ?? 'EMPRESA NO ESPECIFICADA' }}</strong><br>
+                <strong>EMPRESA:
+                    {{ $dispatchNote->getCompany()?->getCompanyName() ?? 'EMPRESA NO ESPECIFICADA' }}</strong><br>
                 RUC: {{ $dispatchNote->getCompany()?->getRuc() ?? 'NO DISPONIBLE' }}<br>
                 {{ $dispatchNote->getCompany()?->getAddress() ?? 'Sin dirección registrada' }}
             </td>
@@ -30,11 +63,14 @@
 
     <table>
         <tr>
-            <td><strong>FECHA EMISIÓN:</strong> {{ $dispatchNote->getCreatedFecha() ? date('d/m/Y', strtotime($dispatchNote->getCreatedFecha())) : 'NO ESPECIFICADA' }}</td>
+            <td><strong>FECHA EMISIÓN:</strong>
+                {{ $dispatchNote->getCreatedFecha ?? 'NO ESPECIFICADA' }}
+            </td>
             <td><strong>MOTIVO:</strong> {{ $dispatchNote->getEmissionReason()?->getDescription() ?? 'VENTA' }}</td>
         </tr>
         <tr>
-            <td colspan="2"><strong>DESTINATARIO:</strong> {{ $dispatchNote->getDestinationAddressCustomer() ?? 'NO ESPECIFICADO' }}</td>
+            <td colspan="2"><strong>DESTINATARIO:</strong>
+                {{ $dispatchNote->getDestinationAddressCustomer() ?? 'NO ESPECIFICADO' }}</td>
         </tr>
     </table>
 
@@ -43,12 +79,20 @@
             <td width="50%">
                 <strong>TRANSPORTISTA</strong><br>
                 <strong>N° PLACA:</strong> {{ $dispatchNote->getLicensePlate() ?? 'NO ESPECIFICADA' }}<br>
-                <strong>CONDUCTOR:</strong> {{ $dispatchNote->getConductor()?->getName() ?? 'NO ESPECIFICADO' }}
+
+                <strong>
+                    {{ strtolower($dispatchNote->getTransferType() ?? '') === 'publico' ? 'EMPRESA DE TRANSPORTE:' : 'CONDUCTOR:' }}
+                </strong>
+                {{ strtolower($dispatchNote->getTransferType() ?? '') === 'publico'
+    ? ($dispatchNote->getTransport()?->getCompanyName() ?? 'EMPRESA NO ESPECIFICADA')
+    : ($dispatchNote->getConductor()?->getName() ?? 'CONDUCTOR NO ESPECIFICADO')
+}}
             </td>
             <td width="50%">
                 <strong>EMPRESA TRANSPORTE</strong><br>
                 <strong>RUC:</strong> {{ $dispatchNote->getTransport()?->getRuc() ?? 'NO ESPECIFICADO' }}<br>
-                <strong>RAZÓN SOCIAL:</strong> {{ $dispatchNote->getTransport()?->getCompanyName() ?? 'NO ESPECIFICADA' }}
+                <strong>RAZÓN SOCIAL:</strong>
+                {{ $dispatchNote->getTransport()?->getCompanyName() ?? 'NO ESPECIFICADA' }}
             </td>
         </tr>
     </table>
@@ -63,30 +107,36 @@
             </tr>
         </thead>
         <tbody>
-            @if(method_exists($dispatchNote, 'getItems') && is_iterable($dispatchNote->getItems()))
-                @foreach($dispatchNote->getItems() as $item)
+            @if(!empty($dispatchArticles) && is_iterable($dispatchArticles))
+                @foreach($dispatchArticles as $item)
                     <tr>
-                        <td class="text-center">{{ $item->getQuantity() ?? 0 }}</td>
-                        <td class="text-center">{{ $item->getUnit() ?? 'UND' }}</td>
-                        <td>{{ $item->getName() ?? 'SIN DESCRIPCIÓN' }}</td>
-                        <td class="text-right">{{ number_format($item->getWeight() ?? 0, 2) }}</td>
+                        <td class="text-center">{{ $item['id'] ?? '-' }}</td>
+                        <td class="text-center">{{ $item['article_id'] ?? '-' }}</td>
+                        <td class="text-center">{{ $item['quantity'] ?? 0 }}</td>
+                        <td class="text-center">{{ $item['weight'] ?? 0 }}</td>
+                        <td class="text-center">{{ $item['saldo'] ?? 0 }}</td>
+                        <td>{{ $item['name'] ?? 'SIN DESCRIPCIÓN' }}</td>
+                        <td class="text-right">{{ number_format($item['subtotal_weight'] ?? 0, 2) }}</td>
                     </tr>
                 @endforeach
             @else
                 <tr>
-                    <td colspan="4" class="text-center">No hay artículos registrados</td>
+                    <td colspan="7" class="text-center">No hay artículos registrados</td>
                 </tr>
             @endif
+
             <tr>
                 <td colspan="3" class="text-right"><strong>TOTAL PESO (kg):</strong></td>
-                <td class="text-right"><strong>{{ number_format($dispatchNote->getTotalWeight() ?? 0, 2) }}</strong></td>
+                <td class="text-right"><strong>{{ number_format($dispatchNote->getTotalWeight() ?? 0, 2) }}</strong>
+                </td>
             </tr>
         </tbody>
     </table>
 
     <table>
         <tr>
-            <td class="no-border"><strong>OBSERVACIONES:</strong> {{ $dispatchNote->getObservations() ?? 'Ninguna' }}</td>
+            <td class="no-border"><strong>OBSERVACIONES:</strong> {{ $dispatchNote->getObservations() ?? 'Ninguna' }}
+            </td>
         </tr>
     </table>
 
@@ -94,4 +144,5 @@
         Documento generado el {{ date('d/m/Y H:i:s') }}
     </div>
 </body>
+
 </html>

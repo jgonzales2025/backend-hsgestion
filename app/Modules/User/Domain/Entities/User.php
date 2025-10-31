@@ -42,6 +42,7 @@ class User
         $this->roles = $roles;
         $this->assignment = $assignment;
         $this->st_login = $st_login;
+        $this->password_item = $password_item;
     }
 
     public function getId(): int { return $this->id; }

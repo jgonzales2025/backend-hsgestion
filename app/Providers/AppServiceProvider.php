@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Domain\Article\Ports\ArticleExporterInterface;
+use App\Infrastructure\Adapters\ArticlesExport;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
 use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface;
@@ -144,7 +146,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CollectionRepositoryInterface::class, EloquentCollectionRepository::class);
         $this->app->bind(PaymentMethodRepositoryInterface::class, EloquentPaymentMethodRepository::class);
         $this->app->bind(TransactionLogRepositoryInterface::class, EloquentTransactionLogRepository::class);
-        $this->app->bind(MonthlyClosureRepositoryInterface::class, EloquentMonthlyClosureRepository::class);;
+        $this->app->bind(MonthlyClosureRepositoryInterface::class, EloquentMonthlyClosureRepository::class);
+        $this->app->bind(ArticleExporterInterface::class,ArticlesExport::class);
     }
 
     /**

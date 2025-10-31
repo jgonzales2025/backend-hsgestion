@@ -99,6 +99,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             state_modify_article: $eloquentArticle->state_modify_article
         );
     }
+
     public function findAllArticle(?string $description): array
     {
         $payload = auth('api')->payload();

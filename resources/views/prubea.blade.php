@@ -1,16 +1,42 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Guía de Remisión Electrónica</title>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 10px; color: #000; margin: 0; padding: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        th, td { border: 1px solid #000; padding: 5px; text-align: left; }
-        .header td { border: none; padding: 2px 0; }
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .no-border { border: none !important; }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10px;
+            color: #000;
+            margin: 0;
+            padding: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: left;
+        }
+        .header {
+            margin-bottom: 15px;
+        }
+        .header td {
+            border: none;
+            padding: 2px 0;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .no-border {
+            border: none !important;
+        }
     </style>
 </head>
 <body>
@@ -23,7 +49,7 @@
             </td>
             <td class="text-center" style="border: 1px solid #000; padding: 5px;">
                 <strong>GUÍA DE REMISIÓN ELECTRÓNICA</strong><br>
-                {{ $dispatchNote->getSerie() ?? '' }}-{{ $dispatchNote->getCorrelativo() ?? '' }}
+                {{ $dispatchNote->getSerie() }}-{{ $dispatchNote->getCorrelativo() }}
             </td>
         </tr>
     </table>
@@ -94,4 +120,5 @@
         Documento generado el {{ date('d/m/Y H:i:s') }}
     </div>
 </body>
-</html>
+
+</html> -->

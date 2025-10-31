@@ -34,6 +34,7 @@ class UpdateSaleRequest extends FormRequest
             'serie_prof' => 'nullable|string|max:10',
             'correlative_prof' => 'nullable|string|max:10',
             'purchase_order' => 'nullable|string|max:10',
+            'user_authorized_id' => 'nullable|integer|exists:users,id',
 
             'sale_articles' => 'required|array|min:1',
             'sale_articles.*.article_id' => 'required|integer|exists:articles,id',

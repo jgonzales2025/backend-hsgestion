@@ -30,6 +30,7 @@ class SaleDTO
     public ?string $serie_prof;
     public ?string $correlative_prof;
     public ?string $purchase_order;
+    public ?int $user_authorized_id;
 
     public function __construct(array $data)
     {
@@ -59,5 +60,6 @@ class SaleDTO
         $this->serie_prof = $data['serie_prof'] ?? null;
         $this->correlative_prof = $data['correlative_prof'] ?? null;
         $this->purchase_order = $data['purchase_order'] ?? null;
+        $this->user_authorized_id = $data['user_authorized_id'] ?? null;
     }
 }

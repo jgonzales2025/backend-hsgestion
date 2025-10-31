@@ -6,6 +6,7 @@ use App\Modules\User\Domain\Entities\User;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class EloquentUserRepository implements UserRepositoryInterface
 {
@@ -89,14 +90,11 @@ class EloquentUserRepository implements UserRepositoryInterface
     {
         $eloquentUser = EloquentUser::find($user->getId());
 
-        if (!$eloquentUser) {
-            throw new \Exception("Usuario no encontrado");
-        }
-
         $data = [
             'firstname' => $user->getFirstname(),
             'lastname' => $user->getLastname(),
             'status' => $user->getStatus(),
+            'password_item' => $user->getPasswordItem()
         ];
 
         if ($user->getPassword() !== null
@@ -105,15 +103,7 @@ class EloquentUserRepository implements UserRepositoryInterface
             $data['password'] = password_hash($user->getPassword(), PASSWORD_BCRYPT);
         }
 
-        if ($user->getPasswordItem() !== null
-            && $user->getPasswordItem() !== $eloquentUser->password_item
-            && !str_starts_with($user->getPasswordItem(), '$2y$'))
-        {
-            $data['password_item'] = Hash::make($user->getPasswordItem());
-        }
-
         $eloquentUser->update($data);
-
     }
 
     public function findAllUsers(): array
@@ -215,8 +205,7 @@ class EloquentUserRepository implements UserRepositoryInterface
             if (Hash::check($password, $user->password_item)) {
                 return [
                     'status' => true,
-                    'user_id' => $user->id,
-                    'username' => $user->username,
+                    'user_id' => $user->id
                 ];
             }
         }

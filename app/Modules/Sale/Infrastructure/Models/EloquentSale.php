@@ -42,7 +42,8 @@ class EloquentSale extends Model
         'amount_amortized',
         'status',
         'payment_status',
-        'is_locked'
+        'is_locked',
+        'user_authorized_id'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -65,6 +66,11 @@ class EloquentSale extends Model
     public function userSale(): BelongsTo
     {
         return $this->belongsTo(EloquentUser::class, 'user_sale_id');
+    }
+
+    public function userAuthorized(): BelongsTo
+    {
+        return $this->belongsTo(EloquentUser::class, 'user_authorized_id');
     }
 
     public function paymentType(): BelongsTo

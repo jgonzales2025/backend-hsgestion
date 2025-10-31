@@ -40,6 +40,7 @@ return new class extends Migration
             $table->string('serie_prof')->nullable();
             $table->string('correlative_prof')->nullable();
             $table->string('purchase_order')->nullable();
+            $table->foreignId('user_authorized_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

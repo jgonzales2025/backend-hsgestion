@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Modules\DispatchNotes\Infrastructure\Services;
+namespace App\Modules\DispatchNotes\Infrastructure\Persistence;
 
 use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
-use App\Modules\DispatchNotes\Domain\Services\PdfGeneratorInterface;
+
+use App\Modules\DispatchNotes\Domain\Interfaces\PdfGeneratorInterface;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;

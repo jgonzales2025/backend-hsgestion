@@ -41,7 +41,7 @@ class ArticleController extends Controller
     private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
     private readonly SubCategoryRepositoryInterface $subCategoryRepository,
     private readonly CompanyRepositoryInterface $companyRepository,
-    // private ExportArticlesToExcelUseCase $exportUseCase
+    //  private ExportArticlesToExcelUseCase $exportUseCase
 
   ) {
   }

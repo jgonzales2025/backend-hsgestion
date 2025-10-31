@@ -39,7 +39,10 @@ use App\Modules\DigitalWallet\Infrastructure\Persistence\EloquentDigitalWalletRe
 use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
 use App\Modules\DispatchArticle\Infrastructure\Persistence\EloquentDispatchArticleRepository;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
+use App\Modules\DispatchNotes\Domain\Interfaces\PdfGeneratorInterface;
+use App\Modules\DispatchNotes\Infrastructure\Persistence\DomPdfGenerator;
 use App\Modules\DispatchNotes\Infrastructure\Persistence\EloquentDIspatchNoteRepository;
+
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\DocumentType\Infrastructure\Persistence\EloquentDocumentTypeRepository;
 use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
@@ -147,7 +150,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PaymentMethodRepositoryInterface::class, EloquentPaymentMethodRepository::class);
         $this->app->bind(TransactionLogRepositoryInterface::class, EloquentTransactionLogRepository::class);
         $this->app->bind(MonthlyClosureRepositoryInterface::class, EloquentMonthlyClosureRepository::class);
-        $this->app->bind(ArticleExporterInterface::class,ArticlesExport::class);
+        $this->app->bind(MonthlyClosureRepositoryInterface::class, EloquentMonthlyClosureRepository::class);
+        $this->app->bind(PdfGeneratorInterface::class,DomPdfGenerator::class);
     }
 
     /**

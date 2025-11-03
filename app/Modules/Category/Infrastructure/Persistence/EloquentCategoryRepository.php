@@ -17,7 +17,7 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
             return [];
         }
 
-        return $categories->map(fn ($eloquentCategory) => $this->mapToEntity($categories))->toArray();
+        return $categories->map(fn ($eloquentCategory) => $this->mapToEntity($eloquentCategory))->toArray();
     }
 
     public function save(Category $category): Category

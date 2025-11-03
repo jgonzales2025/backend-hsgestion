@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name', 30);
             $table->integer('status')->default(1);
+            $table->boolean('st_concept')->default(0);
             $table->timestamps();
         });
     }

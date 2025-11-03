@@ -43,7 +43,10 @@ class EloquentSale extends Model
         'status',
         'payment_status',
         'is_locked',
-        'user_authorized_id'
+        'user_authorized_id',
+        'reference_document_type_id',
+        'reference_serie',
+        'reference_correlative'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

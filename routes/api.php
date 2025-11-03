@@ -45,6 +45,7 @@ use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
 use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
 use App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController;
+use App\Modules\NoteReason\Infrastructure\Controllers\NoteReasonController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -246,14 +247,15 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/branches-by-user', [UserAssignmentController::class, 'indexBranchesByUser']);
 
     // Ruta para ventas
-    Route::get('/sales', [SaleController::class, 'index']);
+
+    Route::get('/sales-proformas', [SaleController::class, 'indexProformas']);
     Route::get('/sales/by-document', [SaleController::class, 'showDocumentSale']);
+    Route::get('/sales/get-updated-quantities', [SaleController::class, 'getUpdatedQuantities']);
+    Route::get('/sales', [SaleController::class, 'index']);
     Route::get('/sales/{id}', [SaleController::class, 'show']);
     Route::post('/sales', [SaleController::class, 'store']);
     Route::put('/sales/{id}', [SaleController::class, 'update']);
 
-    // Ruta para proformas
-    Route::get('/sales-proformas', [SaleController::class, 'indexProformas']);
 
     // Ruta para cobranzas
     Route::get('/collections', [CollectionController::class, 'index']);
@@ -273,6 +275,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Ruta para articulos para ventas
     Route::get('/articles-price-convertion', [ArticleController::class, 'indexArticlesForSales']);
+
+    // Ruta para traer los motivos de notas de credito o debito
+    Route::get('/note-reasons', [NoteReasonController::class, 'index']);
+
 });
 
 Route::middleware('auth:api')->group(function () {

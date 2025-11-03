@@ -85,6 +85,91 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         return $eloquentSalesProformas->map(fn($sale) => $this->mapToDomain($sale))->toArray();
     }
 
+    public function findSaleWithUpdatedQuantities(int $referenceDocumentTypeId, string $referenceSerie, string $referenceCorrelative): ?array
+    {
+        $originalSale = EloquentSale::with([
+            'saleArticles.article',
+            'company',
+            'branch',
+            'documentType',
+            'customer',
+            'user',
+            'userSale',
+            'paymentType',
+            'currencyType',
+            'userAuthorized'
+        ])
+            ->where('document_type_id', $referenceDocumentTypeId)
+            ->where('serie', $referenceSerie)
+            ->where('document_number', $referenceCorrelative)
+            ->first();
+
+        if (!$originalSale) {
+            return null;
+        }
+
+        // Obtener todas las notas de crédito relacionadas
+        $creditNotes = EloquentSale::with(['saleArticles'])
+            ->whereNotNull('reference_document_type_id')
+            ->where('reference_document_type_id', $referenceDocumentTypeId)
+            ->where('reference_serie', $referenceSerie)
+            ->where('reference_correlative', $referenceCorrelative)
+            ->where('status', 1)
+            ->get();
+
+        $hasCreditNotes = $creditNotes->isNotEmpty();
+
+        // Calcular cantidades devueltas por artículo (sumando todas las notas de crédito)
+        $returnedQuantities = [];
+        if ($hasCreditNotes) {
+            foreach ($creditNotes as $creditNote) {
+                foreach ($creditNote->saleArticles as $article) {
+                    $articleId = $article->article_id;
+                    if (!isset($returnedQuantities[$articleId])) {
+                        $returnedQuantities[$articleId] = 0;
+                    }
+                    // Sumar la cantidad devuelta de este artículo en esta nota de crédito
+                    $returnedQuantities[$articleId] += $article->quantity;
+                }
+            }
+        }
+
+        // Calcular cantidades actualizadas para cada artículo
+        $updatedArticles = [];
+
+        foreach ($originalSale->saleArticles as $saleArticle) {
+            $articleId = $saleArticle->article_id;
+            $originalQuantity = $saleArticle->quantity;
+            $returnedQuantity = $returnedQuantities[$articleId] ?? 0;
+            $updatedQuantity = $originalQuantity - $returnedQuantity;
+
+            // Si hay devolución, usar updated_quantity; si no, usar original_quantity
+            $quantityForCalculation = $returnedQuantity > 0 ? $updatedQuantity : $originalQuantity;
+
+            $articleSubtotal = $quantityForCalculation * $saleArticle->unit_price;
+
+            $updatedArticles[] = [
+                'sale_article_id' => $saleArticle->id,
+                'article_id' => $articleId,
+                'article_name' => $saleArticle->article->description ?? null,
+                'description' => $saleArticle->description,
+                'original_quantity' => $originalQuantity,
+                'returned_quantity' => $returnedQuantity,
+                'updated_quantity' => $updatedQuantity,
+                'unit_price' => (float) $saleArticle->unit_price,
+                'public_price' => (float) $saleArticle->public_price ?? null,
+                'subtotal' => round($articleSubtotal, 2),
+            ];
+        }
+
+        return [
+            'sale' => $originalSale,
+            'articles' => $updatedArticles,
+            'has_credit_notes' => $hasCreditNotes
+        ];
+
+    }
+
     private function mapToArray(Sale $sale): array
     {
         return [
@@ -112,6 +197,9 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'correlative_prof' => $sale->getCorrelativeProf(),
             'purchase_order' => $sale->getPurchaseOrder(),
             'user_authorized_id' => $sale->getUserAuthorized()?->getId(),
+            'reference_document_type_id' => $sale->getReferenceDocumentTypeId(),
+            'reference_serie' => $sale->getReferenceSerie(),
+            'reference_correlative' => $sale->getReferenceCorrelative(),
         ];
     }
 
@@ -146,7 +234,10 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             serie_prof: $eloquentSale->series_prof,
             correlative_prof: $eloquentSale->correlative_prof,
             purchase_order: $eloquentSale->purchase_order,
-            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized)
+            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized),
+            reference_document_type_id: $eloquentSale->reference_document_type_id,
+            reference_serie: $eloquentSale->reference_serie,
+            reference_correlative: $eloquentSale->reference_correlative
         );
     }
 
@@ -181,7 +272,10 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             serie_prof: $eloquentSale->series_prof,
             correlative_prof: $eloquentSale->correlative_prof,
             purchase_order: $eloquentSale->purchase_order,
-            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized)
+            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized),
+            reference_document_type_id: $eloquentSale->reference_document_type_id,
+            reference_serie: $eloquentSale->reference_serie,
+            reference_correlative: $eloquentSale->reference_correlative
         );
     }
 

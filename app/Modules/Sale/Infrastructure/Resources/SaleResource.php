@@ -19,6 +19,7 @@ class SaleResource extends JsonResource
             'document_type' => [
                 'id' => $this->resource->getDocumentType()->getId(),
                 'name' => $this->resource->getDocumentType()->getDescription(),
+                'abbreviation' => $this->resource->getDocumentType()->getAbbreviation(),
             ],
             'serie' => $this->resource->getSerie(),
             'document_number' => $this->resource->getDocumentNumber(),
@@ -31,6 +32,8 @@ class SaleResource extends JsonResource
                 ] : [
                     'document_number' => $customer->getDocumentNumber(),
                     'name' => $customer->getName(),
+                    'lastname' => $customer->getLastName(),
+                    'second_lastname' => $customer->getSecondLastName(),
                 ]),
             ],
             'date' => $this->resource->getDate(),

@@ -9,8 +9,8 @@ readonly class FindByDocumentTypeUseCase
 {
     public function __construct(private readonly SerieRepositoryInterface $serieRepository){}
 
-    public function execute(int $documentType, int $branch_id): ?Serie
+    public function execute(int $documentType, int $branch_id, ?int $referenceDocumentType): ?Serie
     {
-        return $this->serieRepository->findByDocumentType($documentType, $branch_id);
+        return $this->serieRepository->findByDocumentType($documentType, $branch_id, $referenceDocumentType);
     }
 }

@@ -41,6 +41,9 @@ class Sale
     private ?string $correlative_prof;
     private ?string $purchase_order;
     private ?User $user_authorized;
+    private ?int $reference_document_type_id;
+    private ?string $reference_serie;
+    private ?string $reference_correlative;
 
     public function __construct(
         int $id,
@@ -71,7 +74,10 @@ class Sale
         ?string $serie_prof,
         ?string $correlative_prof,
         ?string $purchase_order,
-        ?User $user_authorized
+        ?User $user_authorized,
+        ?int $reference_document_type_id,
+        ?string $reference_serie,
+        ?string $reference_correlative
     ){
         $this->id = $id;
         $this->company = $company;
@@ -102,6 +108,9 @@ class Sale
         $this->correlative_prof = $correlative_prof;
         $this->purchase_order = $purchase_order;
         $this->user_authorized = $user_authorized;
+        $this->reference_document_type_id = $reference_document_type_id;
+        $this->reference_serie = $reference_serie;
+        $this->reference_correlative = $reference_correlative;
     }
 
     public function getId(): int { return $this->id; }
@@ -133,4 +142,7 @@ class Sale
     public function getCorrelativeProf(): string|null { return $this->correlative_prof; }
     public function getPurchaseOrder(): string|null { return $this->purchase_order; }
     public function getUserAuthorized(): ?User { return $this->user_authorized; }
+    public function getReferenceDocumentTypeId(): ?int { return $this->reference_document_type_id; }
+    public function getReferenceSerie(): string|null { return $this->reference_serie; }
+    public function getReferenceCorrelative(): string|null { return $this->reference_correlative; }
 }

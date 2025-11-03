@@ -13,4 +13,5 @@ interface SaleRepositoryInterface
     public function update(Sale $sale): ?Sale;
     public function findByDocumentSale(int $documentTypeId, string $serie, string $correlative): ?Sale;
     public function findAllProformas(): array;
+    public function findSaleWithUpdatedQuantities(int $referenceDocumentTypeId, string $referenceSerie, string $referenceCorrelative): ?array;
 }

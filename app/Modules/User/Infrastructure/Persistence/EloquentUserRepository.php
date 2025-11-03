@@ -36,7 +36,7 @@ class EloquentUserRepository implements UserRepositoryInterface
         );
     }
 
-    public function findById(int $id): ?User
+    public function findById(?int $id): ?User
     {
         $user = EloquentUser::with('roles', 'assignments')->find($id);
 

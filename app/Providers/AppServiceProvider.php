@@ -63,6 +63,8 @@ use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\Menu\Infrastructure\Persistence\EloquentMenuRepository;
 use App\Modules\MonthlyClosure\Domain\Interfaces\MonthlyClosureRepositoryInterface;
 use App\Modules\MonthlyClosure\Infrastructure\Persistence\EloquentMonthlyClosureRepository;
+use App\Modules\NoteReason\Domain\Interfaces\NoteReasonRepositoryInterface;
+use App\Modules\NoteReason\Infrastructure\Persistence\EloquentNoteReasonRepository;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
 use App\Modules\PaymentMethod\Infrastructure\Persistence\EloquentPaymentMethodRepository;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
@@ -154,7 +156,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(MonthlyClosureRepositoryInterface::class, EloquentMonthlyClosureRepository::class);
         $this->app->bind(ArticleExporterInterface::class,ExcelArticleExporter::class);
         $this->app->bind(PdfGeneratorInterface::class,DomPdfGenerator::class);
-   
+        $this->app->bind(NoteReasonRepositoryInterface::class, EloquentNoteReasonRepository::class);
+
     }
 
     /**

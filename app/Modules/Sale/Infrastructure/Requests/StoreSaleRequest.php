@@ -47,6 +47,9 @@ class StoreSaleRequest extends FormRequest
             'correlative_prof' => 'nullable|string|max:10',
             'purchase_order' => 'nullable|string|max:10',
             'user_authorized_id' => 'nullable|integer|exists:users,id',
+            'reference_document_type_id' => 'required_if:document_type_id,7|required_if:document_type_id,8|integer|exists:document_types,id',
+            'reference_serie' => 'required_if:document_type_id,7|required_if:document_type_id,8|string|max:10',
+            'reference_correlative' => 'required_if:document_type_id,7|required_if:document_type_id,8|string|max:10',
 
             'sale_articles' => 'required|array|min:1',
             'sale_articles.*.article_id' => 'required|integer|exists:articles,id',

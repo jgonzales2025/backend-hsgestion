@@ -18,9 +18,10 @@ class SerieController extends Controller
     {
         $documentType = $request->query('document_type_id');
         $branch_id = $request->query('branch_id');
+        $referenceDocumentType = $request->query('reference_document_type_id');
 
         $serieUseCase = new FindByDocumentTypeUseCase($this->serieRepository);
-        $series = $serieUseCase->execute($documentType, $branch_id);
+        $series = $serieUseCase->execute($documentType, $branch_id, $referenceDocumentType);
 
         if (!$series) {
             return response()->json(["message" => "No se encontraron series"]);

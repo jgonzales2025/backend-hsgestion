@@ -31,6 +31,9 @@ class SaleDTO
     public ?string $correlative_prof;
     public ?string $purchase_order;
     public ?int $user_authorized_id;
+    public ?int $reference_document_type_id;
+    public ?string $reference_serie;
+    public ?string $reference_correlative;
 
     public function __construct(array $data)
     {
@@ -61,5 +64,8 @@ class SaleDTO
         $this->correlative_prof = $data['correlative_prof'] ?? null;
         $this->purchase_order = $data['purchase_order'] ?? null;
         $this->user_authorized_id = $data['user_authorized_id'] ?? null;
+        $this->reference_document_type_id = $data['reference_document_type_id'] ?? null;
+        $this->reference_serie = $data['reference_serie'] ?? null;
+        $this->reference_correlative = $data['reference_correlative'] ?? null;
     }
 }

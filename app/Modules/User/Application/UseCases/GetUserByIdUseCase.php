@@ -14,7 +14,7 @@ class GetUserByIdUseCase
         $this->userRepository = $userRepository;
     }
 
-    public function execute(int $id): ?User
+    public function execute(?int $id): ?User
     {
         return $this->userRepository->findById($id);
     }

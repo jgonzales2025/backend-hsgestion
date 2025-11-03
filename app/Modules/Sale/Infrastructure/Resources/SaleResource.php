@@ -11,6 +11,7 @@ class SaleResource extends JsonResource
     {
         $customer = $this->resource->getCustomer();
         $isCompany = $customer->getCustomerDocumentTypeId() == 2;
+        $isNegative = $this->resource->getDocumentType()->getId() == 7;
 
         return [
             'id' => $this->resource->getId(),
@@ -61,11 +62,11 @@ class SaleResource extends JsonResource
                 'name' => $this->resource->getCurrencyType()->getName(),
                 'reference'=>($this->resource->getCurrencyType()->getName()) == "SOLES" ? "S/" : "$",
             ],
-            'subtotal' => $this->resource->getSubtotal(),
+            'subtotal' => $isNegative ? -$this->resource->getSubtotal() : $this->resource->getSubtotal(),
             'inafecto' => $this->resource->getInafecto(),
-            'igv' => $this->resource->getIgv(),
-            'total' => $this->resource->getTotal(),
-            'saldo' => $this->resource->getSaldo(),
+            'igv' => $isNegative ? -$this->resource->getIgv() : $this->resource->getIgv(),
+            'total' => $isNegative ? -$this->resource->getTotal() : $this->resource->getTotal(),
+            'saldo' => $isNegative ? -$this->resource->getSaldo() : $this->resource->getSaldo(),
             'amount_amortized' => $this->resource->getAmountAmortized(),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             'payment_status' => ($this->resource->getPaymentStatus()) == 1 ? 'Cancelado' : 'Pendiente',

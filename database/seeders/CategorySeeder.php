@@ -15,32 +15,39 @@ class CategorySeeder extends Seeder
     {
         $categories = [
             [
-                'name' => 'IMPRESORAS',
-                'status' => 1
+                'name' => 'ESPECIAL',
+                'status' => 1,
+                'st_concept' => 1
             ],
             [
                 'name' => 'PLACAS MADRE',
-                'status' => 1
+                'status' => 1,
+                'st_concept' => 0
             ],
             [
                 'name' => 'TARJETAS DE VIDEO',
-                'status' => 1
+                'status' => 1,
+                'st_concept' => 0
             ],
             [
                 'name' => 'MONITORES',
-                'status' => 1
+                'status' => 1,
+                'st_concept' => 0
             ],
             [
                 'name' => 'PROCESADOR',
-                'status' => 1
+                'status' => 1,
+                'st_concept' => 0
             ],
             [
                 'name' => 'MEMORIAS RAM',
-                'status' => 1
+                'status' => 1,
+                'st_concept' => 0
             ],
             [
                 'name' => 'LAPTOPS',
-                'status' => 1
+                'status' => 1,
+                'st_concept' => 0
             ]
         ];
 

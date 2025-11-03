@@ -11,7 +11,7 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
 
     public function findAll(): array
     {
-        $categories = EloquentCategory::all()->sortByDesc('created_at');
+        $categories = EloquentCategory::all()->where('st_concept', 0)->sortByDesc('created_at');
 
         if ($categories->isEmpty()) {
             return [];

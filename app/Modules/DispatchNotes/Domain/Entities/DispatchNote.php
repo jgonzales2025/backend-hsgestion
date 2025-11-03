@@ -35,6 +35,8 @@ class DispatchNote
     private ?int $destination_branch_client;
     private int $customer_id;
     private string $created_at = "";
+    private ?int $supplier_id;
+    private  ?int $address_supplier_id;
 
     public function __construct(
         ?int $id,
@@ -61,6 +63,8 @@ class DispatchNote
         ?DocumentType $document_type,
         ?int $destination_branch_client,
         int $customer_id,
+        ?int $supplier_id = null,
+        ?int $address_supplier_id = null,
 
     ) {
         $this->id = $id;
@@ -87,6 +91,8 @@ class DispatchNote
         $this->document_type = $document_type;
         $this->destination_branch_client = $destination_branch_client;
         $this->customer_id = $customer_id;
+        $this->supplier_id = $supplier_id;
+        $this->address_supplier_id = $address_supplier_id;
     }
 
     // Getters
@@ -189,8 +195,15 @@ class DispatchNote
     public function getCreatedFecha():?string{
         return $this->created_at;
     }
+    public function getSupplierId():?int{
+       return $this->supplier_id;
+   }
+      public function getAddressSupplierId():?int{
+       return $this->address_supplier_id;
+   }
         public function setCreatedAt(?string $date): void
     {
         $this->created_at = $date;
     }
+
 }

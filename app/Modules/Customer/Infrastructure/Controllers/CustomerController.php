@@ -239,8 +239,8 @@ class CustomerController extends Controller
         return response()->json([
             'customer' => (new CustomerCompanyResource($customer))->resolve(),
             'addresses' => CustomerAddressResource::collection($customer->getAddresses())->resolve(),]);
-    }
 
+    }
     public function findAllCustomersExceptionCompanies(Request $request):array
     {
         $customerName = $request->query('customer_name');

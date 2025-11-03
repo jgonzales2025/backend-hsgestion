@@ -44,14 +44,15 @@ class UpdateDispatchNoteUseCase
     $emissionReasonUseCase = new FindByIdEmissionReasonUseCase($this->emissionReasonRepositoryInterface);
     $emissionReason = $emissionReasonUseCase->execute($data->emission_reason_id);
 
-        if ($data->destination_branch_id !=null) {
-      # code...
-      $destinationUseCase = new FindByIdBranchUseCase($this->branchRepository);
-     $destination = $destinationUseCase->execute($data->destination_branch_id);
-    }else{
-     $destination = null;
-    }
-    $data->destination_branch_id = $destination;   
+       if ($data->destination_branch_id != null) {
+    $destinationUseCase = new FindByIdBranchUseCase($this->branchRepository);
+    $destination = $destinationUseCase->execute($data->destination_branch_id);
+} else {
+    $destination = null;
+}
+
+
+$data->destination_branch_id = $destination?->getId();  
 
     $driverUseCase = new FindByIdDriverUseCase($this->driverRepositoryInterface);
     $driver = $driverUseCase->execute($data->cod_conductor);
@@ -86,8 +87,10 @@ class UpdateDispatchNoteUseCase
       transfer_type: $data->transfer_type,
       vehicle_type: $data->vehicle_type,
       document_type: $documentType,
-      destination_branch_client: $data->destination_branch_client_id,
-      customer_id: $data->customer_id
+      destination_branch_client: $data->destination_branch_client,
+      customer_id: $data->customer_id,
+      supplier_id: $data->supplier_id,
+      address_supplier_id: $data->address_supplier_id,
 
     );
     return $this->dispatchNoteRepository->update($dispatchNote);

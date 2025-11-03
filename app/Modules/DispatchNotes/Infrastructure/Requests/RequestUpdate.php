@@ -37,14 +37,16 @@ class RequestUpdate extends FormRequest
             'date_referencia' => ['nullable', 'date'],
             'status' => ['required', 'boolean'],
             'cod_conductor' => ['nullable', 'integer', 'exists:drivers,id'],
-
+            'license_plate' =>'string',
             'total_weight' => ['required', 'numeric'],
             'transfer_type' => ['required', 'string', 'max:50'],
-            'vehicle_type' => ['required', 'boolean'],
+            'vehicle_type' => ['nullable', 'boolean'],
             'document_type_id' => ['required', 'integer', 'exists:document_types,id'],
             'destination_branch_client_id' => ['nullable', 'integer', 'exists:branches,id'],
             'dispatch_articles' => 'required|array|min:1',
             'customer_id' => 'required|integer|exists:customers,id',
+            'supplier_id' => 'nullable|integer',
+            'address_supplier_id' => 'nullable|integer',
         ];
     } 
     public function messages(): array

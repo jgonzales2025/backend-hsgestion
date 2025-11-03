@@ -8,16 +8,16 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ExcelArticleExporter implements ArticleExporterInterface
 {
-    public function export(Article $article): string
+    public function export(Collection $article): string
     {
         $fileName = 'articulo_' . now()->format('Y-m-d_His') . '.xlsx';
         $filePath = 'exports/' . $fileName;
 
         // Convertir el artículo único en una colección
-        $collection = collect([$article]);
+        // $collection = collect([$article]);
 
         Excel::store(
-            new ArticlesExport($collection), 
+            new ArticlesExport($article), 
             $filePath, 
             'public'
         );

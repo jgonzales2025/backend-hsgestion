@@ -37,9 +37,12 @@ return new class extends Migration
             $table->integer('status')->default(1);
             $table->integer('payment_status')->default(0);
             $table->boolean('is_locked')->default(0);
-            $table->string('serie_prof')->nullable();
-            $table->string('correlative_prof')->nullable();
+            $table->string('serie_prof')->nullable();//OBSERVACION
+            $table->string('correlative_prof')->nullable();//OBSERVACION
             $table->string('purchase_order')->nullable();
+            $table->string('reference_document_type_id')->nullable();
+            $table->string('reference_serie')->nullable();
+            $table->string('reference_correlative')->nullable();
             $table->foreignId('user_authorized_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

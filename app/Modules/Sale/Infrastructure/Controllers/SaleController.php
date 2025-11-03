@@ -14,6 +14,7 @@ use App\Modules\Sale\Application\DTOs\SaleDTO;
 use App\Modules\Sale\Application\UseCases\CreateSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllProformasUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllSalesUseCase;
+use App\Modules\Sale\Application\UseCases\FindSaleWithUpdatedQuantitiesUseCase;
 use App\Modules\Sale\Application\UseCases\FindByDocumentSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateSaleUseCase;
@@ -207,6 +208,43 @@ class SaleController extends Controller
         $sales = $saleUseCase->execute();
 
         return SaleResource::collection($sales)->resolve();
+    }
+
+    public function getUpdatedQuantities(Request $request, FindSaleWithUpdatedQuantitiesUseCase $useCase): JsonResponse
+    {
+        $request->validate([
+            'reference_document_type_id' => 'required|integer',
+            'reference_serie' => 'required|string',
+            'reference_correlative' => 'required|string',
+        ]);
+
+        try {
+            $result = $useCase->execute(
+                (int) $request->query('reference_document_type_id'),
+                $request->query('reference_serie'),
+                $request->query('reference_correlative')
+            );
+
+            if (!$result) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Venta no encontrada'
+                ], 404);
+            }
+
+            $saleData = [
+                'sale' => (new SaleResource($this->saleRepository->findById($result['sale']->id)))->resolve(),
+                'articles' => $result['articles'],
+                'has_credit_notes' => $result['has_credit_notes'],
+            ];
+
+            return response()->json($saleData, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener las cantidades actualizadas: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
 }

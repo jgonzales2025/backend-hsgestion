@@ -48,7 +48,9 @@ return new class extends Migration {
             $table->foreignId('document_type_id')->constrained('document_types');
             $table->foreignId('destination_branch_client')->nullable()->constrained('branches');
             $table->foreignId('customer_id')->constrained('customers');
-
+            $table->integer('supplier_id')->nullable();
+            $table->integer('address_supplier_id')->nullable();
+            
         });
     }
 

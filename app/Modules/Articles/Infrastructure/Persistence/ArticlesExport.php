@@ -36,21 +36,21 @@ class ArticlesExport implements FromCollection, WithHeadings, WithMapping, WithS
         ];
     }
 
-  public function map($article): array
-{
-    return [
-        $article->getId(),
-        $article->getCodFab(),
-        $article->getDescription(),
-        number_format($article->getPurchasePrice(), 2),
-        $article->getPublicPrice(),
-        $article->getMinStock(),
-        $article->getCategory()?->getName() ?? '',
-        $article->getBrand()?->getName() ?? '',
-        $article->getCurrencyType()?->getName() ?? '',
-        $article->getMeasurementUnit()?->getName() ?? '',
-    ];
-}
+    public function map($article): array
+    {
+        return [
+            $article->getId(),
+            $article->getCodFab(),
+            $article->getDescription(),
+            number_format($article->getPurchasePrice(), 2),
+            number_format($article->getPublicPrice(), 2),
+            $article->getMinStock(),
+            $article->getCategory()?->getName() ?? '',
+            $article->getBrand()?->getName() ?? '',
+            $article->getCurrencyType()?->getName() ?? '',
+            $article->getMeasurementUnit()?->getName() ?? '',
+        ];
+    }
 
 
     public function styles(Worksheet $sheet)

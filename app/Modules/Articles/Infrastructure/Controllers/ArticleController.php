@@ -45,10 +45,11 @@ class ArticleController extends Controller
 
   ) {
   }
-public function export(int $id)
+public function export()
 {
     try {
-        $filePath = $this->exportUseCase->execute($id);
+        $filePath = $this->exportUseCase->execute();
+        
         return response()->download(
             storage_path('app/public/' . $filePath),
             basename($filePath),
@@ -58,10 +59,14 @@ public function export(int $id)
         )->deleteFileAfterSend(true);
         
     } catch (\Exception $e) {
-      \Log::info("info",[$e]);
+        \Log::error("Error exportando artículos", [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
         return response()->json([
             'error' => $e->getMessage()
-        ], 404);
+        ], 500);
     }
 }
 

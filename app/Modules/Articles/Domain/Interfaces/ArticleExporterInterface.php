@@ -7,5 +7,5 @@ use Illuminate\Support\Collection;
 
 interface ArticleExporterInterface
 {
-    public function export(Article $articles): string;
+    public function export(Collection $articles): string;
 }

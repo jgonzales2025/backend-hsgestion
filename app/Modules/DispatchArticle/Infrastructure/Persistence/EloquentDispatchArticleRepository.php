@@ -69,8 +69,10 @@ class EloquentDispatchArticleRepository implements DispatchArticleRepositoryInte
             );
         })->toArray();
     }
+    
     public function deleteBySaleId(int $id): void
     {
         EloquentDispatchArticle::where('dispatch_id', $id)->delete();
     }
+
 }

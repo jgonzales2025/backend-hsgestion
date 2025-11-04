@@ -15,6 +15,7 @@ use App\Modules\TransportCompany\Infrastructure\Requests\StoreTransportCompanyRe
 use App\Modules\TransportCompany\Infrastructure\Requests\UpdateTransportCompanyRequest;
 use App\Modules\TransportCompany\Infrastructure\Resources\TransportCompanyResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TransportCompanyController extends Controller
 {
@@ -25,10 +26,11 @@ class TransportCompanyController extends Controller
         $this->transportCompanyRepository = $transportCompanyRepository;
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        $description = $request->query('description');
         $transportUseCase = new FindAllTransportCompaniesUseCase($this->transportCompanyRepository);
-        $transportCompanies = $transportUseCase->execute();
+        $transportCompanies = $transportUseCase->execute($description);
 
         return response()->json((TransportCompanyResource::collection($transportCompanies))->resolve());
     }

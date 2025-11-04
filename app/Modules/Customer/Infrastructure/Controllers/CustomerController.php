@@ -135,7 +135,8 @@ class CustomerController extends Controller
                 'department_id' => $addressData['department_id'],
                 'province_id' => $addressData['province_id'],
                 'district_id' => $addressData['district_id'],
-                'status' => 1
+                'status' => 1,
+                'st_principal' => $addressData['st_principal'] ?? 0,
             ]);
             $addresses[] = $createCustomerAddressUseCase->execute($customerAddressDTO);
         }
@@ -211,6 +212,7 @@ class CustomerController extends Controller
                 'province_id' => $addressData['province_id'],
                 'district_id' => $addressData['district_id'],
                 'status' => $addressData['status'],
+                'st_principal' => $addressData['st_principal'] ?? 0,
             ]);
             $addresses[] = $createCustomerAddressUseCase->execute($customerAddressDTO);
         }

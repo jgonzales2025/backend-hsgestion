@@ -41,6 +41,7 @@ class UpdateCustomerRequest extends FormRequest
 
             'addresses' => 'sometimes|array|min:1',
             'addresses.*.address' => 'sometimes|string',
+            'addresses.*.st_principal' => 'sometimes|integer|in:0,1',
             'addresses.*.department_id' => 'sometimes|integer|exists:departments,coddep',
             'addresses.*.province_id' => 'sometimes|integer|exists:provinces,codpro',
             'addresses.*.district_id' => 'sometimes|integer|exists:districts,coddis',

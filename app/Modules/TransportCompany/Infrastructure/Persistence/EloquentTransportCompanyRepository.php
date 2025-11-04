@@ -9,9 +9,14 @@ use App\Modules\TransportCompany\Infrastructure\Models\EloquentTransportCompany;
 class EloquentTransportCompanyRepository implements TransportCompanyRepositoryInterface
 {
 
-    public function findAll(): array
+    public function findAll(?string $description): array
     {
-        $eloquentTransportCompanies = EloquentTransportCompany::all()->sortByDesc('created_at');
+        $eloquentTransportCompanies = EloquentTransportCompany::when($description, function ($query, $description) {
+            return $query->where('company_name', 'like', "%{$description}%")
+                ->orWhere('ruc', 'like', "%{$description}%");
+        })
+            ->orderByDesc('created_at')
+            ->get();
 
         if ($eloquentTransportCompanies->isEmpty()) {
             return [];

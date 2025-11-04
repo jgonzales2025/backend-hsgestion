@@ -24,6 +24,7 @@ class EloquentCustomerAddressRepository implements CustomerAddressRepositoryInte
             'province_id' => $customerAddress->getProvinceId(),
             'district_id' => $customerAddress->getDistrictId(),
             'status' => $customerAddress->getStatus(),
+            'st_principal' => $customerAddress->isPrincipal() ?? 0,
         ]);
 
         return new CustomerAddress(
@@ -33,7 +34,8 @@ class EloquentCustomerAddressRepository implements CustomerAddressRepositoryInte
             department: $customerAddress->getDepartment(),
             province: $customerAddress->getProvince(),
             district: $customerAddress->getDistrict(),
-            status: $eloquentCustomerAddress->status
+            status: $eloquentCustomerAddress->status,
+            st_principal: $eloquentCustomerAddress->st_principal
         );
     }
 
@@ -54,6 +56,7 @@ class EloquentCustomerAddressRepository implements CustomerAddressRepositoryInte
                 province: $province->toDomain($province),
                 district: $district->toDomain($district),
                 status: $address->status,
+                st_principal: $address->st_principal
             );
         })->toArray();
     }

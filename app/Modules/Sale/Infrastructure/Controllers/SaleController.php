@@ -218,11 +218,25 @@ class SaleController extends Controller
             'reference_correlative' => 'required|string',
         ]);
 
+        $paddedCorrelative = str_pad($request->query('reference_correlative'), 5, '0', STR_PAD_LEFT);
+
         try {
+
+            $saleUseCase = new FindByDocumentSaleUseCase($this->saleRepository);
+            $sale = $saleUseCase->execute(
+                (int) $request->query('reference_document_type_id'),
+                $request->query('reference_serie'),
+                $paddedCorrelative
+            );
+
+            if (!$sale) {
+                return response()->json(['message' => 'Venta no encontrada'], 404);
+            }
+
             $result = $useCase->execute(
                 (int) $request->query('reference_document_type_id'),
                 $request->query('reference_serie'),
-                $request->query('reference_correlative')
+                $paddedCorrelative
             );
 
             if (!$result) {

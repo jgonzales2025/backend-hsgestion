@@ -13,6 +13,7 @@ use App\Modules\Driver\Infrastructure\Requests\StoreDriverRequest;
 use App\Modules\Driver\Infrastructure\Requests\UpdateDriverRequest;
 use App\Modules\Driver\Infrastructure\Resources\DriverResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DriverController extends Controller
 {
@@ -23,10 +24,11 @@ class DriverController extends Controller
         $this->driverRepository = new EloquentDriverRepository();
     }
 
-    public function index(): array
+    public function index(Request $request): array
     {
+        $description = $request->query('description');
         $branchUseCase = new FindAllDriversUseCases($this->driverRepository);
-        $drivers = $branchUseCase->execute();
+        $drivers = $branchUseCase->execute($description);
 
         return DriverResource::collection($drivers)->resolve();
     }

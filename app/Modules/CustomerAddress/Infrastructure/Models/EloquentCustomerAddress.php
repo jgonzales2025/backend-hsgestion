@@ -16,7 +16,8 @@ class EloquentCustomerAddress extends Model
         'department_id',
         'province_id',
         'district_id',
-        'status'
+        'status',
+        'st_principal'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

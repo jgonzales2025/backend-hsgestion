@@ -13,8 +13,8 @@ class FindAllDriversUseCases
         $this->driverRepository = $driverRepository;
     }
 
-    public function execute()
+    public function execute(?string $description): array
     {
-        return $this->driverRepository->findAllDrivers();
+        return $this->driverRepository->findAllDrivers($description);
     }
 }

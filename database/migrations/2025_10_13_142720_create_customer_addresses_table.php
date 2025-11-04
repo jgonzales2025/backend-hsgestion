@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('province_id');
             $table->integer('district_id');
             $table->integer('status')->default(1);
+            $table->boolean('st_principal')->default(false);
             $table->timestamps();
         });
     }

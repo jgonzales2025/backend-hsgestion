@@ -6,7 +6,7 @@ use App\Modules\TransportCompany\Domain\Entities\TransportCompany;
 
 interface TransportCompanyRepositoryInterface
 {
-    public function findAll(): array;
+    public function findAll(?string $description): array;
 
     public function save(TransportCompany $transportCompany): ?TransportCompany;
 

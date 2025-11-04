@@ -63,24 +63,24 @@ class StoreArticleRequest extends FormRequest
     {
         return [
             // Campos obligatorios
-            'cod_fab' => 'required|string|max:20',
-            'description' => 'required|string|max:50',
+            'cod_fab' => 'nullable|string|max:20',
+            'description' => 'nullable|string|max:50',
             'weight' => 'nullable|numeric|min:0',
-            'with_deduction' => 'required|boolean',
-            'series_enabled' => 'required|boolean',
-            'measurement_unit_id' => 'required|integer|exists:measurement_units,id',
-            'brand_id' => 'required|integer|exists:brands,id',
-            'category_id' => 'required|integer|exists:categories,id',
-            'currency_type_id' => 'required|integer|exists:currency_types,id',
-            'purchase_price' => 'required|numeric|min:0',
-            'public_price' => 'required|numeric|min:0',
-            'distributor_price' => 'required|numeric|min:0',
-            'authorized_price' => 'required|numeric|min:0',
-            'status' => 'required|integer',
-            'user_id' => 'required|integer|exists:users,id',
-            'sub_category_id' => 'required|integer|exists:sub_categories,id',
-            'venta' => 'required|boolean',
-            'company_type_id' => 'required|integer|exists:companies,id',
+            'with_deduction' => 'nullable|boolean',
+            'series_enabled' => 'nullable|boolean',
+            'measurement_unit_id' => 'nullable|integer|exists:measurement_units,id',
+            'brand_id' => 'nullable|integer|exists:brands,id',
+            'category_id' => 'nullable|integer|exists:categories,id',
+            'currency_type_id' => 'nullable|integer|exists:currency_types,id',
+            'purchase_price' => 'nullable|numeric|min:0',
+            'public_price' => 'nullable|numeric|min:0',
+            'distributor_price' => 'nullable|numeric|min:0',
+            'authorized_price' => 'nullable|numeric|min:0',
+            'status' => 'nullable|integer',
+            'user_id' => 'nullable|integer|exists:users,id',
+            'sub_category_id' => 'nullable|integer|exists:sub_categories,id',
+            'venta' => 'nullable|boolean',
+            'company_type_id' => 'nullable|integer|exists:companies,id',
 
             // Campos opcionales
             'location' => 'nullable|string|max:80',
@@ -99,8 +99,8 @@ class StoreArticleRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'image_url.image' => 'El archivo debe ser una imagen.',
-            'image_url.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg, gif o webp.',
+            // 'image_url.image' => 'El archivo debe ser una imagen.',
+            // 'image_url.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg, gif o webp.',
 
         ];
     }

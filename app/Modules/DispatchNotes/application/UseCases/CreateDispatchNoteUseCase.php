@@ -98,8 +98,6 @@ class CreateDispatchNoteUseCase
       document_type: $documentType,
       destination_branch_client: $data->destination_branch_client,
       customer_id: $data->customer_id,
-      supplier_id: $data->supplier_id,
-      address_supplier_id: $data->address_supplier_id,
 
     );
     return $this->dispatchNoteRepository->save($dispatchNote);

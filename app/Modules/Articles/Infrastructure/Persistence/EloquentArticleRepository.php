@@ -46,7 +46,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'sub_category_id' => $article->getSubCategory()->getId(),
             'company_type_id' => $article->getCompany()->getId(),
             'image_url' => $article->getImageURL(),
-            'state_modify_article' => $article->getstateModifyArticle()
+            'state_modify_article' => $article->getstateModifyArticle(),
+            'filtNameEsp' => $article->getFiltNameEsp(),
+            'statusEsp' => $article->getStatusEsp()
         ]);
 
         $payload = auth('api')->payload();
@@ -97,7 +99,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             subCategory: $eloquentArticle->subCategory->toDomain($eloquentArticle->subCategory),
             company: $eloquentArticle->company->toDomain($eloquentArticle->company),
             image_url: $eloquentArticle->image_url,
-            state_modify_article: $eloquentArticle->state_modify_article
+            state_modify_article: $eloquentArticle->state_modify_article,
+            filtNameEsp: $eloquentArticle->filtNameEsp,
+            statusEsp: $eloquentArticle->statusEsp
         );
     }
 
@@ -159,7 +163,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 venta: $article->venta,
                 company: $article->company->toDomain($article->company),
                 image_url: $article->image_url,
-                state_modify_article: $article->state_modify_article
+                state_modify_article: $article->state_modify_article,
+                filtNameEsp: $article->filtNameEsp,
+                statusEsp: $article->statusEsp
 
             );
 
@@ -206,7 +212,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             subCategory: $article->subCategory->toDomain($article->subCategory) ?? null,
             company: $article->company->toDomain($article->company),
             image_url: $article->image_url,
-            state_modify_article: $article->state_modify_article
+            state_modify_article: $article->state_modify_article,
+            filtNameEsp: $article->filtNameEsp,
+            statusEsp: $article->statusEsp,
         );
     }
 
@@ -245,7 +253,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'category_id' => $article->getCategory()->getId(),
             'sub_category_id' => $article->getSubCategory()->getId(),
             'image_url' => $article->getImageURL(),
-            'state_modify_article' => $article->getstateModifyArticle()
+            'state_modify_article' => $article->getstateModifyArticle(),
+            'filtNameEsp' => $article->getFiltNameEsp(),
+            'statusEsp' => $article->getStatusEsp(),
         ]);
         return new Article(
             id: $eloquentArticle->id,
@@ -280,7 +290,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             subCategory: $eloquentArticle->subCategory->toDomain($eloquentArticle->subCategory),
             company: $eloquentArticle->company->toDomain($eloquentArticle->company),
             image_url: $eloquentArticle->image_url,
-            state_modify_article: $eloquentArticle->state_modify_article
+            state_modify_article: $eloquentArticle->state_modify_article,
+            filtNameEsp: $eloquentArticle->filtNameEsp,
+            statusEsp: $eloquentArticle->statusEsp,
         );
     }
 
@@ -370,7 +382,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 subCategory: $article->subCategory->toDomain($article->subCategory),
                 company: $article->company->toDomain($article->company),
                 image_url: $article->image_url,
-                state_modify_article: $article->state_modify_article
+                state_modify_article: $article->state_modify_article,
+
             );
         })->toArray();
 
@@ -432,7 +445,9 @@ public function findAllExcel(?string $description): Collection
             venta: $article->venta,
             company: $article->company->toDomain($article->company),
             image_url: $article->image_url,
-            state_modify_article: $article->state_modify_article
+            state_modify_article: $article->state_modify_article,
+            filtNameEsp: $article->filtNameEsp,
+            statusEsp: $article->statusEsp,
         );
     });
 }

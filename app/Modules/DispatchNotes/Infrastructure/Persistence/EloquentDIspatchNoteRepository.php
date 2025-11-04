@@ -50,8 +50,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
                 document_type: $dispatch->document_type->toDomain($dispatch->document_type),
                 destination_branch_client: $dispatch->destination_branch_client ?? null,
                 customer_id: $dispatch->customer_id,
-                supplier_id: $dispatch->supplier_id,
-                address_supplier_id: $dispatch->address_supplier_id,
 
 
             );
@@ -99,8 +97,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'document_type_id' => $dispatchNote->getDocumentType() ? $dispatchNote->getDocumentType()->getId() : null,
             'destination_branch_client' => $dispatchNote->getdestination_branch_client(),
             'customer_id' => $dispatchNote->getCustomerId(),
-            'supplier_id' => $dispatchNote->getSupplierId(),
-            'address_supplier_id' => $dispatchNote->getAddressSupplierId(),
         ]);
 
         return new DispatchNote(
@@ -128,8 +124,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             document_type: $dispatchNote->document_type->toDomain($dispatchNote->document_type),
             destination_branch_client: $dispatchNote->destination_branch_client,
             customer_id: $dispatchNote->customer_id,
-            supplier_id: $dispatchNote->supplier_id ,
-            address_supplier_id: $dispatchNote->address_supplier_id,
         );
     }
   public function findById(int $id): ?DispatchNote
@@ -165,8 +159,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
         document_type: $dispatchNote->document_type?->toDomain($dispatchNote->document_type),
         destination_branch_client: $dispatchNote->destination_branch_client,
         customer_id: $dispatchNote->customer_id,
-        supplier_id: $dispatchNote->supplier_id,
-        address_supplier_id: $dispatchNote->address_supplier_id,
 
     );
            $entity->setCreatedAt($dispatchNote->created_at ? $dispatchNote->created_at->format('Y-m-d H:i:s') : null);
@@ -200,8 +192,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'document_type_id' => $dispatchNote->getDocumentType() ? $dispatchNote->getDocumentType()->getId() : null,
             'destination_branch_client' => $dispatchNote->getdestination_branch_client(),
             'customer_id' => $dispatchNote->getCustomerId(),
-            'supplier_id' => $dispatchNote->getSupplierId(),
-            'address_supplier_id' => $dispatchNote->getAddressSupplierId(),
         ]);
 
         return new DispatchNote(
@@ -229,8 +219,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             document_type: $dispatchNotess->document_type->toDomain($dispatchNotess->document_type),
             destination_branch_client: $dispatchNotess->destination_branch_client,
             customer_id: $dispatchNotess->customer_id,
-            supplier_id: $dispatchNotess->supplier_id,
-            address_supplier_id: $dispatchNotess->address_supplier_id,
         );
          
    }

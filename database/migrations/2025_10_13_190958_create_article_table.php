@@ -60,6 +60,9 @@ return new class extends Migration
             $table->timestamp('date_at')->default(DB::raw('CURRENT_TIMESTAMP'))->change();
             $table->foreign('company_type_id')->references('id')->on('companies');
             $table->integer('state_modify_article')->default(0);
+             $table->string('filtNameEsp')->nullable();
+            $table->boolean('statusEsp')->default(true);
+        
 
          
         });

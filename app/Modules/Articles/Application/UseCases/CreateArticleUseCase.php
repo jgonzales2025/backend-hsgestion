@@ -93,7 +93,10 @@ readonly class CreateArticleUseCase
             subCategory: $subCategoryType,
             company: $companyType,
             image_url: $articleDTO->image_url,
-            state_modify_article: $articleDTO->state_modify_article
+            state_modify_article: $articleDTO->state_modify_article,
+            filtNameEsp: $articleDTO->filtNameEsp,
+            statusEsp: $articleDTO->statusEsp,
+
 
         );
 

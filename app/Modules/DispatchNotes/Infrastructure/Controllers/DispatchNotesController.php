@@ -31,6 +31,7 @@ use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class DispatchNotesController extends Controller
 {
@@ -163,7 +164,9 @@ class DispatchNotesController extends Controller
     }
 public function traerProovedores() {
     // Obtener company_id del usuario logeado
-    $payload = auth('api')->payload();
+    
+   $payload = JWTAuth::parseToken()->payload();
+
     $loggedCompanyId = $payload->get('company_id');
 
     // Traer todos los proveedores excepto el de la compañía logeada
@@ -181,11 +184,7 @@ public function traerProovedores() {
         
         ]);
     
-}
-
-
-
-    
+}    
     private function createDispatchArticles($sale, array $articlesData): array
     {
 

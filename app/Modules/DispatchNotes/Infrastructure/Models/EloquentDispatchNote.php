@@ -42,9 +42,7 @@ class EloquentDispatchNote extends Model
         'document_type_id',
         'destination_branch_client',
         'customer_id',
-        'pdf',
-        'supplier_id',
-        'address_supplier_id',
+        'pdf',  
     ];
   public $timestamps = true;
 

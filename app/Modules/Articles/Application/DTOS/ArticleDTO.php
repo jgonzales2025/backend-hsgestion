@@ -34,6 +34,7 @@ class ArticleDTO
     public int $company_type_id;
     public string $image_url;
     public int $state_modify_article;
+
     
 
     public function __construct(array $data)
@@ -52,7 +53,7 @@ class ArticleDTO
         $this->igv_applicable = isset($data['igv_applicable']) ? filter_var($data['igv_applicable'], FILTER_VALIDATE_BOOLEAN) : false;
         $this->plastic_bag_applicable = isset($data['plastic_bag_applicable']) ? filter_var($data['plastic_bag_applicable'], FILTER_VALIDATE_BOOLEAN) : false;
         $this->min_stock = (int)($data['min_stock'] ?? 0);
-        $this->currency_type_id = (int)($data['currency_type_id'] ?? 0);
+        $this->currency_type_id = $data['currency_type_id'] ?? null;
         $this->purchase_price = isset($data['purchase_price']) ? (float)$data['purchase_price'] : 0;
         $this->public_price = isset($data['public_price']) ? (float)$data['public_price'] : 0;
         $this->distributor_price = isset($data['distributor_price']) ? (float)$data['distributor_price'] : 0;

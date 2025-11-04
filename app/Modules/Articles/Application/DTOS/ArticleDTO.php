@@ -35,18 +35,21 @@ class ArticleDTO
     public string $image_url;
     public int $state_modify_article;
 
+    public string  $filtNameEsp;
+    public bool   $statusEsp;
+
     
 
     public function __construct(array $data)
     {
-        $this->cod_fab = $data['cod_fab'];
-        $this->description = $data['description'];
+        $this->cod_fab = $data['cod_fab'] ?? '';
+        $this->description = $data['description'] ?? '';
         $this->weight = isset($data['weight']) ? (float)$data['weight'] : 0;
         $this->with_deduction = isset($data['with_deduction']) ? filter_var($data['with_deduction'], FILTER_VALIDATE_BOOLEAN) : false;
         $this->series_enabled = isset($data['series_enabled']) ? filter_var($data['series_enabled'], FILTER_VALIDATE_BOOLEAN) : false;
         $this->measurement_unit_id = (int)($data['measurement_unit_id'] ?? 0);
-        $this->brand_id = (int)($data['brand_id'] ?? 0);
-        $this->category_id = (int)($data['category_id'] ?? 0);
+        $this->brand_id = (int)($data['brand_id'] ?? null);
+        $this->category_id = (int)($data['category_id'] ?? null);
         $this->location = $data['location'] ?? '';
         $this->warranty = $data['warranty'] ?? '';
         $this->tariff_rate = isset($data['tariff_rate']) ? (float)$data['tariff_rate'] : 0;
@@ -62,12 +65,14 @@ class ArticleDTO
         $this->distributor_price_percent = isset($data['distributor_price_percent']) ? (float)$data['distributor_price_percent'] : 0;
         $this->authorized_price_percent = isset($data['authorized_price_percent']) ? (float)$data['authorized_price_percent'] : 0;
         $this->status = isset($data['status']) ? filter_var($data['status'], FILTER_VALIDATE_BOOLEAN) : false;
-        $this->user_id = (int)($data['user_id'] ?? 0);
+        $this->user_id = (int)($data['user_id'] ?? 1);
         $this->venta = isset($data['venta']) ? filter_var($data['venta'], FILTER_VALIDATE_BOOLEAN) : false;
-        $this->sub_category_id = (int)($data['sub_category_id'] ?? 0);
-        $this->company_type_id = (int)($data['company_type_id'] ?? 0);
+        $this->sub_category_id = (int)($data['sub_category_id'] ?? null);
+        $this->company_type_id = (int)($data['company_type_id'] ?? null);
         $this->image_url = $data['image_url'] ?? '';
          $this->state_modify_article = $data['state_modify_article'] ??0;
+        $this->filtNameEsp = $data['filtNameEsp'] ?? '';
+        $this->statusEsp = isset($data['statusEsp']) ? filter_var($data['statusEsp'], FILTER_VALIDATE_BOOLEAN) : false;
 
         
     }

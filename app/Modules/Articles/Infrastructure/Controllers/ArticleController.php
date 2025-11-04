@@ -81,6 +81,17 @@ public function export()
 
     return ArticleResource::collection($article)->resolve();
   }
+    public function findAllArticleNotasDebito( ): array
+  {
+ 
+
+    $articleUseCase =  $this->articleRepository->findAllArticleNotasDebito(null);
+
+    // $article = $articleUseCase->execute(null);
+
+
+    return ArticleResource::collection($articleUseCase)->resolve();
+  }
   public function show(int $id): JsonResponse
   {
 

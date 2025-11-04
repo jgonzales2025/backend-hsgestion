@@ -36,6 +36,7 @@ class StoreArticleRequest extends FormRequest
             'distributor_price' => isset($this->distributor_price) ? (float) $this->distributor_price : 0,
             'authorized_price' => isset($this->authorized_price) ? (float) $this->authorized_price : 0,
             'currency_type_id' => isset($this->currency_type_id) ? (int) $this->currency_type_id : 0,
+            'statusEsp' => isset($this->statusEsp) ? filter_var($this->statusEsp, FILTER_VALIDATE_BOOLEAN) : false,
         ]);
     }
 
@@ -47,14 +48,18 @@ class StoreArticleRequest extends FormRequest
 
             // Genera URL pública: /storage/articles/imagen.png
             $publicUrl = Storage::url($path);
-
-            // Sobrescribimos el valor de image_url con la URL pública
+             $payload = auth('api')->payload();
+    // $userid = $payload->get('user_id');
+    // Sobrescribimos el valor de image_url con la URL pública
+       \Log::info('User ID: ' , $payload);
             $this->merge([
                 'image_url' => $publicUrl,
+                // 'user_id' => $userid,
             ]);
         } else {
             $this->merge([
                 'image_url' => null,
+                'user_id' => auth('api')->id(),
             ]);
         }
     }
@@ -71,7 +76,7 @@ class StoreArticleRequest extends FormRequest
             'measurement_unit_id' => 'nullable|integer|exists:measurement_units,id',
             'brand_id' => 'nullable|integer|exists:brands,id',
             'category_id' => 'nullable|integer|exists:categories,id',
-            'currency_type_id' => 'nullable|integer|exists:currency_types,id',
+            'currency_type_id' => 'nullable|integer',
             'purchase_price' => 'nullable|numeric|min:0',
             'public_price' => 'nullable|numeric|min:0',
             'distributor_price' => 'nullable|numeric|min:0',
@@ -93,6 +98,8 @@ class StoreArticleRequest extends FormRequest
             'distributor_price_percent' => 'nullable|numeric|min:0',
             'authorized_price_percent' => 'nullable|numeric|min:0',
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
+            'filtNameEsp' => 'nullable|string|max:100',
+            'statusEsp' => 'nullable|boolean',
         ];
     }
 

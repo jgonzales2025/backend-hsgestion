@@ -18,29 +18,29 @@ class ArticleResource extends JsonResource
             'with_deduction' => $this->getWithDeduction(),
             'series_enabled' => $this->getSeriesEnabled(),
             'brand' => [
-                'id' => $this->getBrand()->getId(),
-                'name' => $this->getBrand()->getName(),
-                'status' => ($this->getBrand()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+                'id' => $this->getBrand()?->getId(),
+                'name' => $this->getBrand()?->getName(),
+                'status' => ($this->getBrand()?->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             ],
             'category' => [
-                'id' => $this->resource->getCategory()->getId(),
-                'name' => $this->resource->getCategory()->getName(),
-                'status' => ($this->resource->getCategory()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+                'id' => $this->resource->getCategory()?->getId(),
+                'name' => $this->resource->getCategory()?->getName(),
+                'status' => ($this->resource->getCategory()?->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             ],
 
             'currencyType' => [
-                'id' => $this->resource->getCurrencyType()->getId(),
-                'name' => $this->resource->getCurrencyType()->getName(),
+                'id' => $this->resource->getCurrencyType()?->getId(),
+                'name' => $this->resource->getCurrencyType()?->getName(),
             ],
             'measurementUnit' => [
-                'id' => $this->resource->getMeasurementUnit()->getId(),
-                'name' => $this->resource->getMeasurementUnit()->getName(),
-                'status' => ($this->resource->getMeasurementUnit()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+                'id' => $this->resource->getMeasurementUnit()?->getId(),
+                'name' => $this->resource->getMeasurementUnit()?->getName(),
+                'status' => ($this->resource->getMeasurementUnit()?->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             ],
             'subCategory' => [
-                'id' => $this->resource->getSubCategory()->getId(),
-                'name' => $this->resource->getSubCategory()->getName(),
-                'status' => ($this->resource->getSubCategory()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+                'id' => $this->resource->getSubCategory()?->getId(),
+                'name' => $this->resource->getSubCategory()?->getName(),
+                'status' => ($this->resource->getSubCategory()?->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             ],
             'location' => $this->getLocation(),
             'warranty' => $this->getWarranty(),
@@ -60,9 +60,9 @@ class ArticleResource extends JsonResource
             'precioIGv' => $this->calculatePrecioIGV(),
             'venta' => $this->getVenta() == true ? 'Activo' : 'Inactivo',
             'company' => [
-                'id' => $this->resource->getCompany()->getId(),
-                'status' => ($this->resource->getCompany()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
-                'branches' => EloquentBranch::where('cia_id', $this->resource->getCompany()->getId())
+                'id' => $this->resource->getCompany()?->getId(),
+                'status' => ($this->resource->getCompany()?->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+                'branches' => EloquentBranch::where('cia_id', $this->resource->getCompany()?->getId())
                     ->pluck('id'),
             ],
 
@@ -80,6 +80,8 @@ class ArticleResource extends JsonResource
                 ? url($this->resource->getImageURL())
                 : '',
             'state_modify_article' => $this->resource->getstateModifyArticle(),
+            'statusEsp'=> $this->resource->getStatusEsp(),
+            'filtNameEsp'=> $this->resource->getFiltNameEsp(),
         ];
 
     }

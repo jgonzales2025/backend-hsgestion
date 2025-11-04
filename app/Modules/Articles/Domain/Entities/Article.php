@@ -45,6 +45,8 @@ class Article
     private ?Company $company;
     private ?string $image_url;
     private ?int $state_modify_article;
+    private ?string $filtNameEsp;
+    private ?bool $statusEsp;
 
 
     public function __construct(
@@ -78,7 +80,9 @@ class Article
         ?SubCategory $subCategory,
         ?Company $company,
         ?string $image_url,
-        ?int $state_modify_article
+        ?int $state_modify_article,
+        ?string $filtNameEsp,
+        ?bool $statusEsp
 
 
     ) {
@@ -116,6 +120,8 @@ class Article
         $this->company = $company;
         $this->image_url = $image_url;
         $this->state_modify_article = $state_modify_article;
+        $this->filtNameEsp = $filtNameEsp;
+        $this->statusEsp = $statusEsp;
     }
 
     public function calculatePrecioIGV(): float
@@ -250,5 +256,12 @@ class Article
     {
         return $this->state_modify_article;
     }
-
+    public function getFiltNameEsp(): string|null
+    {
+        return $this->filtNameEsp;
+    }
+    public function getStatusEsp(): bool|null
+    {
+        return $this->statusEsp;
+    }
 }

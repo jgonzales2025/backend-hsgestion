@@ -98,8 +98,6 @@ class DispatchNoteResource extends JsonResource
                 ];
             })(),
              'created_at' => $this->resource->getCreatedFecha(),
-            'supplier_id' =>$this->resource->getSupplierId(),
-            'address_supplier_id' =>$this->resource->getAddressSupplierId(),
 
         ];
     }

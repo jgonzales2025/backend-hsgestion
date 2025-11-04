@@ -39,26 +39,50 @@ readonly class CreateArticleUseCase
 
     public function execute(ArticleDTO $articleDTO): Article
     {
-        $categoryUseCase = new FindByIdCategoryUseCase($this->categoryRepository);
-        $categoryType = $categoryUseCase->execute($articleDTO->category_id);
+        if ($articleDTO->category_id != null) {            
+            $categoryUseCase = new FindByIdCategoryUseCase($this->categoryRepository);
+            $categoryType = $categoryUseCase->execute($articleDTO->category_id);
+        }
+        $categoryType = null;
+        
+        if ($articleDTO->user_id != null) {            
+            $userUseCase = new GetUserByIdUseCase($this->userRepository);
+            $user = $userUseCase->execute($articleDTO->user_id);
+        }
+         $user = null; 
 
-        $userUseCase = new GetUserByIdUseCase($this->userRepository);
-        $user = $userUseCase->execute($articleDTO->user_id);
+         if ($articleDTO->measurement_unit_id != null) {        
+             $measurementUseCase = new FindByIdMeasurementUnit($this->measurementUnitRepository);
+             $measurementUseCaseType = $measurementUseCase->execute($articleDTO->measurement_unit_id);
+         }
+        $measurementUseCaseType = null;
+         
+        if ($articleDTO->brand_id != null) {        
+            $BrandUseCase = new FindByIdBrandUseCase($this->brandRepository);
+            $brand = $BrandUseCase->execute($articleDTO->brand_id);
+        }
+        $brand = null;
+        if ($articleDTO->currency_type_id != null) {       
+            $currencyTypeUseCase = new FindByIdCurrencyTypeUseCase($this->currencyTypeRepository);
+            $currencyType = $currencyTypeUseCase->execute($articleDTO->currency_type_id); 
+        }
+        $currencyType = null;
+         if ($articleDTO->sub_category_id != null) {       
+             $subCategoryUseCase = new FindByIdSubCategoryUseCase($this->subCategoryRepository);
+             $subCategoryType = $subCategoryUseCase->execute($articleDTO->sub_category_id);
+         }
+        $subCategoryType = null;
+         if ($articleDTO->company_type_id != null) {
+                $CompanyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
+                $companyType = $CompanyUseCase->execute($articleDTO->company_type_id);
+            }
+            $companyType = null;
 
-        $measurementUseCase = new FindByIdMeasurementUnit($this->measurementUnitRepository);
-        $measurementUseCaseType = $measurementUseCase->execute($articleDTO->measurement_unit_id);
-
-        $BrandUseCase = new FindByIdBrandUseCase($this->brandRepository);
-        $brand = $BrandUseCase->execute($articleDTO->brand_id);
-
-        $currencyType = new FindByIdCurrencyTypeUseCase($this->currencyTypeRepository);
-        $currencyType = $currencyType->execute($articleDTO->currency_type_id);
-        \Log::info("currency_type",[$currencyType]);
-        $subCategoryUseCase = new FindByIdSubCategoryUseCase($this->subCategoryRepository);
-        $subCategoryType = $subCategoryUseCase->execute($articleDTO->sub_category_id);
-
-        $CompanyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
-        $companyType = $CompanyUseCase->execute($articleDTO->company_type_id);
+         if ($articleDTO->company_type_id != null) {
+             $CompanyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
+             $companyType = $CompanyUseCase->execute($articleDTO->company_type_id);
+            }
+        $companyType = null;
 
 
         $article = new Article(
@@ -93,7 +117,10 @@ readonly class CreateArticleUseCase
             subCategory: $subCategoryType,
             company: $companyType,
             image_url: $articleDTO->image_url,
-            state_modify_article: $articleDTO->state_modify_article
+            state_modify_article: $articleDTO->state_modify_article,
+            filtNameEsp: $articleDTO->filtNameEsp,
+            statusEsp: $articleDTO->statusEsp,
+
 
         );
 

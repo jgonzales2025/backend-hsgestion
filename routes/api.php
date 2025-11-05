@@ -180,6 +180,10 @@ Route::post('articles-save',[ArticleController::class,'store']);
 Route::get('articles/{id}',[ArticleController::class,'show']);
 Route::post('articlesupdate/{id}',[ArticleController::class,'update']);
 Route::get('article-excel/{id}',[ArticleController::class,'export']);
+Route::post('articles-notas-debito',[ArticleController::class,'storeNotesDebito']);
+Route::get('articles-notas-listar',[ArticleController::class,'indexNotesDebito']);
+Route::put('articles-notas-editar/{id}',[ArticleController::class,'updateNotesDebito']);
+Route::get('articles-notas/{id}',[ArticleController::class,'showNotesDebito']);
 
 // Exchange Rates - Tipo de cambio
 Route::get('exchange-rates', [ExchangeRateController::class, 'index']);

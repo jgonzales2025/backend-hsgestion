@@ -46,7 +46,9 @@ class EloquentArticle extends Model
         'category_id',
         'sub_category_id',
         'company_type_id',
-        'image_url'
+        'image_url',
+        'filt_NameEsp',
+        'status_Esp'
     ];
     protected $hidden = ['created_at', 'updated_at'];
 

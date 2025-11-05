@@ -3,6 +3,7 @@ namespace App\Modules\Articles\Infrastructure\Persistence;
 
 use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\Articles\Domain\Entities\ArticleForSale;
+use App\Modules\Articles\Domain\Entities\ArticleNotasDebito;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
@@ -99,6 +100,26 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             state_modify_article: $eloquentArticle->state_modify_article
         );
     }
+      public function cretaArticleNotasDebito(ArticleNotasDebito $article): ?ArticleNotasDebito
+    {
+
+        $eloquentArticle = EloquentArticle::create([
+         'filt_NameEsp' => $article->getFiltNameEsp(), 
+         'user_id' => $article->getUserId(),
+          'company_type_id' => 1, 
+         'status_Esp' => true,
+         'category_id' => 1,
+        ]);
+     
+        return new ArticleNotasDebito(
+            id: $eloquentArticle->id,
+            user_id: $article->getUserId(),
+            company_id: $article->getCompanyId(),
+            filt_NameEsp: $article->getFiltNameEsp(),
+            status_Esp: $article->getStatusEsp()
+
+        );
+    }
 
     public function findAllArticle(?string $description): array
     {
@@ -115,6 +136,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'company',
         ])
             ->where('company_type_id', $companyId)
+             ->where('status_Esp', false)
             ->when($description, function ($query, $name) {
                 return $query->where(function ($q) use ($name) {
                     $q->where('description', 'like', "%{$name}%")
@@ -130,7 +152,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             return new Article(
                 id: $article->id,
                 user: $article->user ? $article->user->toDomain($article->user) : null,
-                cod_fab: $article->cod_fab,
+                cod_fab:" $article->cod_fab",
                 description: $article->description,
                 weight: $article->weight,
                 with_deduction: $article->with_deduction,
@@ -164,7 +186,44 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
         })->toArray();
     }
+ public function findAllArticleNotesDebito(?string $description): array
+    {
+        $payload = auth('api')->payload();
+        $companyId = $payload->get('company_id');
 
+        $articles = EloquentArticle::with([
+            'measurementUnit',
+            'brand',
+            'category',
+            'currencyType',
+            'subCategory',
+            'user',
+            'company',
+        ])
+            ->where('company_type_id', $companyId)
+            ->where('status_Esp', true)
+            ->when($description, function ($query, $name) {
+                return $query->where(function ($q) use ($name) {
+                    $q->where('description', 'like', "%{$name}%")
+                        ->orWhere('cod_fab', 'like', "%{$name}%");
+                });
+            })
+            ->orderByDesc('created_at')
+            ->get();
+
+        return $articles->map(function ($article) {
+            return new ArticleNotasDebito(
+                id: $article->id,
+                user_id: $article->user_id,
+                company_id: $article->company_type_id,
+                filt_NameEsp: $article->filt_NameEsp,
+                status_Esp: $article->statusEsp
+                
+            );
+
+        })->toArray();
+    }
+   
     public function findById(int $id): ?Article
     {
 
@@ -208,7 +267,22 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             state_modify_article: $article->state_modify_article
         );
     }
+    public function FindByIdNotesDebito(int $id):?ArticleNotasDebito{
+       
+        $article = EloquentArticle::find($id);
 
+        if (!$article)
+            return null;
+
+        return new ArticleNotasDebito(
+            id: $article->id,
+            user_id: $article->user_id,
+            company_id: $article->company_type_id,
+            filt_NameEsp: $article->filt_NameEsp,
+            status_Esp: $article->statusEsp
+            
+        );
+    }
     public function update(Article $article): ?Article
     {
         $eloquentArticle = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory'])->find($article->getId());
@@ -280,6 +354,25 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             company: $eloquentArticle->company->toDomain($eloquentArticle->company),
             image_url: $eloquentArticle->image_url,
             state_modify_article: $eloquentArticle->state_modify_article
+        );
+    }
+    public function updateNotesDebito(ArticleNotasDebito $article): ?ArticleNotasDebito
+    {
+        $eloquentArticle = EloquentArticle::find($article->getId());
+
+        if (!$eloquentArticle) {
+            throw new \Exception('Articulo no encontrado');
+        }
+        $eloquentArticle->update([
+            'filt_NameEsp' => $article->getFiltNameEsp(),
+            // 'status_Esp' => $article->getStatusEsp()
+        ]);
+        return new ArticleNotasDebito(
+            id: $eloquentArticle->id,
+            user_id: $eloquentArticle->user_id,
+            company_id: $eloquentArticle->company_type_id,
+            filt_NameEsp: $eloquentArticle->filt_NameEsp,
+            status_Esp: $eloquentArticle->statusEsp
         );
     }
 

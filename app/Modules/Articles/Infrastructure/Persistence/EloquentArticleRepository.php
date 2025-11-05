@@ -105,7 +105,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             statusEsp: $eloquentArticle->statusEsp
         );
     }
-<<<<<<< HEAD
       public function cretaArticleNotasDebito(ArticleNotasDebito $article): ?ArticleNotasDebito
     {
 
@@ -128,9 +127,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     }
 
     public function findAllArticle(?string $description): array
-=======
-        public function findAllArticle(?string $description): array
->>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
     {
         $payload = auth('api')->payload();
         $companyId = $payload->get('company_id');
@@ -145,11 +141,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'company',
         ])
             ->where('company_type_id', $companyId)
-<<<<<<< HEAD
              ->where('status_Esp', false)
-=======
-            ->where('statusEsp', false)
->>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
             ->when($description, function ($query, $name) {
                 return $query->where(function ($q) use ($name) {
                     $q->where('description', 'like', "%{$name}%")
@@ -359,7 +351,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
        
         $article = EloquentArticle::find($id);
 
-<<<<<<< HEAD
         if (!$article)
             return null;
 
@@ -372,9 +363,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             
         );
     }
-=======
-    
->>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
     public function update(Article $article): ?Article
     {
         $eloquentArticle = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory'])

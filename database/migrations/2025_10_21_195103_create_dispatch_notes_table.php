@@ -15,18 +15,18 @@ return new class extends Migration {
             $table->timestamps();
 
             // Relaciones clave foránea
-            $table->foreignId('cia_id')->constrained('companies');
-            $table->foreignId('branch_id')->constrained('branches');
+            $table->foreignId('cia_id')->nullable()->constrained('companies');
+            $table->foreignId('branch_id')->nullable()->constrained('branches');
             $table->string('serie');
             $table->string('correlativo');
 
-            $table->foreignId('emission_reason_id')->constrained('emission_reasons');
+            $table->foreignId('emission_reason_id')->nullable()->constrained('emission_reasons');
             $table->text('description')->nullable();
 
             $table->foreignId('destination_branch_id')->nullable()->constrained('branches');
             $table->string('destination_address_customer');
 
-            $table->foreignId('transport_id')->constrained('transport_companies');
+            $table->foreignId('transport_id')->nullable()->constrained('transport_companies');
             // $table->foreignId('document_types_id')->constrained('document_types');
             $table->text('observations')->nullable();
 
@@ -45,10 +45,11 @@ return new class extends Migration {
 
             $table->string('transfer_type');
             $table->integer('vehicle_type')->boolean();
-            $table->foreignId('document_type_id')->constrained('document_types');
+            $table->foreignId('document_type_id')->nullable()->constrained('document_types');
             $table->foreignId('destination_branch_client')->nullable()->constrained('branches');
-            $table->foreignId('customer_id')->constrained('customers');
-
+            $table->foreignId('customer_id')->nullable()->constrained('customers');
+            $table->integer('supplier_id')->nullable();
+            $table->integer('address_supplier_id')->nullable(); 
         });
     }
 

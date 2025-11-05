@@ -18,9 +18,7 @@ use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterfa
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\TransportCompany\Application\UseCases\FindByIdTransportCompanyUseCase;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Storage;
-
+ 
 class CreateDispatchNoteUseCase
 {
   public function __construct(
@@ -98,7 +96,7 @@ class CreateDispatchNoteUseCase
       transfer_type: $data->transfer_type,
       vehicle_type: $data->vehicle_type,
       document_type: $documentType,
-      destination_branch_client: $data->destination_branch_client_id,
+      destination_branch_client: $data->destination_branch_client,
       customer_id: $data->customer_id,
 
     );

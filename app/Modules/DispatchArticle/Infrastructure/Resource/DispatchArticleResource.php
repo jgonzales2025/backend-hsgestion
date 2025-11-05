@@ -2,6 +2,7 @@
 
 namespace App\Modules\DispatchArticle\Infrastructure\Resource;
 
+use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -17,7 +18,8 @@ class DispatchArticleResource extends JsonResource
             'weight' => $this->resource->getWeight(),
             'saldo' => $this->resource->getSaldo(),
             'name' => $this->resource->getName(),
-            'subtotal_weight' => $this->resource->getsubTotalWeight()
+            'subtotal_weight' => $this->resource->getsubTotalWeight(),
+          'cod_fab' =>  EloquentArticle::where('id', $this->resource->getArticleID())->value('cod_fab')
         ];
     }
 }

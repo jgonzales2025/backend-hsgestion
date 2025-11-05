@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('with_deduction')->default(false);
             $table->boolean('series_enabled')->default(false);
 
+<<<<<<< HEAD
             $table->foreignId('measurement_unit_id')->nullable()->constrained('measurement_units');
             $table->foreignId('brand_id')->nullable()->constrained('brands');
             $table->foreignId('category_id')->nullable()->constrained('categories');
@@ -26,6 +27,8 @@ return new class extends Migration
             $table->foreignId('company_type_id')->nullable()->constrained('companies');
             $table->foreignId('user_id')->nullable()->constrained('users');
 
+=======
+>>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
             $table->string('location')->nullable();
             $table->string('warranty')->nullable();
 
@@ -33,6 +36,10 @@ return new class extends Migration
             $table->boolean('igv_applicable')->default(true);
             $table->boolean('plastic_bag_applicable')->default(false);
 
+<<<<<<< HEAD
+=======
+            $table->foreignId('sub_category_id')->nullable()->constrained('sub_categories');
+>>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
             $table->integer('min_stock')->default(0);
             $table->string('image_url')->nullable();
 
@@ -47,11 +54,28 @@ return new class extends Migration
 
             $table->boolean('venta')->default(true);
             $table->tinyInteger('status')->default(1);
+<<<<<<< HEAD
             $table->integer('state_modify_article')->default(0);
             $table->string('filt_NameEsp')->nullable();
             $table->boolean('status_Esp')->default(false);
 
             $table->timestamp('date_at')->useCurrent();
+=======
+
+            // Relaciones
+            $table->foreignId('measurement_unit_id')->nullable()->constrained('measurement_units');
+            $table->foreignId('brand_id')->nullable()->constrained('brands');
+            $table->foreignId('category_id')->nullable()->constrained('categories');
+            $table->foreignId('currency_type_id')->nullable()->constrained('currency_types');
+            $table->foreignId('user_id')->nullable()->constrained('users');
+            $table->foreignId('company_type_id')->nullable()->constrained('company_types');
+
+            $table->timestamp('date_at')->default(DB::raw('CURRENT_TIMESTAMP'));
+            $table->integer('state_modify_article')->default(0);
+            $table->string('filtNameEsp')->nullable();
+            $table->boolean('statusEsp')->default(true);
+
+>>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
             $table->timestamps();
         });
     }

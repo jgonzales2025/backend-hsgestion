@@ -134,7 +134,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
         return null;
     }
 
-    return new DispatchNote(
+    $entity =  new DispatchNote(
         id: $dispatchNote->id,
         company: $dispatchNote->company?->toDomain($dispatchNote->company),
         branch: $dispatchNote->branch->toDomain($dispatchNote->branch),
@@ -159,7 +159,11 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
         document_type: $dispatchNote->document_type?->toDomain($dispatchNote->document_type),
         destination_branch_client: $dispatchNote->destination_branch_client,
         customer_id: $dispatchNote->customer_id,
+
     );
+           $entity->setCreatedAt($dispatchNote->created_at ? $dispatchNote->created_at->format('Y-m-d H:i:s') : null);
+             \Log::info("fecha",[$entity]);
+           return $entity; 
 }
    public function update(DispatchNote $dispatchNote):?DispatchNote{
          $dispatchNotess = EloquentDispatchNote::find($dispatchNote->getId());
@@ -187,7 +191,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'vehicle_type' => $dispatchNote->getVehicleType(),
             'document_type_id' => $dispatchNote->getDocumentType() ? $dispatchNote->getDocumentType()->getId() : null,
             'destination_branch_client' => $dispatchNote->getdestination_branch_client(),
-            'customer_id' => $dispatchNote->getCustomerId()
+            'customer_id' => $dispatchNote->getCustomerId(),
         ]);
 
         return new DispatchNote(

@@ -6,6 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
+use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
+use App\Modules\Customer\Infrastructure\Resources\CustomerCompanyResource;
+use App\Modules\CustomerAddress\Infrastructure\Models\EloquentCustomerAddress;
+use App\Modules\CustomerAddress\Infrastructure\Resources\CustomerAddressResource;
 use App\Modules\DispatchArticle\Application\DTOS\DispatchArticleDTO;
 use App\Modules\DispatchArticle\Application\UseCase\CreateDispatchArticleUseCase;
 use App\Modules\DispatchArticle\Domain\Entities\DispatchArticle;
@@ -27,6 +31,7 @@ use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class DispatchNotesController extends Controller
 {
@@ -157,9 +162,29 @@ class DispatchNotesController extends Controller
             ], 200);
         }
     }
-
-
+public function traerProovedores() {
+    // Obtener company_id del usuario logeado
     
+   $payload = JWTAuth::parseToken()->payload();
+
+    $loggedCompanyId = $payload->get('company_id');
+
+    // Traer todos los proveedores excepto el de la compañía logeada
+    $proveedores = EloquentCustomer::where('record_type_id', 1)
+        ->where('id', '!=', $loggedCompanyId)
+        ->get();
+        
+   $adres = EloquentCustomerAddress::
+        where('id', '!=', $loggedCompanyId)
+        ->get();
+        
+        return response()->json([
+            'customer' => $proveedores,
+          'addresses' => $adres,
+        
+        ]);
+    
+}    
     private function createDispatchArticles($sale, array $articlesData): array
     {
 
@@ -179,4 +204,5 @@ class DispatchNotesController extends Controller
             return $createSaleArticleUseCase->execute($saleArticleDTO);
         }, $articlesData);
     }
+
 }

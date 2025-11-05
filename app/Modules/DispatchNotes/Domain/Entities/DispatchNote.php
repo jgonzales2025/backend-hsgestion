@@ -34,7 +34,7 @@ class DispatchNote
     private ?DocumentType $document_type;
     private ?int $destination_branch_client;
     private int $customer_id;
-    private string $created_at = "";
+    private string $created_at = ""; 
 
     public function __construct(
         ?int $id,
@@ -193,4 +193,5 @@ class DispatchNote
     {
         $this->created_at = $date;
     }
+
 }

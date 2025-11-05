@@ -10,6 +10,7 @@ use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\ExchangeRate\Infrastructure\Models\EloquentExchangeRate;
 use App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 
 class EloquentArticleRepository implements ArticleRepositoryInterface
@@ -29,24 +30,26 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'igv_applicable' => $article->getIgvApplicable(),
             'plastic_bag_applicable' => $article->getPlasticBagApplicable(),
             'min_stock' => $article->getMinStock(),
-            'currency_type_id' => $article->getCurrencyType()->getId(),
+            'currency_type_id' => $article->getCurrencyType()?->getId(),
             'purchase_price' => $article->getPurchasePrice(),
             'public_price' => $article->getPublicPrice(),
             'distributor_price' => $article->getDistributorPrice(),
             'authorized_price' => $article->getAuthorizedPrice(),
-            'measurement_unit_id' => $article->getMeasurementUnit()->getId(),
+            'measurement_unit_id' => $article->getMeasurementUnit()?->getId(),
             'public_price_percent' => $article->getPublicPricePercent(),
             'distributor_price_percent' => $article->getDistributorPricePercent(),
             'authorized_price_percent' => $article->getAuthorizedPricePercent(),
-            'status' => $article->getStatus(),
-            'brand_id' => $article->getBrand()->getId(),
+            'status' =>true,
+            'brand_id' => $article->getBrand()?->getId(),
             'venta' => $article->getVenta(),
-            'user_id' => $article->getUser()->getId(),
-            'category_id' => $article->getCategory()->getId(),
-            'sub_category_id' => $article->getSubCategory()->getId(),
-            'company_type_id' => $article->getCompany()->getId(),
+            'user_id' => 1,
+            'category_id' => $article->getCategory()?->getId(),
+            'sub_category_id' => $article->getSubCategory()?->getId(),
+            'company_type_id' =>1,
             'image_url' => $article->getImageURL(),
-            'state_modify_article' => $article->getstateModifyArticle()
+            'state_modify_article' => $article->getstateModifyArticle(),
+            'filtNameEsp' => $article->getFiltNameEsp(),
+            'statusEsp' => $article->getStatusEsp()
         ]);
 
         $payload = auth('api')->payload();
@@ -59,8 +62,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 'company_id' => $companyId,
                 'branch_id' => $sucursal->id,
                 'article_id' => $eloquentArticle->id,
-                'user_id' => $eloquentArticle->user_id,
-                'status' => 1
+                'user_id' => 1,
+                'status' => true
             ]);
         });
 
@@ -85,21 +88,24 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             distributor_price_percent: (float) $eloquentArticle->distributor_price_percent,
             authorized_price_percent: isset($eloquentArticle->authorized_price_percent) ? (float) $eloquentArticle->authorized_price_percent : 0,
             status: $eloquentArticle->status,
-            brand: $eloquentArticle->brand->toDomain($eloquentArticle->brand),
-            category: $eloquentArticle->category->toDomain($eloquentArticle->category),
-            currencyType: $eloquentArticle->currencyType->toDomain($eloquentArticle->currencyType),
-            measurementUnit: $eloquentArticle->measurementUnit->toDomain($eloquentArticle->measurementUnit),
-            user: $eloquentArticle->user->toDomain($eloquentArticle->user),
+            brand: $eloquentArticle->brand?->toDomain($eloquentArticle->brand),
+            category: $eloquentArticle->category?->toDomain($eloquentArticle->category),
+            currencyType: $eloquentArticle->currencyType?->toDomain($eloquentArticle->currencyType),
+            measurementUnit: $eloquentArticle->measurementUnit?->toDomain($eloquentArticle->measurementUnit),
+            user: $eloquentArticle->user?->toDomain($eloquentArticle->user),
             precioIGv: isset($eloquentArticle->purchase_price, $eloquentArticle->tariff_rate)
             ? (float) ($eloquentArticle->purchase_price + ($eloquentArticle->purchase_price * $eloquentArticle->tariff_rate / 100))
             : 0,
             venta: (bool) $eloquentArticle->venta,
-            subCategory: $eloquentArticle->subCategory->toDomain($eloquentArticle->subCategory),
-            company: $eloquentArticle->company->toDomain($eloquentArticle->company),
+            subCategory: $eloquentArticle->subCategory?->toDomain($eloquentArticle->subCategory),
+            company: $eloquentArticle->company?->toDomain($eloquentArticle->company),
             image_url: $eloquentArticle->image_url,
-            state_modify_article: $eloquentArticle->state_modify_article
+            state_modify_article: $eloquentArticle->state_modify_article,
+            filtNameEsp: $eloquentArticle->filtNameEsp,
+            statusEsp: $eloquentArticle->statusEsp
         );
     }
+<<<<<<< HEAD
       public function cretaArticleNotasDebito(ArticleNotasDebito $article): ?ArticleNotasDebito
     {
 
@@ -122,6 +128,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     }
 
     public function findAllArticle(?string $description): array
+=======
+        public function findAllArticle(?string $description): array
+>>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
     {
         $payload = auth('api')->payload();
         $companyId = $payload->get('company_id');
@@ -136,7 +145,11 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'company',
         ])
             ->where('company_type_id', $companyId)
+<<<<<<< HEAD
              ->where('status_Esp', false)
+=======
+            ->where('statusEsp', false)
+>>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
             ->when($description, function ($query, $name) {
                 return $query->where(function ($q) use ($name) {
                     $q->where('description', 'like', "%{$name}%")
@@ -180,7 +193,78 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 venta: $article->venta,
                 company: $article->company->toDomain($article->company),
                 image_url: $article->image_url,
-                state_modify_article: $article->state_modify_article
+                state_modify_article: $article->state_modify_article,
+                filtNameEsp: $article->filtNameEsp,
+                statusEsp: $article->statusEsp
+
+            );
+
+        })->toArray();
+    }
+
+
+    public function findAllArticleNotasDebito(?string $description): array
+    {
+        $payload = auth('api')->payload();
+        $companyId = $payload->get('company_id');
+
+        $articles = EloquentArticle::with([
+            'measurementUnit',
+            'brand',
+            'category',
+            'currencyType',
+            'subCategory',
+            'user',
+            'company',
+        ])
+            ->where('company_type_id', $companyId)
+            ->where('statusEsp', true)
+            ->when($description, function ($query, $name) {
+                return $query->where(function ($q) use ($name) {
+                    $q->where('description', 'like', "%{$name}%")
+                        ->orWhere('cod_fab', 'like', "%{$name}%");
+                });
+            })
+            ->orderByDesc('created_at')
+            ->get();
+
+        return $articles->map(function ($article) {
+
+
+            return new Article(
+                id: $article->id,
+                user: $article->user ? $article->user->toDomain($article->user) : null,
+                cod_fab: $article->cod_fab,
+                description: $article->description,
+                weight: $article->weight,
+                with_deduction: $article->with_deduction,
+                series_enabled: $article->series_enabled,
+                location: $article->location,
+                warranty: $article->warranty,
+                tariff_rate: $article->tariff_rate,
+                igv_applicable: $article->igv_applicable,
+                plastic_bag_applicable: $article->plastic_bag_applicable,
+                min_stock: $article->min_stock,
+                purchase_price: $article->purchase_price,
+                public_price: $article->public_price,
+                distributor_price: $article->distributor_price,
+                authorized_price: $article->authorized_price,
+                public_price_percent: $article->public_price_percent,
+                distributor_price_percent: $article->distributor_price_percent,
+                authorized_price_percent: $article->authorized_price_percent,
+                status: $article->status,
+                brand: $article->brand ? $article->brand->toDomain($article->brand) : null,
+                category: $article->category ? $article->category->toDomain($article->category) : null,
+                currencyType: $article->currencyType ? $article->currencyType->toDomain($article->currencyType) : null,
+                measurementUnit: $article->measurementUnit ? $article->measurementUnit->toDomain($article->measurementUnit) : null,
+                subCategory: $article->subCategory ? $article->subCategory->toDomain($article->subCategory) : null,
+                precioIGv: $article->purchase_price + ($article->purchase_price * ($article->tariff_rate / 100)),
+                venta: $article->venta,
+                company: $article->company->toDomain($article->company),
+                image_url: $article->image_url,
+                state_modify_article: $article->state_modify_article,
+                filtNameEsp: $article->filtNameEsp,
+                statusEsp: $article->statusEsp
 
             );
 
@@ -227,7 +311,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     public function findById(int $id): ?Article
     {
 
-        $article = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory', 'company'])->find($id);
+        $article = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory', 'company'])
+          ->where( 'statusEsp', false)
+        ->find($id);
 
         if (!$article)
             return null;
@@ -264,13 +350,16 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             subCategory: $article->subCategory->toDomain($article->subCategory) ?? null,
             company: $article->company->toDomain($article->company),
             image_url: $article->image_url,
-            state_modify_article: $article->state_modify_article
+            state_modify_article: $article->state_modify_article,
+            filtNameEsp: $article->filtNameEsp,
+            statusEsp: $article->statusEsp,
         );
     }
     public function FindByIdNotesDebito(int $id):?ArticleNotasDebito{
        
         $article = EloquentArticle::find($id);
 
+<<<<<<< HEAD
         if (!$article)
             return null;
 
@@ -283,9 +372,14 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             
         );
     }
+=======
+    
+>>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
     public function update(Article $article): ?Article
     {
-        $eloquentArticle = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory'])->find($article->getId());
+        $eloquentArticle = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory'])
+        ->where( 'statusEsp', false)
+        ->find($article->getId());
 
         if (!$eloquentArticle) {
             throw new \Exception('Articulo no encontrado');
@@ -302,7 +396,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'igv_applicable' => $article->getIgvApplicable(),
             'plastic_bag_applicable' => $article->getPlasticBagApplicable(),
             'min_stock' => $article->getMinStock(),
-            'currency_type_id' => $article->getCurrencyType()->getId(),
+            'currency_type_id' => $article->getCurrencyType()->getId() ??   null,
             'purchase_price' => $article->getPurchasePrice(),
             'public_price' => $article->getPublicPrice(),
             'distributor_price' => $article->getDistributorPrice(),
@@ -318,7 +412,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'category_id' => $article->getCategory()->getId(),
             'sub_category_id' => $article->getSubCategory()->getId(),
             'image_url' => $article->getImageURL(),
-            'state_modify_article' => $article->getstateModifyArticle()
+            'state_modify_article' => $article->getstateModifyArticle(),
+            'filtNameEsp' => $article->getFiltNameEsp(),
+            'statusEsp' => $article->getStatusEsp(),
         ]);
         return new Article(
             id: $eloquentArticle->id,
@@ -353,7 +449,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             subCategory: $eloquentArticle->subCategory->toDomain($eloquentArticle->subCategory),
             company: $eloquentArticle->company->toDomain($eloquentArticle->company),
             image_url: $eloquentArticle->image_url,
-            state_modify_article: $eloquentArticle->state_modify_article
+            state_modify_article: $eloquentArticle->state_modify_article,
+            filtNameEsp: $eloquentArticle->filtNameEsp,
+            statusEsp: $eloquentArticle->statusEsp,
         );
     }
     public function updateNotesDebito(ArticleNotasDebito $article): ?ArticleNotasDebito
@@ -462,9 +560,74 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 subCategory: $article->subCategory->toDomain($article->subCategory),
                 company: $article->company->toDomain($article->company),
                 image_url: $article->image_url,
-                state_modify_article: $article->state_modify_article
+                state_modify_article: $article->state_modify_article,
+
             );
         })->toArray();
 
     }
+
+public function findAllExcel(?string $description): Collection
+{
+    $payload = auth('api')->payload();
+    $companyId = $payload->get('company_id');
+
+    $articles = EloquentArticle::with([
+        'measurementUnit',
+        'brand',
+        'category',
+        'currencyType',
+        'subCategory',
+        'user',
+        'company',
+    ])
+        ->where('company_type_id', $companyId)
+        ->when($description, function ($query, $name) {
+            return $query->where(function ($q) use ($name) {
+                $q->where('description', 'like', "%{$name}%")
+                    ->orWhere('cod_fab', 'like', "%{$name}%");
+            });
+        })
+        ->orderByDesc('created_at')
+        ->get();
+
+    return $articles->map(function ($article) {
+        return new Article(
+            id: $article->id,
+            user: $article->user ? $article->user->toDomain($article->user) : null,
+            cod_fab: $article->cod_fab,
+            description: $article->description,
+            weight: $article->weight,
+            with_deduction: $article->with_deduction,
+            series_enabled: $article->series_enabled,
+            location: $article->location,
+            warranty: $article->warranty,
+            tariff_rate: $article->tariff_rate,
+            igv_applicable: $article->igv_applicable,
+            plastic_bag_applicable: $article->plastic_bag_applicable,
+            min_stock: $article->min_stock,
+            purchase_price: $article->purchase_price,
+            public_price: $article->public_price,
+            distributor_price: $article->distributor_price,
+            authorized_price: $article->authorized_price,
+            public_price_percent: $article->public_price_percent,
+            distributor_price_percent: $article->distributor_price_percent,
+            authorized_price_percent: $article->authorized_price_percent,
+            status: $article->status,
+            brand: $article->brand ? $article->brand->toDomain($article->brand) : null,
+            category: $article->category ? $article->category->toDomain($article->category) : null,
+            currencyType: $article->currencyType ? $article->currencyType->toDomain($article->currencyType) : null,
+            measurementUnit: $article->measurementUnit ? $article->measurementUnit->toDomain($article->measurementUnit) : null,
+            subCategory: $article->subCategory ? $article->subCategory->toDomain($article->subCategory) : null,
+            precioIGv: $article->purchase_price + ($article->purchase_price * ($article->tariff_rate / 100)),
+            venta: $article->venta,
+            company: $article->company->toDomain($article->company),
+            image_url: $article->image_url,
+            state_modify_article: $article->state_modify_article,
+            filtNameEsp: $article->filtNameEsp,
+            statusEsp: $article->statusEsp,
+        );
+    });
+}
+
 }

@@ -64,7 +64,7 @@
     <table>
         <tr>
             <td><strong>FECHA EMISIÓN:</strong>
-                {{ $dispatchNote->getCreatedFecha ?? 'NO ESPECIFICADA' }}
+                {{ $dispatchNote->getCreatedFecha() ?? 'NO ESPECIFICADA' }}
             </td>
             <td><strong>MOTIVO:</strong> {{ $dispatchNote->getEmissionReason()?->getDescription() ?? 'VENTA' }}</td>
         </tr>
@@ -100,29 +100,28 @@
     <table>
         <thead>
             <tr>
-                <th width="10%">CANT</th>
-                <th width="10%">UND</th>
-                <th width="60%">DESCRIPCIÓN</th>
-                <th width="20%">PESO (kg)</th>
+                <th width="10%">article_id</th>
+                <th width="10%">quantity</th>
+                <th width="60%">description</th>
             </tr>
         </thead>
         <tbody>
             @if(!empty($dispatchArticles) && is_iterable($dispatchArticles))
                 @foreach($dispatchArticles as $item)
                     <tr>
-                        <td class="text-center">{{ $item['id'] ?? '-' }}</td>
+
                         <td class="text-center">{{ $item['article_id'] ?? '-' }}</td>
                         <td class="text-center">{{ $item['quantity'] ?? 0 }}</td>
-                        <td class="text-center">{{ $item['weight'] ?? 0 }}</td>
-                        <td class="text-center">{{ $item['saldo'] ?? 0 }}</td>
-                        <td>{{ $item['name'] ?? 'SIN DESCRIPCIÓN' }}</td>
-                        <td class="text-right">{{ number_format($item['subtotal_weight'] ?? 0, 2) }}</td>
+                        <td>{{ $item['description'] ?? 'SIN DESCRIPCIÓN' }}</td>
                     </tr>
                 @endforeach
             @else
                 <tr>
-                    <td colspan="7" class="text-center">No hay artículos registrados</td>
+                    <td colspan="3" class="text-right"><strong>TOTAL PESO (kg):</strong></td>
+                    <td class="text-right"><strong>{{ number_format($dispatchNote->getTotalWeight() ?? 0, 2) }}</strong>
+                    </td>
                 </tr>
+
             @endif
 
             <tr>

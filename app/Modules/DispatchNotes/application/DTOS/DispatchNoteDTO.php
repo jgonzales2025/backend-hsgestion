@@ -25,7 +25,7 @@ class DispatchNoteDTO
   public string $transfer_type;
   public bool $vehicle_type;
   public int $document_type_id;
-  public int $destination_branch_client_id;
+  public int $destination_branch_client ;
   public int $customer_id;
 
 
@@ -50,9 +50,9 @@ class DispatchNoteDTO
     $this->license_plate = $date['license_plate'] ?? '';
     $this->total_weight = $date['total_weight'];
     $this->transfer_type = $date['transfer_type'];
-    $this->vehicle_type = $date['vehicle_type'];
+    $this->vehicle_type = $date['vehicle_type']?? 1;
     $this->document_type_id = $date['document_type_id'] ?? 1;
-    $this->destination_branch_client_id = $date['destination_branch_client_id'] ?? 1;
+    $this->destination_branch_client = $date['destination_branch_client_id'] ?? 1;
     $this->customer_id = $date['customer_id'] ?? 1;
 
   }

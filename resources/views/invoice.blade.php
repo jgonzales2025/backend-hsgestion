@@ -147,7 +147,9 @@
                 <td><strong>DESTINATARIO</strong><br>{{ $dispatchNote->getTransport()->razon_social ?? '' }}</td>
 
                 <td><strong>RUC</strong><br>{{ $dispatchNote->getCompany()?->getRuc() }}</td>
-                <td><strong>MOTIVO TRASLADO</strong><br>{{ strtoupper($dispatchNote->getEmissionReason()->getDescription() ?? 'VENTA') }}</td>
+                <td><strong>MOTIVO
+                        TRASLADO</strong><br>{{ strtoupper($dispatchNote->getEmissionReason()->getDescription() ?? 'VENTA') }}
+                </td>
             </tr>
         </table>
 
@@ -214,7 +216,7 @@
             <tr>
                 <td>
                     <strong>TIPO Y N° DE COMPROBANTE DE PAGO:</strong>
-                    {{ $dispatchNote->serie_referencia ??'' . '-' . $dispatchNote->getDocReferencia()  ?? '' }}
+                    {{ $dispatchNote->serie_referencia ?? '' . '-' . $dispatchNote->getDocReferencia() ?? '' }}
                 </td>
             </tr>
             <tr>
@@ -228,7 +230,7 @@
             <p>Autorizado mediante resolución N° {{ $dispatchNote->cia->resolucion ?? '0180050002825' }}</p>
             <p>Representación impresa - Documento Electrónico</p>
             <p>Podrá ser consultada en:
-                <strong>{{ $dispatchNote->cia->pagina_web ?? 'http://www.supertec.com.pe/cdpelectronico' }}</strong>
+                <strong>{{ $dispatchNote->cia->pagina_web ?? '' }}</strong>
             </p>
         </div>
 

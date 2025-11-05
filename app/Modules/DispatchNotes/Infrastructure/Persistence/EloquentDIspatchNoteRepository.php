@@ -162,7 +162,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
 
     );
            $entity->setCreatedAt($dispatchNote->created_at ? $dispatchNote->created_at->format('Y-m-d H:i:s') : null);
-             \Log::info("fecha",[$entity]);
+
            return $entity; 
 }
    public function update(DispatchNote $dispatchNote):?DispatchNote{

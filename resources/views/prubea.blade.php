@@ -1,124 +1,247 @@
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Guía de Remisión Electrónica</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            font-size: 10px;
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 11px;
             color: #000;
             margin: 0;
-            padding: 10px;
         }
-        table {
+
+        .container {
             width: 100%;
+            padding: 10px 25px;
+        }
+
+        table {
             border-collapse: collapse;
-            margin-bottom: 10px;
+            width: 100%;
         }
-        th, td {
+
+        .header-table td {
+            vertical-align: top;
+        }
+
+        .logo {
+            width: 160px;
+            max-height: 60px;
+        }
+
+        .company-info {
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .company-ruc {
             border: 1px solid #000;
-            padding: 5px;
-            text-align: left;
+            text-align: center;
+            padding: 8px;
         }
-        .header {
-            margin-bottom: 15px;
+
+        .company-ruc h2 {
+            margin: 2px 0;
+            font-size: 13px;
         }
-        .header td {
-            border: none;
-            padding: 2px 0;
+
+        .company-ruc h3 {
+            margin: 3px 0;
+            font-size: 14px;
+            font-weight: bold;
         }
-        .text-center {
+
+        .company-ruc h4 {
+            margin: 3px 0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Secciones */
+        .section-title {
+            background-color: #eaeaea;
+            font-weight: bold;
+            padding: 4px 6px;
+            border: 1px solid #000;
+        }
+
+        .info-table td {
+            border: 1px solid #000;
+            padding: 3px 5px;
+        }
+
+        .info-table td strong {
+            color: #000;
+        }
+
+        .products-table {
+            width: 100%;
+            margin-top: 6px;
+            font-size: 10px;
+            border: 1px solid #000;
+        }
+
+
+        .products-table th,
+        .products-table td {
+            border: 1px solid #000;
+            padding: 4px;
+        }
+
+        .products-table th {
+            background-color: #eaeaea;
             text-align: center;
         }
-        .text-right {
-            text-align: right;
+
+        .products-table td:nth-child(1),
+        .products-table td:nth-child(2),
+        .products-table td:nth-child(3) {
+            text-align: center;
         }
-        .no-border {
-            border: none !important;
+
+        .footer {
+            font-size: 9px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .qr {
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .qr img {
+            width: 70px;
         }
     </style>
 </head>
+
 <body>
-    <table class="header">
-        <tr>
-            <td width="60%">
-                <strong>EMPRESA: {{ $dispatchNote->getCompany()?->getCompanyName() ?? 'EMPRESA NO ESPECIFICADA' }}</strong><br>
-                RUC: {{ $dispatchNote->getCompany()?->getRuc() ?? 'NO DISPONIBLE' }}<br>
-                {{ $dispatchNote->getCompany()?->getAddress() ?? 'Sin dirección registrada' }}
-            </td>
-            <td class="text-center" style="border: 1px solid #000; padding: 5px;">
-                <strong>GUÍA DE REMISIÓN ELECTRÓNICA</strong><br>
-                {{ $dispatchNote->getSerie() }}-{{ $dispatchNote->getCorrelativo() }}
-            </td>
-        </tr>
-    </table>
+    <div class="container">
 
-    <table>
-        <tr>
-            <td><strong>FECHA EMISIÓN:</strong> {{ $dispatchNote->getCreatedFecha() ? date('d/m/Y', strtotime($dispatchNote->getCreatedFecha())) : 'NO ESPECIFICADA' }}</td>
-            <td><strong>MOTIVO:</strong> {{ $dispatchNote->getEmissionReason()?->getDescription() ?? 'VENTA' }}</td>
-        </tr>
-        <tr>
-            <td colspan="2"><strong>DESTINATARIO:</strong> {{ $dispatchNote->getDestinationAddressCustomer() ?? 'NO ESPECIFICADO' }}</td>
-        </tr>
-    </table>
-
-    <table>
-        <tr>
-            <td width="50%">
-                <strong>TRANSPORTISTA</strong><br>
-                <strong>N° PLACA:</strong> {{ $dispatchNote->getLicensePlate() ?? 'NO ESPECIFICADA' }}<br>
-                <strong>CONDUCTOR:</strong> {{ $dispatchNote->getConductor()?->getName() ?? 'NO ESPECIFICADO' }}
-            </td>
-            <td width="50%">
-                <strong>EMPRESA TRANSPORTE</strong><br>
-                <strong>RUC:</strong> {{ $dispatchNote->getTransport()?->getRuc() ?? 'NO ESPECIFICADO' }}<br>
-                <strong>RAZÓN SOCIAL:</strong> {{ $dispatchNote->getTransport()?->getCompanyName() ?? 'NO ESPECIFICADA' }}
-            </td>
-        </tr>
-    </table>
-
-    <table>
-        <thead>
+        <!-- ENCABEZADO -->
+        <table class="header-table">
             <tr>
-                <th width="10%">CANT</th>
-                <th width="10%">UND</th>
-                <th width="60%">DESCRIPCIÓN</th>
-                <th width="20%">PESO (kg)</th>
+                <td width="60%">
+                    @if($dispatchNote->cia->logo_horizontal && file_exists(public_path('storage/cias/' . $dispatchNote->cia->logo_horizontal)))
+                        <img src="{{ public_path('storage/cias/' . $dispatchNote->cia->logo_horizontal) }}"
+                            class="logo"><br>
+                    @endif
+                    <div class="company-info">
+                        <strong>{{ strtoupper($dispatchNote->cia->descripcion) }}</strong><br>
+                        DIRECC: {{ $dispatchNote->cia->direccion }}<br>
+                        TELF: {{ $dispatchNote->cia->telefono ?? '' }}<br>
+                        CORREO: {{ $dispatchNote->cia->correo ?? '' }}
+                    </div>
+                </td>
+                <td width="40%">
+                    <div class="company-ruc">
+                        <h2>R.U.C. {{ $dispatchNote->cia->ruc }}</h2>
+                        <h3>GUÍA DE REMISIÓN ELECTRÓNICA</h3>
+                        <h4>{{ $dispatchNote->serie }} N°{{ str_pad($dispatchNote->correlativo, 8, '0', STR_PAD_LEFT) }}
+                        </h4>
+                    </div>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @if(method_exists($dispatchNote, 'getItems') && is_iterable($dispatchNote->getItems()))
-                @foreach($dispatchNote->getItems() as $item)
+        </table>
+
+        <!-- DATOS PRINCIPALES -->
+        <table class="info-table" style="margin-top:10px;">
+            <tr>
+                <td><strong>EMISIÓN</strong><br>{{ $dispatchNote->fecha }}</td>
+                <td><strong>TRASLADO</strong><br>{{ $dispatchNote->fecha }}
+                </td>
+                <td><strong>DESTINATARIO</strong><br>{{ $dispatchNote->transport_company->razon_social ?? '' }}</td>
+
+                <td><strong>RUC</strong><br>{{ $dispatchNote->cia->ruc }}</td>
+                <td><strong>MOTIVO TRASLADO</strong><br>{{ strtoupper($dispatchNote->motivo_traslado ?? 'VENTA') }}</td>
+            </tr>
+        </table>
+
+        <!-- DIRECCIONES -->
+        <table class="info-table">
+            <tr>
+                <td width="50%"><strong>DIRECCIÓN PARTIDA</strong><br>{{ $dispatchNote->cia->direccion }}</td>
+                <td width="50%"><strong>DIRECCIÓN DESTINO <br></strong>
+                    @if (is_null($dispatchNote->direccion_destino_cliente))
+                        {{ $dispatchNote->sucursal->direccion }}
+                    @elseif ($dispatchNote->direccion_destino_cliente == 0)
+                        {{ $dispatchNote->customer->direccion }}
+                    @elseif ($dispatchNote->direccion_destino_cliente > 0)
+                        {{ $dispatchNote->address->descripcion }}
+                    @endif
+
+                </td>
+            </tr>
+        </table>
+
+        <!-- TRANSPORTE -->
+        <table class="info-table">
+            <tr>
+                <td width="50%">
+                    <strong>DATOS DEL TRANSPORTISTA</strong><br>
+                    <strong>N° PLACA:</strong> {{ $dispatchNote->placa ?? '' }}<br>
+                    <strong>CONDUCTOR:</strong>
+                    {{ $dispatchNote->conductor->nombre . ' ' . $dispatchNote->conductor->apellido_paterno . ' ' .
+    $dispatchNote->conductor->apellido_materno ?? '' }}<br>
+                    <strong>LIC. CONDUCIR:</strong> {{ $dispatchNote->conductor->licencia ?? '' }}
+                </td>
+                <td width="50%">
+                    <strong>EMPRESA DE TRANSPORTE</strong><br>
+                    <strong>RUC:</strong> {{ $dispatchNote->transport_company->ruc ?? ''  }}<br>
+                    <strong>RAZÓN SOCIAL:</strong>{{ $dispatchNote->transport_company->razon_social ?? ''  }}<br>
+                    <strong>PESO TOTAL:</strong> {{ number_format($dispatchNote->peso_total, 4) }} KGM
+                </td>
+            </tr>
+        </table>
+
+        <!-- DETALLES -->
+        <table class="products-table">
+            <thead>
+                <tr>
+                    <th>UND</th>
+                    <th>CANT</th>
+                    <th>DESCRIPCIÓN</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($dispatchNote->detalles as $detalle)
                     <tr>
-                        <td class="text-center">{{ $item->getQuantity() ?? 0 }}</td>
-                        <td class="text-center">{{ $item->getUnit() ?? 'UND' }}</td>
-                        <td>{{ $item->getName() ?? 'SIN DESCRIPCIÓN' }}</td>
-                        <td class="text-right">{{ number_format($item->getWeight() ?? 0, 2) }}</td>
+                        <td>{{ $detalle->producto->unidad->siglas ?? 'UND' }}</td>
+                        <td style="text-align:center;">{{ $detalle->cantidad }}</td>
+                        <td>{{ $detalle->producto->descripcion }}</td>
                     </tr>
                 @endforeach
-            @else
-                <tr>
-                    <td colspan="4" class="text-center">No hay artículos registrados</td>
-                </tr>
-            @endif
+            </tbody>
+        </table>
+
+        <!-- PIE -->
+        <table class="info-table" style="margin-top:6px;">
             <tr>
-                <td colspan="3" class="text-right"><strong>TOTAL PESO (kg):</strong></td>
-                <td class="text-right"><strong>{{ number_format($dispatchNote->getTotalWeight() ?? 0, 2) }}</strong></td>
+                <td>
+                    <strong>TIPO Y N° DE COMPROBANTE DE PAGO:</strong>
+                    {{ $dispatchNote->serie_referencia . '-' . $dispatchNote->correlativo_referencia ?? '' }}
+                </td>
             </tr>
-        </tbody>
-    </table>
+            <tr>
+                <td><strong>OBSERVACIÓN:</strong> {{ $dispatchNote->observacion ?? '' }}</td>
+            </tr>
+        </table>
 
-    <table>
-        <tr>
-            <td class="no-border"><strong>OBSERVACIONES:</strong> {{ $dispatchNote->getObservations() ?? 'Ninguna' }}</td>
-        </tr>
-    </table>
+        <div class="footer">
+            <p>NO SE ACEPTAN CAMBIOS NI DEVOLUCIONES CON DAÑOS FÍSICOS O ACCESORIOS FALTANTES, SOLO POR FALLAS DE
+                FABRICACIÓN</p>
+            <p>Autorizado mediante resolución N° {{ $dispatchNote->cia->resolucion ?? '0180050002825' }}</p>
+            <p>Representación impresa - Documento Electrónico</p>
+            <p>Podrá ser consultada en:
+                <strong>{{ $dispatchNote->cia->pagina_web ?? 'http://www.supertec.com.pe/cdpelectronico' }}</strong>
+            </p>
+        </div>
 
-    <div style="text-align: center; margin-top: 20px; font-size: 9px;">
-        Documento generado el {{ date('d/m/Y H:i:s') }}
+
     </div>
 </body>
 
-</html> -->
+</html>

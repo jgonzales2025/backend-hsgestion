@@ -210,7 +210,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'company',
         ])
             ->where('company_type_id', $companyId)
-            ->where('statusEsp', true)
+            ->where('status_Esp', true)
             ->when($description, function ($query, $name) {
                 return $query->where(function ($q) use ($name) {
                     $q->where('description', 'like', "%{$name}%")
@@ -304,7 +304,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     {
 
         $article = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory', 'company'])
-          ->where( 'statusEsp', false)
+          ->where( 'status_Esp', false)
         ->find($id);
 
         if (!$article)
@@ -366,7 +366,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     public function update(Article $article): ?Article
     {
         $eloquentArticle = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory'])
-        ->where( 'statusEsp', false)
+        ->where( 'status_Esp', false)
         ->find($article->getId());
 
         if (!$eloquentArticle) {
@@ -570,6 +570,7 @@ public function findAllExcel(?string $description): Collection
         'company',
     ])
         ->where('company_type_id', $companyId)
+        ->where('status_Esp', false)
         ->when($description, function ($query, $name) {
             return $query->where(function ($q) use ($name) {
                 $q->where('description', 'like', "%{$name}%")

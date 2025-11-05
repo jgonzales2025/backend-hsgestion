@@ -9,6 +9,7 @@ use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\PdfGeneratorInterface;
 use App\Modules\DispatchNotes\Infrastructure\Resource\DispatchNoteResource;
+use App\Modules\DispatchNotes\Infrastructure\Resource\ExcelNoteResource;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -30,18 +31,20 @@ class DomPdfGenerator implements PdfGeneratorInterface
                     return [];
                 }
             })();
-            $dispatch = (function () use ($dispatchNote) {
+            $dispatchNote = (function () use ($dispatchNote) {
                 try {
                     $note = app(DispatchNotesRepositoryInterface::class)
                         ->findById($dispatchNote->getId());
 
                     // Si es una sola entidad, se usa 'make' en vez de 'collection'
-                    return (new DispatchNoteResource($note))->resolve();
+                    return (new ExcelNoteResource($note));
                 } catch (\Throwable $e) {
                     \Log::error("Error obteniendo guia de remision: " . $e->getMessage());
                     return [];
                 }
             })();
+            \Log::info('Dispatch Data: ', ['dispatch' => $dispatchNote]);
+            \Log::info('Dispatch Articles Data: ', ['dispatchArticles' => $dispatchArticles]);
             // Cargar la vista Blade con los datos de la guía y los artículos
             $pdf = Pdf::loadView('invoice', [
                 'dispatchNote' => $dispatchNote,

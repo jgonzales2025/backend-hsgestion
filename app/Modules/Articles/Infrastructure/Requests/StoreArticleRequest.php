@@ -4,6 +4,7 @@ namespace App\Modules\Articles\Infrastructure\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Storage;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class StoreArticleRequest extends FormRequest
 {
@@ -48,10 +49,12 @@ class StoreArticleRequest extends FormRequest
 
             // Genera URL pública: /storage/articles/imagen.png
             $publicUrl = Storage::url($path);
-             $payload = auth('api')->payload();
+        //    $payload = JWTAuth::parseToken()->getPayload();
+        //    \Log::info('payload', $payload);
+            //  $payload = auth('api')->payload();
     // $userid = $payload->get('user_id');
     // Sobrescribimos el valor de image_url con la URL pública
-       \Log::info('User ID: ' , $payload);
+
             $this->merge([
                 'image_url' => $publicUrl,
                 // 'user_id' => $userid,

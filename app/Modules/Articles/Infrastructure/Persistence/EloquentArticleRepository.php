@@ -111,7 +111,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         $eloquentArticle = EloquentArticle::create([
          'filt_NameEsp' => $article->getFiltNameEsp(), 
          'user_id' => $article->getUserId(),
-          'company_type_id' => 1, 
+          'company_type_id' => $article->getCompanyId(), 
          'status_Esp' => true,
          'category_id' => 1,
         ]);

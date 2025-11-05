@@ -79,9 +79,13 @@ class ArticleResource extends JsonResource
             'image_url' => $this->resource->getImageURL()
                 ? url($this->resource->getImageURL())
                 : '',
+<<<<<<< HEAD
+            'is_visible' => ($this->resource->getstateModifyArticle()) === true ? 'Activo' : 'Inactivo',
+=======
             'state_modify_article' => $this->resource->getstateModifyArticle(),
             'statusEsp'=> $this->resource->getStatusEsp(),
             'filtNameEsp'=> $this->resource->getFiltNameEsp(),
+>>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
         ];
 
     }

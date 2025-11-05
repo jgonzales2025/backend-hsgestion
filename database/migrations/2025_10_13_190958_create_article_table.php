@@ -12,19 +12,34 @@ return new class extends Migration
         Schema::create('articles', function (Blueprint $table) {
             $table->id();
 
-            $table->string('cod_fab', 100);
-            $table->string('description');
+            $table->string('cod_fab', 100)->nullable();
+            $table->string('description')->nullable();
             $table->float('weight')->default(0);
             $table->boolean('with_deduction')->default(false);
             $table->boolean('series_enabled')->default(false);
 
+<<<<<<< HEAD
+            $table->foreignId('measurement_unit_id')->nullable()->constrained('measurement_units');
+            $table->foreignId('brand_id')->nullable()->constrained('brands');
+            $table->foreignId('category_id')->nullable()->constrained('categories');
+            $table->foreignId('sub_category_id')->nullable()->constrained('sub_categories');
+            $table->foreignId('currency_type_id')->nullable()->constrained('currency_types');
+            $table->foreignId('company_type_id')->nullable()->constrained('companies');
+            $table->foreignId('user_id')->nullable()->constrained('users');
+
+=======
+>>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
             $table->string('location')->nullable();
             $table->string('warranty')->nullable();
+
             $table->decimal('tariff_rate', 8, 2)->default(0);
             $table->boolean('igv_applicable')->default(true);
             $table->boolean('plastic_bag_applicable')->default(false);
 
+<<<<<<< HEAD
+=======
             $table->foreignId('sub_category_id')->nullable()->constrained('sub_categories');
+>>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
             $table->integer('min_stock')->default(0);
             $table->string('image_url')->nullable();
 
@@ -39,6 +54,13 @@ return new class extends Migration
 
             $table->boolean('venta')->default(true);
             $table->tinyInteger('status')->default(1);
+<<<<<<< HEAD
+            $table->integer('state_modify_article')->default(0);
+            $table->string('filt_NameEsp')->nullable();
+            $table->boolean('status_Esp')->default(false);
+
+            $table->timestamp('date_at')->useCurrent();
+=======
 
             // Relaciones
             $table->foreignId('measurement_unit_id')->nullable()->constrained('measurement_units');
@@ -53,6 +75,7 @@ return new class extends Migration
             $table->string('filtNameEsp')->nullable();
             $table->boolean('statusEsp')->default(true);
 
+>>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
             $table->timestamps();
         });
     }

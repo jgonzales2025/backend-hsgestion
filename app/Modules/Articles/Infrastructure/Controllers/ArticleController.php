@@ -4,19 +4,22 @@ namespace App\Modules\Articles\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Articles\Application\DTOs\ArticleDTO;
+use App\Modules\Articles\Application\DTOS\ArticleNotasDebitoDTO;
+use App\Modules\Articles\Application\UseCases\CreateArticleNotasDebito;
 use App\Modules\Articles\Application\UseCases\CreateArticleUseCase;
 use App\Modules\Articles\Application\UseCases\ExportArticlesToExcelUseCase;
-use App\Modules\Articles\Application\UseCases\FindAllArticlesPriceConvertionUseCase;
+use App\Modules\Articles\Application\UseCases\FindAllArticlesNotesDebitoUseCase;
 use App\Modules\Articles\Application\UseCases\FindAllArticleUseCase;
 use App\Modules\Articles\Application\UseCases\FindByIdArticleUseCase;
+use App\Modules\Articles\Application\UseCases\FindByIdNotesDebito;
+use App\Modules\Articles\Application\UseCases\UpdateArticleNotasDebitoUseCase;
 use App\Modules\Articles\Application\UseCases\UpdateArticleUseCase;
-use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
-use App\Modules\Articles\Domain\Interfaces\FileStoragePort;
-use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
+use App\Modules\Articles\Infrastructure\Requests\StoreArticleNotasDebito;
 use App\Modules\Articles\Infrastructure\Requests\StoreArticleRequest;
+use App\Modules\Articles\Infrastructure\Requests\UpdateArticleNotasDebito;
 use App\Modules\Articles\Infrastructure\Requests\UpdateArticleRequest;
-use App\Modules\Articles\Infrastructure\Resource\ArticleForSalesResource;
+use App\Modules\Articles\Infrastructure\Resource\ArticleNotesDebitoResource;
 use App\Modules\Articles\Infrastructure\Resource\ArticleResource;
 use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
@@ -108,6 +111,32 @@ public function export()
     );
 
   }
+   public function indexNotesDebito(): array
+  {
+
+    $articleUseCase = new FindAllArticlesNotesDebitoUseCase($this->articleRepository);
+
+    $article = $articleUseCase->execute();
+
+
+    return ArticleNotesDebitoResource::collection($article)->resolve();
+  }
+  public function showNotesDebito(int $id): JsonResponse
+  {
+
+    $articleUseCase = new FindByIdNotesDebito($this->articleRepository);
+    $article = $articleUseCase->execute($id);
+
+    if (!$article) {
+      return response()->json(["message" => "no se encontraron articulo"]);
+    }
+
+    return response()->json(
+      (new ArticleNotesDebitoResource($article))->resolve(),
+      200
+    );
+
+  }
   public function update(UpdateArticleRequest $request, int $id): JsonResponse
   {
     $data = $request->validated();
@@ -158,7 +187,29 @@ public function export()
       200
     );
   }
+ public function updateNotesDebito(UpdateArticleNotasDebito $request, int $id): JsonResponse
+  {
+    $data = $request->validated();
 
+    // 🔍 Buscar el artículo existente
+    $articlebuscR = new FindByIdNotesDebito($this->articleRepository);
+    $article = $articlebuscR->execute($id);
+
+    if (!$article) {
+      return response()->json(['message' => 'Artículo no encontrado'], 404);
+    }
+
+    //  Crear DTO y ejecutar caso de uso
+    $articleNotasDebitoDTO = new ArticleNotasDebitoDTO($data);
+    $articleUseCase = new UpdateArticleNotasDebitoUseCase($this->articleRepository);
+
+    $result = $articleUseCase->execute($id, $articleNotasDebitoDTO);
+
+    return response()->json(
+      (new ArticleNotesDebitoResource($result))->resolve(),
+      200
+    );
+  }
 
   public function store(StoreArticleRequest $request): JsonResponse
   {
@@ -198,19 +249,18 @@ public function export()
       201
     );
   }
-
-  public function indexArticlesForSales(Request $request): array
+    public function storeNotesDebito(StoreArticleNotasDebito $request): JsonResponse
   {
-    $description = $request->query("description");
+     $articlesNotesDebitoDTO = new ArticleNotasDebitoDTO($request->validated());
+     $articlesDebito = new CreateArticleNotasDebito($this->articleRepository);
+     $article = $articlesDebito->execute($articlesNotesDebitoDTO);
 
-    $validatedData = $request->validate([
-        'date' => 'date|required'
-    ]);
 
-    $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);
-    $articles = $articlesUseCase->execute($validatedData['date'], $description);
-
-    return ArticleForSalesResource::collection($articles)->resolve();
+    return response()->json(
+      (new ArticleNotesDebitoResource($article))->resolve(),
+      201
+    );
   }
+
 
 }

@@ -47,8 +47,13 @@ class EloquentArticle extends Model
         'sub_category_id',
         'company_type_id',
         'image_url',
+<<<<<<< HEAD
+        'filt_NameEsp',
+        'status_Esp'
+=======
          'filtNameEsp', 
          'statusEsp'
+>>>>>>> 9b62d779dfefdbc0a9cb250fdf97c96ce28e0796
     ];
     protected $hidden = ['created_at', 'updated_at'];
 

@@ -16,19 +16,28 @@ class PaymentMethodSeeder extends Seeder
         $paymentMethods = [
             [
                 'description' => 'EFECTIVO',
-                'status' => 1
+                'status' => 1,
+                'st_visible' => 1
             ],
             [
                 'description' => 'TARJETA',
-                'status' => 1
+                'status' => 1,
+                'st_visible' => 1
             ],
             [
                 'description' => 'TRANSFERENCIA BANCARIA',
-                'status' => 1
+                'status' => 1,
+                'st_visible' => 1
             ],
             [
                 'description' => 'BILLETERA DIGITAL',
-                'status' => 1
+                'status' => 1,
+                'st_visible' => 1
+            ],
+            [
+                'description' => 'NOTA DE CRÉDITO',
+                'status' => 1,
+                'st_visible' => 0
             ]
         ];
 

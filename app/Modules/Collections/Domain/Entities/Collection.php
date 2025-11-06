@@ -25,6 +25,9 @@ class Collection
     private ?string $lote_number;
     private ?string $for_digits;
     private int $status;
+    private ?int $credit_document_type_id;
+    private ?string $credit_serie;
+    private ?string $credit_correlative;
 
     public function __construct(
         int $id,
@@ -45,7 +48,10 @@ class Collection
         ?string $operation_number,
         ?string $lote_number,
         ?string $for_digits,
-        int $status = 1
+        int $status = 1,
+        int $credit_document_type_id = null,
+        string $credit_serie = null,
+        string $credit_correlative = null,
     ){
         $this->id = $id;
         $this->company_id = $company_id;
@@ -66,6 +72,9 @@ class Collection
         $this->lote_number = $lote_number;
         $this->for_digits = $for_digits;
         $this->status = $status;
+        $this->credit_document_type_id = $credit_document_type_id;
+        $this->credit_serie = $credit_serie;
+        $this->credit_correlative = $credit_correlative;
     }
 
     public function getId(): int { return $this->id; }
@@ -87,5 +96,8 @@ class Collection
     public function getLoteNumber(): ?string { return $this->lote_number; }
     public function getForDigits(): ?string { return $this->for_digits; }
     public function getStatus(): int { return $this->status; }
+    public function getCreditDocumentTypeId(): ?int { return $this->credit_document_type_id; }
+    public function getCreditSerie(): ?string { return $this->credit_serie; }
+    public function getCreditCorrelative(): ?string { return $this->credit_correlative; }
 
 }

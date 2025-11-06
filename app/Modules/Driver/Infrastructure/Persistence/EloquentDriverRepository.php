@@ -9,9 +9,17 @@ use App\Modules\Driver\Infrastructure\Models\EloquentDriver;
 class EloquentDriverRepository implements DriverRepositoryInterface
 {
 
-    public function findAllDrivers(): array
+    public function findAllDrivers(?string $description): array
     {
-        $drivers = EloquentDriver::with('customerDocumentType')->orderBy('created_at', 'desc')->get();;
+        $drivers = EloquentDriver::with('customerDocumentType')
+            ->when($description, function ($query, $description) {
+                return $query->where('name', 'like', "%{$description}%")
+                    ->orWhere('pat_surname', 'like', "%{$description}%")
+                    ->orWhere('mat_surname', 'like', "%{$description}%")
+                    ->orWhere('doc_number', 'like', "%{$description}%");
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         if ($drivers->isEmpty()) {
             return [];
@@ -30,7 +38,7 @@ class EloquentDriverRepository implements DriverRepositoryInterface
                 document_type_name: $driver->customerDocumentType?->abbreviation
             );
         })->toArray();
-        
+
     }
 
     public function save(Driver $driver): ?Driver

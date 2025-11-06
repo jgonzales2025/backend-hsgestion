@@ -39,7 +39,8 @@ readonly class CreateCustomerAddressUseCase
             department: $department,
             province: $province,
             district: $district,
-            status: $customerAddressDTO->status
+            status: $customerAddressDTO->status,
+            st_principal: $customerAddressDTO->st_principal
         );
 
         return $this->customerAddressRepository->save($customerAddress);

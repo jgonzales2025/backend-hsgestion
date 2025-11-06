@@ -34,6 +34,7 @@ class StoreCustomerRequest extends FormRequest
 
             'addresses' => 'required|array|min:1',
             'addresses.*.address' => 'required|string',
+            'addresses.*.st_principal' => 'nullable|integer|in:0,1',
             'addresses.*.department_id' => 'required|integer|exists:departments,coddep',
             'addresses.*.province_id' => 'required|integer|exists:provinces,codpro',
             'addresses.*.district_id' => 'required|integer|exists:districts,coddis',

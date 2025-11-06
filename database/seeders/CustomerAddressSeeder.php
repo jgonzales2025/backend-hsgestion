@@ -20,7 +20,8 @@ class CustomerAddressSeeder extends Seeder
                 'department_id' => 15,
                 'province_id' => 01,
                 'district_id' => 01,
-                'status' => 1
+                'status' => 1,
+                'st_principal' => 1
             ],
             [
                 'customer_id' => 2,
@@ -28,7 +29,8 @@ class CustomerAddressSeeder extends Seeder
                 'department_id' => 15,
                 'province_id' => 01,
                 'district_id' => 01,
-                'status' => 1
+                'status' => 1,
+                'st_principal' => 1
             ],
             [
                 'customer_id' => 3,
@@ -36,7 +38,8 @@ class CustomerAddressSeeder extends Seeder
                 'department_id' => 15,
                 'province_id' => 01,
                 'district_id' => 01,
-                'status' => 1
+                'status' => 1,
+                'st_principal' => 1
             ],
             [
                 'customer_id' => 4,
@@ -44,7 +47,8 @@ class CustomerAddressSeeder extends Seeder
                 'department_id' => 15,
                 'province_id' => 01,
                 'district_id' => 01,
-                'status' => 1
+                'status' => 1,
+                'st_principal' => 1
             ]
         ];
 

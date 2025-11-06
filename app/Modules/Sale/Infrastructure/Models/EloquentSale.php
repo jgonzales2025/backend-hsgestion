@@ -7,6 +7,7 @@ use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\DocumentType\Infrastructure\Models\EloquentDocumentType;
+use App\Modules\NoteReason\Infrastructure\Models\EloquentNoteReason;
 use App\Modules\PaymentType\Infrastructure\Models\EloquentPaymentType;
 use App\Modules\SaleArticle\Infrastructure\Models\EloquentSaleArticle;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
@@ -46,7 +47,8 @@ class EloquentSale extends Model
         'user_authorized_id',
         'reference_document_type_id',
         'reference_serie',
-        'reference_correlative'
+        'reference_correlative',
+        'note_reason_id'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -99,5 +101,10 @@ class EloquentSale extends Model
     public function saleArticles(): HasMany
     {
         return $this->hasMany(EloquentSaleArticle::class, 'sale_id');
+    }
+
+    public function noteReason(): BelongsTo
+    {
+        return $this->belongsTo(EloquentNoteReason::class, 'note_reason_id');
     }
 }

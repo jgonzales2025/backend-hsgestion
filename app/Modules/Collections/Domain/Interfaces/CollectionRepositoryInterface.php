@@ -11,4 +11,5 @@ interface CollectionRepositoryInterface
     public function findBySaleId(int $saleId): array;
     public function findById(int $id): ?Collection;
     public function cancelCharge(int $id): void;
+    public function saveCollectionCreditNote(Collection $collection): ?Collection;
 }

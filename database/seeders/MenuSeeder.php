@@ -916,6 +916,17 @@ class MenuSeeder extends Seeder
             'type' => 'item',
         ]);
 
+        Menu::create([
+            'name' => 'tablas_notas_debito',
+            'label' => 'Concepto de Notas de Débito',
+            'route' => '/tablas/notas-debito',
+            'permission' => 'tablas.notas_debito',
+            'parent_id' => $tabla->id,
+            'order' => 20,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
         // ===== MANTENIMIENTO =====
         $mantenimiento = Menu::create([
             'name' => 'mantenimiento',

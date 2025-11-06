@@ -5,7 +5,7 @@ namespace App\Modules\Sale\Infrastructure\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SaleResource extends JsonResource
+class SaleCreditNoteResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
@@ -46,17 +46,10 @@ class SaleResource extends JsonResource
                 'firstname' => $this->resource->getUser()->getFirstName(),
                 'lastname' => $this->resource->getUser()->getLastName()
             ],
-            'user_sale' => $this->resource->getUserSale()?->getId() ? [
-                'id' => $this->resource->getUserSale()->getId(),
-                'username' => $this->resource->getUserSale()->getUsername(),
-                'firstname' => $this->resource->getUserSale()->getFirstName(),
-                'lastname' => $this->resource->getUserSale()->getLastName()
-            ] : null,
             'payment_type' => [
                 'id' => $this->resource->getPaymentType()->getId(),
                 'name' => $this->resource->getPaymentType()->getName(),
             ],
-            'observations' => $this->resource->getObservations(),
             'currency_type' => [
                 'id' => $this->resource->getCurrencyType()->getId(),
                 'name' => $this->resource->getCurrencyType()->getName(),
@@ -71,9 +64,12 @@ class SaleResource extends JsonResource
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             'payment_status' => ($this->resource->getPaymentStatus()) == 1 ? 'Cancelado' : 'Pendiente',
             'is_locked' => $this->resource->getIsLocked(),
-            'user_authorized' => $this->resource->getUserAuthorized() ? [
-                'id' => $this->resource->getUserAuthorized()->getId(),
-                'username' => $this->resource->getUserAuthorized()->getUsername(),
+            'reference_document_type_id' => $this->resource->getReferenceDocumentTypeId() ?? null,
+            'reference_serie' => $this->resource->getReferenceSerie() ?? null,
+            'reference_correlative' => $this->resource->getReferenceCorrelative() ?? null,
+            'note_reason' => $this->resource->getNoteReason() ? [
+                'id' => $this->resource->getNoteReason()->getId(),
+                'description' => $this->resource->getNoteReason()->getDescription()
             ] : null
         ];
     }

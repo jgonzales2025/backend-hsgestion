@@ -3,6 +3,7 @@
 namespace App\Modules\Sale\Infrastructure\Persistence;
 
 use App\Modules\Sale\Domain\Entities\Sale;
+use App\Modules\Sale\Domain\Entities\SaleCreditNote;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
 use Illuminate\Support\Facades\DB;
@@ -10,9 +11,9 @@ use Illuminate\Support\Facades\Log;
 
 class EloquentSaleRepository implements SaleRepositoryInterface
 {
-    public function findAll(): array
+    public function findAll(int $companyId): array
     {
-        $eloquentSale = EloquentSale::all()->sortByDesc('created_at');
+        $eloquentSale = EloquentSale::all()->where('company_id', $companyId)->sortByDesc('created_at');
         if ($eloquentSale->isEmpty()) {
             return [];
         }
@@ -24,6 +25,12 @@ class EloquentSaleRepository implements SaleRepositoryInterface
     {
         $eloquentSale = EloquentSale::create($this->mapToArray($sale));
         return $this->buildDomainSale($eloquentSale, $sale);
+    }
+
+    public function saveCreditNote(SaleCreditNote $saleCreditNote): ?SaleCreditNote
+    {
+        $eloquentSaleCreditNote = EloquentSale::create($this->mapToArrayCreditNote($saleCreditNote));
+        return $this->buildDomainSaleCreditNote($eloquentSaleCreditNote, $saleCreditNote);
     }
 
     public function getLastDocumentNumber(string $serie): ?string
@@ -49,8 +56,6 @@ class EloquentSaleRepository implements SaleRepositoryInterface
     public function update(Sale $sale): ?Sale
     {
         $eloquentSale = EloquentSale::find($sale->getId());
-
-        Log::info('sale', $eloquentSale->toArray());
 
         $eloquentSale->update($this->mapToArray($sale));
 
@@ -151,8 +156,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             $updatedArticles[] = [
                 'sale_article_id' => $saleArticle->id,
                 'article_id' => $articleId,
-                'article_name' => $saleArticle->article->description ?? null,
                 'description' => $saleArticle->description,
+                'measurement_unit' => $saleArticle->article->measurementUnit->name ?? null,
                 'original_quantity' => $originalQuantity,
                 'returned_quantity' => $returnedQuantity,
                 'updated_quantity' => $updatedQuantity,
@@ -168,6 +173,27 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'has_credit_notes' => $hasCreditNotes
         ];
 
+    }
+
+    public function findAllCreditNotesByCustomerId(int $customerId): array
+    {
+        $creditNotes = EloquentSale::all()->where('customer_id', $customerId)->where('document_type_id', 7)->where('status', 1);
+
+        if ($creditNotes->isEmpty()) {
+            return [];
+        }
+
+        //return $creditNotes->map(fn($creditNote) => $this->mapToDomain($creditNote))->toArray();
+        return $creditNotes->map(function ($creditNote) {
+            return [
+                'id' => $creditNote->id,
+                'document_type_id' => $creditNote->document_type_id,
+                'serie' => $creditNote->serie,
+                'document_number' => $creditNote->document_number,
+                'date' => $creditNote->date,
+                'saldo' => $creditNote->saldo
+            ];
+        })->toArray();
     }
 
     private function mapToArray(Sale $sale): array
@@ -196,10 +222,35 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'series_prof' => $sale->getSerieProf(),
             'correlative_prof' => $sale->getCorrelativeProf(),
             'purchase_order' => $sale->getPurchaseOrder(),
-            'user_authorized_id' => $sale->getUserAuthorized()?->getId(),
-            'reference_document_type_id' => $sale->getReferenceDocumentTypeId(),
-            'reference_serie' => $sale->getReferenceSerie(),
-            'reference_correlative' => $sale->getReferenceCorrelative(),
+            'user_authorized_id' => $sale->getUserAuthorized()?->getId()
+        ];
+    }
+
+    private function mapToArrayCreditNote(SaleCreditNote $saleCreditNote): array
+    {
+        return [
+            'company_id' => $saleCreditNote->getCompany()->getId(),
+            'branch_id' => $saleCreditNote->getBranch()->getId(),
+            'document_type_id' => $saleCreditNote->getDocumentType()->getId(),
+            'serie' => $saleCreditNote->getSerie(),
+            'document_number' => $saleCreditNote->getDocumentNumber(),
+            'parallel_rate' => $saleCreditNote->getParallelRate(),
+            'customer_id' => $saleCreditNote->getCustomer()->getId(),
+            'date' => $saleCreditNote->getDate(),
+            'due_date' => $saleCreditNote->getDueDate(),
+            'days' => $saleCreditNote->getDays(),
+            'user_id' => $saleCreditNote->getUser()->getId(),
+            'payment_type_id' => $saleCreditNote->getPaymentType()->getId(),
+            'currency_type_id' => $saleCreditNote->getCurrencyType()->getId(),
+            'subtotal' => $saleCreditNote->getSubtotal(),
+            'inafecto' => $saleCreditNote->getInafecto(),
+            'igv' => $saleCreditNote->getIgv(),
+            'total' => $saleCreditNote->getTotal(),
+            'saldo' => $saleCreditNote->getTotal(),
+            'reference_document_type_id' => $saleCreditNote->getReferenceDocumentTypeId(),
+            'reference_serie' => $saleCreditNote->getReferenceSerie(),
+            'reference_correlative' => $saleCreditNote->getReferenceCorrelative(),
+            'note_reason_id' => $saleCreditNote->getNoteReason()?->getId() ?? null
         ];
     }
 
@@ -218,7 +269,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             due_date: $eloquentSale->due_date,
             days: $eloquentSale->days,
             user: $eloquentSale->user->toDomain($eloquentSale->user),
-            user_sale: $eloquentSale->userSale->toDomain($eloquentSale->userSale),
+            user_sale: $eloquentSale->userSale?->toDomain($eloquentSale->userSale),
             paymentType: $eloquentSale->paymentType->toDomain($eloquentSale->paymentType),
             observations: $eloquentSale->observations,
             currencyType: $eloquentSale->currencyType->toDomain($eloquentSale->currencyType),
@@ -234,10 +285,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             serie_prof: $eloquentSale->series_prof,
             correlative_prof: $eloquentSale->correlative_prof,
             purchase_order: $eloquentSale->purchase_order,
-            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized),
-            reference_document_type_id: $eloquentSale->reference_document_type_id,
-            reference_serie: $eloquentSale->reference_serie,
-            reference_correlative: $eloquentSale->reference_correlative
+            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized)
         );
     }
 
@@ -272,10 +320,40 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             serie_prof: $eloquentSale->series_prof,
             correlative_prof: $eloquentSale->correlative_prof,
             purchase_order: $eloquentSale->purchase_order,
-            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized),
+            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized)
+        );
+    }
+
+    private function buildDomainSaleCreditNote(EloquentSale $eloquentSale, SaleCreditNote $domainSale): SaleCreditNote
+    {
+        return new SaleCreditNote(
+            id: $eloquentSale->id,
+            company: $domainSale->getCompany(),
+            branch: $domainSale->getBranch(),
+            documentType: $domainSale->getDocumentType(),
+            serie: $eloquentSale->serie,
+            document_number: $eloquentSale->document_number,
+            parallel_rate: $eloquentSale->parallel_rate,
+            customer: $domainSale->getCustomer(),
+            date: $eloquentSale->date,
+            due_date: $eloquentSale->due_date,
+            days: $eloquentSale->days,
+            user: $domainSale->getUser(),
+            paymentType: $domainSale->getPaymentType(),
+            currencyType: $domainSale->getCurrencyType(),
+            subtotal: $eloquentSale->subtotal,
+            inafecto: $eloquentSale->inafecto,
+            igv: $eloquentSale->igv,
+            total: $eloquentSale->total,
+            saldo: $eloquentSale->saldo,
+            amount_amortized: $eloquentSale->amount_amortized,
+            status: $eloquentSale->status,
+            payment_status: $eloquentSale->payment_status,
+            is_locked: $eloquentSale->is_locked,
             reference_document_type_id: $eloquentSale->reference_document_type_id,
             reference_serie: $eloquentSale->reference_serie,
-            reference_correlative: $eloquentSale->reference_correlative
+            reference_correlative: $eloquentSale->reference_correlative,
+            note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason)
         );
     }
 

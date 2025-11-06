@@ -9,9 +9,13 @@ use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
+use App\Modules\NoteReason\Domain\Interfaces\NoteReasonRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
+use App\Modules\Sale\Application\DTOs\SaleCreditNoteDTO;
 use App\Modules\Sale\Application\DTOs\SaleDTO;
+use App\Modules\Sale\Application\UseCases\CreateSaleCreditNoteUseCase;
 use App\Modules\Sale\Application\UseCases\CreateSaleUseCase;
+use App\Modules\Sale\Application\UseCases\FindAllNoteCreditsByCustomerUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllProformasUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllSalesUseCase;
 use App\Modules\Sale\Application\UseCases\FindSaleWithUpdatedQuantitiesUseCase;
@@ -20,8 +24,10 @@ use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateSaleUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
+use App\Modules\Sale\Infrastructure\Requests\StoreSaleCreditNoteRequest;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleRequest;
 use App\Modules\Sale\Infrastructure\Requests\UpdateSaleRequest;
+use App\Modules\Sale\Infrastructure\Resources\SaleCreditNoteResource;
 use App\Modules\Sale\Infrastructure\Resources\SaleResource;
 use App\Modules\SaleArticle\Application\DTOs\SaleArticleDTO;
 use App\Modules\SaleArticle\Application\UseCases\CreateSaleArticleUseCase;
@@ -49,12 +55,14 @@ class SaleController extends Controller
         private readonly SaleArticleRepositoryInterface $saleArticleRepository,
         private readonly TransactionLogRepositoryInterface $transactionLogRepository,
         private readonly BranchRepositoryInterface $branchRepository,
+        private readonly NoteReasonRepositoryInterface $noteReasonRepository,
     ){}
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        $companyId = request()->get('company_id');
         $saleUseCase = new FindAllSalesUseCase($this->saleRepository);
-        $sales = $saleUseCase->execute();
+        $sales = $saleUseCase->execute($companyId);
 
         $result = [];
         foreach ($sales as $sale) {
@@ -71,11 +79,8 @@ class SaleController extends Controller
 
     public function store(StoreSaleRequest $request): JsonResponse
     {
-        $userId = request()->get('user_id');
-        $role = request()->get('role');
-
         $saleDTO = new SaleDTO($request->validated());
-        $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository);
+        $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->noteReasonRepository);
         $sale = $saleUseCase->execute($saleDTO);
 
         $saleArticles = $this->createSaleArticles($sale, $request->validated()['sale_articles']);
@@ -83,6 +88,22 @@ class SaleController extends Controller
 
         return response()->json([
             'sale' => (new SaleResource($sale))->resolve(),
+            'articles' => SaleArticleResource::collection($saleArticles)->resolve()
+            ], 201
+        );
+    }
+
+    public function storeCreditNote(StoreSaleCreditNoteRequest $request): JsonResponse
+    {
+        $saleCreditNoteDTO = new SaleCreditNoteDTO($request->validated());
+        $saleCreditNoteUseCase = new CreateSaleCreditNoteUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->noteReasonRepository);
+        $saleCreditNote = $saleCreditNoteUseCase->execute($saleCreditNoteDTO);
+
+        $saleArticles = $this->createSaleArticles($saleCreditNote, $request->validated()['sale_articles']);
+        $this->logTransaction($request, $saleCreditNote);
+
+        return response()->json([
+            'sale' => (new SaleCreditNoteResource($saleCreditNote))->resolve(),
             'articles' => SaleArticleResource::collection($saleArticles)->resolve()
             ], 201
         );
@@ -188,7 +209,7 @@ class SaleController extends Controller
         $transactionDTO = new TransactionLogDTO([
             'user_id' => request()->get('user_id'),
             'role_name' => request()->get('role'),
-            'description_log' => 'Venta',
+            'description_log' => $sale->getDocumentType()->getId() == 7 ? 'Nota de crédito' : 'Venta',
             'action' => $request->method(),
             'company_id' => $sale->getCompany()->getId(),
             'branch_id' => $sale->getBranch()->getId(),
@@ -218,11 +239,25 @@ class SaleController extends Controller
             'reference_correlative' => 'required|string',
         ]);
 
+        $paddedCorrelative = str_pad($request->query('reference_correlative'), 5, '0', STR_PAD_LEFT);
+
         try {
+
+            $saleUseCase = new FindByDocumentSaleUseCase($this->saleRepository);
+            $sale = $saleUseCase->execute(
+                (int) $request->query('reference_document_type_id'),
+                $request->query('reference_serie'),
+                $paddedCorrelative
+            );
+
+            if (!$sale) {
+                return response()->json(['message' => 'Venta no encontrada'], 404);
+            }
+
             $result = $useCase->execute(
                 (int) $request->query('reference_document_type_id'),
                 $request->query('reference_serie'),
-                $request->query('reference_correlative')
+                $paddedCorrelative
             );
 
             if (!$result) {
@@ -245,6 +280,16 @@ class SaleController extends Controller
                 'message' => 'Error al obtener las cantidades actualizadas: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function indexCreditNotesByCustomer(Request $request): JsonResponse
+    {
+        $customerId = $request->query('customer_id');
+
+        $creditNoteUseCase = new FindAllNoteCreditsByCustomerUseCase($this->saleRepository);
+        $creditNotes = $creditNoteUseCase->execute($customerId);
+
+        return response()->json(array_values($creditNotes), 200);
     }
 
 }

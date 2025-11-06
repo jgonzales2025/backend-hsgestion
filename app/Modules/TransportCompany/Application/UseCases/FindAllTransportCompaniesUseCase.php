@@ -13,8 +13,8 @@ class FindAllTransportCompaniesUseCase
         $this->transportCompanyRepository = $transportCompanyRepository;
     }
 
-    public function execute(): array
+    public function execute(?string $description): array
     {
-        return $this->transportCompanyRepository->findAll();
+        return $this->transportCompanyRepository->findAll($description);
     }
 }

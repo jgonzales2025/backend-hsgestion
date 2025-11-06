@@ -10,6 +10,7 @@ class CustomerAddressDTO
     public int $province_id;
     public int $district_id;
     public int $status;
+    public int $st_principal = 0;
 
     public function __construct(array $data)
     {
@@ -19,5 +20,6 @@ class CustomerAddressDTO
         $this->province_id = $data['province_id'];
         $this->district_id = $data['district_id'];
         $this->status = $data['status'];
+        $this->st_principal = $data['st_principal'] ?? 0;
     }
 }

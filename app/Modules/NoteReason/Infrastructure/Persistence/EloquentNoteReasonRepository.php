@@ -24,4 +24,22 @@ class EloquentNoteReasonRepository implements NoteReasonRepositoryInterface
             );
         })->toArray();
     }
+
+    public function findById(?int $id): ?NoteReason
+    {
+        $noteReasonEloquent = EloquentNoteReason::find($id);
+
+        if (!$noteReasonEloquent) {
+            return null;
+        }
+
+        return new NoteReason(
+            id: $noteReasonEloquent->id,
+            cod_sunat: $noteReasonEloquent->cod_sunat,
+            description: $noteReasonEloquent->description,
+            document_type_id: $noteReasonEloquent->document_type_id,
+            stock: $noteReasonEloquent->stock,
+            status: $noteReasonEloquent->status
+        );
+    }
 }

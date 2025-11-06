@@ -38,7 +38,7 @@ readonly class CreateCollectionUseCase
             operation_date: $collectionDTO->operation_date,
             operation_number: $collectionDTO->operation_number,
             lote_number: $collectionDTO->lote_number,
-            for_digits: $collectionDTO->for_digits,
+            for_digits: $collectionDTO->for_digits
         );
 
         return $this->collectionRepository->save($collection);

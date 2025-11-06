@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Log;
 
 class EloquentSaleRepository implements SaleRepositoryInterface
 {
-    public function findAll(): array
+    public function findAll(int $companyId): array
     {
-        $eloquentSale = EloquentSale::all()->sortByDesc('created_at');
+        $eloquentSale = EloquentSale::all()->where('company_id', $companyId)->sortByDesc('created_at');
         if ($eloquentSale->isEmpty()) {
             return [];
         }
@@ -151,8 +151,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             $updatedArticles[] = [
                 'sale_article_id' => $saleArticle->id,
                 'article_id' => $articleId,
-                'article_name' => $saleArticle->article->description ?? null,
                 'description' => $saleArticle->description,
+                'measurement_unit' => $saleArticle->article->measurementUnit->name ?? null,
                 'original_quantity' => $originalQuantity,
                 'returned_quantity' => $returnedQuantity,
                 'updated_quantity' => $updatedQuantity,
@@ -168,6 +168,27 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'has_credit_notes' => $hasCreditNotes
         ];
 
+    }
+
+    public function findAllCreditNotesByCustomerId(int $customerId): array
+    {
+        $creditNotes = EloquentSale::all()->where('customer_id', $customerId)->where('document_type_id', 7)->where('status', 1);
+
+        if ($creditNotes->isEmpty()) {
+            return [];
+        }
+
+        //return $creditNotes->map(fn($creditNote) => $this->mapToDomain($creditNote))->toArray();
+        return $creditNotes->map(function ($creditNote) {
+            return [
+                'id' => $creditNote->id,
+                'document_type_id' => $creditNote->document_type_id,
+                'serie' => $creditNote->serie,
+                'document_number' => $creditNote->document_number,
+                'date' => $creditNote->date,
+                'saldo' => $creditNote->saldo
+            ];
+        })->toArray();
     }
 
     private function mapToArray(Sale $sale): array
@@ -200,6 +221,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'reference_document_type_id' => $sale->getReferenceDocumentTypeId(),
             'reference_serie' => $sale->getReferenceSerie(),
             'reference_correlative' => $sale->getReferenceCorrelative(),
+            'note_reason_id' => $sale->getNoteReason()?->getId() ?? null
         ];
     }
 
@@ -237,7 +259,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized),
             reference_document_type_id: $eloquentSale->reference_document_type_id,
             reference_serie: $eloquentSale->reference_serie,
-            reference_correlative: $eloquentSale->reference_correlative
+            reference_correlative: $eloquentSale->reference_correlative,
+            note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason)
         );
     }
 
@@ -275,7 +298,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized),
             reference_document_type_id: $eloquentSale->reference_document_type_id,
             reference_serie: $eloquentSale->reference_serie,
-            reference_correlative: $eloquentSale->reference_correlative
+            reference_correlative: $eloquentSale->reference_correlative,
+            note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason)
         );
     }
 

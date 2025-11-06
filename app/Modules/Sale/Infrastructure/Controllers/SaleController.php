@@ -9,9 +9,11 @@ use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
+use App\Modules\NoteReason\Domain\Interfaces\NoteReasonRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Sale\Application\DTOs\SaleDTO;
 use App\Modules\Sale\Application\UseCases\CreateSaleUseCase;
+use App\Modules\Sale\Application\UseCases\FindAllNoteCreditsByCustomerUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllProformasUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllSalesUseCase;
 use App\Modules\Sale\Application\UseCases\FindSaleWithUpdatedQuantitiesUseCase;
@@ -49,12 +51,14 @@ class SaleController extends Controller
         private readonly SaleArticleRepositoryInterface $saleArticleRepository,
         private readonly TransactionLogRepositoryInterface $transactionLogRepository,
         private readonly BranchRepositoryInterface $branchRepository,
+        private readonly NoteReasonRepositoryInterface $noteReasonRepository,
     ){}
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        $companyId = request()->get('company_id');
         $saleUseCase = new FindAllSalesUseCase($this->saleRepository);
-        $sales = $saleUseCase->execute();
+        $sales = $saleUseCase->execute($companyId);
 
         $result = [];
         foreach ($sales as $sale) {
@@ -75,7 +79,7 @@ class SaleController extends Controller
         $role = request()->get('role');
 
         $saleDTO = new SaleDTO($request->validated());
-        $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository);
+        $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->noteReasonRepository);
         $sale = $saleUseCase->execute($saleDTO);
 
         $saleArticles = $this->createSaleArticles($sale, $request->validated()['sale_articles']);
@@ -259,6 +263,16 @@ class SaleController extends Controller
                 'message' => 'Error al obtener las cantidades actualizadas: ' . $e->getMessage()
             ], 500);
         }
+    }
+
+    public function indexCreditNotesByCustomer(Request $request): JsonResponse
+    {
+        $customerId = $request->query('customer_id');
+
+        $creditNoteUseCase = new FindAllNoteCreditsByCustomerUseCase($this->saleRepository);
+        $creditNotes = $creditNoteUseCase->execute($customerId);
+
+        return response()->json(array_values($creditNotes), 200);
     }
 
 }

@@ -39,6 +39,9 @@ readonly class CreateCollectionUseCase
             operation_number: $collectionDTO->operation_number,
             lote_number: $collectionDTO->lote_number,
             for_digits: $collectionDTO->for_digits,
+            credit_document_type_id: $collectionDTO->credit_document_type_id,
+            credit_serie: $collectionDTO->credit_serie,
+            credit_correlative: $collectionDTO->credit_correlative,
         );
 
         return $this->collectionRepository->save($collection);

@@ -29,7 +29,10 @@ class EloquentCollection extends Model
         'operation_number',
         'lote_number',
         'for_digits',
-        'status'
+        'status',
+        'credit_document_type_id',
+        'credit_serie',
+        'credit_correlative'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

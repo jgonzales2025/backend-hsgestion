@@ -7,6 +7,7 @@ use App\Modules\Company\Domain\Entities\Company;
 use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
 use App\Modules\Customer\Domain\Entities\Customer;
 use App\Modules\DocumentType\Domain\Entities\DocumentType;
+use App\Modules\NoteReason\Domain\Entities\NoteReason;
 use App\Modules\PaymentType\Domain\Entities\PaymentType;
 use App\Modules\User\Domain\Entities\User;
 
@@ -44,6 +45,7 @@ class Sale
     private ?int $reference_document_type_id;
     private ?string $reference_serie;
     private ?string $reference_correlative;
+    private ?NoteReason $note_reason;
 
     public function __construct(
         int $id,
@@ -77,7 +79,8 @@ class Sale
         ?User $user_authorized,
         ?int $reference_document_type_id,
         ?string $reference_serie,
-        ?string $reference_correlative
+        ?string $reference_correlative,
+        NoteReason $note_reason = null
     ){
         $this->id = $id;
         $this->company = $company;
@@ -111,6 +114,7 @@ class Sale
         $this->reference_document_type_id = $reference_document_type_id;
         $this->reference_serie = $reference_serie;
         $this->reference_correlative = $reference_correlative;
+        $this->note_reason = $note_reason;
     }
 
     public function getId(): int { return $this->id; }
@@ -145,4 +149,5 @@ class Sale
     public function getReferenceDocumentTypeId(): ?int { return $this->reference_document_type_id; }
     public function getReferenceSerie(): string|null { return $this->reference_serie; }
     public function getReferenceCorrelative(): string|null { return $this->reference_correlative; }
+    public function getNoteReason(): ?NoteReason { return $this->note_reason; }
 }

@@ -6,14 +6,14 @@ use App\Modules\DocumentType\Domain\Entities\DocumentType;
 
 class NoteReason
 {
-    private int $id;
+    private ?int $id;
     private string $cod_sunat;
     private string $description;
     private int $document_type_id;
     private int $stock;
     private int $status;
 
-    public function __construct(int $id, string $cod_sunat, string $description, int $document_type_id, int $stock, int $status)
+    public function __construct(?int $id, string $cod_sunat, string $description, int $document_type_id, int $stock, int $status)
     {
         $this->id = $id;
         $this->cod_sunat = $cod_sunat;
@@ -23,7 +23,7 @@ class NoteReason
         $this->status = $status;
     }
 
-    public function getId(): int { return $this->id; }
+    public function getId(): int|null { return $this->id; }
     public function getCodSunat(): string { return $this->cod_sunat; }
     public function getDescription(): string { return $this->description; }
     public function getDocumentTypeId(): int { return $this->document_type_id; }

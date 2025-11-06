@@ -35,7 +35,7 @@ class StoreSaleRequest extends FormRequest
             'due_date' => 'required|date',
             'days' => 'required|integer',
             'user_id' => 'required|integer|exists:users,id',
-            'user_sale_id' => 'required|integer|exists:users,id',
+            'user_sale_id' => 'nullable|integer|exists:users,id',
             'payment_type_id' => 'required|integer|exists:payment_types,id',
             'observations' => 'nullable|string',
             'currency_type_id' => 'required|integer|exists:currency_types,id',
@@ -50,6 +50,7 @@ class StoreSaleRequest extends FormRequest
             'reference_document_type_id' => 'required_if:document_type_id,7|required_if:document_type_id,8|integer|exists:document_types,id',
             'reference_serie' => 'required_if:document_type_id,7|required_if:document_type_id,8|string|max:10',
             'reference_correlative' => 'required_if:document_type_id,7|required_if:document_type_id,8|string|max:10',
+            'note_reason_id' => 'required_if:document_type_id,7|required_if:document_type_id,8|integer|exists:note_reasons,id',
 
             'sale_articles' => 'required|array|min:1',
             'sale_articles.*.article_id' => 'required|integer|exists:articles,id',

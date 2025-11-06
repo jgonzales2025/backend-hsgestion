@@ -43,6 +43,7 @@ return new class extends Migration
             $table->string('reference_document_type_id')->nullable();
             $table->string('reference_serie')->nullable();
             $table->string('reference_correlative')->nullable();
+            $table->foreignId('note_reason_id')->nullable()->constrained('note_reasons')->onDelete('cascade');
             $table->foreignId('user_authorized_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

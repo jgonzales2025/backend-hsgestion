@@ -6,7 +6,7 @@ use App\Modules\Sale\Domain\Entities\Sale;
 
 interface SaleRepositoryInterface
 {
-    public function findAll(): array;
+    public function findAll(int $companyId): array;
     public function save(Sale $sale): ?Sale;
     public function getLastDocumentNumber(string $serie): ?string;
     public function findById(int $id): ?Sale;
@@ -14,4 +14,5 @@ interface SaleRepositoryInterface
     public function findByDocumentSale(int $documentTypeId, string $serie, string $correlative): ?Sale;
     public function findAllProformas(): array;
     public function findSaleWithUpdatedQuantities(int $referenceDocumentTypeId, string $referenceSerie, string $referenceCorrelative): ?array;
+    public function findAllCreditNotesByCustomerId(int $customerId): array;
 }

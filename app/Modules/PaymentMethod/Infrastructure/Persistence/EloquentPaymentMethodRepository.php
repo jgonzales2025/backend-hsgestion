@@ -11,7 +11,7 @@ class EloquentPaymentMethodRepository implements PaymentMethodRepositoryInterfac
 
     public function findAllPaymentMethods(): array
     {
-        $payment_methods = EloquentPaymentMethod::all();
+        $payment_methods = EloquentPaymentMethod::all()->where('st_visible', 1);
         if ($payment_methods->isEmpty()) {
             return [];
         }

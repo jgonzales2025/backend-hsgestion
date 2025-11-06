@@ -12,6 +12,8 @@ use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DocumentType\Application\UseCases\FindByIdDocumentTypeUseCase;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
+use App\Modules\NoteReason\Application\UseCases\FindByIdNoteReasonUseCase;
+use App\Modules\NoteReason\Domain\Interfaces\NoteReasonRepositoryInterface;
 use App\Modules\PaymentType\Application\UseCases\FindByIdPaymentTypeUseCase;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Sale\Application\DTOs\SaleDTO;
@@ -31,6 +33,7 @@ readonly class CreateSaleUseCase
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
+        private readonly NoteReasonRepositoryInterface $noteReasonRepository
     ){}
 
     public function execute(SaleDTO $saleDTO): ?Sale
@@ -73,6 +76,9 @@ readonly class CreateSaleUseCase
         $userAuthorizedUseCase = new GetUserByIdUseCase($this->userRepository);
         $userAuthorized = $userAuthorizedUseCase->execute($saleDTO->user_authorized_id);
 
+        $noteReasonUseCase = new FindByIdNoteReasonUseCase($this->noteReasonRepository);
+        $noteReason = $noteReasonUseCase->execute($saleDTO->note_reason_id);
+
         $sale = new Sale(
             id: 0,
             company: $company,
@@ -106,6 +112,7 @@ readonly class CreateSaleUseCase
             reference_document_type_id: $saleDTO->reference_document_type_id,
             reference_serie: $saleDTO->reference_serie,
             reference_correlative: $saleDTO->reference_correlative,
+            note_reason: $noteReason
         );
 
         return $this->saleRepository->save($sale);

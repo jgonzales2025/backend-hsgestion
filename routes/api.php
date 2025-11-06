@@ -254,13 +254,14 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/sales/get-updated-quantities', [SaleController::class, 'getUpdatedQuantities']);
     Route::get('/sales', [SaleController::class, 'index']);
     Route::get('/sales/{id}', [SaleController::class, 'show']);
+    Route::get('/credit-notes-customer', [SaleController::class, 'indexCreditNotesByCustomer']);
     Route::post('/sales', [SaleController::class, 'store']);
     Route::put('/sales/{id}', [SaleController::class, 'update']);
-
 
     // Ruta para cobranzas
     Route::get('/collections', [CollectionController::class, 'index']);
     Route::post('/collections', [CollectionController::class, 'store']);
+    Route::post('/collections-credits', [CollectionController::class, 'storeCollectionCreditNote']);
     Route::get('/collections/{id}', [CollectionController::class, 'showBySaleId']);
     Route::put('/collections/{id}', [CollectionController::class, 'cancelCharge']);
 
@@ -279,6 +280,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Ruta para traer los motivos de notas de credito o debito
     Route::get('/note-reasons', [NoteReasonController::class, 'index']);
+
+
 
 });
 

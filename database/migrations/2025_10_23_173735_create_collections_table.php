@@ -30,6 +30,9 @@ return new class extends Migration
             $table->string('operation_number', 20)->nullable();
             $table->string('lote_number', 30)->nullable();
             $table->string('for_digits', 4)->nullable();
+            $table->integer('credit_document_type_id')->nullable();
+            $table->string('credit_serie', 6)->nullable();
+            $table->string('credit_correlative', 10)->nullable();
             $table->integer('status')->default(1);
             $table->timestamps();
         });

@@ -4,18 +4,22 @@ namespace App\Modules\Collections\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\Collections\Application\DTOs\CollectionCreditNoteDTO;
 use App\Modules\Collections\Application\DTOs\CollectionDTO;
 use App\Modules\Collections\Application\UseCases\CancelChargeCollectionUseCase;
+use App\Modules\Collections\Application\UseCases\CreateCollectionCreditNoteUseCase;
 use App\Modules\Collections\Application\UseCases\CreateCollectionUseCase;
 use App\Modules\Collections\Application\UseCases\FindAllCollectionsUseCase;
 use App\Modules\Collections\Application\UseCases\FindByIdCollectionUseCase;
 use App\Modules\Collections\Application\UseCases\FindBySaleIdCollectionUseCase;
 use App\Modules\Collections\Domain\Interfaces\CollectionRepositoryInterface;
+use App\Modules\Collections\Infrastructure\Requests\StoreCollectionCreditNoteRequest;
 use App\Modules\Collections\Infrastructure\Requests\StoreCollectionRequest;
 use App\Modules\Collections\Infrastructure\Resources\CollectionResource;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
+use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
 use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
 use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
@@ -33,6 +37,7 @@ class CollectionController extends Controller
         private readonly CompanyRepositoryInterface $companyRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly BranchRepositoryInterface $branchRepository,
+        private readonly SaleRepositoryInterface $saleRepository,
     ){}
 
     public function index(): array
@@ -71,6 +76,35 @@ class CollectionController extends Controller
         $transactionLogs->execute($transactionDTO);
 
         return response()->json((new CollectionResource($collection))->resolve(), 201);
+    }
+
+    public function storeCollectionCreditNote(StoreCollectionCreditNoteRequest $request): JsonResponse
+    {
+        $userId = request()->get('user_id');
+        $role = request()->get('role');
+        $companyId = request()->get('company_id');
+
+        $collectionDTO = new CollectionCreditNoteDTO($request->validated());
+        $collectionCreditNoteUseCase = new CreateCollectionCreditNoteUseCase($this->collectionRepository, $this->paymentMethodRepository, $this->saleRepository);
+        $collectionCreditNote = $collectionCreditNoteUseCase->execute($collectionDTO);
+
+        $transactionLogs = new CreateTransactionLogUseCase($this->transactionLogRepository, $this->userRepository, $this->companyRepository, $this->documentTypeRepository, $this->branchRepository);
+        $transactionDTO = new TransactionLogDTO([
+            'user_id' => $userId,
+            'role_name' => $role,
+            'description_log' => 'Nota de Credito',
+            'action' => $request->method(),
+            'company_id' => $companyId,
+            'branch_id' => (int) substr($collectionCreditNote->getSaleSerie(), -1),
+            'document_type_id' => $collectionCreditNote->getSaleDocumentTypeId(),
+            'serie' => $collectionCreditNote->getSaleSerie(),
+            'correlative' => $collectionCreditNote->getSaleCorrelative(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+        $transactionLogs->execute($transactionDTO);
+
+        return response()->json((new CollectionResource($collectionCreditNote))->resolve(), 201);
     }
 
     public function showBySaleId(int $id): JsonResponse

@@ -34,6 +34,7 @@ class SaleDTO
     public ?int $reference_document_type_id;
     public ?string $reference_serie;
     public ?string $reference_correlative;
+    public ?int $note_reason_id;
 
     public function __construct(array $data)
     {
@@ -67,5 +68,6 @@ class SaleDTO
         $this->reference_document_type_id = $data['reference_document_type_id'] ?? null;
         $this->reference_serie = $data['reference_serie'] ?? null;
         $this->reference_correlative = $data['reference_correlative'] ?? null;
+        $this->note_reason_id = $data['note_reason_id'] ?? null;
     }
 }

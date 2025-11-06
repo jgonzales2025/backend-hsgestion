@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('description', 40);
             $table->integer('status')->default(1);
+            $table->boolean('st_visible')->default(1);
             $table->timestamps();
         });
     }

@@ -74,6 +74,13 @@ class SaleResource extends JsonResource
             'user_authorized' => $this->resource->getUserAuthorized() ? [
                 'id' => $this->resource->getUserAuthorized()->getId(),
                 'username' => $this->resource->getUserAuthorized()->getUsername(),
+            ] : null,
+            'reference_document_type_id' => $this->resource->getReferenceDocumentTypeId() ?? null,
+            'reference_serie' => $this->resource->getReferenceSerie() ?? null,
+            'reference_correlative' => $this->resource->getReferenceCorrelative() ?? null,
+            'note_reason' => $this->resource->getNoteReason() ? [
+                'id' => $this->resource->getNoteReason()->getId(),
+                'description' => $this->resource->getNoteReason()->getDescription()
             ] : null
         ];
     }

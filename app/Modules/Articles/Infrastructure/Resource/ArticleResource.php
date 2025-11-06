@@ -31,6 +31,7 @@ class ArticleResource extends JsonResource
             'currencyType' => [
                 'id' => $this->resource->getCurrencyType()?->getId(),
                 'name' => $this->resource->getCurrencyType()?->getName(),
+                'commercial_symbol' => $this->resource->getCurrencyType()?->getCommercialSymbol(),
             ],
             'measurementUnit' => [
                 'id' => $this->resource->getMeasurementUnit()?->getId(),
@@ -56,8 +57,7 @@ class ArticleResource extends JsonResource
             'public_price_percent' => $this->getPublicPricePercent(),
             'distributor_price_percent' => $this->getDistributorPricePercent(),
             'authorized_price_percent' => $this->getAuthorizedPricePercent(),
-            'status' => ($this->getStatus()) == 1 ? "Activo" : "Inactivo",
-            'precioIGv' => $this->calculatePrecioIGV(),
+            'status' => ($this->getStatus()) == 1 ? "Activo" : "Inactivo", 
             'venta' => $this->getVenta() == true ? 'Activo' : 'Inactivo',
             'company' => [
                 'id' => $this->resource->getCompany()?->getId(),

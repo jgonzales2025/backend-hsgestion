@@ -10,7 +10,7 @@ use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
 use App\Modules\Category\Application\UseCases\FindByIdCategoryUseCase;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
 use App\Modules\Company\Application\UseCases\FindByIdCompanyUseCase;
-use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface; 
+use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Application\UseCases\FindByIdCurrencyTypeUseCase;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\MeasurementUnit\Application\UseCases\FindByIdMeasurementUnit;
@@ -39,51 +39,56 @@ readonly class CreateArticleUseCase
 
     public function execute(ArticleDTO $articleDTO): Article
     {
-        if ($articleDTO->category_id != null) {            
+        // \Log::info('company_type_id',[$articleDTO->company_type_id]);
+        // \Log::info('user_id',[$articleDTO->user_id]);
+        if ($articleDTO->category_id != null) {
             $categoryUseCase = new FindByIdCategoryUseCase($this->categoryRepository);
             $categoryType = $categoryUseCase->execute($articleDTO->category_id);
+        }else{
+            $categoryType = null;
         }
-        $categoryType = null;
-        
-        if ($articleDTO->user_id != null) {            
+
+        if ($articleDTO->user_id != null) {
             $userUseCase = new GetUserByIdUseCase($this->userRepository);
             $user = $userUseCase->execute($articleDTO->user_id);
+        }else{
+            $user = null;
         }
-         $user = null; 
+ 
+        if ($articleDTO->measurement_unit_id != null) {
+            $measurementUseCase = new FindByIdMeasurementUnit($this->measurementUnitRepository);
+            $measurementUseCaseType = $measurementUseCase->execute($articleDTO->measurement_unit_id);
+        }else{
+            $measurementUseCaseType = null;
+        }
 
-         if ($articleDTO->measurement_unit_id != null) {        
-             $measurementUseCase = new FindByIdMeasurementUnit($this->measurementUnitRepository);
-             $measurementUseCaseType = $measurementUseCase->execute($articleDTO->measurement_unit_id);
-         }
-        $measurementUseCaseType = null;
-         
-        if ($articleDTO->brand_id != null) {        
+        if ($articleDTO->brand_id != null) {
             $BrandUseCase = new FindByIdBrandUseCase($this->brandRepository);
             $brand = $BrandUseCase->execute($articleDTO->brand_id);
+        }else{
+            $brand = null;
         }
-        $brand = null;
-        if ($articleDTO->currency_type_id != null) {       
+
+        if ($articleDTO->currency_type_id != null) {
             $currencyTypeUseCase = new FindByIdCurrencyTypeUseCase($this->currencyTypeRepository);
-            $currencyType = $currencyTypeUseCase->execute($articleDTO->currency_type_id); 
+            $currencyType = $currencyTypeUseCase->execute($articleDTO->currency_type_id);
+        }else{
+            $currencyType = null;
         }
-        $currencyType = null;
-         if ($articleDTO->sub_category_id != null) {       
-             $subCategoryUseCase = new FindByIdSubCategoryUseCase($this->subCategoryRepository);
-             $subCategoryType = $subCategoryUseCase->execute($articleDTO->sub_category_id);
-         }
-        $subCategoryType = null;
-         if ($articleDTO->company_type_id != null) {
-                $CompanyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
-                $companyType = $CompanyUseCase->execute($articleDTO->company_type_id);
-            }
+
+        if ($articleDTO->sub_category_id != null) {
+            $subCategoryUseCase = new FindByIdSubCategoryUseCase($this->subCategoryRepository);
+            $subCategoryType = $subCategoryUseCase->execute($articleDTO->sub_category_id);
+        }else{
+            $subCategoryType = null;
+        }
+ 
+        if ($articleDTO->company_type_id != null) {
+            $CompanyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
+            $companyType = $CompanyUseCase->execute($articleDTO->company_type_id);
+        }else{
             $companyType = null;
-
-         if ($articleDTO->company_type_id != null) {
-             $CompanyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
-             $companyType = $CompanyUseCase->execute($articleDTO->company_type_id);
-            }
-        $companyType = null;
-
+        }
 
         $article = new Article(
             id: null,
@@ -105,8 +110,7 @@ readonly class CreateArticleUseCase
             public_price_percent: $articleDTO->public_price_percent,
             distributor_price_percent: $articleDTO->distributor_price_percent,
             authorized_price_percent: $articleDTO->authorized_price_percent,
-            status: $articleDTO->status,
-
+            status: $articleDTO->status, 
             brand: $brand,
             category: $categoryType,
             currencyType: $currencyType,

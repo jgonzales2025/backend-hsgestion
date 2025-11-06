@@ -15,12 +15,12 @@ class StoreArticleRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $payload = auth('api')->payload();
-        $companyId = $payload->get('company_id');
-
+        $companyId = request()->get('company_id');
         $this->merge([
             'user_id' => auth('api')->id(),
             'company_type_id' => $companyId,
+
+
 
             // Conversión de booleanos
             'with_deduction' => filter_var($this->with_deduction, FILTER_VALIDATE_BOOLEAN),
@@ -43,30 +43,28 @@ class StoreArticleRequest extends FormRequest
 
     protected function passedValidation(): void
     {
+        $user = auth('api')->user();
+        $companyId = request()->get('company_id');
+
         if ($this->hasFile('image_url') && $this->file('image_url')->isValid()) {
             // Guarda la imagen en storage/app/public/articles
             $path = $this->file('image_url')->store('articles', 'public');
 
             // Genera URL pública: /storage/articles/imagen.png
-            $publicUrl = Storage::url($path);
-        //    $payload = JWTAuth::parseToken()->getPayload();
-        //    \Log::info('payload', $payload);
-            //  $payload = auth('api')->payload();
-    // $userid = $payload->get('user_id');
-    // Sobrescribimos el valor de image_url con la URL pública
 
+            $publicUrl = Storage::url($path);
             $this->merge([
                 'image_url' => $publicUrl,
-                // 'user_id' => $userid,
+                'user_id' => $user->getAuthIdentifier(),
+                'company_type_id' => $companyId,
             ]);
         } else {
             $this->merge([
                 'image_url' => null,
-                'user_id' => auth('api')->id(),
+                'user_id' => $user->getAuthIdentifier(),
             ]);
         }
     }
-
     public function rules(): array
     {
         return [
@@ -103,15 +101,6 @@ class StoreArticleRequest extends FormRequest
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
             'filtNameEsp' => 'nullable|string|max:100',
             'statusEsp' => 'nullable|boolean',
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            // 'image_url.image' => 'El archivo debe ser una imagen.',
-            // 'image_url.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg, gif o webp.',
-
         ];
     }
 }

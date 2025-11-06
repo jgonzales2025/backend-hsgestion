@@ -174,16 +174,7 @@ Route::get('paymentType/{id}', [PaymentTypeController::class,'show']);
 
 //currencyType
 Route::get('currency-type',[CurrencyTypeController::class,'index']);
-//articles
-Route::get('articles',[ArticleController::class,'index']);
-Route::post('articles-save',[ArticleController::class,'store']);
-Route::get('articles/{id}',[ArticleController::class,'show']);
-Route::post('articlesupdate/{id}',[ArticleController::class,'update']);
-Route::get('article-excel/{id}',[ArticleController::class,'export']);
-Route::post('articles-notas-debito',[ArticleController::class,'storeNotesDebito']);
-Route::get('articles-notas-listar',[ArticleController::class,'indexNotesDebito']);
-Route::put('articles-notas-editar/{id}',[ArticleController::class,'updateNotesDebito']);
-Route::get('articles-notas/{id}',[ArticleController::class,'showNotesDebito']);
+
 
 // Exchange Rates - Tipo de cambio
 Route::get('exchange-rates', [ExchangeRateController::class, 'index']);
@@ -233,6 +224,17 @@ Route::get('dispatchNote-proveedor', [DispatchNotesController::class, 'traerProo
 Route::get('logs-login', [LoginAttemptController::class, 'index']);
 
 Route::middleware(['auth:api', 'auth.custom'])->group(function () {
+    //articles
+    Route::get('articles',[ArticleController::class,'index']);
+    Route::post('articles-save',[ArticleController::class,'store']);
+    Route::get('articles/{id}',[ArticleController::class,'show']);
+    Route::post('articlesupdate/{id}',[ArticleController::class,'update']);
+    Route::get('article-excel/{id}',[ArticleController::class,'export']);
+    Route::post('articles-notas-debito',[ArticleController::class,'storeNotesDebito']);
+    Route::get('articles-notas-listar',[ArticleController::class,'indexNotesDebito']);
+    Route::put('articles-notas-editar/{id}',[ArticleController::class,'updateNotesDebito']);
+    Route::get('articles-notas/{id}',[ArticleController::class,'showNotesDebito']);
+
     // Customer portfolios - Cartera de clientes
     Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index']);
     Route::get('/customer-portfolios-user/{id}', [CustomerPortfolioController::class, 'showUserByCustomer']);

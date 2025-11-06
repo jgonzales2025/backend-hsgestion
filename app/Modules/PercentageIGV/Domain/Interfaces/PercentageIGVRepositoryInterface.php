@@ -9,6 +9,7 @@ interface PercentageIGVRepositoryInterface
     public function findAll(): array;
     public function save(PercentageIGV $percentageIGV): ?PercentageIGV;
     public function findById(int $id): ?PercentageIGV;
+    public function findPercentageCurrent(): ?PercentageIGV;
 
     public function update(PercentageIGV $percentageIGV): ?PercentageIGV;
 }

@@ -14,7 +14,7 @@ class EloquentCollectionRepository implements CollectionRepositoryInterface
 
     public function findAll(): array
     {
-        return EloquentCollection::all()
+        return EloquentCollection::all()->sortByDesc('created_at')
             ->map(fn($collection) => $this->mapToDomain($collection))
             ->toArray();
     }
@@ -51,6 +51,7 @@ class EloquentCollectionRepository implements CollectionRepositoryInterface
     {
         return EloquentCollection::where('sale_id', $saleId)
             ->get()
+            ->sortByDesc('created_at')
             ->map(fn($collection) => $this->mapToDomain($collection))
             ->toArray();
     }

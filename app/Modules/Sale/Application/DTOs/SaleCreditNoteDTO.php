@@ -2,7 +2,7 @@
 
 namespace App\Modules\Sale\Application\DTOs;
 
-class SaleDTO
+class SaleCreditNoteDTO
 {
     public $company_id;
     public $branch_id;
@@ -15,9 +15,7 @@ class SaleDTO
     public $due_date;
     public $days;
     public $user_id;
-    public ?int $user_sale_id;
     public $payment_type_id;
-    public ?string $observations;
     public $currency_type_id;
     public $subtotal;
     public $inafecto;
@@ -27,10 +25,10 @@ class SaleDTO
     public ?float $amount_amortized;
     public ?int $payment_status;
     public ?bool $is_locked;
-    public ?string $serie_prof;
-    public ?string $correlative_prof;
-    public ?string $purchase_order;
-    public ?int $user_authorized_id;
+    public ?int $reference_document_type_id;
+    public ?string $reference_serie;
+    public ?string $reference_correlative;
+    public ?int $note_reason_id;
 
     public function __construct(array $data)
     {
@@ -45,9 +43,7 @@ class SaleDTO
         $this->due_date = $data['due_date'];
         $this->days = $data['days'];
         $this->user_id = $data['user_id'];
-        $this->user_sale_id = $data['user_sale_id'] ?? null;
         $this->payment_type_id = $data['payment_type_id'];
-        $this->observations = $data['observations'] ?? null;
         $this->currency_type_id = $data['currency_type_id'];
         $this->subtotal = $data['subtotal'];
         $this->inafecto = $data['inafecto'];
@@ -57,9 +53,9 @@ class SaleDTO
         $this->amount_amortized = $data['amount_amortized'] ?? null;
         $this->payment_status = $data['payment_status'] ?? null;
         $this->is_locked = $data['is_locked'] ?? null;
-        $this->serie_prof = $data['serie_prof'] ?? null;
-        $this->correlative_prof = $data['correlative_prof'] ?? null;
-        $this->purchase_order = $data['purchase_order'] ?? null;
-        $this->user_authorized_id = $data['user_authorized_id'] ?? null;
+        $this->reference_document_type_id = $data['reference_document_type_id'] ?? null;
+        $this->reference_serie = $data['reference_serie'] ?? null;
+        $this->reference_correlative = $data['reference_correlative'] ?? null;
+        $this->note_reason_id = $data['note_reason_id'] ?? null;
     }
 }

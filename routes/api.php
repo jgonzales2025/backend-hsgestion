@@ -256,6 +256,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/sales/{id}', [SaleController::class, 'show']);
     Route::get('/credit-notes-customer', [SaleController::class, 'indexCreditNotesByCustomer']);
     Route::post('/sales', [SaleController::class, 'store']);
+    Route::post('/sales-credit-notes', [SaleController::class, 'storeCreditNote']);
     Route::put('/sales/{id}', [SaleController::class, 'update']);
 
     // Ruta para cobranzas

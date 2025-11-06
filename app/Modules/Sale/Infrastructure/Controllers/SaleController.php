@@ -11,7 +11,9 @@ use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\NoteReason\Domain\Interfaces\NoteReasonRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
+use App\Modules\Sale\Application\DTOs\SaleCreditNoteDTO;
 use App\Modules\Sale\Application\DTOs\SaleDTO;
+use App\Modules\Sale\Application\UseCases\CreateSaleCreditNoteUseCase;
 use App\Modules\Sale\Application\UseCases\CreateSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllNoteCreditsByCustomerUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllProformasUseCase;
@@ -22,8 +24,10 @@ use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateSaleUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
+use App\Modules\Sale\Infrastructure\Requests\StoreSaleCreditNoteRequest;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleRequest;
 use App\Modules\Sale\Infrastructure\Requests\UpdateSaleRequest;
+use App\Modules\Sale\Infrastructure\Resources\SaleCreditNoteResource;
 use App\Modules\Sale\Infrastructure\Resources\SaleResource;
 use App\Modules\SaleArticle\Application\DTOs\SaleArticleDTO;
 use App\Modules\SaleArticle\Application\UseCases\CreateSaleArticleUseCase;
@@ -75,9 +79,6 @@ class SaleController extends Controller
 
     public function store(StoreSaleRequest $request): JsonResponse
     {
-        $userId = request()->get('user_id');
-        $role = request()->get('role');
-
         $saleDTO = new SaleDTO($request->validated());
         $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->noteReasonRepository);
         $sale = $saleUseCase->execute($saleDTO);
@@ -87,6 +88,22 @@ class SaleController extends Controller
 
         return response()->json([
             'sale' => (new SaleResource($sale))->resolve(),
+            'articles' => SaleArticleResource::collection($saleArticles)->resolve()
+            ], 201
+        );
+    }
+
+    public function storeCreditNote(StoreSaleCreditNoteRequest $request): JsonResponse
+    {
+        $saleCreditNoteDTO = new SaleCreditNoteDTO($request->validated());
+        $saleCreditNoteUseCase = new CreateSaleCreditNoteUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->noteReasonRepository);
+        $saleCreditNote = $saleCreditNoteUseCase->execute($saleCreditNoteDTO);
+
+        $saleArticles = $this->createSaleArticles($saleCreditNote, $request->validated()['sale_articles']);
+        $this->logTransaction($request, $saleCreditNote);
+
+        return response()->json([
+            'sale' => (new SaleCreditNoteResource($saleCreditNote))->resolve(),
             'articles' => SaleArticleResource::collection($saleArticles)->resolve()
             ], 201
         );
@@ -192,7 +209,7 @@ class SaleController extends Controller
         $transactionDTO = new TransactionLogDTO([
             'user_id' => request()->get('user_id'),
             'role_name' => request()->get('role'),
-            'description_log' => 'Venta',
+            'description_log' => $sale->getDocumentType()->getId() == 7 ? 'Nota de crédito' : 'Venta',
             'action' => $request->method(),
             'company_id' => $sale->getCompany()->getId(),
             'branch_id' => $sale->getBranch()->getId(),

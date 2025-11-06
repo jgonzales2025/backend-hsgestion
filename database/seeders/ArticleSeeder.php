@@ -18,7 +18,7 @@ class ArticleSeeder extends Seeder
                 'series_enabled' => false,
                 'measurement_unit_id' => 1,
                 'brand_id' => 1,
-                'category_id' => 1,
+                'category_id' => 2,
                 'location' => 'A1-01',
                 'warranty' => '1 año',
                 'tariff_rate' => 18.00,
@@ -41,7 +41,7 @@ class ArticleSeeder extends Seeder
                 'sub_category_id'=>1,
                 'company_type_id'=>1,
                 'state_modify_article'=>0
-               
+
             ],
                [
                 'cod_fab' => 'ART-002',
@@ -51,7 +51,7 @@ class ArticleSeeder extends Seeder
                 'series_enabled' => false,
                 'measurement_unit_id' => 1,
                 'brand_id' => 1,
-                'category_id' => 1,
+                'category_id' => 3,
                 'location' => 'A1-01',
                 'warranty' => '2 año',
                 'tariff_rate' => 18.00,
@@ -74,7 +74,7 @@ class ArticleSeeder extends Seeder
                 'sub_category_id'=>1,
                 'company_type_id'=>1,
                 'state_modify_article'=>0
-               
+
             ]
             ];
       DB::table('articles')->insert($articles);

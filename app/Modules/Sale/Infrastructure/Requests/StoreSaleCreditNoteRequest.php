@@ -4,23 +4,12 @@ namespace App\Modules\Sale\Infrastructure\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreSaleRequest extends FormRequest
+class StoreSaleCreditNoteRequest extends FormRequest
 {
     public function authorize(): bool
     {
         return true;
     }
-
-    /*protected function prepareForValidation(): void
-    {
-        // Obtener company_id del payload del token JWT
-        $payload = auth('api')->payload();
-
-        $this->merge([
-            'company_id' => $payload->get('company_id'),
-            'user_id' => auth('api')->id()
-        ]);
-    }*/
 
     public function rules(): array
     {
@@ -35,18 +24,16 @@ class StoreSaleRequest extends FormRequest
             'due_date' => 'required|date',
             'days' => 'required|integer',
             'user_id' => 'required|integer|exists:users,id',
-            'user_sale_id' => 'nullable|integer|exists:users,id',
             'payment_type_id' => 'required|integer|exists:payment_types,id',
-            'observations' => 'nullable|string',
             'currency_type_id' => 'required|integer|exists:currency_types,id',
             'subtotal' => 'required|numeric|min:0',
             'inafecto' => 'required|numeric|min:0',
             'igv' => 'required|numeric|min:0',
             'total' => 'required|numeric|min:0',
-            'serie_prof' => 'nullable|string|max:10',
-            'correlative_prof' => 'nullable|string|max:10',
-            'purchase_order' => 'nullable|string|max:10',
-            'user_authorized_id' => 'nullable|integer|exists:users,id',
+            'reference_document_type_id' => 'required_if:document_type_id,7|required_if:document_type_id,8|integer|exists:document_types,id',
+            'reference_serie' => 'required_if:document_type_id,7|required_if:document_type_id,8|string|max:10',
+            'reference_correlative' => 'required_if:document_type_id,7|required_if:document_type_id,8|string|max:10',
+            'note_reason_id' => 'required_if:document_type_id,7|required_if:document_type_id,8|integer|exists:note_reasons,id',
 
             'sale_articles' => 'required|array|min:1',
             'sale_articles.*.article_id' => 'required|integer|exists:articles,id',

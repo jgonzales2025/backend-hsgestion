@@ -44,34 +44,34 @@ class ArticleController extends Controller
     private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
     private readonly SubCategoryRepositoryInterface $subCategoryRepository,
     private readonly CompanyRepositoryInterface $companyRepository,
-      private ExportArticlesToExcelUseCase $exportUseCase
+    private ExportArticlesToExcelUseCase $exportUseCase
 
   ) {
   }
-public function export()
-{
+  public function export()
+  {
     try {
-        $filePath = $this->exportUseCase->execute();
-        
-        return response()->download(
-            storage_path('app/public/' . $filePath),
-            basename($filePath),
-            [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            ]
-        )->deleteFileAfterSend(true);
-        
+      $filePath = $this->exportUseCase->execute();
+
+      return response()->download(
+        storage_path('app/public/' . $filePath),
+        basename($filePath),
+        [
+          'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]
+      )->deleteFileAfterSend(true);
+
     } catch (\Exception $e) {
-        \Log::error("Error exportando artículos", [
-            'error' => $e->getMessage(),
-            'trace' => $e->getTraceAsString()
-        ]);
-        
-        return response()->json([
-            'error' => $e->getMessage()
-        ], 500);
+      \Log::error("Error exportando artículos", [
+        'error' => $e->getMessage(),
+        'trace' => $e->getTraceAsString()
+      ]);
+
+      return response()->json([
+        'error' => $e->getMessage()
+      ], 500);
     }
-}
+  }
 
   public function index(Request $request): array
   {
@@ -83,18 +83,7 @@ public function export()
 
 
     return ArticleResource::collection($article)->resolve();
-  }
-    public function findAllArticleNotasDebito( ): array
-  {
- 
-
-    $articleUseCase =  $this->articleRepository->findAllArticleNotasDebito(null);
-
-    // $article = $articleUseCase->execute(null);
-
-
-    return ArticleResource::collection($articleUseCase)->resolve();
-  }
+  } 
   public function show(int $id): JsonResponse
   {
 
@@ -111,7 +100,7 @@ public function export()
     );
 
   }
-   public function indexNotesDebito(): array
+  public function indexNotesDebito(): array
   {
 
     $articleUseCase = new FindAllArticlesNotesDebitoUseCase($this->articleRepository);
@@ -187,7 +176,7 @@ public function export()
       200
     );
   }
- public function updateNotesDebito(UpdateArticleNotasDebito $request, int $id): JsonResponse
+  public function updateNotesDebito(UpdateArticleNotasDebito $request, int $id): JsonResponse
   {
     $data = $request->validated();
 
@@ -249,11 +238,11 @@ public function export()
       201
     );
   }
-    public function storeNotesDebito(StoreArticleNotasDebito $request): JsonResponse
+  public function storeNotesDebito(StoreArticleNotasDebito $request): JsonResponse
   {
-     $articlesNotesDebitoDTO = new ArticleNotasDebitoDTO($request->validated());
-     $articlesDebito = new CreateArticleNotasDebito($this->articleRepository);
-     $article = $articlesDebito->execute($articlesNotesDebitoDTO);
+    $articlesNotesDebitoDTO = new ArticleNotasDebitoDTO($request->validated());
+    $articlesDebito = new CreateArticleNotasDebito($this->articleRepository);
+    $article = $articlesDebito->execute($articlesNotesDebitoDTO);
 
 
     return response()->json(

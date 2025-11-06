@@ -14,8 +14,7 @@ class UpdateArticleRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $payload = auth('api')->payload();
-        $companyId = $payload->get('company_id');
+        $companyId = request()->get('company_id');
 
         $this->merge([
             'user_id' => auth('api')->id(),

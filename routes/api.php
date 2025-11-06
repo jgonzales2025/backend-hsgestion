@@ -258,6 +258,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     Route::get('/sales-proformas', [SaleController::class, 'indexProformas']);
     Route::get('/sales/by-document', [SaleController::class, 'showDocumentSale']);
+    Route::get('/sales/by-document-debit', [SaleController::class, 'findSaleByDocumentForDebitNote']);
     Route::get('/sales/get-updated-quantities', [SaleController::class, 'getUpdatedQuantities']);
     Route::get('/sales', [SaleController::class, 'index']);
     Route::get('/sales/{id}', [SaleController::class, 'show']);

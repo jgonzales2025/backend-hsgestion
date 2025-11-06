@@ -55,6 +55,19 @@ class EloquentPercentageIGVRepository implements PercentageIGVRepositoryInterfac
         );
     }
 
+    public function findPercentageCurrent(): ?PercentageIGV
+    {
+        $percentageIGV = EloquentPercentageIGV::orderBy('date', 'desc')->first();
+        if (!$percentageIGV) {
+            return null;
+        }
+        return new PercentageIGV(
+            id: $percentageIGV->id,
+            date: new \DateTimeImmutable($percentageIGV->date),
+            percentage: $percentageIGV->percentage,
+        );
+    }
+
     public function update(PercentageIGV $percentageIGV): ?PercentageIGV
     {
         $eloquentPercentageIGV = EloquentPercentageIGV::find($percentageIGV->getId());

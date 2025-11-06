@@ -7,6 +7,7 @@ use App\Modules\PercentageIGV\Application\DTOs\PercentageIGVDTO;
 use App\Modules\PercentageIGV\Application\UseCases\CreatePercentageIGVUseCase;
 use App\Modules\PercentageIGV\Application\UseCases\FindAllPercentageIGVUseCase;
 use App\Modules\PercentageIGV\Application\UseCases\FindByIdPercentageIGVUseCase;
+use App\Modules\PercentageIGV\Application\UseCases\FindPercentageCurrentUseCase;
 use App\Modules\PercentageIGV\Application\UseCases\UpdatePercentageIGVUseCase;
 use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface;
 use App\Modules\PercentageIGV\Infrastructure\Requests\StorePercentageIGVRequest;
@@ -46,6 +47,18 @@ class PercentageIGVController extends Controller
 
         if (!$percentageIGV) {
             return response()->json(['message' => 'Percentage IGV not found'], 404);
+        }
+
+        return response()->json(new PercentageIGVResource($percentageIGV), 200);
+    }
+
+    public function findPercentageCurrent(): JsonResponse
+    {
+        $percentageIGVUseCase = new FindPercentageCurrentUseCase($this->percentageIGVRepository);
+        $percentageIGV = $percentageIGVUseCase->execute();
+
+        if (!$percentageIGV) {
+            return response()->json(['message' => 'No hay porcentajes de igv agregados.'], 404);
         }
 
         return response()->json(new PercentageIGVResource($percentageIGV), 200);

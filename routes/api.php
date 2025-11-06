@@ -133,6 +133,7 @@ Route::put('transport-companies/{id}',[TransportCompanyController::class, 'updat
 
 // PercentageIGV - Porcentaje de IGV
 Route::get('percentage-igv',[PercentageIGVController::class, 'index']);
+Route::get('percentage-igv-current',[PercentageIGVController::class, 'findPercentageCurrent']);
 Route::post('percentage-igv',[PercentageIGVController::class, 'store']);
 Route::get('percentage-igv/{id}',[PercentageIGVController::class, 'show']);
 Route::put('percentage-igv/{id}',[PercentageIGVController::class, 'update']);

@@ -177,6 +177,25 @@ class SaleController extends Controller
         ]);
     }
 
+    public function findSaleByDocumentForDebitNote(Request $request): JsonResponse
+    {
+        $documentTypeId = $request->query('document_type_id');
+        $serie = $request->query('serie');
+        $correlative = $request->query('correlative');
+
+        $saleUseCase = new FindByDocumentSaleUseCase($this->saleRepository);
+        $sale = $saleUseCase->execute($documentTypeId, $serie, $correlative);
+        if (!$sale) {
+            return response()->json(['message' => 'Venta no encontrada'], 404);
+        }
+
+        $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
+
+        return response()->json([
+            'sale' => (new SaleResource($sale))->resolve()
+        ]);
+    }
+
     private function createSaleArticles($sale, array $articlesData): array
     {
         $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository);

@@ -86,7 +86,7 @@ class EloquentCustomer extends Model
         return new Customer(
             id: $eloquentCustomer->id,
             record_type_id: $eloquentCustomer->record_type_id,
-            record_type_name: $eloquentCustomer->recordType->name,
+            record_type_name: $eloquentCustomer->recordType?->name,
             customer_document_type_id: $eloquentCustomer->customer_document_type_id,
             customer_document_type_name: $eloquentCustomer->customerDocumentType->description,
             customer_document_type_abbreviation: $eloquentCustomer->customerDocumentType->abbreviation,
@@ -96,7 +96,7 @@ class EloquentCustomer extends Model
             lastname: $eloquentCustomer->lastname,
             second_lastname: $eloquentCustomer->second_lastname,
             customer_type_id: $eloquentCustomer->customer_type_id,
-            customer_type_name: $eloquentCustomer->customerType->name,
+            customer_type_name: $eloquentCustomer->customerType?->name,
             contact: $eloquentCustomer->contact,
             is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
             status: $eloquentCustomer->status,

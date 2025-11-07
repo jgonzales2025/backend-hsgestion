@@ -59,7 +59,7 @@ readonly class UpdateArticleUseCase
         $companyType = $CompanyUseCase->execute($articleDTO->company_type_id);
 
         $article = new Article(
-            id: $id,
+             id: $id,
             cod_fab: $articleDTO->cod_fab,
             description: $articleDTO->description,
             weight: $articleDTO->weight,
@@ -78,8 +78,7 @@ readonly class UpdateArticleUseCase
             public_price_percent: $articleDTO->public_price_percent,
             distributor_price_percent: $articleDTO->distributor_price_percent,
             authorized_price_percent: $articleDTO->authorized_price_percent,
-            status: $articleDTO->status,
-
+            status: $articleDTO->status, 
             brand: $brand,
             category: $categoryType,
             currencyType: $currencyType,
@@ -90,7 +89,10 @@ readonly class UpdateArticleUseCase
             subCategory: $subCategoryType,
             company: $companyType,
             image_url: $articleDTO->image_url,
-            state_modify_article: $articleDTO->state_modify_article
+            state_modify_article: $articleDTO->state_modify_article,
+            filtNameEsp: $articleDTO->filtNameEsp,
+            statusEsp: $articleDTO->statusEsp,
+
         );
 
         return $this->articleRepository->update($article);

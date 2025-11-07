@@ -48,8 +48,7 @@ class ArticleResource extends JsonResource
             'tariff_rate' => $this->getTariffRate(),
             'igv_applicable' => $this->getIgvApplicable(),
             'plastic_bag_applicable' => $this->getPlasticBagApplicable(),
-            'min_stock' => $this->getMinStock(),
-
+            'min_stock' => $this->getMinStock(), 
             'purchase_price' => $this->getPurchasePrice(),
             'public_price' => $this->getPublicPrice(),
             'distributor_price' => $this->getDistributorPrice(),
@@ -57,7 +56,7 @@ class ArticleResource extends JsonResource
             'public_price_percent' => $this->getPublicPricePercent(),
             'distributor_price_percent' => $this->getDistributorPricePercent(),
             'authorized_price_percent' => $this->getAuthorizedPricePercent(),
-            'status' => ($this->getStatus()) == 1 ? "Activo" : "Inactivo", 
+            'status' => ($this->getStatus()) == 1 ? "Activo" : "Inactivo",
             'venta' => $this->getVenta() == true ? 'Activo' : 'Inactivo',
             'company' => [
                 'id' => $this->resource->getCompany()?->getId(),

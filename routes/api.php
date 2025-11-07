@@ -230,7 +230,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('articles-save',[ArticleController::class,'store']);
     Route::get('articles/{id}',[ArticleController::class,'show']);
     Route::post('articlesupdate/{id}',[ArticleController::class,'update']);
-    Route::get('article-excel/{id}',[ArticleController::class,'export']);
+    Route::get('article-excel',[ArticleController::class,'export']);
     Route::post('articles-notas-debito',[ArticleController::class,'storeNotesDebito']);
     Route::get('articles-notas-listar',[ArticleController::class,'indexNotesDebito']);
     Route::put('articles-notas-editar/{id}',[ArticleController::class,'updateNotesDebito']);

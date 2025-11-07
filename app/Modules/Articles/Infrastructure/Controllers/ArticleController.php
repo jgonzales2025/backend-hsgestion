@@ -9,6 +9,7 @@ use App\Modules\Articles\Application\UseCases\CreateArticleNotasDebito;
 use App\Modules\Articles\Application\UseCases\CreateArticleUseCase;
 use App\Modules\Articles\Application\UseCases\ExportArticlesToExcelUseCase;
 use App\Modules\Articles\Application\UseCases\FindAllArticlesNotesDebitoUseCase;
+use App\Modules\Articles\Application\UseCases\FindAllArticlesPriceConvertionUseCase;
 use App\Modules\Articles\Application\UseCases\FindAllArticleUseCase;
 use App\Modules\Articles\Application\UseCases\FindByIdArticleUseCase;
 use App\Modules\Articles\Application\UseCases\FindByIdNotesDebito;
@@ -19,6 +20,7 @@ use App\Modules\Articles\Infrastructure\Requests\StoreArticleNotasDebito;
 use App\Modules\Articles\Infrastructure\Requests\StoreArticleRequest;
 use App\Modules\Articles\Infrastructure\Requests\UpdateArticleNotasDebito;
 use App\Modules\Articles\Infrastructure\Requests\UpdateArticleRequest;
+use App\Modules\Articles\Infrastructure\Resource\ArticleForSalesResource;
 use App\Modules\Articles\Infrastructure\Resource\ArticleNotesDebitoResource;
 use App\Modules\Articles\Infrastructure\Resource\ArticleResource;
 use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
@@ -238,6 +240,21 @@ class ArticleController extends Controller
       201
     );
   }
+
+  public function indexArticlesForSales(Request $request): array
+  {
+    $description = $request->query("description");
+
+    $validatedData = $request->validate([
+        'date' => 'date|required'
+    ]);
+
+    $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);
+    $articles = $articlesUseCase->execute($validatedData['date'], $description);
+
+    return ArticleForSalesResource::collection($articles)->resolve();
+  }
+  
   public function storeNotesDebito(StoreArticleNotasDebito $request): JsonResponse
   {
     $articlesNotesDebitoDTO = new ArticleNotasDebitoDTO($request->validated());

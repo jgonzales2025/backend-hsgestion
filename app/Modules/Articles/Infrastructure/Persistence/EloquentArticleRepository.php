@@ -9,8 +9,7 @@ use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch; 
 use App\Modules\ExchangeRate\Infrastructure\Models\EloquentExchangeRate;
 use App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle;
-use Illuminate\Support\Collection;
-
+use Illuminate\Support\Collection; 
 
 class EloquentArticleRepository implements ArticleRepositoryInterface
 {

@@ -71,6 +71,17 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
         return $this->buildCustomer($eloquentCustomer, $phones, $emails, $addresses);
     }
 
+    public function findCustomerByDocumentNumber(string $documentNumber): ?Customer
+    {
+        $customer = EloquentCustomer::where('document_number', $documentNumber)->first();
+
+        if (!$customer) {
+            return null;
+        }
+
+        return $this->buildCustomer($customer, [], [], []);
+    }
+
     public function update(Customer $customer): ?Customer
     {
         $eloquentCustomer = EloquentCustomer::find($customer->getId());
@@ -148,12 +159,26 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
         })->toArray();
     }
 
+    public function saveCustomerBySunatApi(Customer $customer): ?Customer
+    {
+        $eloquentCustomer = EloquentCustomer::create([
+            'customer_document_type_id' => $customer->getCustomerDocumentTypeId(),
+            'document_number' => $customer->getDocumentNumber(),
+            'company_name' => $customer->getCompanyName(),
+            'name' => $customer->getName(),
+            'lastname' => $customer->getLastname(),
+            'second_lastname' => $customer->getSecondLastname()
+        ]);
+
+        return $this->buildCustomer($eloquentCustomer, [], [], []);
+    }
+
     private function buildCustomer(EloquentCustomer $customer, $phones = [], $emails = [], $addresses = []): Customer
     {
         return new Customer(
             id: $customer->id,
             record_type_id: $customer->record_type_id,
-            record_type_name: $customer->recordType->name,
+            record_type_name: $customer->recordType?->name,
             customer_document_type_id: $customer->customer_document_type_id,
             customer_document_type_name: $customer->customerDocumentType->description,
             customer_document_type_abbreviation: $customer->customerDocumentType->abbreviation,
@@ -163,7 +188,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             lastname: $customer->lastname,
             second_lastname: $customer->second_lastname,
             customer_type_id: $customer->customer_type_id,
-            customer_type_name: $customer->customerType->description,
+            customer_type_name: $customer->customerType?->description,
             contact: $customer->contact,
             is_withholding_applicable: $customer->is_withholding_applicable,
             status: $customer->status,

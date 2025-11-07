@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'external_api' => [
+        'sunat_api_token' => env('SUNAT_API_TOKEN'),
+        'document_api_url' => env('DOCUMENT_API_URL'),
+        'exchange_rate_api_url' => env('EXCHANGE_RATE_API_URL'),
+    ]
+
 ];

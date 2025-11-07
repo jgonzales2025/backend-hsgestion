@@ -4,11 +4,13 @@ namespace App\Modules\Customer\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Customer\Application\DTOs\CustomerDTO;
+use App\Modules\Customer\Application\UseCases\CreateCustomerSunatApiUseCase;
 use App\Modules\Customer\Application\UseCases\CreateCustomerUseCase;
 use App\Modules\Customer\Application\UseCases\FindAllCustomersExcludingCompaniesUseCase;
 use App\Modules\Customer\Application\UseCases\FindAllCustomersUseCase;
 use App\Modules\Customer\Application\UseCases\FindAllUnassignedCustomerUseCase;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
+use App\Modules\Customer\Application\UseCases\FindCustomerByDocumentNumberUseCase;
 use App\Modules\Customer\Application\UseCases\FindCustomerCompanyUseCase;
 use App\Modules\Customer\Application\UseCases\UpdateCustomerUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
@@ -46,6 +48,7 @@ use App\Modules\Ubigeo\Departments\Domain\Interfaces\DepartmentRepositoryInterfa
 use App\Modules\Ubigeo\Districts\Domain\Interfaces\DistrictRepositoryInterface;
 use App\Modules\Ubigeo\Provinces\Domain\Interfaces\ProvinceRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
+use App\Services\ApiSunatService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -63,6 +66,7 @@ class CustomerController extends Controller
         private readonly DistrictRepositoryInterface $districtRepository,
         private readonly CustomerPortfolioRepositoryInterface $customerPortfolioRepository,
         private readonly UserRepositoryInterface $userRepository,
+        private readonly ApiSunatService $apiSunatService
     ){}
 
     public function index(Request $request): array
@@ -251,5 +255,73 @@ class CustomerController extends Controller
         $customers = $customersUseCase->execute($customerName);
 
         return CustomerAllResource::collection($customers)->resolve();
+    }
+
+    public function storeCustomerBySunatApi(Request $request): JsonResponse
+    {
+        $documentNumber = $request->query('document_number');
+
+        if (!$documentNumber) {
+            return response()->json(['error' => 'No ha enviado el número de documento'], 422);
+        }
+
+        $data = $this->apiSunatService->getDataByDocument($documentNumber);
+
+        if (!$data['success']) {
+            return response()->json(['error' => 'Documento no válido'], 422);
+        }
+
+        $findCustomerUseCase = new FindCustomerByDocumentNumberUseCase($this->customerRepository);
+        $customer = $findCustomerUseCase->execute($documentNumber);
+
+        if ($customer) {
+            return response()->json(['error' => 'Cliente ya existe'], 409);
+        }
+
+        $documentNumberValue = $data['data']['ruc'] ?? $data['data']['document_number'];
+
+        $customerDTO = new CustomerDTO([
+            'customer_document_type_id' => strlen($documentNumber) == 11 ? 2 : 3,
+            'document_number' => $documentNumberValue,
+            'company_name' => $data['data']['razsoc'] ?? null,
+            'name' => $data['data']['first_name'] ?? null,
+            'lastname' => $data['data']['first_last_name'] ?? null,
+            'second_lastname' => $data['data']['second_last_name'] ?? null,
+        ]);
+
+        $customerUseCase = new CreateCustomerSunatApiUseCase($this->customerRepository);
+        $customer = $customerUseCase->execute($customerDTO);
+
+        $address = null;
+
+        if (isset($data['data']['ubigeo'])) {
+            $ubigeo = $data['data']['ubigeo'];
+            $departmentId = substr($ubigeo, 0, 2);
+            $provinceId = substr($ubigeo, 2, 2);
+            $districtId = substr($ubigeo, 4, 2);
+
+            $createCustomerAddressUseCase = new CreateCustomerAddressUseCase(
+                $this->customerAddressRepository,
+                $this->departmentRepository,
+                $this->provinceRepository,
+                $this->districtRepository,
+            );
+
+            $customerAddressDTO = new CustomerAddressDTO([
+                'customer_id' => $customer->getId(),
+                'address' => $data['data']['direccion'],
+                'department_id' => $departmentId,
+                'province_id' => $provinceId,
+                'district_id' => $districtId,
+                'status' => 1,
+                'st_principal' => 1,
+            ]);
+            $address = $createCustomerAddressUseCase->execute($customerAddressDTO);
+        }
+
+        return response()->json([
+            'customer' => (new CustomerResource($customer))->resolve(),
+            'address' => $address ? (new CustomerAddressResource($address))->resolve() : null
+        ], 201);
     }
 }

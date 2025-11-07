@@ -13,15 +13,14 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('record_type_id')->constrained('record_types')->onDelete('cascade');
+            $table->foreignId('record_type_id')->nullable()->constrained('record_types')->onDelete('cascade');
             $table->foreignId('customer_document_type_id')->constrained('customer_document_types')->onDelete('cascade');
             $table->string('document_number', 11)->unique();
             $table->string('company_name', 100)->nullable();
             $table->string('name', 50)->nullable();
             $table->string('lastname', 50)->nullable();
             $table->string('second_lastname', 50)->nullable();
-            $table->foreignId('customer_type_id')->constrained('customer_types')->onDelete('cascade');
-            $table->string('fax', 20)->nullable();
+            $table->foreignId('customer_type_id')->nullable()->constrained('customer_types')->onDelete('cascade');
             $table->string('contact', 100)->nullable();
             $table->boolean('is_withholding_applicable')->default(false);
             $table->integer('status')->default(1);

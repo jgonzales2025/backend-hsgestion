@@ -20,7 +20,7 @@ class CustomerAddressResource extends JsonResource
             'province' => new ProvinceResource($this->resource->getProvince()),
             'district' => new DistrictResource($this->resource->getDistrict()),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
-            'st_principal' => ($this->resource->isPrincipal()) == 1 ? 'Principal' : 'Secundario'
+            'st_principal' => ($this->resource->isPrincipal()) == 1
         ];
     }
 }

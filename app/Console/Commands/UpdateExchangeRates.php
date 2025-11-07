@@ -31,9 +31,9 @@ class UpdateExchangeRates extends Command
         try {
             $date = now()->format('Y-m-d');
 
-            $url = config('app.exchange_rate_api_url') . "/{$date}";
+            $url = config('services.external_api.exchange_rate_api_url') . "/{$date}";
             $response = Http::withHeaders([
-                'Authorization' => 'Bearer ' . config('app.exchange_rate_api_token'),
+                'Authorization' => 'Bearer ' . config('services.external_api.sunat_api_token'),
                 'Accept' => 'application/json',
             ])->get($url);
 

@@ -5,7 +5,7 @@ namespace App\Modules\Customer\Domain\Entities;
 class Customer
 {
     private int $id;
-    private int $record_type_id;
+    private ?int $record_type_id;
     private ?string $record_type_name;
     private int $customer_document_type_id;
     private ?string $customer_document_type_name;
@@ -15,11 +15,11 @@ class Customer
     private ?string $name;
     private ?string $lastname;
     private ?string $second_lastname;
-    private int $customer_type_id;
+    private ?int $customer_type_id;
     private ?string $customer_type_name;
     private ?string $contact;
-    private bool $is_withholding_applicable;
-    private int $status;
+    private ?bool $is_withholding_applicable;
+    private ?int $status;
     private int $st_assigned;
     private ?array $phones;
     private ?array $emails;
@@ -27,7 +27,7 @@ class Customer
 
     public function __construct(
         int $id,
-        int $record_type_id,
+        ?int $record_type_id,
         ?string $record_type_name,
         int $customer_document_type_id,
         ?string $customer_document_type_name,
@@ -37,11 +37,11 @@ class Customer
         ?string $name,
         ?string $lastname,
         ?string $second_lastname,
-        int $customer_type_id,
+        ?int $customer_type_id,
         ?string $customer_type_name,
         ?string $contact,
-        bool $is_withholding_applicable,
-        int $status,
+        ?bool $is_withholding_applicable,
+        ?int $status,
         int $st_assigned = 0,
         ?array $phones = null,
         ?array $emails = null,
@@ -70,7 +70,7 @@ class Customer
     }
 
     public function getId(): int { return $this->id; }
-    public function getRecordTypeId(): int { return $this->record_type_id; }
+    public function getRecordTypeId(): int|null { return $this->record_type_id; }
     public function getRecordTypeName(): string|null { return $this->record_type_name; }
     public function getCustomerDocumentTypeId(): int { return $this->customer_document_type_id; }
     public function getCustomerDocumentTypeName(): string|null { return $this->customer_document_type_name; }
@@ -80,11 +80,11 @@ class Customer
     public function getName(): ?string { return $this->name; }
     public function getLastname(): ?string { return $this->lastname; }
     public function getSecondLastname(): ?string { return $this->second_lastname; }
-    public function getCustomerTypeId(): int { return $this->customer_type_id; }
+    public function getCustomerTypeId(): int|null { return $this->customer_type_id; }
     public function getCustomerTypeName(): string|null { return $this->customer_type_name; }
     public function getContact(): ?string { return $this->contact; }
-    public function isWithholdingApplicable(): bool { return $this->is_withholding_applicable; }
-    public function getStatus(): int { return $this->status; }
+    public function isWithholdingApplicable(): bool|null { return $this->is_withholding_applicable; }
+    public function getStatus(): int|null { return $this->status; }
     public function getStAssigned(): int { return $this->st_assigned; }
     public function getPhones(): ?array { return $this->phones; }
     public function getEmails(): ?array { return $this->emails; }

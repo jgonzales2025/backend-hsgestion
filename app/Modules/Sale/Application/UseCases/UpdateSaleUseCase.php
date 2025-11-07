@@ -74,10 +74,7 @@ readonly class UpdateSaleUseCase
             serie_prof: $saleDTO->serie_prof,
             correlative_prof: $saleDTO->correlative_prof,
             purchase_order: $saleDTO->purchase_order,
-            user_authorized: $userAuthorized,
-            reference_document_type_id: $saleDTO->reference_document_type_id,
-            reference_serie: $saleDTO->reference_serie,
-            reference_correlative: $saleDTO->reference_correlative
+            user_authorized: $userAuthorized
         );
 
         return $this->saleRepository->update($sale);

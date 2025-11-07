@@ -123,7 +123,4 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
-    'exchange_rate_api_url' => env('EXCHANGE_RATE_API_URL'),
-    'exchange_rate_api_token' => env('EXCHANGE_RATE_API_TOKEN'),
-
 ];

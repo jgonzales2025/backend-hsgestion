@@ -239,6 +239,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Crear cliente
     Route::post('customers', [CustomerController::class, 'store']);
+    Route::post('customers-save-api', [CustomerController::class, 'storeCustomerBySunatApi']);
     Route::get('customers-company', [CustomerController::class, 'findCustomerCompany']);
     Route::get('customers-no-company', [CustomerController::class, 'findAllCustomersExceptionCompanies']);
 

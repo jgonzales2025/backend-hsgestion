@@ -23,6 +23,7 @@ use App\Modules\Sale\Domain\Entities\SaleCreditNote;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\User\Application\UseCases\GetUserByIdUseCase;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
+use App\Services\DocumentNumberGeneratorService;
 
 readonly class CreateSaleCreditNoteUseCase
 {
@@ -35,21 +36,14 @@ readonly class CreateSaleCreditNoteUseCase
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
-        private readonly NoteReasonRepositoryInterface $noteReasonRepository
+        private readonly NoteReasonRepositoryInterface $noteReasonRepository,
+        private readonly DocumentNumberGeneratorService $documentNumberGenerator
     ){}
 
     public function execute(SaleCreditNoteDTO $saleCreditNoteDTO): ?SaleCreditNote
     {
         $lastDocumentNumber = $this->saleRepository->getLastDocumentNumber($saleCreditNoteDTO->serie);
-
-        if ($lastDocumentNumber === null) {
-            $documentNumber = '00001';
-        } else {
-            $nextNumber = intval($lastDocumentNumber) + 1;
-            $documentNumber = str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
-        }
-
-        $saleCreditNoteDTO->document_number = $documentNumber;
+        $saleCreditNoteDTO->document_number = $this->documentNumberGenerator->generateNextNumber($lastDocumentNumber);
 
         $companyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
         $company = $companyUseCase->execute($saleCreditNoteDTO->company_id);

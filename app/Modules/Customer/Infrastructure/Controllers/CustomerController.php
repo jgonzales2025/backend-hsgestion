@@ -294,7 +294,7 @@ class CustomerController extends Controller
 
         $address = null;
 
-        if (isset($data['data']['ubigeo'])) {
+        if (isset($data['data']['ubigeo']) && $data['data']['ubigeo'] !== '-') {
             $ubigeo = $data['data']['ubigeo'];
             $departmentId = substr($ubigeo, 0, 2);
             $provinceId = substr($ubigeo, 2, 2);

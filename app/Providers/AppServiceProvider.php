@@ -71,6 +71,8 @@ use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\PaymentType\Infrastructure\Persistence\EloquentPaymentTypeRepository;
 use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface;
 use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRepository;
+use App\Modules\PurchaseOrder\Domain\Interfaces\PurchaseOrderRepositoryInterface;
+use App\Modules\PurchaseOrder\Infrastructure\Persistence\EloquentPurchaseOrderRepository;
 use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
 use App\Modules\RecordType\Infrastructure\Models\EloquentRecordType;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
@@ -157,6 +159,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ArticleExporterInterface::class,ExcelArticleExporter::class);
         $this->app->bind(PdfGeneratorInterface::class,DomPdfGenerator::class);
         $this->app->bind(NoteReasonRepositoryInterface::class, EloquentNoteReasonRepository::class);
+        $this->app->bind(PurchaseOrderRepositoryInterface::class, EloquentPurchaseOrderRepository::class);
 
     }
 

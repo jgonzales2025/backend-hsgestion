@@ -133,7 +133,7 @@ class TransportCompanyController extends Controller
             'ruc' => $documentNumberValue,
             'company_name' => $data['data']['razsoc'] ?? null,
             'address' => $data['data']['direccion'] ?? null,
-            'nro_reg_mtc' => null,
+            'nro_reg_mtc' => '',
             'status' => null,
 
         ]);

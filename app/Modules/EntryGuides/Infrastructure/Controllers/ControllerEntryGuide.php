@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\EntryGuides\Application\UseCases\FindAllEntryGuide;
 use App\Modules\EntryGuides\Application\UseCases\FindAllEntryGuideUseCase;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
+use App\Modules\EntryGuides\Infrastructure\Resource\EntryGuideResource;
 use Illuminate\Http\JsonResponse;
 
 
@@ -13,11 +14,11 @@ class ControllerEntryGuide extends Controller {
 
     public function __construct(private readonly EntryGuideRepositoryInterface $entryGuideRepositoryInterface){}
 
-    public function index():JsonResponse{
+    public function index():array{
         $entryGuideUseCase = new FindAllEntryGuideUseCase($this->entryGuideRepositoryInterface);
         $entryGuide = $entryGuideUseCase->execute();
 
-        return new JsonResponse($entryGuide);
-        
+        return EntryGuideResource::collection($entryGuide)->resolve();
+
     }
 }

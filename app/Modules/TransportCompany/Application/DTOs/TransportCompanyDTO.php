@@ -14,8 +14,8 @@ class TransportCompanyDTO
     {
         $this->ruc = $data['ruc'];
         $this->company_name = $data['company_name'];
-        $this->address = $data['address'];
-        $this->nro_reg_mtc = $data['nro_reg_mtc'];
-        $this->status = $data['status'];
+        $this->address = $data['address'] ?? null;
+        $this->nro_reg_mtc = $data['nro_reg_mtc'] ?? null;
+        $this->status = $data['status'] ?? 1;
     }
 }

@@ -14,11 +14,11 @@ class StoreTransportCompanyRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'ruc' => 'required|string|max:11',
-            'company_name' => 'required|string|max:100',
-            'address' => 'required|string|max:255',
-            'nro_reg_mtc' => 'required|string|max:10',
-            'status' => 'required|integer',
+            'ruc' => 'nullable|string|max:11',
+            'company_name' => 'nullable|string|max:100',
+            'address' => 'nullable|string|max:255',
+            'nro_reg_mtc' => 'nullable|string|max:10',
+            'status' => 'nullable|integer',
         ];
     }
 }

@@ -111,6 +111,7 @@ Route::get('drivers',[DriverController::class, 'index']);
 Route::post('drivers',[DriverController::class, 'store']);
 Route::get('drivers/{id}',[DriverController::class, 'show']);
 Route::put('drivers/{id}',[DriverController::class, 'update']);
+Route::post('drivers-sunatApi',[DriverController::class, 'storeCustomerBySunatApi']);
 
 // Categories - categorias
 Route::get('categories',[CategoryController::class, 'index']);
@@ -130,6 +131,7 @@ Route::get('transport-companies',[TransportCompanyController::class, 'index']);
 Route::post('transport-companies',[TransportCompanyController::class, 'store']);
 Route::get('transport-companies/{id}',[TransportCompanyController::class, 'show']);
 Route::put('transport-companies/{id}',[TransportCompanyController::class, 'update']);
+Route::post('transport-companies-sunat',[TransportCompanyController::class, 'storeCustomerBySunatApi']);
 
 // PercentageIGV - Porcentaje de IGV
 Route::get('percentage-igv',[PercentageIGVController::class, 'index']);

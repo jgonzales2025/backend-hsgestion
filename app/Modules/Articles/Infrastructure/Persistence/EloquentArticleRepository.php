@@ -75,7 +75,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             ->when($description, function ($query, $name) {
                 return $query->where(function ($q) use ($name) {
                     $q->where('description', 'like', "%{$name}%")
-                        ->orWhere('cod_fab', 'like', "%{$name}%");
+                        ->orWhere('cod_fab', 'like', "%{$name}%")
+                        
+                        ;
                 });
             })
             ->orderByDesc('created_at')

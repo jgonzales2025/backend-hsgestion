@@ -103,4 +103,22 @@ class EloquentDriverRepository implements DriverRepositoryInterface
             'license' => $driver->getLicense(),
         ]);
     }
+    function findDriverByDocumentNumber(string $documentNumber): ?Driver
+    {
+        $driver = EloquentDriver::where('doc_number', $documentNumber)->first();
+        if (!$driver) {
+            return null;
+        }
+        return new Driver(
+            id: $driver->id,
+            customer_document_type_id: $driver->customer_document_type_id,
+            doc_number: $driver->doc_number,
+            name: $driver->name,
+            pat_surname: $driver->pat_surname,
+            mat_surname: $driver->mat_surname,
+            status: $driver->status,
+            license: $driver->license,
+            document_type_name: $driver->customerDocumentType->abbreviation
+        );
+    }
 }

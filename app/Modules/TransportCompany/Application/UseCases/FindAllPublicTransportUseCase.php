@@ -8,8 +8,8 @@ readonly class FindAllPublicTransportUseCase
 {
     public function __construct(private readonly TransportCompanyRepositoryInterface $transportCompanyRepository){}
 
-    public function execute(): array
+    public function execute(?string $description): array
     {
-        return $this->transportCompanyRepository->findAllPublicTransport();
+        return $this->transportCompanyRepository->findAllPublicTransport($description);
     }
 }

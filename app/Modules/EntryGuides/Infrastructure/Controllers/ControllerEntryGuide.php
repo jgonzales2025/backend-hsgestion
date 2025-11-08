@@ -16,8 +16,8 @@ class ControllerEntryGuide extends Controller {
     public function index():JsonResponse{
         $entryGuideUseCase = new FindAllEntryGuideUseCase($this->entryGuideRepositoryInterface);
         $entryGuide = $entryGuideUseCase->execute();
-        
-        return new JsonResponse($entryGuide);
 
+        return new JsonResponse($entryGuide);
+        
     }
 }

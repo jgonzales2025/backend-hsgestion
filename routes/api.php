@@ -21,6 +21,7 @@ use App\Modules\DispatchArticle\Infrastructure\Controllers\DispatchArticleContro
 use App\Modules\DispatchNotes\Infrastructure\Controllers\DispatchNotesController;
 use App\Modules\Driver\Infrastructure\Controllers\DriverController;
 use App\Modules\EmissionReason\Infrastructure\Controllers\EmissionReasonController;
+use App\Modules\EntryGuides\Infrastructure\Controllers\ControllerEntryGuide;
 use App\Modules\ExchangeRate\Infrastructure\Controllers\ExchangeRateController;
 use App\Modules\IngressReason\Infrastructure\Controllers\IngressReasonController;
 use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitController;
@@ -293,6 +294,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Ruta para traer los motivos de notas de credito o debito
     Route::get('/note-reasons', [NoteReasonController::class, 'index']);
 
+   //Entry Guide
+   Route::get('/entry-guides', [ControllerEntryGuide::class, 'index']);
 
 
 });

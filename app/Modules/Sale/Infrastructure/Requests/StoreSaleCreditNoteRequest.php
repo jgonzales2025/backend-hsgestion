@@ -44,7 +44,7 @@ class StoreSaleCreditNoteRequest extends FormRequest
             'note_reason_id' => 'required_if:document_type_id,7|required_if:document_type_id,8|integer|exists:note_reasons,id',
 
             'sale_articles' => 'required|array|min:1',
-            'sale_articles.*.article_id' => 'required|integer|exists:articles,id',
+            'sale_articles.*.article_id' => 'required|integer',
             'sale_articles.*.description' => 'required|string',
             'sale_articles.*.quantity' => 'required|integer|min:1',
             'sale_articles.*.unit_price' => 'required|numeric|min:0',
@@ -56,7 +56,7 @@ class StoreSaleCreditNoteRequest extends FormRequest
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
-            if ($this->input('document_type_id') == 7 || $this->input('document_type_id') == 8) {
+            if ($this->input('document_type_id') == 7) {
                 $paddedCorrelative = str_pad($this->input('reference_correlative'), 5, '0', STR_PAD_LEFT);
                 $result = $this->findSaleWithUpdatedQuantitiesUseCase->execute(
                     (int) $this->input('reference_document_type_id'),
@@ -85,6 +85,14 @@ class StoreSaleCreditNoteRequest extends FormRequest
                     $availableQuantity = $originalArticle['updated_quantity'];
                     if ($requestedQuantity > $availableQuantity) {
                         $validator->errors()->add("sale_articles.{$index}.quantity", "La cantidad solicitada ({$requestedQuantity}) excede la disponible ({$availableQuantity}) en la venta original.");
+                    }
+                }
+            }
+            if ($this->input('document_type_id') == 8) {
+                $saleArticles = $this->input('sale_articles', []);
+                foreach ($saleArticles as $index => $article) {
+                    if (isset($article['unit_price']) && $article['unit_price'] <= 0) {
+                        $validator->errors()->add("sale_articles.{$index}.unit_price", 'El precio unitario debe ser mayor a 0 para notas de débito.');
                     }
                 }
             }

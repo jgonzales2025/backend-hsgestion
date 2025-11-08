@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name', 20);
             $table->string('pat_surname', 20);
             $table->string('mat_surname', 20);
-            $table->string('license', 13)->unique();
+            $table->string('license', 13)->unique()->nullable();
             $table->integer('status')->default(1);
             $table->timestamps();
         });

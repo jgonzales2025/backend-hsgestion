@@ -20,6 +20,6 @@ class DriverDTO
         $this->pat_surname = $data['pat_surname'];
         $this->mat_surname = $data['mat_surname'];
         $this->status = $data['status'];
-        $this->license = $data['license'];
+        $this->license = $data['license'] ;
     }
 }

@@ -91,4 +91,25 @@ class EloquentTransportCompanyRepository implements TransportCompanyRepositoryIn
             status: $eloquentTransportCompany->status,
         );
     }
+    public function saveTransportCompanyBySunatApi(TransportCompany $customer): ?TransportCompany{
+        $eloquentTransport = EloquentTransportCompany::create([
+            'ruc' => $customer->getRuc(),
+            'company_name' => $customer->getCompanyName(),
+            'address' => $customer->getAddress(),
+            'nro_reg_mtc' => $customer->getNroRegMtc(),
+            'status' => $customer->getStatus(),
+        ]);
+
+        return $this->mapToEntity($eloquentTransport);
+    }
+    public function findTransporCompanyByDocumentNumber(string $documentNumber): ?TransportCompany
+    {
+        $transportCompany = EloquentTransportCompany::where('ruc', $documentNumber)->first();
+
+        if (!$transportCompany) {
+            return null;
+        }
+
+        return $this->mapToEntity($transportCompany);
+    }
 }

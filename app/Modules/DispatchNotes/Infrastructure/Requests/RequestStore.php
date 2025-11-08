@@ -29,7 +29,7 @@ class RequestStore extends FormRequest
             'emission_reason_id' => ['required', 'integer', 'exists:emission_reasons,id'],
             'description' => ['nullable', 'string', 'max:255'],
             'destination_branch_id' => ['nullable', 'integer', 'exists:branches,id'],
-            'transport_id' => ['required', 'integer'],
+            'transport_id' => ['nullable', 'integer'],
             'observations' => ['nullable', 'string', 'max:255'],
             'num_orden_compra' => ['nullable', 'string', 'max:50'],
             'doc_referencia' => ['nullable', 'string', 'max:50'],

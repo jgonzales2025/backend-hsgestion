@@ -65,16 +65,21 @@ class ArticleResource extends JsonResource
                     ->pluck('id'),
             ],
 
-            'reference_codes' => EloquentReferenceCode::where('article_id', $this->resource->getId())
-                ->get()->map(function ($code) {
-                    return [
-                        'id' => $code->id,
-                        'ref_code' => $code->ref_code,
-                        'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
-                        'date_at' => $code->date_at,
-                    ];
-                })
-                ->toArray(),
+'reference_codes' => EloquentReferenceCode::where('article_id', $this->resource->getId())
+    ->when($request->has('lastname'), function ($query) use ($request) {
+        $query->where('ref_code', 'like', '%' . $request->query('lastname') . '%');
+    })
+    ->get()
+    ->map(function ($code) {
+        return [
+            'id' => $code->id,
+            'ref_code' => $code->ref_code,
+            'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
+            'date_at' => $code->date_at,
+        ];
+    })
+    ->toArray(),
+
             'image_url' => $this->resource->getImageURL()
                 ? url($this->resource->getImageURL())
                 : '',

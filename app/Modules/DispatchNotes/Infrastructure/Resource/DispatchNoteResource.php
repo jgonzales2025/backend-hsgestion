@@ -41,8 +41,8 @@ class DispatchNoteResource extends JsonResource
             'description' => $this->resource->getDescription(),
             'destination_address_customer' => $this->resource->getDestinationAddressCustomer(),
             'transport' => [
-                'id' => $this->resource->getTransport()->getId(),
-                'status' => $this->resource->getTransport()->getStatus(),
+                'id' => $this->resource->getTransport()?->getId(),
+                'status' => $this->resource->getTransport()?->getStatus(),
                 'name' => $this->resource->getTransport()?->getCompanyName()
 
             ],

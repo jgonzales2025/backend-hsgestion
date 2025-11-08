@@ -95,10 +95,12 @@ class TransportCompanyController extends Controller
         );
     }
 
-    public function indexPublicTransport(): array
+    public function indexPublicTransport(Request $request): array
     {
+          $description = $request->query('description');
+   
         $transportUseCase = new FindAllPublicTransportUseCase($this->transportCompanyRepository);
-        $transportCompanies = $transportUseCase->execute();
+        $transportCompanies = $transportUseCase->execute($description);
 
         return TransportCompanyResource::collection($transportCompanies)->resolve();
     }

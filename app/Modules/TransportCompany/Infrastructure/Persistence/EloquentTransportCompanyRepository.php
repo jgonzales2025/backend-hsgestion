@@ -73,9 +73,17 @@ class EloquentTransportCompanyRepository implements TransportCompanyRepositoryIn
         return $this->mapToEntity($transportCompany);
     }
 
-    public function findAllPublicTransport(): array
+    public function findAllPublicTransport(?string $description): array
     {
-        $transportCompanies = EloquentTransportCompany::where('st_private', 0)->get();
+        
+        $transportCompanies = EloquentTransportCompany::where('st_private', 0)
+        ->when($description, function ($query, $description) {
+        $query->where(function ($q) use ($description) {
+            $q->where('company_name', 'like', "%{$description}%")
+              ->orWhere('ruc', 'like', "%{$description}%");
+        });
+    })
+        ->get();
 
         return $transportCompanies->map(fn($company) => $this->mapToEntity($company))->toArray();
     }

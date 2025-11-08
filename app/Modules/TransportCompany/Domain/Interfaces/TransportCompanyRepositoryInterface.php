@@ -16,7 +16,7 @@ interface TransportCompanyRepositoryInterface
 
     public function findPrivateTransport(): ?TransportCompany;
 
-    public function findAllPublicTransport(): array;
+    public function findAllPublicTransport(?string $description): array;
        public function saveTransportCompanyBySunatApi(TransportCompany $customer): ?TransportCompany;
     public function findTransporCompanyByDocumentNumber(string $documentNumber): ?TransportCompany;
 }

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('sale_id')->constrained('sales')->onDelete('cascade');
             $table->foreignId('article_id')->constrained('articles')->onDelete('cascade');
             $table->string('serial');
-            $table->integer('status')->default(0); // 0: available, 1: sold, etc.
             $table->timestamps();
         });
     }

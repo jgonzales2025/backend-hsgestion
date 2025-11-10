@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sale\Infrastructure\Requests;
 
+use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreSaleRequest extends FormRequest
@@ -10,17 +11,6 @@ class StoreSaleRequest extends FormRequest
     {
         return true;
     }
-
-    /*protected function prepareForValidation(): void
-    {
-        // Obtener company_id del payload del token JWT
-        $payload = auth('api')->payload();
-
-        $this->merge([
-            'company_id' => $payload->get('company_id'),
-            'user_id' => auth('api')->id()
-        ]);
-    }*/
 
     public function rules(): array
     {
@@ -55,8 +45,69 @@ class StoreSaleRequest extends FormRequest
             'sale_articles.*.unit_price' => 'required|numeric|min:0',
             'sale_articles.*.public_price' => 'required|numeric|min:0',
             'sale_articles.*.subtotal' => 'required|numeric|min:0',
+            'sale_articles.*.serials' => 'nullable|array',
+            'sale_articles.*.serials.*' => 'string|distinct',
         ];
     }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $this->validateSerials($validator);
+        });
+    }
+
+    protected function validateSerials($validator)
+    {
+        $saleArticles = $this->input('sale_articles', []);
+        $allSerials = [];
+
+        foreach ($saleArticles as $index => $saleArticle) {
+            $article = EloquentArticle::find($saleArticle['article_id']);
+
+            if (!$article) {
+                continue;
+            }
+
+            $serials = $saleArticle['serials'] ?? [];
+            $quantity = $saleArticle['quantity'];
+
+            // Validar artículos que requieren serie
+            if ($article->series_enabled) {
+                if (empty($serials)) {
+                    $validator->errors()->add(
+                        "sale_articles.{$index}.serials",
+                        "El artículo '{$article->description}' requiere series."
+                    );
+                } elseif (count($serials) !== $quantity) {
+                    $validator->errors()->add(
+                        "sale_articles.{$index}.serials",
+                        "El artículo '{$article->description}' requiere {$quantity} series, pero se proporcionaron " . count($serials) . "."
+                    );
+                }
+
+                $allSerials = array_merge($allSerials, $serials);
+            } else {
+                // Validar que artículos sin serie no tengan series
+                if (!empty($serials)) {
+                    $validator->errors()->add(
+                        "sale_articles.{$index}.serials",
+                        "El artículo '{$article->description}' no maneja series."
+                    );
+                }
+            }
+        }
+
+        // Validar que no haya series duplicadas en toda la venta
+        if (count($allSerials) !== count(array_unique($allSerials))) {
+            $validator->errors()->add(
+                'sale_articles',
+                'Hay números de serie duplicados en la venta.'
+            );
+        }
+
+    }
+
 
     public function messages(): array
     {
@@ -117,6 +168,7 @@ class StoreSaleRequest extends FormRequest
             'sale_articles.*.public_price.min' => 'El precio público debe ser mayor o igual a 0.',
             'sale_articles.*.subtotal.required' => 'El subtotal del artículo es obligatorio.',
             'sale_articles.*.subtotal.min' => 'El subtotal del artículo debe ser mayor o igual a 0.',
+            'sale_articles.*.serials.*.distinct' => 'Hay series duplicadas en el mismo artículo.',
         ];
     }
 }

@@ -43,6 +43,11 @@ class ControllerEntryGuide extends Controller
     }
     public function update(UpdateEntryGuideRequest $request, $id): JsonResponse
     {
+        return response()->json(
+            (new EntryGuideResource($entryGuide))->resolve(),
+            200
+        );
+
     }
 
 }

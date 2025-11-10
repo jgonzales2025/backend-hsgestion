@@ -40,10 +40,10 @@ readonly class CreateSaleUseCase
         $lastDocumentNumber = $this->saleRepository->getLastDocumentNumber($saleDTO->serie);
 
         if ($lastDocumentNumber === null) {
-            $documentNumber = '00001';
+            $documentNumber = '00000001';
         } else {
             $nextNumber = intval($lastDocumentNumber) + 1;
-            $documentNumber = str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+            $documentNumber = str_pad($nextNumber, 8, '0', STR_PAD_LEFT);
         }
 
         $saleDTO->document_number = $documentNumber;

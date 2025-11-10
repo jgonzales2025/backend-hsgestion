@@ -135,10 +135,19 @@ class AuthController extends Controller
             }
         }
 
+        $eloquentUser->load(['assignments.branch']);
+
+        $branches = $eloquentUser->assignments
+            ->where('company_id', $request->cia_id)
+            ->pluck('branch.id')
+            ->unique()
+            ->toArray();
+
         // Generar token con claims personalizados
         $customClaims = [
             'company_id' => $request->cia_id,
-            'role_id' => $request->role_id ?? $userRoles->first()->role_id
+            'role_id' => $request->role_id ?? $userRoles->first()->role_id,
+            'branches' => $branches
         ];
 
         $token = Auth::guard('api')->claims($customClaims)->attempt($credentials);

@@ -140,6 +140,8 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             ->when($customerName, function ($query, $name) {
                 return $query->where(function ($q) use ($name) {
                     $q->where('name', 'like', "%{$name}%")
+                        ->orWhere('lastname', 'like', "%{$name}%")
+                        ->orWhere('second_lastname', 'like', "%{$name}%")
                         ->orWhere('company_name', 'like', "%{$name}%")
                         ->orWhere('document_number', 'like', "%{$name}%");
                 });

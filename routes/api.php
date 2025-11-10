@@ -28,6 +28,7 @@ use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitContro
 use App\Modules\MonthlyClosure\Infrastructure\Controllers\MonthlyClosureController;
 use App\Modules\PaymentType\Infrastructure\Controllers\PaymentTypeController;
 use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
+use App\Modules\PurchaseOrder\Infrastructure\Controllers\PurchaseOrderController;
 use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
 use App\Modules\ReferenceCode\Infrastructure\Controllers\ReferenceCodeController;
 use App\Modules\SubCategory\Infrastructure\Controllers\SubCategoryController;
@@ -302,6 +303,11 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
 
 
+    // Ruta para las ordenes de compra
+    Route::get('/purchase-orders', [PurchaseOrderController::class, 'index']);
+    Route::post('/purchase-orders', [PurchaseOrderController::class, 'store']);
+    Route::get('/purchase-orders/{id}', [PurchaseOrderController::class, 'show']);
+    Route::put('/purchase-orders/{id}', [PurchaseOrderController::class, 'update']);
 
 });
 

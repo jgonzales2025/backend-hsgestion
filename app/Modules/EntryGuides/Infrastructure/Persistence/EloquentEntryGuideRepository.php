@@ -6,6 +6,7 @@ use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
 use App\Modules\EntryGuides\Infrastructure\Models\EloquentEntryGuide;
+use PhpParser\Node\NullableType;
 
 class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 {
@@ -39,6 +40,40 @@ public function findAll(): array
 
     public function save(EntryGuide $entryGuide): ?EntryGuide
     {
+        $eloquentEntryGuide = EloquentEntryGuide::create([
+            'cia_id' => $entryGuide->getCompany()->getId(),
+            'branch_id' => $entryGuide->getBranch()->getId(),
+            'serie' => $entryGuide->getSerie(),
+            'correlative' => $entryGuide->getCorrelativo(),
+            'date' => $entryGuide->getDate(),
+            'customer_id' => $entryGuide->getCustomer()->getId(),
+            'guide_serie_supplier' => $entryGuide->getGuideCorrelativeSupplier(),
+            'guide_correlative_supplier' => $entryGuide->getGuideCorrelativeSupplier(),
+            'invoice_serie_supplier' => $entryGuide->getInvoiceSerieSupplier(),
+            'invoice_correlative_supplier' => $entryGuide->getInvoiceCorrelativeSupplier(),
+            'observations' => $entryGuide->getObservations(),
+            'ingress_reason_id' => 1,
+            'reference_serie' => $entryGuide->getReferenceCorrelative(),
+            'reference_correlative' => $entryGuide->getReferenceCorrelative(),
+            'status' => $entryGuide->getStatus(),
+        ]);
+        return new EntryGuide(
+              id: $eloquentEntryGuide->id,
+            cia: $eloquentEntryGuide->company?->toDomain($eloquentEntryGuide->company),
+            branch: $eloquentEntryGuide->branch?->toDomain($eloquentEntryGuide->branch),
+            serie: $eloquentEntryGuide->serie,
+            correlative: $eloquentEntryGuide->correlative,
+            date: $eloquentEntryGuide->date,
+            customer: $eloquentEntryGuide->customer?->toDomain($eloquentEntryGuide->customer),
+            guide_serie_supplier: $eloquentEntryGuide->guide_serie_supplier,
+            guide_correlative_supplier: $eloquentEntryGuide->guide_correlative_supplier,
+            invoice_serie_supplier: $eloquentEntryGuide->invoice_serie_supplier,
+            invoice_correlative_supplier: $eloquentEntryGuide->invoice_correlative_supplier,
+            observations: $eloquentEntryGuide->observations,
+            ingressReason: $eloquentEntryGuide->ingressReason?->toDomain($eloquentEntryGuide->ingressReason),
+            reference_serie: $eloquentEntryGuide->reference_serie,
+            reference_correlative: $eloquentEntryGuide->reference_correlative,
+            status: $eloquentEntryGuide->status);
 
     }
     public function findById(int $id): ?EntryGuide
@@ -68,7 +103,48 @@ public function findAll(): array
         );
     
     }
-
+  public function update(EntryGuide $entryGuide): EntryGuide|null
+  {
+      $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])->find($entryGuide->getId());
+    if (!$eloquentEntryGuide) {
+      return null;
+    }
+    $eloquentEntryGuide->update([
+            'cia_id' => $entryGuide->getCompany()->getId(),
+            'branch_id' => $entryGuide->getBranch()->getId(),
+            'serie' => $entryGuide->getSerie(),
+            'correlative' => $entryGuide->getCorrelativo(),
+            'date' => $entryGuide->getDate(),
+            'customer_id' => $entryGuide->getCustomer()->getId(),
+            'guide_serie_supplier' => $entryGuide->getGuideCorrelativeSupplier(),
+            'guide_correlative_supplier' => $entryGuide->getGuideCorrelativeSupplier(),
+            'invoice_serie_supplier' => $entryGuide->getInvoiceSerieSupplier(),
+            'invoice_correlative_supplier' => $entryGuide->getInvoiceCorrelativeSupplier(),
+            'observations' => $entryGuide->getObservations(),
+            'ingress_reason_id' => 1,
+            'reference_serie' => $entryGuide->getReferenceCorrelative(),
+            'reference_correlative' => $entryGuide->getReferenceCorrelative(),
+            'status' => $entryGuide->getStatus(),
+    ]);
+         return new EntryGuide(
+            id: $eloquentEntryGuide->id,
+            cia: $eloquentEntryGuide->company?->toDomain($eloquentEntryGuide->company),
+            branch: $eloquentEntryGuide->branch?->toDomain($eloquentEntryGuide->branch),
+            serie: $eloquentEntryGuide->serie,
+            correlative: $eloquentEntryGuide->correlative,
+            date: $eloquentEntryGuide->date,
+            customer: $eloquentEntryGuide->customer?->toDomain($eloquentEntryGuide->customer),
+            guide_serie_supplier: $eloquentEntryGuide->guide_serie_supplier,
+            guide_correlative_supplier: $eloquentEntryGuide->guide_correlative_supplier,
+            invoice_serie_supplier: $eloquentEntryGuide->invoice_serie_supplier,
+            invoice_correlative_supplier: $eloquentEntryGuide->invoice_correlative_supplier,
+            observations: $eloquentEntryGuide->observations,
+            ingressReason: $eloquentEntryGuide->ingressReason?->toDomain($eloquentEntryGuide->ingressReason),
+            reference_serie: $eloquentEntryGuide->reference_serie,
+            reference_correlative: $eloquentEntryGuide->reference_correlative,
+            status: $eloquentEntryGuide->status,
+        );
+  }
 
 
 }

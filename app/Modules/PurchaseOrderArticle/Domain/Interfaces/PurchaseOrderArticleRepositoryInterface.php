@@ -8,4 +8,5 @@ interface PurchaseOrderArticleRepositoryInterface
 {
     public function save(PurchaseOrderArticle $purchaseOrderArticle): PurchaseOrderArticle;
     public function findByPurchaseOrderId(int $purchaseOrderId): array;
+    public function deleteByPurchaseOrderId(int $purchaseOrderId): void;
 }

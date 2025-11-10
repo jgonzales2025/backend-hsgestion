@@ -15,6 +15,7 @@ use App\Modules\PurchaseOrder\Infrastructure\Requests\UpdatePurchaseOrderRequest
 use App\Modules\PurchaseOrder\Infrastructure\Resources\PurchaseOrderResource;
 use App\Modules\PurchaseOrderArticle\Application\DTOs\PurchaseOrderArticleDTO;
 use App\Modules\PurchaseOrderArticle\Application\UseCases\CreatePurchaseOrderArticleUseCase;
+use App\Modules\PurchaseOrderArticle\Application\UseCases\DeleteByPurchaseOrderIdUseCase;
 use App\Modules\PurchaseOrderArticle\Application\UseCases\FindPurchaseOrderIdUseCase;
 use App\Modules\PurchaseOrderArticle\Domain\Interfaces\PurchaseOrderArticleRepositoryInterface;
 use App\Modules\PurchaseOrderArticle\Infrastructure\Resources\PurchaseOrderArticleResource;
@@ -94,7 +95,15 @@ class PurchaseOrderController extends Controller
             return response()->json(['message' => 'Orden de compra no encontrada'], 404);
         }
 
-        return response()->json(new PurchaseOrderResource($purchaseOrder), 200);
+        $articlesDeleteUseCase = new DeleteByPurchaseOrderIdUseCase($this->purchaseOrderArticleRepository);
+        $articlesDeleteUseCase->execute($purchaseOrder->getId());
+
+        $purchaseOrderArticles = $this->createPurchaseOrderArticles($purchaseOrder, $request->validated()['articles']);
+
+        $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
+        $response['articles'] = PurchaseOrderArticleResource::collection($purchaseOrderArticles)->resolve();
+
+        return response()->json($response, 201);
     }
 
     private function createPurchaseOrderArticles($purchaseOrder, array $articlesData): array

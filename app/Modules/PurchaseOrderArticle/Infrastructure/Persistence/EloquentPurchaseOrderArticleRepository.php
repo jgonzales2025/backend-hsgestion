@@ -50,4 +50,9 @@ class EloquentPurchaseOrderArticleRepository implements PurchaseOrderArticleRepo
             );
         })->toArray();
     }
+
+    public function deleteByPurchaseOrderId(int $purchaseOrderId): void
+    {
+        EloquentPurchaseOrderArticle::where('purchase_order_id', $purchaseOrderId)->delete();
+    }
 }

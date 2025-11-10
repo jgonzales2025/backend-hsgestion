@@ -38,6 +38,8 @@ class StoreArticleRequest extends FormRequest
             'authorized_price' => isset($this->authorized_price) ? (float) $this->authorized_price : 0,
             'currency_type_id' => isset($this->currency_type_id) ? (int) $this->currency_type_id : 0,
             'statusEsp' => isset($this->statusEsp) ? filter_var($this->statusEsp, FILTER_VALIDATE_BOOLEAN) : false,
+           'state_modify_article' => isset($this->state_modify_article) ? (int) $this->state_modify_article : 0,
+
         ]);
     }
 
@@ -87,7 +89,7 @@ class StoreArticleRequest extends FormRequest
             'sub_category_id' => 'nullable|integer|exists:sub_categories,id',
             'venta' => 'nullable|boolean',
             'company_type_id' => 'nullable|integer|exists:companies,id',
-
+            'state_modify_article' => 'nullable|integer',
             // Campos opcionales
             'location' => 'nullable|string|max:80',
             'warranty' => 'nullable|string|max:255',

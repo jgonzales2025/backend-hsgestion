@@ -23,7 +23,7 @@ class EloquentPurchaseItemSerialRepository implements PurchaseItemSerialReposito
     }
 
     public function findById(int $id):array{
-        $eloquentFindById = EloquentPurchaseItemSerial::where('purchase_guide_id',$id);
+        $eloquentFindById = EloquentPurchaseItemSerial::where('purchase_guide_id',$id)->get();
         if (!$eloquentFindById) {
             return [];
         }

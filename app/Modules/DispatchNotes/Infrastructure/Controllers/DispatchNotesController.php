@@ -131,7 +131,7 @@ class DispatchNotesController extends Controller
         $dispatchNoteUseCase = new UpdateDispatchNoteUseCase($this->dispatchNoteRepository, $this->companyRepositoryInterface, $this->branchRepository, $this->serieRepositoryInterface, $this->emissionReasonRepositoryInterface, $this->transportCompany, $this->documentTypeRepositoryInterface, $this->driverRepositoryInterface);
         $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO, $dispatchNote);
         
-
+        
         $this->dispatchArticleRepositoryInterface->deleteBySaleId($dispatchNotes->getId());
 
         $dispatchArticle = $this->createDispatchArticles($dispatchNotes, $store->validated()['dispatch_articles']);

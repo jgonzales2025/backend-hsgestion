@@ -23,6 +23,7 @@ class EntryGuideResource extends JsonResource{
             'reference_correlative' => $this->resource->getReferenceCorrelative(),
 
             'status' => $this->resource->getStatus(),
+            
         ];
     }
 }

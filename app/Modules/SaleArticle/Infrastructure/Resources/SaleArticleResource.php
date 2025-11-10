@@ -17,7 +17,11 @@ class SaleArticleResource extends JsonResource
             'quantity' => $this->resource->getQuantity(),
             'unit_price' => $this->resource->getUnitPrice(),
             'subtotal' => $this->resource->getSubTotal(),
-            'state_modify_article' => $this->resource->getStateModifyArticle()
+            'state_modify_article' => $this->resource->getStateModifyArticle(),
+            'serials' => $this->when(
+                isset($this->resource->serials) && !empty($this->resource->serials),
+                array_map(fn($itemSerial) => $itemSerial->getSerial(), $this->resource->serials ?? [])
+            ),
         ];
     }
 }

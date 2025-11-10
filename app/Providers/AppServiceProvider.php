@@ -83,6 +83,8 @@ use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Persistence\EloquentSaleRepository;
 use App\Modules\SaleArticle\Domain\Interfaces\SaleArticleRepositoryInterface;
 use App\Modules\SaleArticle\Infrastructure\Persistence\EloquentSaleArticleRepository;
+use App\Modules\SaleItemSerial\Domain\Interfaces\SaleItemSerialRepositoryInterface;
+use App\Modules\SaleItemSerial\Infrastructure\Persistence\EloquentSaleItemSerialRepository;
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Serie\Infrastructure\Persistence\EloquentSerieRepository;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
@@ -164,6 +166,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PdfGeneratorInterface::class,DomPdfGenerator::class);
         $this->app->bind(NoteReasonRepositoryInterface::class, EloquentNoteReasonRepository::class);
         $this->app->bind(EntryGuideRepositoryInterface::class, EloquentEntryGuideRepository::class);
+        $this->app->bind(PurchaseOrderArticleRepositoryInterface::class, EloquentPurchaseOrderArticleRepository::class);
+        $this->app->bind(SaleItemSerialRepositoryInterface::class, EloquentSaleItemSerialRepository::class);
       $this->app->bind(PurchaseGuideArticleRepositoryInterface::class, EloquentPurchaseGuideArticleRepository::class);
 
     }

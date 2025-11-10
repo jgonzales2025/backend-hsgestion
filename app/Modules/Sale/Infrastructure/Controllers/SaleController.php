@@ -33,6 +33,9 @@ use App\Modules\SaleArticle\Application\DTOs\SaleArticleDTO;
 use App\Modules\SaleArticle\Application\UseCases\CreateSaleArticleUseCase;
 use App\Modules\SaleArticle\Domain\Interfaces\SaleArticleRepositoryInterface;
 use App\Modules\SaleArticle\Infrastructure\Resources\SaleArticleResource;
+use App\Modules\SaleItemSerial\Application\DTOs\SaleItemSerialDTO;
+use App\Modules\SaleItemSerial\Application\UseCases\CreateSaleItemSerialUseCase;
+use App\Modules\SaleItemSerial\Domain\Interfaces\SaleItemSerialRepositoryInterface;
 use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
 use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
 use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
@@ -58,6 +61,7 @@ class SaleController extends Controller
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly NoteReasonRepositoryInterface $noteReasonRepository,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
+        private readonly SaleItemSerialRepositoryInterface $saleItemSerialRepository,
     ){}
 
     public function index(Request $request): JsonResponse
@@ -213,7 +217,28 @@ class SaleController extends Controller
                 'subtotal' => $article['subtotal'],
             ]);
 
-            return $createSaleArticleUseCase->execute($saleArticleDTO);
+            $saleArticle = $createSaleArticleUseCase->execute($saleArticleDTO);
+
+            // Array para almacenar los seriales
+            $serials = [];
+
+            if (!empty($article['serials'])) {
+                foreach ($article['serials'] as $serial) {
+                    $itemSerialDTO = new SaleItemSerialDTO([
+                        'sale' => $sale,
+                        'article' => $saleArticle,
+                        'serial' => $serial,
+                    ]);
+                    $itemSerialUseCase = new CreateSaleItemSerialUseCase($this->saleItemSerialRepository);
+                    $itemSerial = $itemSerialUseCase->execute($itemSerialDTO);
+                    $serials[] = $itemSerial;
+                }
+            }
+
+            // Agregar los seriales al objeto saleArticle
+            $saleArticle->serials = $serials;
+
+            return $saleArticle;
         }, $articlesData);
     }
 

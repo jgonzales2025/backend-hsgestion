@@ -2,7 +2,9 @@
 
 namespace App\Modules\SaleItemSerial\Domain\Interfaces;
 
+use App\Modules\SaleItemSerial\Domain\Entities\SaleItemSerial;
+
 interface SaleItemSerialRepositoryInterface
 {
-    public function save(array $saleItemSerials): void;
+    public function save(SaleItemSerial $saleItemSerial): SaleItemSerial;
 }

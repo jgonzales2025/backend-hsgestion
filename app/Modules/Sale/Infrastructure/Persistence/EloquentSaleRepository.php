@@ -148,6 +148,11 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             $returnedQuantity = $returnedQuantities[$articleId] ?? 0;
             $updatedQuantity = $originalQuantity - $returnedQuantity;
 
+            // Omitir artículos completamente devueltos
+            if ($returnedQuantity >= $originalQuantity) {
+                continue;
+            }
+
             // Si hay devolución, usar updated_quantity; si no, usar original_quantity
             $quantityForCalculation = $returnedQuantity > 0 ? $updatedQuantity : $originalQuantity;
 

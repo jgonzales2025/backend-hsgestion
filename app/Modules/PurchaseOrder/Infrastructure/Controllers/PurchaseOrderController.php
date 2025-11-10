@@ -1,0 +1,127 @@
+<?php
+
+namespace App\Modules\PurchaseOrder\Infrastructure\Controllers;
+
+use App\Http\Controllers\Controller;
+use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\PurchaseOrder\Application\DTOs\PurchaseOrderDTO;
+use App\Modules\PurchaseOrder\Application\UseCases\CreatePurchaseOrderUseCase;
+use App\Modules\PurchaseOrder\Application\UseCases\FindAllPurchaseOrdersUseCase;
+use App\Modules\PurchaseOrder\Application\UseCases\FindByIdPurchaseOrderUseCase;
+use App\Modules\PurchaseOrder\Application\UseCases\UpdatePurchaseOrderUseCase;
+use App\Modules\PurchaseOrder\Domain\Interfaces\PurchaseOrderRepositoryInterface;
+use App\Modules\PurchaseOrder\Infrastructure\Requests\StorePurchaseOrderRequest;
+use App\Modules\PurchaseOrder\Infrastructure\Requests\UpdatePurchaseOrderRequest;
+use App\Modules\PurchaseOrder\Infrastructure\Resources\PurchaseOrderResource;
+use App\Modules\PurchaseOrderArticle\Application\DTOs\PurchaseOrderArticleDTO;
+use App\Modules\PurchaseOrderArticle\Application\UseCases\CreatePurchaseOrderArticleUseCase;
+use App\Modules\PurchaseOrderArticle\Application\UseCases\DeleteByPurchaseOrderIdUseCase;
+use App\Modules\PurchaseOrderArticle\Application\UseCases\FindPurchaseOrderIdUseCase;
+use App\Modules\PurchaseOrderArticle\Domain\Interfaces\PurchaseOrderArticleRepositoryInterface;
+use App\Modules\PurchaseOrderArticle\Infrastructure\Resources\PurchaseOrderArticleResource;
+use App\Services\DocumentNumberGeneratorService;
+use Illuminate\Http\JsonResponse;
+
+class PurchaseOrderController extends Controller
+{
+    public function __construct(
+        private readonly PurchaseOrderRepositoryInterface $purchaseOrderRepository,
+        private readonly CustomerRepositoryInterface $customerRepository,
+        private readonly DocumentNumberGeneratorService $documentNumberGenerator,
+        private readonly PurchaseOrderArticleRepositoryInterface $purchaseOrderArticleRepository
+    ){}
+
+    public function index(): array
+    {
+        $role = request()->get('role');
+        $branches = request()->get('branches');
+        $companyId = request()->get('company_id');
+
+        $purchaseOrderUseCase = new FindAllPurchaseOrdersUseCase($this->purchaseOrderRepository);
+        $purchaseOrders = $purchaseOrderUseCase->execute($role, $branches, $companyId);
+
+        $result = [];
+        foreach ($purchaseOrders as $purchaseOrder) {
+            $articles = $this->purchaseOrderArticleRepository->findByPurchaseOrderId($purchaseOrder->getId());
+
+            $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
+            $response['articles'] = PurchaseOrderArticleResource::collection($articles)->resolve();
+
+            $result[] = $response;
+        }
+
+        return $result;
+    }
+
+    public function store(StorePurchaseOrderRequest $request): JsonResponse
+    {
+        $purchaseOrderDTO = new PurchaseOrderDTO($request->validated());
+        $purchaseOrderUseCase = new CreatePurchaseOrderUseCase($this->purchaseOrderRepository, $this->customerRepository, $this->documentNumberGenerator);
+        $purchaseOrder = $purchaseOrderUseCase->execute($purchaseOrderDTO);
+
+        $purchaseOrderArticles = $this->createPurchaseOrderArticles($purchaseOrder, $request->validated()['articles']);
+
+        $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
+        $response['articles'] = PurchaseOrderArticleResource::collection($purchaseOrderArticles)->resolve();
+
+        return response()->json($response, 201);
+    }
+
+    public function show(int $id): JsonResponse
+    {
+        $purchaseOrderUseCase = new FindByIdPurchaseOrderUseCase($this->purchaseOrderRepository);
+        $purchaseOrder = $purchaseOrderUseCase->execute($id);
+
+        if (!$purchaseOrder) {
+            return response()->json(['message' => 'Orden de compra no encontrada'], 404);
+        }
+
+        $articlesUseCase = new FindPurchaseOrderIdUseCase($this->purchaseOrderArticleRepository);
+        $articles = $articlesUseCase->execute($purchaseOrder->getId());
+
+        $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
+        $response['articles'] = PurchaseOrderArticleResource::collection($articles)->resolve();
+
+        return response()->json($response, 200);
+    }
+
+    public function update(UpdatePurchaseOrderRequest $request, int $id): JsonResponse
+    {
+        $purchaseOrderDTO = new PurchaseOrderDTO($request->validated());
+        $purchaseOrderUseCase = new UpdatePurchaseOrderUseCase($this->purchaseOrderRepository, $this->customerRepository);
+        $purchaseOrder = $purchaseOrderUseCase->execute($purchaseOrderDTO, $id);
+
+        if (!$purchaseOrder) {
+            return response()->json(['message' => 'Orden de compra no encontrada'], 404);
+        }
+
+        $articlesDeleteUseCase = new DeleteByPurchaseOrderIdUseCase($this->purchaseOrderArticleRepository);
+        $articlesDeleteUseCase->execute($purchaseOrder->getId());
+
+        $purchaseOrderArticles = $this->createPurchaseOrderArticles($purchaseOrder, $request->validated()['articles']);
+
+        $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
+        $response['articles'] = PurchaseOrderArticleResource::collection($purchaseOrderArticles)->resolve();
+
+        return response()->json($response, 201);
+    }
+
+    private function createPurchaseOrderArticles($purchaseOrder, array $articlesData): array
+    {
+        $createPurchaseOrderArticleUseCase = new CreatePurchaseOrderArticleUseCase($this->purchaseOrderArticleRepository);
+
+        return array_map(function ($article) use ($purchaseOrder, $createPurchaseOrderArticleUseCase) {
+            $purchaseOrderArticleDTO = new PurchaseOrderArticleDTO([
+                'purchase_order_id' => $purchaseOrder->getId(),
+                'article_id' => $article['article_id'],
+                'description' => $article['description'],
+                'weight' => $article['weight'],
+                'quantity' => $article['quantity'],
+                'purchase_price' => $article['purchase_price'],
+                'subtotal' => $article['subtotal'],
+            ]);
+
+            return $createPurchaseOrderArticleUseCase->execute($purchaseOrderArticleDTO);
+        }, $articlesData);
+    }
+}

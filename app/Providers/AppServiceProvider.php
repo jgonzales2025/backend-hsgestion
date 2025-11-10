@@ -50,6 +50,9 @@ use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
 use App\Modules\Driver\Infrastructure\Persistence\EloquentDriverRepository;
 use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterface;
 use App\Modules\EmissionReason\Infrastructure\Persistence\EloquentEmissionReasonRepository;
+use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
+use App\Modules\EntryGuides\Infrastructure\Models\EloquentEntryGuide;
+use App\Modules\EntryGuides\Infrastructure\Persistence\EloquentEntryGuideRepository;
 use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
 use App\Modules\ExchangeRate\Infrastructure\Persistence\EloquentExchangeRateRepository;
 use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
@@ -157,6 +160,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ArticleExporterInterface::class,ExcelArticleExporter::class);
         $this->app->bind(PdfGeneratorInterface::class,DomPdfGenerator::class);
         $this->app->bind(NoteReasonRepositoryInterface::class, EloquentNoteReasonRepository::class);
+                $this->app->bind(EntryGuideRepositoryInterface::class, EloquentEntryGuideRepository::class);
 
     }
 

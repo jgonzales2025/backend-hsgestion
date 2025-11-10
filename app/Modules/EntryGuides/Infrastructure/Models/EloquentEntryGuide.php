@@ -3,6 +3,7 @@
 namespace App\Modules\EntryGuides\Infrastructure\Models;
 
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
+use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\IngressReason\Infrastructure\Models\EloquentIngressReason;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,7 @@ class EloquentEntryGuide extends Model
         'cia_id',
         'branch_id',
         'serie',
-        'correlativo',
+        'correlative',
         'date',
         'customer_id',
         'guide_serie_supplier',
@@ -44,5 +45,10 @@ class EloquentEntryGuide extends Model
     {
         return $this->belongsTo(EloquentIngressReason::class, 'ingress_reason_id');
     }
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(EloquentCompany::class, 'cia_id');
+    }
+
 
 }

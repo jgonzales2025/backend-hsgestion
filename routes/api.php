@@ -296,6 +296,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
    //Entry Guide
    Route::get('/entry-guides', [ControllerEntryGuide::class, 'index']);
+    Route::get('/entry-guides/{id}', [ControllerEntryGuide::class, 'show']);
 
 
 });

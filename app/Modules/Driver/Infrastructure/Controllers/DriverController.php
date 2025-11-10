@@ -114,8 +114,7 @@ class DriverController extends Controller
         $customerUseCase = new CreateDriverUseCase($this->driverRepository);
         $customer = $customerUseCase->execute($customerDTO);
 
-        return response()->json([
-         (new DriverResource($customer))->resolve(),
-        ], 201);
+        return response()->json(
+         new DriverResource($customer), 201);
     }
 }

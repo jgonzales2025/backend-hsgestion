@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\EntryGuides\Application\UseCases\FindAllEntryGuideUseCase;
 use App\Modules\EntryGuides\Application\UseCases\FindByIdEntryGuideUseCase;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
+use App\Modules\EntryGuides\Infrastructure\Request\EntryGuideRequest;
 use App\Modules\EntryGuides\Infrastructure\Resource\EntryGuideResource;
 use Illuminate\Http\JsonResponse;
 
@@ -36,6 +37,12 @@ class ControllerEntryGuide extends Controller
             (new EntryGuideResource($entryGuide))->resolve(),
             200
         );
-    
     }
+    public function store(EntryGuideRequest $request): JsonResponse
+    {
+    }
+    public function update(UpdateEntryGuideRequest $request, $id): JsonResponse
+    {
+    }
+
 }

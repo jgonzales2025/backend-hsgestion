@@ -89,7 +89,7 @@ class DispatchNotesController extends Controller
             ]);
 
             return $createSaleArticleUseCase->execute($saleArticleDTO);
-        }, $store->validated()['dispatch_articles']);
+        }, array: $store->validated()['dispatch_articles']);
 
         return response()->json(
             [

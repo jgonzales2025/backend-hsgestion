@@ -4,10 +4,7 @@ namespace App\Modules\EntryGuides\Infrastructure\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-
-
-
-class EntryGuideRequest extends FormRequest
+class UpdateGuideRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -32,8 +29,7 @@ class EntryGuideRequest extends FormRequest
             'reference_serie' => 'string',
             'reference_correlative' => 'string',
             'status' => 'integer',
-            'purchase_guide_articles'=> 'required|array|min:1'
+            'purchase_guide_articles' => 'required|array|min:1'
         ];
     }
-
 }

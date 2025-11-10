@@ -21,7 +21,7 @@ class PurchaseOrderResource extends JsonResource
                 'id' => $this->resource->getSupplier()->getId(),
                 'company_name' => $this->resource->getSupplier()->getCompanyName(),
             ],
-            'status' => $this->resource->getStatus()
+            'status' => $this->resource->getStatus() == 0 ? 'Pendiente' : 'Entregado'
         ];
     }
 }

@@ -297,10 +297,17 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
    //Entry Guide
    Route::get('/entry-guides', [ControllerEntryGuide::class, 'index']);
+    Route::get('/entry-guides/{id}', [ControllerEntryGuide::class, 'show']);
+    Route::post('/entry-guides', [ControllerEntryGuide::class, 'store']);
+    Route::put('/entry-guides/{id}', [ControllerEntryGuide::class, 'update']);
+
+
 
     // Ruta para las ordenes de compra
     Route::get('/purchase-orders', [PurchaseOrderController::class, 'index']);
     Route::post('/purchase-orders', [PurchaseOrderController::class, 'store']);
+    Route::get('/purchase-orders/{id}', [PurchaseOrderController::class, 'show']);
+    Route::put('/purchase-orders/{id}', [PurchaseOrderController::class, 'update']);
 
 });
 

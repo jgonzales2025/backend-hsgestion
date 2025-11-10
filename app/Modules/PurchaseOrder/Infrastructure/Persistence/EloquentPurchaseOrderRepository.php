@@ -50,6 +50,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             'order_number_supplier' => $purchaseOrder->getOrderNumberSupplier(),
             'supplier_id' => $purchaseOrder->getSupplier()->getId()
         ]);
+        $purchaseOrderEloquent->refresh();
 
         return new PurchaseOrder(
             id: $purchaseOrderEloquent->id,
@@ -72,6 +73,65 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             ->orderBy('correlative', 'desc')
             ->first();
 
-        return $purchaseOder?->document_number;
+        return $purchaseOder?->correlative;
+    }
+
+    public function findById(int $id): ?PurchaseOrder
+    {
+        $purchaseOrderEloquent = EloquentPurchaseOrder::find($id);
+
+        if (!$purchaseOrderEloquent) {
+            return null;
+        }
+
+        return new PurchaseOrder(
+            id: $purchaseOrderEloquent->id,
+            company_id: $purchaseOrderEloquent->company_id,
+            branch_id: $purchaseOrderEloquent->branch_id,
+            serie: $purchaseOrderEloquent->serie,
+            correlative: $purchaseOrderEloquent->correlative,
+            date: $purchaseOrderEloquent->date,
+            delivery_date: $purchaseOrderEloquent->delivery_date,
+            contact: $purchaseOrderEloquent->contact,
+            order_number_supplier: $purchaseOrderEloquent->order_number_supplier,
+            supplier: $purchaseOrderEloquent->supplier?->toDomain($purchaseOrderEloquent->supplier),
+            status: $purchaseOrderEloquent->status
+        );
+    }
+
+    public function update(PurchaseOrder $purchaseOrder): ?PurchaseOrder
+    {
+        $purchaseOrderEloquent = EloquentPurchaseOrder::find($purchaseOrder->getId());
+
+        if (!$purchaseOrderEloquent) {
+            return null;
+        }
+
+        $purchaseOrderEloquent->update([
+            'company_id' => $purchaseOrder->getCompanyId(),
+            'branch_id' => $purchaseOrder->getBranchId(),
+            'serie' => $purchaseOrder->getSerie(),
+            'date' => $purchaseOrder->getDate(),
+            'delivery_date' => $purchaseOrder->getDeliveryDate(),
+            'contact' => $purchaseOrder->getContact(),
+            'order_number_supplier' => $purchaseOrder->getOrderNumberSupplier(),
+            'supplier_id' => $purchaseOrder->getSupplier()->getId(),
+            'status' => $purchaseOrder->getStatus()
+        ]);
+        $purchaseOrderEloquent->refresh();
+
+        return new PurchaseOrder(
+            id: $purchaseOrderEloquent->id,
+            company_id: $purchaseOrderEloquent->company_id,
+            branch_id: $purchaseOrderEloquent->branch_id,
+            serie: $purchaseOrderEloquent->serie,
+            correlative: $purchaseOrderEloquent->correlative,
+            date: $purchaseOrderEloquent->date,
+            delivery_date: $purchaseOrderEloquent->delivery_date,
+            contact: $purchaseOrderEloquent->contact,
+            order_number_supplier: $purchaseOrderEloquent->order_number_supplier,
+            supplier: $purchaseOrderEloquent->supplier?->toDomain($purchaseOrderEloquent->supplier),
+            status: $purchaseOrderEloquent->status
+        );
     }
 }

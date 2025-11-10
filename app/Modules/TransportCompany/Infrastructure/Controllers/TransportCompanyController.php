@@ -141,9 +141,8 @@ class TransportCompanyController extends Controller
         $customerUseCase = new CreateTransportCompanyUseCase($this->transportCompanyRepository);
         $customer = $customerUseCase->execute($customerDTO);
 
-        return response()->json([
-            'customer' => (new TransportCompanyResource($customer))->resolve(),
-        ], 201);
+        return response()->json(
+             (new TransportCompanyResource($customer)), 201);
     }
     
 }

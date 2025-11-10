@@ -12,7 +12,7 @@ class EntryGuide
     private ?Company $cia;
     private ?Branch $branch;
     private string $serie;
-    private string $correlativo;
+    private string $correlative;
     private string $date;
     private ?Customer $customer;
     private string $guide_serie_supplier;
@@ -30,7 +30,7 @@ class EntryGuide
         ?Company $cia,
         ?Branch $branch,
         string $serie,
-        string $correlativo,
+        string $correlative,
         string $date,
         ?Customer $customer,
         string $guide_serie_supplier,
@@ -47,7 +47,7 @@ class EntryGuide
         $this->cia = $cia;
         $this->branch = $branch;
         $this->serie = $serie;
-        $this->correlativo = $correlativo;
+        $this->correlative = $correlative;
         $this->date = $date;
         $this->customer = $customer;
         $this->guide_serie_supplier = $guide_serie_supplier;
@@ -71,7 +71,7 @@ class EntryGuide
     }
     public function getCorrelativo(): string
     {
-        return $this->correlativo;
+        return $this->correlative;
     }
 
     public function getDate(): string

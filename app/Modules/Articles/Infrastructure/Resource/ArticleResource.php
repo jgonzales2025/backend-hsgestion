@@ -84,6 +84,8 @@ class ArticleResource extends JsonResource
                 ? url($this->resource->getImageURL())
                 : '',
             'is_visible' => ($this->resource->getstateModifyArticle()) === true ? 'Activo' : 'Inactivo',
+            'state_modify_article' => $this->resource->getstateModifyArticle(),
+
         ];
 
     }

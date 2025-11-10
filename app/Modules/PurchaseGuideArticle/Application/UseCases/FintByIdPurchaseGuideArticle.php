@@ -8,7 +8,7 @@ use App\Modules\PurchaseGuideArticle\Domain\Interface\PurchaseGuideArticleReposi
 class FintByIdPurchaseGuideArticle{
     public function __construct(private readonly PurchaseGuideArticleRepositoryInterface $purchaseGuideArticleRepositoryInterface){
     }
-    public function execute(int $id):?PurchaseGuideArticle{
+    public function execute(int $id):array{
         return $this->purchaseGuideArticleRepositoryInterface->findById($id);
     }
 }

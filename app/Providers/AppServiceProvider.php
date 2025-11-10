@@ -77,6 +77,10 @@ use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRe
 use App\Modules\PurchaseGuideArticle\Domain\Entities\PurchaseGuideArticle;
 use App\Modules\PurchaseGuideArticle\Domain\Interface\PurchaseGuideArticleRepositoryInterface;
 use App\Modules\PurchaseGuideArticle\Infrastructure\Persistence\EloquentPurchaseGuideArticleRepository;
+use App\Modules\PurchaseItemSerials\Domain\Entities\PurchaseItemSerial;
+use App\Modules\PurchaseItemSerials\Domain\Interface\PurchaseItemSerialRepositoryInterface;
+use App\Modules\PurchaseItemSerials\Infrastructure\Models\EloquentPurchaseItemSerial;
+use App\Modules\PurchaseItemSerials\Infrastructure\Persistence\EloquentPurchaseItemSerialRepository;
 use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
 use App\Modules\RecordType\Infrastructure\Models\EloquentRecordType;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
@@ -165,6 +169,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(NoteReasonRepositoryInterface::class, EloquentNoteReasonRepository::class);
         $this->app->bind(EntryGuideRepositoryInterface::class, EloquentEntryGuideRepository::class);
       $this->app->bind(PurchaseGuideArticleRepositoryInterface::class, EloquentPurchaseGuideArticleRepository::class);
+  $this->app->bind(PurchaseItemSerialRepositoryInterface::class, EloquentPurchaseItemSerialRepository::class);
 
     }
 

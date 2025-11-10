@@ -34,6 +34,8 @@ class UpdateArticleRequest extends FormRequest
             'public_price' => isset($this->public_price) ? (float) $this->public_price : 0,
             'distributor_price' => isset($this->distributor_price) ? (float) $this->distributor_price : 0,
             'authorized_price' => isset($this->authorized_price) ? (float) $this->authorized_price : 0,
+          'state_modify_article' => isset($this->state_modify_article) ? (int) $this->state_modify_article : 0,
+
         ]);
     }
 
@@ -79,6 +81,7 @@ class UpdateArticleRequest extends FormRequest
             'sub_category_id' => 'required|integer|exists:sub_categories,id',
             'venta' => 'required|boolean',
             'company_type_id' => 'required|integer|exists:companies,id',
+            'state_modify_article' => 'nullable|integer',
 
             // Campos opcionales
             'location' => 'nullable|string|max:80',

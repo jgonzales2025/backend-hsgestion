@@ -29,7 +29,8 @@ class UpdateGuideRequest extends FormRequest
             'reference_serie' => 'string',
             'reference_correlative' => 'string',
             'status' => 'integer',
-            'purchase_guide_articles' => 'required|array|min:1'
+            'purchase_guide_articles' => 'required|array|min:1',
+            'purchase_item_serial' => 'required|array|min:1',
         ];
     }
 }

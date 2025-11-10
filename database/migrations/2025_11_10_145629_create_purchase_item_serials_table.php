@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('purchase_item_serials', function (Blueprint $table) {
             $table->id();
-               $table->foreignId('purchase_guide_id')->nullable()->constrained('purchase_guide_article');
+               $table->integer('purchase_guide_id')->nullable();
             $table->foreignId('article_id')->nullable()->constrained('articles');     
             $table->string('serial')->nullable();   
             $table->timestamps();

@@ -21,6 +21,7 @@ use App\Modules\Sale\Domain\Entities\Sale;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\User\Application\UseCases\GetUserByIdUseCase;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
+use App\Services\DocumentNumberGeneratorService;
 
 readonly class CreateSaleUseCase
 {
@@ -33,20 +34,13 @@ readonly class CreateSaleUseCase
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
+        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
     ){}
 
     public function execute(SaleDTO $saleDTO): ?Sale
     {
         $lastDocumentNumber = $this->saleRepository->getLastDocumentNumber($saleDTO->serie);
-
-        if ($lastDocumentNumber === null) {
-            $documentNumber = '00000001';
-        } else {
-            $nextNumber = intval($lastDocumentNumber) + 1;
-            $documentNumber = str_pad($nextNumber, 8, '0', STR_PAD_LEFT);
-        }
-
-        $saleDTO->document_number = $documentNumber;
+        $saleDTO->document_number = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
 
         $companyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
         $company = $companyUseCase->execute($saleDTO->company_id);

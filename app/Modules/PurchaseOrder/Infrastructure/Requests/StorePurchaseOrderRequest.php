@@ -22,6 +22,15 @@ class StorePurchaseOrderRequest extends FormRequest
             'contact' => 'required|string|max:100',
             'order_number_supplier' => 'required|string|max:30',
             'supplier_id' => 'required|integer|exists:customers,id',
+
+            // Articulos
+            'articles' => 'required|array|min:1',
+            'articles.*.article_id' => 'required|integer|exists:articles,id',
+            'articles.*.description' => 'nullable|string|max:150',
+            'articles.*.weight' => 'nullable|numeric|min:0',
+            'articles.*.quantity' => 'required|integer|min:1',
+            'articles.*.purchase_price' => 'required|numeric|min:0',
+            'articles.*.subtotal' => 'required|numeric|min:0',
         ];
     }
 

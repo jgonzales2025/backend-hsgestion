@@ -76,6 +76,8 @@ use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface
 use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRepository;
 use App\Modules\PurchaseOrder\Domain\Interfaces\PurchaseOrderRepositoryInterface;
 use App\Modules\PurchaseOrder\Infrastructure\Persistence\EloquentPurchaseOrderRepository;
+use App\Modules\PurchaseOrderArticle\Domain\Interfaces\PurchaseOrderArticleRepositoryInterface;
+use App\Modules\PurchaseOrderArticle\Infrastructure\Persistence\EloquentPurchaseOrderArticleRepository;
 use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
 use App\Modules\RecordType\Infrastructure\Models\EloquentRecordType;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
@@ -165,6 +167,7 @@ class AppServiceProvider extends ServiceProvider
                 $this->app->bind(EntryGuideRepositoryInterface::class, EloquentEntryGuideRepository::class);
         $this->app->bind(PurchaseOrderRepositoryInterface::class, EloquentPurchaseOrderRepository::class);
         $this->app->bind(EntryGuideRepositoryInterface::class, EloquentEntryGuideRepository::class);
+        $this->app->bind(PurchaseOrderArticleRepositoryInterface::class, EloquentPurchaseOrderArticleRepository::class);
 
     }
 

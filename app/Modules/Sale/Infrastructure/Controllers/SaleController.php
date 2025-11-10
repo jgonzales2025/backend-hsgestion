@@ -37,6 +37,7 @@ use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
 use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
 use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
+use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -56,6 +57,7 @@ class SaleController extends Controller
         private readonly TransactionLogRepositoryInterface $transactionLogRepository,
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly NoteReasonRepositoryInterface $noteReasonRepository,
+        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
     ){}
 
     public function index(Request $request): JsonResponse
@@ -80,7 +82,7 @@ class SaleController extends Controller
     public function store(StoreSaleRequest $request): JsonResponse
     {
         $saleDTO = new SaleDTO($request->validated());
-        $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->noteReasonRepository);
+        $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->documentNumberGeneratorService);
         $sale = $saleUseCase->execute($saleDTO);
 
         $saleArticles = $this->createSaleArticles($sale, $request->validated()['sale_articles']);
@@ -96,7 +98,7 @@ class SaleController extends Controller
     public function storeCreditNote(StoreSaleCreditNoteRequest $request): JsonResponse
     {
         $saleCreditNoteDTO = new SaleCreditNoteDTO($request->validated());
-        $saleCreditNoteUseCase = new CreateSaleCreditNoteUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->noteReasonRepository);
+        $saleCreditNoteUseCase = new CreateSaleCreditNoteUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->noteReasonRepository, $this->documentNumberGeneratorService);
         $saleCreditNote = $saleCreditNoteUseCase->execute($saleCreditNoteDTO);
 
         $saleArticles = $this->createSaleArticles($saleCreditNote, $request->validated()['sale_articles']);

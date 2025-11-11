@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
+use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\Customer\Infrastructure\Resources\CustomerCompanyResource;
 use App\Modules\CustomerAddress\Infrastructure\Models\EloquentCustomerAddress;
@@ -45,7 +46,8 @@ class DispatchNotesController extends Controller
         private readonly DocumentTypeRepositoryInterface $documentTypeRepositoryInterface,
         private readonly DriverRepositoryInterface $driverRepositoryInterface,
         private readonly DispatchArticleRepositoryInterface $dispatchArticleRepositoryInterface,
-        private readonly GenerateDispatchNotePdfUseCase $generatePdfUseCase
+        private readonly GenerateDispatchNotePdfUseCase $generatePdfUseCase,
+        private readonly CustomerRepositoryInterface $customerRepositoryInterface
         ) {
     }
 
@@ -69,7 +71,16 @@ class DispatchNotesController extends Controller
     public function store(RequestStore $store): JsonResponse
     {
         $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
-        $dispatchNoteUseCase = new CreateDispatchNoteUseCase($this->dispatchNoteRepository, $this->companyRepositoryInterface, $this->branchRepository, $this->serieRepositoryInterface, $this->emissionReasonRepositoryInterface, $this->transportCompany, $this->documentTypeRepositoryInterface, $this->driverRepositoryInterface);
+        $dispatchNoteUseCase = new CreateDispatchNoteUseCase(
+            $this->dispatchNoteRepository, 
+            $this->companyRepositoryInterface, 
+            $this->branchRepository, 
+            $this->serieRepositoryInterface, 
+            $this->emissionReasonRepositoryInterface,
+             $this->transportCompany, 
+             $this->documentTypeRepositoryInterface,
+              $this->driverRepositoryInterface,
+            $this->customerRepositoryInterface);
 
 
         $dispatchNotesDTO->pdf = '1234';

@@ -159,6 +159,30 @@ class EloquentCollectionRepository implements CollectionRepositoryInterface
 
     private function updateCreditNotePaymentStatus(EloquentCollection $collection): void
     {
+        // Ejecuta el SP para recalcular el saldo de la nota de crédito
+        if ($collection->credit_document_type_id && $collection->credit_serie && $collection->credit_correlative) {
+            DB::statement('CALL sp_actualiza_saldo_venta(?, ?, ?, ?)', [
+                $collection->company_id,
+                $collection->credit_document_type_id,
+                $collection->credit_serie,
+                $collection->credit_correlative
+            ]);
+        }
+
+        // Actualiza el estado de pago y monto amortizado de la nota de crédito
+        $creditNote = EloquentSale::where('company_id', $collection->company_id)
+            ->where('document_type_id', $collection->credit_document_type_id)
+            ->where('serie', $collection->credit_serie)
+            ->where('document_number', $collection->credit_correlative)
+            ->first();
+
+        if ($creditNote) {
+            $creditNote = $creditNote->fresh();
+            $creditNote->payment_status = $creditNote->saldo == 0 ? 1 : 0;
+            $creditNote->amount_amortized = $creditNote->total - $creditNote->saldo;
+            $creditNote->save();
+        }
+    
         $creditNote = EloquentSale::where('company_id', $collection->company_id)
             ->where('document_type_id', $collection->credit_document_type_id)
             ->where('serie', $collection->credit_serie)

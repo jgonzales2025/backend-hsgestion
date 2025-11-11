@@ -17,4 +17,5 @@ interface SaleRepositoryInterface
     public function findAllProformas(): array;
     public function findSaleWithUpdatedQuantities(int $referenceDocumentTypeId, string $referenceSerie, string $referenceCorrelative): ?array;
     public function findAllCreditNotesByCustomerId(int $customerId): array;
+    public function findCreditNoteById(int $id): ?SaleCreditNote;
 }

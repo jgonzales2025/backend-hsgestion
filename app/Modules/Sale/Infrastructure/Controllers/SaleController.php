@@ -21,6 +21,7 @@ use App\Modules\Sale\Application\UseCases\FindAllSalesUseCase;
 use App\Modules\Sale\Application\UseCases\FindSaleWithUpdatedQuantitiesUseCase;
 use App\Modules\Sale\Application\UseCases\FindByDocumentSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
+use App\Modules\Sale\Application\UseCases\FindCreditNoteByIdUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateSaleUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
@@ -32,6 +33,7 @@ use App\Modules\Sale\Infrastructure\Resources\SaleResource;
 use App\Modules\SaleArticle\Application\DTOs\SaleArticleDTO;
 use App\Modules\SaleArticle\Application\UseCases\CreateSaleArticleUseCase;
 use App\Modules\SaleArticle\Domain\Interfaces\SaleArticleRepositoryInterface;
+use App\Modules\SaleArticle\Infrastructure\Resources\SaleArticleCreditNoteResource;
 use App\Modules\SaleArticle\Infrastructure\Resources\SaleArticleResource;
 use App\Modules\SaleItemSerial\Application\DTOs\SaleItemSerialDTO;
 use App\Modules\SaleItemSerial\Application\UseCases\CreateSaleItemSerialUseCase;
@@ -130,6 +132,25 @@ class SaleController extends Controller
             [
                 'sale' => (new SaleResource($sale))->resolve(),
                 'articles' => SaleArticleResource::collection($articles)->resolve(),
+            ]
+        );
+    }
+
+    public function showCreditNote($id): JsonResponse
+    {
+        $saleCreditNoteUseCase = new FindCreditNoteByIdUseCase($this->saleRepository);
+        $saleCreditNote = $saleCreditNoteUseCase->execute($id);
+
+        if (!$saleCreditNote) {
+            return response()->json(['message' => 'Nota de crédito no encontrada'], 404);
+        }
+
+        $articles = $this->saleArticleRepository->findBySaleId($saleCreditNote->getId());
+
+        return response()->json(
+            [
+                'sale' => (new SaleCreditNoteResource($saleCreditNote))->resolve(),
+                'articles' => SaleArticleCreditNoteResource::collection($articles)->resolve(),
             ]
         );
     }
@@ -285,7 +306,7 @@ class SaleController extends Controller
             'reference_correlative' => 'required|string',
         ]);
 
-        $paddedCorrelative = str_pad($request->query('reference_correlative'), 5, '0', STR_PAD_LEFT);
+        $paddedCorrelative = str_pad($request->query('reference_correlative'), 8, '0', STR_PAD_LEFT);
 
         try {
 

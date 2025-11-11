@@ -402,8 +402,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             image_url: $Eloquentarticle->image_url,
             state_modify_article: $Eloquentarticle->state_modify_article,
             filtNameEsp: $Eloquentarticle->filtNameEsp,
-            statusEsp: $Eloquentarticle->statusEsp,
-            precioIGv: $Eloquentarticle->precioIGv,
+            statusEsp: $Eloquentarticle->statusEsp
         );
     }
     private function mapToDomain(EloquentArticle $article): Article
@@ -435,7 +434,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             currencyType: $article->currencyType ? $article->currencyType->toDomain($article->currencyType) : null,
             measurementUnit: $article->measurementUnit ? $article->measurementUnit->toDomain($article->measurementUnit) : null,
             subCategory: $article->subCategory ? $article->subCategory->toDomain($article->subCategory) : null,
-            precioIGv: $article->precioIGv,
             venta: $article->venta,
             company: $article->company ? $article->company->toDomain($article->company) : null,
             image_url: $article->image_url,

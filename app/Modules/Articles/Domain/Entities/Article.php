@@ -41,7 +41,6 @@ class Article
     private ?MeasurementUnit $measurementUnit;
     private ?SubCategory $subCategory;
 
-    private float $precioIGv;
     private ?Company $company;
     private ?string $image_url;
     private ?int $state_modify_article;
@@ -75,7 +74,6 @@ class Article
         ?CurrencyType $currencyType,
         ?MeasurementUnit $measurementUnit,
         ?User $user,
-        ?float $precioIGv,
         bool $venta,
         ?SubCategory $subCategory,
         ?Company $company,
@@ -112,8 +110,6 @@ class Article
         $this->currencyType = $currencyType;
         $this->measurementUnit = $measurementUnit;
         $this->user = $user;
-
-        $this->precioIGv = $precioIGv ?? $this->calculatePrecioIGV();
 
         $this->venta = $venta;
         $this->subCategory = $subCategory;
@@ -223,10 +219,6 @@ class Article
     public function getVenta(): bool
     {
         return $this->venta;
-    }
-    public function getPrecioIGV(): float
-    {
-        return $this->precioIGv;
     }
     public function getBrand(): Brand|null
     {

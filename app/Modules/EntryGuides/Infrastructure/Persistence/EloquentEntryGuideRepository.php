@@ -25,14 +25,10 @@ public function findAll(): array
             correlative: $entryGuide->correlative,
             date: $entryGuide->date,
             customer: $entryGuide->customer?->toDomain($entryGuide->customer),
-            guide_serie_supplier: $entryGuide->guide_serie_supplier,
-            guide_correlative_supplier: $entryGuide->guide_correlative_supplier,
-            invoice_serie_supplier: $entryGuide->invoice_serie_supplier,
-            invoice_correlative_supplier: $entryGuide->invoice_correlative_supplier,
             observations: $entryGuide->observations,
             ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
-            reference_serie: $entryGuide->reference_serie,
-            reference_correlative: $entryGuide->reference_correlative,
+            reference_po_serie: $entryGuide->reference_po_serie,
+            reference_po_correlative: $entryGuide->reference_po_correlative,
             status: $entryGuide->status,
         );
     })->toArray();
@@ -47,32 +43,24 @@ public function findAll(): array
             'correlative' => $entryGuide->getCorrelativo(),
             'date' => $entryGuide->getDate(),
             'customer_id' => $entryGuide->getCustomer()->getId(),
-            'guide_serie_supplier' => $entryGuide->getGuideCorrelativeSupplier(),
-            'guide_correlative_supplier' => $entryGuide->getGuideCorrelativeSupplier(),
-            'invoice_serie_supplier' => $entryGuide->getInvoiceSerieSupplier(),
-            'invoice_correlative_supplier' => $entryGuide->getInvoiceCorrelativeSupplier(),
             'observations' => $entryGuide->getObservations(),
             'ingress_reason_id' => 1,
-            'reference_serie' => $entryGuide->getReferenceCorrelative(),
-            'reference_correlative' => $entryGuide->getReferenceCorrelative(),
+            'reference_po_serie' => $entryGuide->getReferenceCorrelative(),
+            'reference_po_correlative' => $entryGuide->getReferenceCorrelative(),
             'status' => $entryGuide->getStatus(),
         ]);
         return new EntryGuide(
-              id: $eloquentEntryGuide->id,
+            id: $eloquentEntryGuide->id,
             cia: $eloquentEntryGuide->company?->toDomain($eloquentEntryGuide->company),
             branch: $eloquentEntryGuide->branch?->toDomain($eloquentEntryGuide->branch),
             serie: $eloquentEntryGuide->serie,
             correlative: $eloquentEntryGuide->correlative,
             date: $eloquentEntryGuide->date,
             customer: $eloquentEntryGuide->customer?->toDomain($eloquentEntryGuide->customer),
-            guide_serie_supplier: $eloquentEntryGuide->guide_serie_supplier,
-            guide_correlative_supplier: $eloquentEntryGuide->guide_correlative_supplier,
-            invoice_serie_supplier: $eloquentEntryGuide->invoice_serie_supplier,
-            invoice_correlative_supplier: $eloquentEntryGuide->invoice_correlative_supplier,
             observations: $eloquentEntryGuide->observations,
             ingressReason: $eloquentEntryGuide->ingressReason?->toDomain($eloquentEntryGuide->ingressReason),
-            reference_serie: $eloquentEntryGuide->reference_serie,
-            reference_correlative: $eloquentEntryGuide->reference_correlative,
+            reference_po_serie: $eloquentEntryGuide->reference_serie,
+            reference_po_correlative: $eloquentEntryGuide->reference_correlative,
             status: $eloquentEntryGuide->status);
 
     }
@@ -91,14 +79,10 @@ public function findAll(): array
             correlative: $eloquentEntryGuide->correlative,
             date: $eloquentEntryGuide->date,
             customer: $eloquentEntryGuide->customer?->toDomain($eloquentEntryGuide->customer),
-            guide_serie_supplier: $eloquentEntryGuide->guide_serie_supplier,
-            guide_correlative_supplier: $eloquentEntryGuide->guide_correlative_supplier,
-            invoice_serie_supplier: $eloquentEntryGuide->invoice_serie_supplier,
-            invoice_correlative_supplier: $eloquentEntryGuide->invoice_correlative_supplier,
             observations: $eloquentEntryGuide->observations,
             ingressReason: $eloquentEntryGuide->ingressReason?->toDomain($eloquentEntryGuide->ingressReason),
-            reference_serie: $eloquentEntryGuide->reference_serie,
-            reference_correlative: $eloquentEntryGuide->reference_correlative,
+            reference_po_serie: $eloquentEntryGuide->reference_serie,
+            reference_po_correlative: $eloquentEntryGuide->reference_correlative,
             status: $eloquentEntryGuide->status,
         );
     
@@ -116,14 +100,10 @@ public function findAll(): array
             'correlative' => $entryGuide->getCorrelativo(),
             'date' => $entryGuide->getDate(),
             'customer_id' => $entryGuide->getCustomer()->getId(),
-            'guide_serie_supplier' => $entryGuide->getGuideCorrelativeSupplier(),
-            'guide_correlative_supplier' => $entryGuide->getGuideCorrelativeSupplier(),
-            'invoice_serie_supplier' => $entryGuide->getInvoiceSerieSupplier(),
-            'invoice_correlative_supplier' => $entryGuide->getInvoiceCorrelativeSupplier(),
             'observations' => $entryGuide->getObservations(),
             'ingress_reason_id' => 1,
-            'reference_serie' => $entryGuide->getReferenceCorrelative(),
-            'reference_correlative' => $entryGuide->getReferenceCorrelative(),
+            'reference_po_serie' => $entryGuide->getReferenceCorrelative(),
+            'reference_po_correlative' => $entryGuide->getReferenceCorrelative(),
             'status' => $entryGuide->getStatus(),
     ]);
          return new EntryGuide(
@@ -134,17 +114,21 @@ public function findAll(): array
             correlative: $eloquentEntryGuide->correlative,
             date: $eloquentEntryGuide->date,
             customer: $eloquentEntryGuide->customer?->toDomain($eloquentEntryGuide->customer),
-            guide_serie_supplier: $eloquentEntryGuide->guide_serie_supplier,
-            guide_correlative_supplier: $eloquentEntryGuide->guide_correlative_supplier,
-            invoice_serie_supplier: $eloquentEntryGuide->invoice_serie_supplier,
-            invoice_correlative_supplier: $eloquentEntryGuide->invoice_correlative_supplier,
             observations: $eloquentEntryGuide->observations,
             ingressReason: $eloquentEntryGuide->ingressReason?->toDomain($eloquentEntryGuide->ingressReason),
-            reference_serie: $eloquentEntryGuide->reference_serie,
-            reference_correlative: $eloquentEntryGuide->reference_correlative,
+            reference_po_serie: $eloquentEntryGuide->reference_serie,
+            reference_po_correlative: $eloquentEntryGuide->reference_correlative,
             status: $eloquentEntryGuide->status,
         );
   }
 
+  public function getLastDocumentNumber(string $serie): ?string
+  {
+    $entryGuide = EloquentEntryGuide::where('serie', $serie)
+        ->orderBy('correlative', 'desc')
+        ->first();
+
+    return $entryGuide?->correlative;
+  }
 
 }

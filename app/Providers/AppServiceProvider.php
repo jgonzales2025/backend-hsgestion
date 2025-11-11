@@ -50,9 +50,12 @@ use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
 use App\Modules\Driver\Infrastructure\Persistence\EloquentDriverRepository;
 use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterface;
 use App\Modules\EmissionReason\Infrastructure\Persistence\EloquentEmissionReasonRepository;
+use App\Modules\EntryGuideArticle\Infrastructure\Persistence\EloquentEntryGuideArticleRepository;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
 use App\Modules\EntryGuides\Infrastructure\Models\EloquentEntryGuide;
 use App\Modules\EntryGuides\Infrastructure\Persistence\EloquentEntryGuideRepository;
+use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
+use App\Modules\EntryItemSerial\Infrastructure\Persistence\EloquentEntryItemSerialRepository;
 use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
 use App\Modules\ExchangeRate\Infrastructure\Persistence\EloquentExchangeRateRepository;
 use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
@@ -74,15 +77,12 @@ use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\PaymentType\Infrastructure\Persistence\EloquentPaymentTypeRepository;
 use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface;
 use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRepository;
-use App\Modules\PurchaseGuideArticle\Domain\Entities\PurchaseGuideArticle;
-use App\Modules\PurchaseGuideArticle\Domain\Interface\PurchaseGuideArticleRepositoryInterface;
-use App\Modules\PurchaseGuideArticle\Infrastructure\Persistence\EloquentPurchaseGuideArticleRepository;
-use App\Modules\PurchaseItemSerials\Domain\Entities\PurchaseItemSerial;
-use App\Modules\PurchaseItemSerials\Domain\Interface\PurchaseItemSerialRepositoryInterface;
-use App\Modules\PurchaseItemSerials\Infrastructure\Models\EloquentPurchaseItemSerial;
-use App\Modules\PurchaseItemSerials\Infrastructure\Persistence\EloquentPurchaseItemSerialRepository;
+use App\Modules\EntryGuideArticle\Domain\Interface\EntryGuideArticleRepositoryInterface;
+use App\Modules\PurchaseOrder\Domain\Interfaces\PurchaseOrderRepositoryInterface;
+use App\Modules\PurchaseOrder\Infrastructure\Persistence\EloquentPurchaseOrderRepository;
+use App\Modules\PurchaseOrderArticle\Domain\Interfaces\PurchaseOrderArticleRepositoryInterface;
+use App\Modules\PurchaseOrderArticle\Infrastructure\Persistence\EloquentPurchaseOrderArticleRepository;
 use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
-use App\Modules\RecordType\Infrastructure\Models\EloquentRecordType;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Persistence\EloquentSaleRepository;
 use App\Modules\SaleArticle\Domain\Interfaces\SaleArticleRepositoryInterface;
@@ -172,8 +172,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EntryGuideRepositoryInterface::class, EloquentEntryGuideRepository::class);
         $this->app->bind(PurchaseOrderArticleRepositoryInterface::class, EloquentPurchaseOrderArticleRepository::class);
         $this->app->bind(SaleItemSerialRepositoryInterface::class, EloquentSaleItemSerialRepository::class);
-      $this->app->bind(PurchaseGuideArticleRepositoryInterface::class, EloquentPurchaseGuideArticleRepository::class);
-  $this->app->bind(PurchaseItemSerialRepositoryInterface::class, EloquentPurchaseItemSerialRepository::class);
+        $this->app->bind(EntryGuideArticleRepositoryInterface::class, EloquentEntryGuideArticleRepository::class);
+        $this->app->bind(EntryItemSerialRepositoryInterface::class, EloquentEntryItemSerialRepository::class);
+        $this->app->bind(PurchaseOrderRepositoryInterface::class, EloquentPurchaseOrderRepository::class);
 
     }
 

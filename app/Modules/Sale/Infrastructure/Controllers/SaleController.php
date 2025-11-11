@@ -22,11 +22,13 @@ use App\Modules\Sale\Application\UseCases\FindSaleWithUpdatedQuantitiesUseCase;
 use App\Modules\Sale\Application\UseCases\FindByDocumentSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindCreditNoteByIdUseCase;
+use App\Modules\Sale\Application\UseCases\UpdateCreditNoteUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateSaleUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleCreditNoteRequest;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleRequest;
+use App\Modules\Sale\Infrastructure\Requests\UpdateSaleCreditNoteRequest;
 use App\Modules\Sale\Infrastructure\Requests\UpdateSaleRequest;
 use App\Modules\Sale\Infrastructure\Resources\SaleCreditNoteResource;
 use App\Modules\Sale\Infrastructure\Resources\SaleResource;
@@ -184,6 +186,33 @@ class SaleController extends Controller
         );
     }
 
+    public function updateCreditNote(UpdateSaleCreditNoteRequest $request, $id): JsonResponse
+    {
+        $creditNoteUseCase = new FindCreditNoteByIdUseCase($this->saleRepository);
+        $saleCreditNote = $creditNoteUseCase->execute($id);
+
+        if (!$saleCreditNote) {
+            return response()->json(['message' => 'Nota de crédito no encontrada'], 404);
+        }
+
+        if ($saleCreditNote->getIsLocked() == 1) {
+            return response()->json(['message' => 'La nota de crédito no se puede actualizar por cierre de mes'], 200);
+        }
+
+        $saleCreditNoteDTO = new SaleCreditNoteDTO($request->validated());
+        $saleCreditNoteUseCase = new UpdateCreditNoteUseCase($this->saleRepository, $this->companyRepository, $this->userRepository, $this->noteReasonRepository);
+        $saleCreditNoteUpdated = $saleCreditNoteUseCase->execute($saleCreditNoteDTO, $id);
+
+        $saleArticles = $this->createSaleArticles($saleCreditNoteUpdated, $request->validated()['sale_articles']);
+        $this->logTransaction($request, $saleCreditNoteUpdated);
+
+        return response()->json([
+            'sale' => (new SaleCreditNoteResource($saleCreditNoteUpdated))->resolve(),
+            'articles' => SaleArticleCreditNoteResource::collection($saleArticles)->resolve()
+            ], 200
+        );
+    }
+
     public function showDocumentSale(Request $request): JsonResponse
     {
         $documentTypeId = $request->query('document_type_id');
@@ -215,8 +244,6 @@ class SaleController extends Controller
         if (!$sale) {
             return response()->json(['message' => 'Venta no encontrada'], 404);
         }
-
-        $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
 
         return response()->json([
             'sale' => (new SaleResource($sale))->resolve()

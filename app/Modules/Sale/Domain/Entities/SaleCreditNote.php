@@ -15,20 +15,19 @@ class SaleCreditNote
 {
     private int $id;
     private Company $company;
-    private Branch $branch;
-    private DocumentType $documentType;
-    private string $serie;
-    private string $document_number;
-    private float $parallel_rate;
-    private Customer $customer;
+    private ?Branch $branch;
+    private ?DocumentType $documentType;
+    private ?string $serie;
+    private ?string $document_number;
+    private ?float $parallel_rate;
+    private ?Customer $customer;
     private string $date;
     private string $due_date;
     private int $days;
     private User $user;
-    private PaymentType $paymentType;
-    private CurrencyType $currencyType;
+    private ?PaymentType $paymentType;
+    private ?CurrencyType $currencyType;
     private float $subtotal;
-    private float $inafecto;
     private float $igv;
     private float $total;
     private ?float $saldo;
@@ -44,20 +43,19 @@ class SaleCreditNote
     public function __construct(
         int $id,
         Company $company,
-        Branch $branch,
-        DocumentType $documentType,
-        string $serie,
-        string $document_number,
-        float $parallel_rate,
-        Customer $customer,
+        ?Branch $branch,
+        ?DocumentType $documentType,
+        ?string $serie,
+        ?string $document_number,
+        ?float $parallel_rate,
+        ?Customer $customer,
         string $date,
         string $due_date,
         int $days,
         User $user,
-        PaymentType $paymentType,
-        CurrencyType $currencyType,
+        ?PaymentType $paymentType,
+        ?CurrencyType $currencyType,
         float $subtotal,
-        float $inafecto,
         float $igv,
         float $total,
         ?float $saldo,
@@ -85,7 +83,6 @@ class SaleCreditNote
         $this->paymentType = $paymentType;
         $this->currencyType = $currencyType;
         $this->subtotal = $subtotal;
-        $this->inafecto = $inafecto;
         $this->igv = $igv;
         $this->total = $total;
         $this->saldo = $saldo;
@@ -101,20 +98,19 @@ class SaleCreditNote
 
     public function getId(): int { return $this->id; }
     public function getCompany(): Company { return $this->company; }
-    public function getBranch(): Branch { return $this->branch; }
-    public function getDocumentType(): DocumentType { return $this->documentType; }
-    public function getSerie(): string { return $this->serie; }
-    public function getDocumentNumber(): string { return $this->document_number; }
-    public function getParallelRate(): float { return $this->parallel_rate; }
-    public function getCustomer(): Customer { return $this->customer; }
+    public function getBranch(): ?Branch { return $this->branch; }
+    public function getDocumentType(): ?DocumentType { return $this->documentType; }
+    public function getSerie(): ?string { return $this->serie; }
+    public function getDocumentNumber(): ?string { return $this->document_number; }
+    public function getParallelRate(): ?float { return $this->parallel_rate; }
+    public function getCustomer(): ?Customer { return $this->customer; }
     public function getDate(): string { return $this->date; }
     public function getDueDate(): string { return $this->due_date; }
     public function getDays(): int { return $this->days; }
     public function getUser(): User { return $this->user; }
-    public function getPaymentType(): PaymentType { return $this->paymentType; }
-    public function getCurrencyType(): CurrencyType { return $this->currencyType; }
+    public function getPaymentType(): ?PaymentType { return $this->paymentType; }
+    public function getCurrencyType(): ?CurrencyType { return $this->currencyType; }
     public function getSubtotal(): float { return $this->subtotal; }
-    public function getInafecto(): float { return $this->inafecto; }
     public function getIgv(): float { return $this->igv; }
     public function getTotal(): float { return $this->total; }
     public function getSaldo(): ?float { return $this->saldo; }

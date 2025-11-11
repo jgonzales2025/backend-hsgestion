@@ -81,6 +81,30 @@ class MenuSeeder extends Seeder
             'type' => 'item',
         ]);
 
+        // ===== COMPRAS ====
+        $purchase = Menu::create([
+            'name' => 'compras',
+            'label' => 'Compras',
+            'icon' => 'ShoppingCart',
+            'route' => '/compras',
+            'permission' => null,
+            'parent_id' => null,
+            'order' => 2,
+            'status' => 1,
+            'type' => 'group'
+        ]);
+
+        Menu::create([
+            'name' => 'orden_compras_proveedores',
+            'label' => 'Listar Ordenes de Compra',
+            'route' => '/compras/orden-compras-proveedores',
+            'permission' => 'compras.orden_compras_proveedores',
+            'parent_id' => $purchase->id,
+            'order' => 1,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
         // ===== CAJA =====
         $caja = Menu::create([
             'name' => 'caja',
@@ -89,7 +113,7 @@ class MenuSeeder extends Seeder
             'route' => '/caja',
             'permission' => null,
             'parent_id' => null,
-            'order' => 2,
+            'order' => 3,
             'status' => 1,
             'type' => 'group'
         ]);
@@ -168,7 +192,7 @@ class MenuSeeder extends Seeder
             'route' => '/estadisticas',
             'permission' => null,
             'parent_id' => null,
-            'order' => 3,
+            'order' => 4,
             'status' => 1,
             'type' => 'group'
         ]);
@@ -313,7 +337,7 @@ class MenuSeeder extends Seeder
             'route' => '/reportes',
             'permission' => null,
             'parent_id' => null,
-            'order' => 4,
+            'order' => 5,
             'status' => 1,
             'type' => 'group'
         ]);
@@ -612,7 +636,7 @@ class MenuSeeder extends Seeder
             'route' => '/garantias',
             'permission' => null,
             'parent_id' => null,
-            'order' => 5,
+            'order' => 6,
             'status' => 1,
             'type' => 'group'
         ]);
@@ -702,7 +726,7 @@ class MenuSeeder extends Seeder
             'route' => '/tablas',
             'permission' => null,
             'parent_id' => null,
-            'order' => 6,
+            'order' => 7,
             'status' => 1,
             'type' => 'group'
         ]);
@@ -935,7 +959,7 @@ class MenuSeeder extends Seeder
             'route' => '/mantenimiento',
             'permission' => null,
             'parent_id' => null,
-            'order' => 7,
+            'order' => 8,
             'status' => 1,
             'type' => 'group'
         ]);
@@ -1080,7 +1104,7 @@ class MenuSeeder extends Seeder
             'route' => '/actualizaciones',
             'permission' => null,
             'parent_id' => null,
-            'order' => 8,
+            'order' => 9,
             'status' => 1,
             'type' => 'group'
         ]);
@@ -1137,7 +1161,7 @@ class MenuSeeder extends Seeder
             'route' => '/sfs-sunat',
             'permission' => null,
             'parent_id' => null,
-            'order' => 9,
+            'order' => 10,
             'status' => 1,
             'type' => 'group'
         ]);

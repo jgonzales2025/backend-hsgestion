@@ -25,65 +25,41 @@ use App\Modules\User\Application\UseCases\GetUserByIdUseCase;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 
-readonly class CreateSaleCreditNoteUseCase
+readonly class UpdateCreditNoteUseCase
 {
     public function __construct(
         private readonly SaleRepositoryInterface $saleRepository,
         private readonly CompanyRepositoryInterface $companyRepository,
-        private readonly BranchRepositoryInterface $branchRepository,
         private readonly UserRepositoryInterface $userRepository,
-        private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
-        private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
-        private readonly CustomerRepositoryInterface $customerRepository,
-        private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
-        private readonly NoteReasonRepositoryInterface $noteReasonRepository,
-        private readonly DocumentNumberGeneratorService $documentNumberGenerator
+        private readonly NoteReasonRepositoryInterface $noteReasonRepository
     ){}
 
-    public function execute(SaleCreditNoteDTO $saleCreditNoteDTO): ?SaleCreditNote
+    public function execute(SaleCreditNoteDTO $saleCreditNoteDTO, $id): ?SaleCreditNote
     {
-        $lastDocumentNumber = $this->saleRepository->getLastDocumentNumber($saleCreditNoteDTO->serie);
-        $saleCreditNoteDTO->document_number = $this->documentNumberGenerator->generateNextNumber($lastDocumentNumber);
-
         $companyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
         $company = $companyUseCase->execute($saleCreditNoteDTO->company_id);
 
-        $branchUseCase = new FindByIdBranchUseCase($this->branchRepository);
-        $branch = $branchUseCase->execute($saleCreditNoteDTO->branch_id);
-
         $userUseCase = new GetUserByIdUseCase($this->userRepository);
         $user = $userUseCase->execute($saleCreditNoteDTO->user_id);
-
-        $currencyTypeUseCase = new FindByIdCurrencyTypeUseCase($this->currencyTypeRepository);
-        $currencyType = $currencyTypeUseCase->execute($saleCreditNoteDTO->currency_type_id);
-
-        $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepository);
-        $documentType = $documentTypeUseCase->execute($saleCreditNoteDTO->document_type_id);
-
-        $customerUseCase = new FindByIdCustomerUseCase($this->customerRepository);
-        $customer = $customerUseCase->execute($saleCreditNoteDTO->customer_id);
-
-        $paymentTypeUseCase = new FindByIdPaymentTypeUseCase($this->paymentTypeRepository);
-        $paymentType = $paymentTypeUseCase->execute($saleCreditNoteDTO->payment_type_id);
 
         $noteReasonUseCase = new FindByIdNoteReasonUseCase($this->noteReasonRepository);
         $noteReason = $noteReasonUseCase->execute($saleCreditNoteDTO->note_reason_id);
 
         $saleCreditNote = new SaleCreditNote(
-            id: 0,
+            id: $id,
             company: $company,
-            branch: $branch,
-            documentType: $documentType,
-            serie: $saleCreditNoteDTO->serie,
-            document_number: $saleCreditNoteDTO->document_number,
-            parallel_rate: $saleCreditNoteDTO->parallel_rate,
-            customer: $customer,
+            branch: null,
+            documentType: null,
+            serie: null,
+            document_number: null,
+            parallel_rate: null,
+            customer: null,
             date: $saleCreditNoteDTO->date,
             due_date: $saleCreditNoteDTO->due_date,
             days: $saleCreditNoteDTO->days,
             user: $user,
-            paymentType: $paymentType,
-            currencyType: $currencyType,
+            paymentType: null,
+            currencyType: null,
             subtotal: $saleCreditNoteDTO->subtotal,
             igv: $saleCreditNoteDTO->igv,
             total: $saleCreditNoteDTO->total,
@@ -92,12 +68,12 @@ readonly class CreateSaleCreditNoteUseCase
             status: 1,
             payment_status: 0,
             is_locked: null,
-            reference_document_type_id: $saleCreditNoteDTO->reference_document_type_id,
-            reference_serie: $saleCreditNoteDTO->reference_serie,
-            reference_correlative: $saleCreditNoteDTO->reference_correlative,
+            reference_document_type_id: null,
+            reference_serie: null,
+            reference_correlative: null,
             note_reason: $noteReason
         );
 
-        return $this->saleRepository->saveCreditNote($saleCreditNote);
+        return $this->saleRepository->updateCreditNote($saleCreditNote);
     }
 }

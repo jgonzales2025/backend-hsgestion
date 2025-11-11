@@ -6,6 +6,7 @@ use App\Modules\Sale\Domain\Entities\Sale;
 use App\Modules\Sale\Domain\Entities\SaleCreditNote;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -212,6 +213,19 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         return $this->mapToDomainCreditNote($creditNote);
     }
 
+    public function updateCreditNote(SaleCreditNote $saleCreditNote): ?SaleCreditNote
+    {
+        $creditNote = EloquentSale::find($saleCreditNote->getId());
+
+        if (!$creditNote) {
+            return null;
+        }
+
+        $creditNote->update($this->mapToArrayUpdateCreditNote($saleCreditNote));
+
+        return $this->mapToDomainCreditNote($creditNote);
+    }
+
     private function mapToArray(Sale $sale): array
     {
         return [
@@ -242,6 +256,22 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         ];
     }
 
+    private function mapToArrayUpdateCreditNote(SaleCreditNote $saleCreditNote): array
+    {
+        return [
+            'company_id' => $saleCreditNote->getCompany()->getId(),
+            'date' => $saleCreditNote->getDate(),
+            'due_date' => $saleCreditNote->getDueDate(),
+            'days' => $saleCreditNote->getDays(),
+            'user_id' => $saleCreditNote->getUser()->getId(),
+            'subtotal' => $saleCreditNote->getSubtotal(),
+            'igv' => $saleCreditNote->getIgv(),
+            'total' => $saleCreditNote->getTotal(),
+            'saldo' => $saleCreditNote->getTotal(),
+            'note_reason_id' => $saleCreditNote->getNoteReason()?->getId() ?? null
+        ];
+    }
+
     private function mapToArrayCreditNote(SaleCreditNote $saleCreditNote): array
     {
         return [
@@ -259,7 +289,6 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'payment_type_id' => $saleCreditNote->getPaymentType()->getId(),
             'currency_type_id' => $saleCreditNote->getCurrencyType()->getId(),
             'subtotal' => $saleCreditNote->getSubtotal(),
-            'inafecto' => $saleCreditNote->getInafecto(),
             'igv' => $saleCreditNote->getIgv(),
             'total' => $saleCreditNote->getTotal(),
             'saldo' => $saleCreditNote->getTotal(),
@@ -288,7 +317,6 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             paymentType: $eloquentSale->paymentType->toDomain($eloquentSale->paymentType),
             currencyType: $eloquentSale->currencyType->toDomain($eloquentSale->currencyType),
             subtotal: $eloquentSale->subtotal,
-            inafecto: $eloquentSale->inafecto,
             igv: $eloquentSale->igv,
             total: $eloquentSale->total,
             saldo: $eloquentSale->saldo,
@@ -391,7 +419,6 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             paymentType: $domainSale->getPaymentType(),
             currencyType: $domainSale->getCurrencyType(),
             subtotal: $eloquentSale->subtotal,
-            inafecto: $eloquentSale->inafecto,
             igv: $eloquentSale->igv,
             total: $eloquentSale->total,
             saldo: $eloquentSale->saldo,

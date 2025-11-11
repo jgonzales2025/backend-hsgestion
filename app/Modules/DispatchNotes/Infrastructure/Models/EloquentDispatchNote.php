@@ -5,6 +5,8 @@ namespace App\Modules\DispatchNotes\Infrastructure\Models;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\Category\Infrastructure\Models\EloquentCategory;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
+use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
+use App\Modules\CustomerAddress\Infrastructure\Models\EloquentCustomerAddress;
 use App\Modules\Driver\Infrastructure\Models\EloquentDriver;
 use App\Modules\EmissionReason\Infrastructure\Models\EloquentEmissionReason;
 use App\Modules\MeasurementUnit\Infrastructure\Models\EloquentMeasurementUnit;
@@ -42,6 +44,8 @@ class EloquentDispatchNote extends Model
         'document_type_id',
         'destination_branch_client',
         'customer_id',
+        'supplier_id',
+        'address_supplier_id',
         'pdf',  
     ];
   public $timestamps = true;
@@ -83,8 +87,14 @@ class EloquentDispatchNote extends Model
     {
         return $this->belongsTo(EloquentBranch::class, 'destination_branch_id');
     }
-    public function destinationbranchClient(): BelongsTo
+    public function destination_branch_client(): BelongsTo
     {
-        return $this->belongsTo(EloquentBranch::class, 'destination_branch_client');
+        return $this->belongsTo(EloquentCustomerAddress::class, 'destination_branch_client');
+    }
+    public function supplier():BelongsTo{
+        return $this->belongsTo(EloquentCustomer::class, 'supplier_id');
+    }
+    public function address_supplier(){
+        return $this->belongsTo(EloquentCustomer::class, 'address_supplier_id');
     }
 }

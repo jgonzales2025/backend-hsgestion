@@ -27,6 +27,9 @@ class DispatchNoteDTO
   public int $document_type_id;
   public int $destination_branch_client ;
   public int $customer_id;
+  public ?int $supplier_id;
+  public ?int $address_supplier_id;
+
 
 
   public function __construct(array $date)
@@ -54,6 +57,9 @@ class DispatchNoteDTO
     $this->document_type_id = $date['document_type_id'] ?? 1;
     $this->destination_branch_client = $date['destination_branch_client_id'] ?? 1;
     $this->customer_id = $date['customer_id'] ?? 1;
+    $this->supplier_id = $date['supplier_id'] ?? null;
+    $this->address_supplier_id = $date['address_supplier_id'] ?? null;
+  
 
   }
 

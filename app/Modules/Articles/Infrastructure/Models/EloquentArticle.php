@@ -8,6 +8,7 @@ use App\Modules\Category\Infrastructure\Models\EloquentCategory;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\MeasurementUnit\Infrastructure\Models\EloquentMeasurementUnit;
+use App\Modules\ReferenceCode\Infrastructure\Models\EloquentReferenceCode;
 use App\Modules\SubCategory\Infrastructure\Models\EloquentSubCategory;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Illuminate\Database\Eloquent\Model;
@@ -80,6 +81,10 @@ class EloquentArticle extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(EloquentCompany::class, 'company_type_id');
+    }
+    public function referenceCodes()
+    {
+        return $this->hasMany(EloquentReferenceCode::class, 'article_id', 'id');
     }
 
     public function toDomain(EloquentArticle $eloquentArticle): Article

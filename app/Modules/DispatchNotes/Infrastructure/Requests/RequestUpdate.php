@@ -45,8 +45,8 @@ class RequestUpdate extends FormRequest
             'destination_branch_client_id' => ['nullable', 'integer', 'exists:branches,id'],
             'dispatch_articles' => 'required|array|min:1',
             'customer_id' => 'required|integer|exists:customers,id',
-            'supplier_id' => 'nullable|integer',
-            'address_supplier_id' => 'nullable|integer',
+            'address_supplier_id' => 'nullable|integer|exists:customers,id',
+            'supplier_id' => 'nullable|integer|exists:customers,id'
         ];
     } 
     public function messages(): array

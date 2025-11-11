@@ -6,6 +6,8 @@ use App\Modules\Branch\Application\UseCases\FindByIdBranchUseCase;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Application\UseCases\FindByIdCompanyUseCase;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
+use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
+use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DispatchNotes\application\DTOS\DispatchNoteDTO;
 use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
@@ -30,6 +32,7 @@ class CreateDispatchNoteUseCase
     private readonly TransportCompanyRepositoryInterface $transportCompany,
     private readonly DocumentTypeRepositoryInterface $documentTypeRepositoryInterface,
     private readonly DriverRepositoryInterface $driverRepositoryInterface,
+    private readonly CustomerRepositoryInterface $customerRepositoryInterface
   ) {
   }
 
@@ -44,7 +47,7 @@ class CreateDispatchNoteUseCase
             $documentNumber = str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
         }
 
- $data->correlativo = $documentNumber;
+    $data->correlativo = $documentNumber;
  
     $companyUseCase = new FindByIdCompanyUseCase($this->companyRepositoryInterface);
     $company = $companyUseCase->execute($data->cia_id);
@@ -72,6 +75,21 @@ class CreateDispatchNoteUseCase
 
     $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepositoryInterface);
     $documentType = $documentTypeUseCase->execute($data->document_type_id);
+    if ($data->supplier_id !=null) {
+    
+      $supplierUseCase = new FindByIdCustomerUseCase($this->customerRepositoryInterface);
+      $supplier = $supplierUseCase->execute($data->supplier_id);
+    }else{
+      $supplier = null;
+    }
+        if ($data->address_supplier_id !=null) {
+    
+      $supplierUseCase = new FindByIdCustomerUseCase($this->customerRepositoryInterface);
+      $supplierAddress = $supplierUseCase->execute($data->address_supplier_id);
+    }else{
+      $supplierAddress = null;
+    }
+
 
     $dispatchNote = new DispatchNote(
       id: 0,
@@ -98,6 +116,8 @@ class CreateDispatchNoteUseCase
       document_type: $documentType,
       destination_branch_client: $data->destination_branch_client,
       customer_id: $data->customer_id,
+      supplier: $supplier,
+      address_supplier: $supplierAddress
 
     );
     return $this->dispatchNoteRepository->save($dispatchNote);

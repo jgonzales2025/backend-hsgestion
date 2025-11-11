@@ -20,12 +20,6 @@ return new class extends Migration
             $table->date('date');
             $table->text('observations')->nullable();
 
-            // Datos del proveedor (guía y factura)
-            $table->string('guide_serie_supplier', 20)->nullable();
-            $table->string('guide_correlative_supplier', 20)->nullable();
-            $table->string('invoice_serie_supplier', 20)->nullable();
-            $table->string('invoice_correlative_supplier', 20)->nullable();
-
             // Datos de referencia (orden de compra)
             $table->string('reference_serie', 20)->nullable();
             $table->string('reference_correlative', 20)->nullable();

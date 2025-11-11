@@ -15,14 +15,10 @@ class EntryGuide
     private string $correlative;
     private string $date;
     private ?Customer $customer;
-    private string $guide_serie_supplier;
-    private string $guide_correlative_supplier;
-    private string $invoice_serie_supplier;
-    private string $invoice_correlative_supplier;
     private string $observations;
     private ?IngressReason $ingressReason;
-    private ?string $reference_serie; //opcional
-    private ?string $reference_correlative; //opcional
+    private ?string $reference_po_serie; //opcional purchase order
+    private ?string $reference_po_correlative; //opcional purchase order
     private bool $status;
 
     public function __construct(
@@ -33,14 +29,10 @@ class EntryGuide
         string $correlative,
         string $date,
         ?Customer $customer,
-        string $guide_serie_supplier,
-        string $guide_correlative_supplier,
-        string $invoice_serie_supplier,
-        string $invoice_correlative_supplier,
         string $observations,
         ?IngressReason $ingressReason,
-        ?string $reference_serie, //opcional
-        ?string $reference_correlative, //opcional
+        ?string $reference_po_serie, //opcional purchase order
+        ?string $reference_po_correlative, //opcional purchase order
         bool $status,
     ) {
         $this->id = $id;
@@ -50,14 +42,10 @@ class EntryGuide
         $this->correlative = $correlative;
         $this->date = $date;
         $this->customer = $customer;
-        $this->guide_serie_supplier = $guide_serie_supplier;
-        $this->guide_correlative_supplier = $guide_correlative_supplier;
-        $this->invoice_serie_supplier = $invoice_serie_supplier;
-        $this->invoice_correlative_supplier = $invoice_correlative_supplier;
         $this->observations = $observations;
         $this->ingressReason = $ingressReason;
-        $this->reference_serie = $reference_serie;
-        $this->reference_correlative = $reference_correlative;
+        $this->reference_po_serie = $reference_po_serie;
+        $this->reference_po_correlative = $reference_po_correlative;
         $this->status = $status;
 
     }
@@ -84,31 +72,15 @@ class EntryGuide
     }
     public function getReferenceSerie(): string|null
     {
-        return $this->reference_serie;
+        return $this->reference_po_serie;
     }
     public function getReferenceCorrelative(): string|null
     {
-        return $this->reference_correlative;
+        return $this->reference_po_correlative;
     }
     public function getStatus(): bool
     {
         return $this->status;
-    }
-    public function getGuideSerieSupplier(): string
-    {
-        return $this->guide_serie_supplier;
-    }
-    public function getGuideCorrelativeSupplier(): string
-    {
-        return $this->guide_correlative_supplier;
-    }
-    public function getInvoiceSerieSupplier(): string
-    {
-        return $this->invoice_serie_supplier;
-    }
-    public function getInvoiceCorrelativeSupplier(): string
-    {
-        return $this->invoice_correlative_supplier;
     }
     public function getIngressReason(): IngressReason|null
     {

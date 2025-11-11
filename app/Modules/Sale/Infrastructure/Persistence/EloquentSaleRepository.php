@@ -201,6 +201,17 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         })->toArray();
     }
 
+    public function findCreditNoteById(int $id): ?SaleCreditNote
+    {
+        $creditNote = EloquentSale::find($id);
+
+        if (!$creditNote) {
+            return null;
+        }
+
+        return $this->mapToDomainCreditNote($creditNote);
+    }
+
     private function mapToArray(Sale $sale): array
     {
         return [
@@ -257,6 +268,39 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'reference_correlative' => $saleCreditNote->getReferenceCorrelative(),
             'note_reason_id' => $saleCreditNote->getNoteReason()?->getId() ?? null
         ];
+    }
+
+    private function mapToDomainCreditNote(EloquentSale $eloquentSale): SaleCreditNote
+    {
+        return new SaleCreditNote(
+            id: $eloquentSale->id,
+            company: $eloquentSale->company->toDomain($eloquentSale->company),
+            branch: $eloquentSale->branch->toDomain($eloquentSale->branch),
+            documentType: $eloquentSale->documentType->toDomain($eloquentSale->documentType),
+            serie: $eloquentSale->serie,
+            document_number: $eloquentSale->document_number,
+            parallel_rate: $eloquentSale->parallel_rate,
+            customer: $eloquentSale->customer->toDomain($eloquentSale->customer),
+            date: $eloquentSale->date,
+            due_date: $eloquentSale->due_date,
+            days: $eloquentSale->days,
+            user: $eloquentSale->user->toDomain($eloquentSale->user),
+            paymentType: $eloquentSale->paymentType->toDomain($eloquentSale->paymentType),
+            currencyType: $eloquentSale->currencyType->toDomain($eloquentSale->currencyType),
+            subtotal: $eloquentSale->subtotal,
+            inafecto: $eloquentSale->inafecto,
+            igv: $eloquentSale->igv,
+            total: $eloquentSale->total,
+            saldo: $eloquentSale->saldo,
+            amount_amortized: $eloquentSale->amount_amortized,
+            status: $eloquentSale->status,
+            payment_status: $eloquentSale->payment_status,
+            is_locked: $eloquentSale->is_locked,
+            reference_document_type_id: $eloquentSale->reference_document_type_id,
+            reference_serie: $eloquentSale->reference_serie,
+            reference_correlative: $eloquentSale->reference_correlative,
+            note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason) ?? null
+        );
     }
 
     private function mapToDomain(EloquentSale $eloquentSale): Sale

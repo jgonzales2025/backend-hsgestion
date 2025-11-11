@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Modules\EntryItemSerial\Application\DTOS;
+
+use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
+use App\Modules\EntryGuideArticle\Domain\Entities\EntryGuideArticle;
+
+class EntryItemSerialDTO{
+    public EntryGuide $entry_guide;
+    public EntryGuideArticle $article;
+    public string $serial;
+
+    public function __construct($array){
+        $this->entry_guide = $array['entry_guide'];
+        $this->article = $array['article'];
+        $this->serial = $array['serial'];
+    }
+
+}

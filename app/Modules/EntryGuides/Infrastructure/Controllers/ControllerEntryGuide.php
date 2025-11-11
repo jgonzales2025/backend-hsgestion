@@ -3,10 +3,12 @@
 namespace App\Modules\EntryGuides\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
-
+use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\EntryGuideArticle\Application\DTOS\EntryGuideArticleDTO;
+use App\Modules\EntryGuideArticle\Application\UseCases\CreateEntryGuideArticle;
 use App\Modules\EntryGuides\Application\DTOS\EntryGuideDTO;
 use App\Modules\EntryGuides\Application\UseCases\CreateEntryGuideUseCase;
 use App\Modules\EntryGuides\Application\UseCases\FindAllEntryGuideUseCase;
@@ -16,14 +18,14 @@ use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
 use App\Modules\EntryGuides\Infrastructure\Request\EntryGuideRequest;
 use App\Modules\EntryGuides\Infrastructure\Request\UpdateGuideRequest;
 use App\Modules\EntryGuides\Infrastructure\Resource\EntryGuideResource;
-use App\Modules\PurchaseGuideArticle\Application\DTOS\PurchaseGuideArticleDTO;
-use App\Modules\PurchaseGuideArticle\Application\UseCases\CreatePurchaseGuideArticle;
-use App\Modules\PurchaseGuideArticle\Domain\Interface\PurchaseGuideArticleRepositoryInterface;
-use App\Modules\PurchaseGuideArticle\Infrastructure\Resource\PurchaseGuideArticleResource;
-use App\Modules\PurchaseItemSerials\Application\DTOS\PurchaseItemSerialDTO;
-use App\Modules\PurchaseItemSerials\Application\UseCases\CreatePurchaseItemSerialUseCase;
-use App\Modules\PurchaseItemSerials\Domain\Interface\PurchaseItemSerialRepositoryInterface;
-use App\Modules\PurchaseItemSerials\Infrastructure\Resource\PurchaseItemSerialResource;
+use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
+use App\Modules\EntryGuideArticle\Domain\Interface\EntryGuideArticleRepositoryInterface;
+use App\Modules\EntryGuideArticle\Infrastructure\Resource\EntryGuideArticleResource;
+use App\Modules\EntryItemSerial\Application\DTOS\EntryItemSerialDTO;
+use App\Modules\EntryItemSerial\Infrastructure\Resource\EntryItemSerialResource;
+use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
+use App\Modules\EntryItemSerial\Application\UseCases\CreateEntryItemSerialUseCase;
+use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 
 
@@ -31,12 +33,15 @@ class ControllerEntryGuide extends Controller
 {
 
     public function __construct(
-        private readonly EntryGuideRepositoryInterface $entryGuideRepositoryInterface,
-        private readonly CompanyRepositoryInterface $companyRepositoryInterface,
-        private readonly BranchRepositoryInterface $branchRepositoryInterface,
-        private readonly CustomerRepositoryInterface $customerRepositoryInterface,
-        private readonly PurchaseGuideArticleRepositoryInterface $purchaseGuideArticleRepositoryInterface,
-        private readonly PurchaseItemSerialRepositoryInterface $purchaseItemSerialRepositoryInterface,
+        private readonly EntryGuideRepositoryInterface        $entryGuideRepositoryInterface,
+        private readonly CompanyRepositoryInterface           $companyRepositoryInterface,
+        private readonly BranchRepositoryInterface            $branchRepositoryInterface,
+        private readonly CustomerRepositoryInterface          $customerRepositoryInterface,
+        private readonly EntryGuideArticleRepositoryInterface $entryGuideArticleRepositoryInterface,
+        private readonly EntryItemSerialRepositoryInterface   $entryItemSerialRepositoryInterface,
+        private readonly IngressReasonRepositoryInterface    $ingressReasonRepositoryInterface,
+        private readonly ArticleRepositoryInterface          $articleRepositoryInterface,
+        private readonly DocumentNumberGeneratorService      $documentNumberGeneratorService,
     ) {
     }
 
@@ -48,13 +53,10 @@ class ControllerEntryGuide extends Controller
         $result = [];
 
         foreach ($entryGuide as $entryGuides) {
-            $entry = $this->purchaseGuideArticleRepositoryInterface->findById($entryGuides->getId());
-            $entry_item_serials = $this->purchaseItemSerialRepositoryInterface->findById($entryGuides->getId());
+            $entry = $this->entryGuideArticleRepositoryInterface->findById($entryGuides->getId());
             $result[] = [
                 'entryGuide' => (new EntryGuideResource($entryGuides))->resolve(),
-                'purchase_guide_articles' => PurchaseGuideArticleResource::collection($entry)->resolve(),
-                'entry_item_serials' => PurchaseItemSerialResource::collection($entry_item_serials)->resolve()
-
+                'purchase_guide_articles' => EntryGuideArticleResource::collection($entry)->resolve()
             ];
         }
 
@@ -65,16 +67,12 @@ class ControllerEntryGuide extends Controller
         $entryGuideUseCase = new FindByIdEntryGuideUseCase($this->entryGuideRepositoryInterface);
         $entryGuide = $entryGuideUseCase->execute($id);
 
-        $purchaseArticles = $this->purchaseGuideArticleRepositoryInterface->findById($entryGuide->getId());
-
-        $purchase_item_serial = $this->purchaseItemSerialRepositoryInterface->findById($entryGuide->getId());
+        $entryArticles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
 
         return response()->json(
             [
                 'entryGuide' => (new EntryGuideResource($entryGuide))->resolve(),
-                'purchase_guide_articles' => PurchaseGuideArticleResource::collection($purchaseArticles)->resolve(),
-                'entry_item_serials' => PurchaseItemSerialResource::collection($purchase_item_serial)->resolve()
-
+                'entry_guide_articles' => EntryGuideArticleResource::collection($entryArticles)->resolve()
             ],
             200
         );
@@ -87,37 +85,45 @@ class ControllerEntryGuide extends Controller
             $this->companyRepositoryInterface,
             $this->branchRepositoryInterface,
             $this->customerRepositoryInterface,
+            $this->ingressReasonRepositoryInterface,
+            $this->documentNumberGeneratorService,
         );
         $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
-        $createPurchaseGuideArticleUseCase = new CreatePurchaseGuideArticle($this->purchaseGuideArticleRepositoryInterface);
-        $PurchaseGuideArticle = array_map(function ($q) use ($entryGuide, $createPurchaseGuideArticleUseCase) {
-
-            $PurchaseGuideArticleDTO = new PurchaseGuideArticleDTO([
-                'purchase_guide_id' => $entryGuide->getId(),
+        $createEntryGuideArticleUseCase = new CreateEntryGuideArticle($this->entryGuideArticleRepositoryInterface, $this->articleRepositoryInterface);
+        $entryGuideArticle = array_map(function ($q) use ($entryGuide, $createEntryGuideArticleUseCase) {
+            $entryGuideArticleDTO = new EntryGuideArticleDTO([
+                'entry_guide_id' => $entryGuide->getId(),
                 'article_id' => $q['article_id'],
                 'description' => $q['description'],
                 'quantity' => $q['quantity'],
             ]);
-            return $createPurchaseGuideArticleUseCase->execute($PurchaseGuideArticleDTO);
-        }, $request->validated()['purchase_guide_articles']);
+            $guideArticle = $createEntryGuideArticleUseCase->execute($entryGuideArticleDTO);
 
-        $createPurchaseItemSerialGuideArticleUseCase = new CreatePurchaseItemSerialUseCase($this->purchaseItemSerialRepositoryInterface);
-        $createPurchaseItemSerialGuideArticleUseCaseR = array_map(function ($q) use ($entryGuide, $createPurchaseItemSerialGuideArticleUseCase) {
-            $createPurchaseItemSerialGuideArticleUseCaseDto = new PurchaseItemSerialDTO([
-                'purchase_guide_id' => $entryGuide->getId(),
-                'article_id' => $q['article_id'],
-                'serial' => $q['serial'],
-            ]);
-            return $createPurchaseItemSerialGuideArticleUseCase->execute($createPurchaseItemSerialGuideArticleUseCaseDto);
-        }, $request->validated()['purchase_item_serial']);
+            // Array para almacenar los seriales
+            $serials = [];
 
+            if (!empty($q['serials'])) {
+                foreach ($q['serials'] as $serial) {
+                    $itemSerialDTO = new EntryItemSerialDTO([
+                        'entry_guide' => $entryGuide,
+                        'article' => $guideArticle,
+                        'serial' => $serial
+                    ]);
+                    $itemSerialUseCase = new CreateEntryItemSerialUseCase($this->entryItemSerialRepositoryInterface);
+                    $itemSerial = $itemSerialUseCase->execute($itemSerialDTO);
+                    $serials[] = $itemSerial;
+                }
+            }
+            $guideArticle->serials = $serials;
+            return $guideArticle;
+
+        }, $request->validated()['entry_guide_articles']);
 
         return response()->json(
             [
                 'entryGuide' => (new EntryGuideResource($entryGuide))->resolve(),
-                'purchase_guide_articles' => PurchaseGuideArticleResource::collection($PurchaseGuideArticle)->resolve(),
-                'entry_item_serials' => PurchaseItemSerialResource::collection($createPurchaseItemSerialGuideArticleUseCaseR)->resolve()
+                'articles' => EntryGuideArticleResource::collection($entryGuideArticle)->resolve()
             ],
             201
         );
@@ -142,54 +148,56 @@ class ControllerEntryGuide extends Controller
 
         $entryGuide = $entryGuideUseCase->execute($entryGuideDTO, $id);
 
-        $this->purchaseGuideArticleRepositoryInterface->deleteByPurchaseGuideId($entryGuide->getId());
+        $this->entryGuideArticleRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
 
-        $purchaseGuideArticle = $this->createPurchaseGuideArticles($entryGuide, $request->validated()['purchase_guide_articles']);
 
-        $this->purchaseItemSerialRepositoryInterface->deleteByIdPurchaseItemSerial($entryGuide->getId());
 
-        $purchaseGuideArticler = $this->createPurchaseItemSerialGuideArticle($entryGuide, $request->validated()['purchase_item_serial']);
+        $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
+
+        $this->entryItemSerialRepositoryInterface->deleteByIdEntryItemSerial($entryGuide->getId());
+
+        $entryGuideArticles = $this->createEntryItemSerialGuideArticle($entryGuide, $request->validated()['entry_item_serial']);
 
         return response()->json(
             [
                 'entryGuide' => (new EntryGuideResource($entryGuide))->resolve(),
-                'purchase_guide_articles' => PurchaseGuideArticleResource::collection($purchaseGuideArticle)->resolve(),
-                'entry_item_serials' => PurchaseItemSerialResource::collection($purchaseGuideArticler)->resolve()
+                'entry_guide_articles' => EntryGuideArticleResource::collection($entryGuideArticle)->resolve(),
+                'entry_item_serials' => EntryItemSerialResource::collection($entryGuideArticles)->resolve()
 
             ],
             201
         );
 
     }
-    private function createPurchaseGuideArticles($sale, array $purchaseGuideArticle): array
+    private function createEntryGuideArticles($sale, array $entryGuideArticle): array
     {
 
-        $createSaleArticleUseCase = new CreatePurchaseGuideArticle($this->purchaseGuideArticleRepositoryInterface);
+        $createSaleArticleUseCase = new CreateEntryGuideArticle($this->entryGuideArticleRepositoryInterface);
 
         return array_map(function ($q) use ($sale, $createSaleArticleUseCase) {
-            $saleArticleDTO = new PurchaseGuideArticleDTO([
-                'purchase_guide_id' => $sale->getId(),
+            $saleArticleDTO = new EntryGuideArticleDTO([
+                'entry_guide_id' => $sale->getId(),
                 'article_id' => $q['article_id'],
                 'description' => $q['description'],
                 'quantity' => $q['quantity'],
             ]);
 
             return $createSaleArticleUseCase->execute($saleArticleDTO);
-        }, $purchaseGuideArticle);
+        }, $entryGuideArticle);
     }
-    private function createPurchaseItemSerialGuideArticle($sale, array $purchaseGuideArticle): array
+    private function createEntryItemSerialGuideArticle($sale, array $entryGuideArticle): array
     {
 
-        $createSaleArticleUseCase = new CreatePurchaseItemSerialUseCase($this->purchaseItemSerialRepositoryInterface);
+        $createSaleArticleUseCase = new CreateEntryItemSerialUseCase($this->entryItemSerialRepositoryInterface);
 
         return array_map(function ($q) use ($sale, $createSaleArticleUseCase) {
-            $saleArticleDTO = new PurchaseItemSerialDTO([
+            $saleArticleDTO = new EntryItemSerialDTO([
                 'purchase_guide_id' => $sale->getId(),
                 'article_id' => $q['article_id'],
                 'serial' => $q['serial'],
             ]);
 
             return $createSaleArticleUseCase->execute($saleArticleDTO);
-        }, $purchaseGuideArticle);
+        }, $entryGuideArticle);
     }
 }

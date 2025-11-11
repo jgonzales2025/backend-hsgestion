@@ -267,6 +267,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/sales/get-updated-quantities', [SaleController::class, 'getUpdatedQuantities']);
     Route::get('/sales', [SaleController::class, 'index']);
     Route::get('/sales/{id}', [SaleController::class, 'show']);
+    Route::get('/sales-credit-notes/{id}', [SaleController::class, 'showCreditNote']);
     Route::get('/credit-notes-customer', [SaleController::class, 'indexCreditNotesByCustomer']);
     Route::post('/sales', [SaleController::class, 'store']);
     Route::post('/sales-credit-notes', [SaleController::class, 'storeCreditNote']);

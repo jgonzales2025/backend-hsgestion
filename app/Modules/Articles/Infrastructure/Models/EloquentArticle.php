@@ -2,7 +2,7 @@
 
 namespace App\Modules\Articles\Infrastructure\Models;
 
-
+use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\Brand\Infrastructure\Models\EloquentBrand;
 use App\Modules\Category\Infrastructure\Models\EloquentCategory;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
@@ -80,6 +80,44 @@ class EloquentArticle extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(EloquentCompany::class, 'company_type_id');
+    }
+
+    public function toDomain(EloquentArticle $eloquentArticle): Article
+    {
+        return new Article(
+            id: $eloquentArticle->id,
+            cod_fab: $eloquentArticle->cod_fab,
+            description: $eloquentArticle->description,
+            weight: $eloquentArticle->weight,
+            with_deduction: $eloquentArticle->with_deduction,
+            series_enabled: $eloquentArticle->series_enabled,
+            measurementUnit: $eloquentArticle->measurementUnit->toDomain($eloquentArticle->measurementUnit),
+            brand: $eloquentArticle->brand->toDomain($eloquentArticle->brand),
+            category: $eloquentArticle->category->toDomain($eloquentArticle->category),
+            subCategory: $eloquentArticle->subCategory->toDomain($eloquentArticle->subCategory),
+            location: $eloquentArticle->location,
+            warranty: $eloquentArticle->warranty,
+            tariff_rate: $eloquentArticle->tariff_rate,
+            igv_applicable: $eloquentArticle->igv_applicable,
+            plastic_bag_applicable: $eloquentArticle->plastic_bag_applicable,
+            min_stock: $eloquentArticle->min_stock,
+            currencyType: $eloquentArticle->currencyType->toDomain($eloquentArticle->currencyType),
+            purchase_price: $eloquentArticle->purchase_price,
+            public_price: $eloquentArticle->public_price,
+            distributor_price: $eloquentArticle->distributor_price,
+            authorized_price: $eloquentArticle->authorized_price,
+            public_price_percent: $eloquentArticle->public_price_percent,
+            distributor_price_percent: $eloquentArticle->distributor_price_percent,
+            authorized_price_percent: $eloquentArticle->authorized_price_percent,
+            status: $eloquentArticle->status,
+            user: $eloquentArticle->user->toDomain($eloquentArticle->user),
+            venta: $eloquentArticle->venta,
+            company: $eloquentArticle->company->toDomain($eloquentArticle->company),
+            image_url: $eloquentArticle->image_url,
+            filtNameEsp: $eloquentArticle->filt_NameEsp,
+            statusEsp: $eloquentArticle->status_Esp,
+            state_modify_article: $eloquentArticle->state_modify_article,
+        );
     }
 
 }

@@ -25,4 +25,19 @@ class EloquentIngressReasonRepository implements IngressReasonRepositoryInterfac
             );
         })->toArray();
     }
+
+    public function findById(int $id): ?IngressReason
+    {
+        $eloquentIngressReason = EloquentIngressReason::find($id);
+
+        if (!$eloquentIngressReason) {
+            return null;
+        }
+
+        return new IngressReason(
+            id: $eloquentIngressReason->id,
+            description: $eloquentIngressReason->description,
+            status: $eloquentIngressReason->status
+        );
+    }
 }

@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             PaymentMethodSeeder::class,
             DocumentTypeSeeder::class,
             CustomerDocumentTypeSeeder::class,
+            PercentageIgvSeeder::class,
             CustomerSeeder::class,
             CustomerAddressSeeder::class,
             MenuSeeder::class,

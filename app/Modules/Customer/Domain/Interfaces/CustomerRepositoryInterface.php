@@ -15,4 +15,5 @@ interface CustomerRepositoryInterface
     public function findAllCustomerExceptionCompanies(?string $customerName): array;
     public function saveCustomerBySunatApi(Customer $customer): ?Customer;
     public function findCustomerByDocumentNumber(string $documentNumber): ?Customer;
+    public function findAllCustomersSuppliers(): array;
 }

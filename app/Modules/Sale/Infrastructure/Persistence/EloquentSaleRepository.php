@@ -245,7 +245,6 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'observations' => $sale->getObservations(),
             'currency_type_id' => $sale->getCurrencyType()->getId(),
             'subtotal' => $sale->getSubtotal(),
-            'inafecto' => $sale->getInafecto(),
             'igv' => $sale->getIgv(),
             'total' => $sale->getTotal(),
             'saldo' => $sale->getTotal(),

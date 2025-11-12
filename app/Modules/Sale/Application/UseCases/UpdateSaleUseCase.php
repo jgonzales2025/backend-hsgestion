@@ -63,7 +63,6 @@ readonly class UpdateSaleUseCase
             observations: $saleDTO->observations,
             currencyType: $currencyType,
             subtotal: $saleDTO->subtotal,
-            inafecto: $saleDTO->inafecto,
             igv: $saleDTO->igv,
             total: $saleDTO->total,
             saldo: $saleDTO->saldo,

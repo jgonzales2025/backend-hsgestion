@@ -7,4 +7,5 @@ use App\Modules\EntryItemSerial\Domain\Entities\EntryItemSerial;
 interface EntryItemSerialRepositoryInterface{
 
     public function save(EntryItemSerial $entryItemSerial):?EntryItemSerial;
+    public function findSerialsByEntryGuideId(int $entryGuideId): array;
 }

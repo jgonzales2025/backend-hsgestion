@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\Articles\Infrastructure\Persistence;
 
 use App\Modules\Articles\Domain\Entities\Article;
@@ -6,10 +7,10 @@ use App\Modules\Articles\Domain\Entities\ArticleForSale;
 use App\Modules\Articles\Domain\Entities\ArticleNotasDebito;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
-use App\Modules\Branch\Infrastructure\Models\EloquentBranch; 
+use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\ExchangeRate\Infrastructure\Models\EloquentExchangeRate;
 use App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle;
-use Illuminate\Support\Collection; 
+use Illuminate\Support\Collection;
 
 class EloquentArticleRepository implements ArticleRepositoryInterface
 {
@@ -76,8 +77,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 return $query->where(function ($q) use ($name) {
                     $q->where('description', 'like', "%{$name}%")
                         ->orWhere('cod_fab', 'like', "%{$name}%")
-                        
-                        ;
+
+                    ;
                 });
             })
             ->orderByDesc('created_at')
@@ -146,7 +147,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 status_Esp: $article->statusEsp
 
             );
-
         })->toArray();
     }
 
@@ -211,12 +211,15 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticlePriceConvertion(string $date, ?string $description): array
+    public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId): array
     {
         $companyId = request()->get('company_id');
         $exchangeRate = EloquentExchangeRate::select('parallel_rate')->where('date', $date)->first();
 
         $articles = EloquentArticle::where('company_type_id', $companyId)
+            ->when($articleId, function ($query, $id) {
+                return $query->where('id', $id);
+            })
             ->when($description, function ($query, $name) {
                 return $query->where(function ($q) use ($name) {
                     $q->where('description', 'like', "%{$name}%")
@@ -303,7 +306,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
             );
         })->toArray();
-
     }
 
     public function findAllExcel(?string $description): Collection

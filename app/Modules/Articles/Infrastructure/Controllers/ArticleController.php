@@ -241,18 +241,26 @@ class ArticleController extends Controller
     );
   }
 
-  public function indexArticlesForSales(Request $request): array
+  public function indexArticlesForSales(Request $request): array|JsonResponse
   {
     $description = $request->query("description");
+    $articleId = $request->query("article_id");
 
     $validatedData = $request->validate([
         'date' => 'date|required'
     ]);
 
     $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);
-    $articles = $articlesUseCase->execute($validatedData['date'], $description);
+    $articles = $articlesUseCase->execute($validatedData['date'], $description, $articleId);
 
-    return ArticleForSalesResource::collection($articles)->resolve();
+    if ($articleId)
+    {
+      return response()->json((new ArticleForSalesResource($articles[0]))->resolve());
+    }
+    else{
+      return ArticleForSalesResource::collection($articles)->resolve();
+    }
+    
   }
   
   public function storeNotesDebito(StoreArticleNotasDebito $request): JsonResponse

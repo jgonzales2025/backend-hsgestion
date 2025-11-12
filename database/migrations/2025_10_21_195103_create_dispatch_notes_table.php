@@ -46,7 +46,7 @@ return new class extends Migration {
             $table->string('transfer_type');
             $table->integer('vehicle_type')->boolean();
             $table->foreignId('document_type_id')->nullable()->constrained('document_types');
-            $table->foreignId('destination_branch_client')->nullable()->constrained('customer_addresses');
+            $table->foreignId('destination_branch_client')->nullable()->constrained('customer_addresses')->onDelete('set null')->onUpdate('cascade');;
             $table->foreignId('customer_id')->nullable()->constrained('customers');
             $table->foreignId('supplier_id')->nullable()->constrained('customers');
             $table->integer('address_supplier_id')->nullable(); 

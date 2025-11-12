@@ -65,7 +65,8 @@ class DispatchNote
         ?int $destination_branch_client,
         int $customer_id,
         ?Customer $supplier,
-        ?Customer $address_supplier 
+        ?Customer $address_supplier,
+        ?string $created_at
 
     ) {
         $this->id = $id;
@@ -94,6 +95,7 @@ class DispatchNote
         $this->customer_id = $customer_id;
         $this->supplier = $supplier;
         $this->address_supplier = $address_supplier;
+        $this->created_at = $created_at;
     }
 
     // Getters

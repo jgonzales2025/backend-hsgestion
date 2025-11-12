@@ -87,7 +87,7 @@ class EloquentDispatchNote extends Model
     {
         return $this->belongsTo(EloquentBranch::class, 'destination_branch_id');
     }
-    public function destination_branch_client(): BelongsTo
+    public function destinationBranchClient(): BelongsTo
     {
         return $this->belongsTo(EloquentCustomerAddress::class, 'destination_branch_client');
     }

@@ -1,16 +1,10 @@
 <?php
 
 namespace App\Modules\DispatchNotes\Infrastructure\Resource;
-use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
-use App\Modules\Customer\Domain\Entities\Customer;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\CustomerAddress\Infrastructure\Models\EloquentCustomerAddress;
-use App\Modules\RecordType\Infrastructure\Models\EloquentRecordType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Storage;
-
 class DispatchNoteResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -68,8 +62,8 @@ class DispatchNoteResource extends JsonResource
                 'description' => $this->resource->getDocumentType()->getDescription(),
             ],
             'destination_branch_client_id' => (function () {
-                $code = EloquentCustomerAddress::where('id', $this->resource->getdestination_branch_client())->first(); 
-    
+                $code = EloquentCustomerAddress::where('id', $this->resource->getdestination_branch_client())->first();
+
                 if (!$code) {
                     return [];
                 }
@@ -77,17 +71,15 @@ class DispatchNoteResource extends JsonResource
                 return (object) [
                     'id' => $code->id,
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
-                    'name'=> $code->address,
+                    'name' => $code->address,
                     // 'name' => $code->address[0]['address'],
-
+    
                 ];
             })(),
 
-            'date' => $this->resource->getCreatedFecha(),
+            'customer' => (function () {
+                $code = EloquentCustomer::where('id', $this->resource->getCustomerId())->first();
 
-            'customer' =>(function () {
-                $code = EloquentCustomer::where('id', $this->resource->getCustomerId())->first(); 
-    
                 if (!$code) {
                     return [];
                 }
@@ -103,16 +95,15 @@ class DispatchNoteResource extends JsonResource
             'supplier' => [
                 'id' => $this->resource->getSupplier()?->getId(),
                 'status' => $this->resource->getSupplier()?->getStatus() == 1 ? 'Activo' : 'Inactivo',
-                'name' => $this->resource->getSupplier()?->getName(),
-                // 'address' => $this->resource->getSupplier()?->getAddresses()
+                'name' => $this->resource->getSupplier()?->getName(), 
             ],
             'address_supplier' => [
                 'id' => $this->resource->getAddressSupplier()?->getId(),
                 'status' => $this->resource->getAddressSupplier()?->getStatus() == 1 ? 'Activo' : 'Inactivo',
                 'name' => $this->resource->getAddressSupplier()?->getName(),
             ],
-             'created_at' => $this->resource->getCreatedFecha(),
-              
+            'created_at' => $this->resource->getCreatedFecha(),
+
         ];
     }
 }

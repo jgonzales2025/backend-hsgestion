@@ -89,6 +89,7 @@ class CreateDispatchNoteUseCase
     }else{
       $supplierAddress = null;
     }
+    
 
 
     $dispatchNote = new DispatchNote(
@@ -117,7 +118,8 @@ class CreateDispatchNoteUseCase
       destination_branch_client: $data->destination_branch_client,
       customer_id: $data->customer_id,
       supplier: $supplier,
-      address_supplier: $supplierAddress
+      address_supplier: $supplierAddress,
+      created_at: ''
 
     );
     return $this->dispatchNoteRepository->save($dispatchNote);

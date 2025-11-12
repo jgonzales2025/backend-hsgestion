@@ -12,7 +12,8 @@ use App\Modules\EmissionReason\Application\UseCases\FindByIdEmissionReasonUseCas
 use App\Modules\EntryGuides\Application\DTOS\EntryGuideDTO;
 use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
-
+use App\Modules\IngressReason\Application\UseCases\FindByIdIngressReasonUseCase;
+use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
 
 class UpdateEntryGuideUseCase{
     public function __construct(
@@ -20,48 +21,35 @@ class UpdateEntryGuideUseCase{
         private readonly CompanyRepositoryInterface $companyRepositoryInterface,
         private readonly BranchRepositoryInterface $branchRepositoryInterface,
         private readonly CustomerRepositoryInterface $customerRepositoryInterface,
+        private readonly IngressReasonRepositoryInterface $ingressReasonRepositoryInterface,
     ){}
 
     public function execute(EntryGuideDTO $entryGuideDTO, $id):?EntryGuide
     {
         $companyUseCase = new FindByIdCompanyUseCase($this->companyRepositoryInterface);
         $company = $companyUseCase->execute($entryGuideDTO->cia_id);
-        if (!$company) {
-            return $company = null;
-        }
+
         $branchUseCase = new FindByIdBranchUseCase($this->branchRepositoryInterface);
         $branch = $branchUseCase->execute($entryGuideDTO->branch_id);
-        if (!$branch) {
-            return $branch = null;
-        }
+
         $customerUseCase = new FindByIdCustomerUseCase($this->customerRepositoryInterface);
         $customer = $customerUseCase->execute($entryGuideDTO->customer_id);
-        if (!$customer) {
-            return $customer = null;
-        }
-        // $entryGuideUseCase = new FindByIdEmissionReasonUseCase(entryGuideRepositoryInterface: $this->entryGuideRepositoryInterface);
-        // $entryGuide = $entryGuideUseCase->execute($entryGuideDTO->ingress_reason_id);
-        // if ($entryGuide) {
-        //     return $entryGuide = null;
-        // }
-       
+
+        $ingressReasonUseCase = new FindByIdIngressReasonUseCase($this->ingressReasonRepositoryInterface);
+        $ingressReason = $ingressReasonUseCase->execute($entryGuideDTO->ingress_reason_id);
         
         $entryGuide = new EntryGuide(
             id:$id,
             cia: $company,
             branch: $branch,
-            serie: $entryGuideDTO->serie,
-            correlative: $entryGuideDTO->correlative,
+            serie: $entryGuideDTO->serie ?? null,
+            correlative: $entryGuideDTO->correlative ?? null,
             date: $entryGuideDTO->date,
             customer: $customer,
-            guide_serie_supplier: $entryGuideDTO->guide_serie_supplier,
-            guide_correlative_supplier: $entryGuideDTO->guide_correlative_supplier,
-            invoice_serie_supplier: $entryGuideDTO->invoice_serie_supplier,
-            invoice_correlative_supplier: $entryGuideDTO->invoice_correlative_supplier,
             observations: $entryGuideDTO->observations,
-            ingressReason: null,
-            reference_serie: $entryGuideDTO->reference_serie,
-            reference_correlative: $entryGuideDTO->reference_correlative,
+            ingressReason: $ingressReason,
+            reference_po_serie: $entryGuideDTO->reference_po_serie ?? null,
+            reference_po_correlative: $entryGuideDTO->reference_po_correlative ?? null,
             status: $entryGuideDTO->status,
         );
         return $this->entryGuideRepositoryInterface->update($entryGuide);

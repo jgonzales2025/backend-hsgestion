@@ -11,8 +11,8 @@ class EntryGuide
     private ?int $id;
     private ?Company $cia;
     private ?Branch $branch;
-    private string $serie;
-    private string $correlative;
+    private ?string $serie;
+    private ?string $correlative;
     private string $date;
     private ?Customer $customer;
     private string $observations;
@@ -25,8 +25,8 @@ class EntryGuide
         ?int $id,
         ?Company $cia,
         ?Branch $branch,
-        string $serie,
-        string $correlative,
+        ?string $serie,
+        ?string $correlative,
         string $date,
         ?Customer $customer,
         string $observations,
@@ -53,11 +53,11 @@ class EntryGuide
     {
         return $this->id;
     }
-    public function getSerie(): string
+    public function getSerie(): ?string
     {
         return $this->serie;
     }
-    public function getCorrelativo(): string
+    public function getCorrelativo(): ?string
     {
         return $this->correlative;
     }

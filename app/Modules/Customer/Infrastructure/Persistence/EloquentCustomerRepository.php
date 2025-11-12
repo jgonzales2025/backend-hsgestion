@@ -217,4 +217,23 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             'addresses' => $addresses,
         ];
     }
+
+    public function findAllCustomersSuppliers(): array
+    {
+        $customers = EloquentCustomer::query()
+            ->where('st_sales', 1)
+            ->whereIn('record_type_id', [1, 3])
+            ->orderByDesc('created_at')
+            ->get();
+
+        return $customers->map(function (EloquentCustomer $customer) {
+
+            $contactData = $this->getCustomerContactData($customer->id);
+            $phones = $contactData['phones'];
+            $emails = $contactData['emails'];
+            $addresses = $contactData['addresses'];
+
+            return $this->buildCustomer($customer, $phones, $emails, $addresses);
+        })->toArray();
+    }
 }

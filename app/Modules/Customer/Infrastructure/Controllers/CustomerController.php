@@ -7,6 +7,7 @@ use App\Modules\Customer\Application\DTOs\CustomerDTO;
 use App\Modules\Customer\Application\UseCases\CreateCustomerSunatApiUseCase;
 use App\Modules\Customer\Application\UseCases\CreateCustomerUseCase;
 use App\Modules\Customer\Application\UseCases\FindAllCustomersExcludingCompaniesUseCase;
+use App\Modules\Customer\Application\UseCases\FindAllCustomersSuppliers;
 use App\Modules\Customer\Application\UseCases\FindAllCustomersUseCase;
 use App\Modules\Customer\Application\UseCases\FindAllUnassignedCustomerUseCase;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
@@ -229,9 +230,9 @@ class CustomerController extends Controller
         ]);
     }
 
-    public function findAllUnassigned(): array
+    public function findAllSuppliers(): array
     {
-        $customersUseCase = new FindAllUnassignedCustomerUseCase($this->customerRepository);
+        $customersUseCase = new FindAllCustomersSuppliers($this->customerRepository);
         $customers = $customersUseCase->execute();
 
         return CustomerAllResource::collection($customers)->resolve();

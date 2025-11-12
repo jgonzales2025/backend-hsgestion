@@ -16,6 +16,7 @@ class DocumentTypeResource extends JsonResource
             'st_sales' => $this->resource->getStSales(),
             'st_purchases' => $this->resource->getStPurchases(),
             'st_collections' => $this->resource->getStCollections(),
+            'st_invoices' => $this->resource->getStInvoices(),
         ];
 
     }

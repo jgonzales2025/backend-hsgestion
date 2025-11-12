@@ -7,6 +7,7 @@ class PurchaseOrderArticle
     private int $id;
     private int $purchase_order_id;
     private int $article_id;
+    private ?string $cod_fab;
     private string $description;
     private float $weight;
     private int $quantity;
@@ -21,11 +22,13 @@ class PurchaseOrderArticle
         float $weight,
         int $quantity,
         float $purchase_price,
-        float $subtotal
+        float $subtotal,
+        ?string $cod_fab = null,
     ) {
         $this->id = $id;
         $this->purchase_order_id = $purchase_order_id;
         $this->article_id = $article_id;
+        $this->cod_fab = $cod_fab;
         $this->description = $description;
         $this->weight = $weight;
         $this->quantity = $quantity;
@@ -36,6 +39,7 @@ class PurchaseOrderArticle
     public function getId(): int { return $this->id; }
     public function getPurchaseOrderId(): int { return $this->purchase_order_id; }
     public function getArticleId(): int { return $this->article_id; }
+    public function getCodFab(): ?string { return $this->cod_fab; }
     public function getDescription(): string { return $this->description; }
     public function getWeight(): float { return $this->weight; }
     public function getQuantity(): int { return $this->quantity; }

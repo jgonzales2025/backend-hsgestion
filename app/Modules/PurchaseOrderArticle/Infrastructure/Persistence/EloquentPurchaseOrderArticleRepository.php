@@ -29,7 +29,8 @@ class EloquentPurchaseOrderArticleRepository implements PurchaseOrderArticleRepo
             weight: $purchaseOrderArticleEloquent->weight,
             quantity: $purchaseOrderArticleEloquent->quantity,
             purchase_price: $purchaseOrderArticleEloquent->purchase_price,
-            subtotal: $purchaseOrderArticleEloquent->subtotal
+            subtotal: $purchaseOrderArticleEloquent->subtotal,
+            cod_fab: $purchaseOrderArticleEloquent->article->cod_fab
         );
     }
 
@@ -46,7 +47,8 @@ class EloquentPurchaseOrderArticleRepository implements PurchaseOrderArticleRepo
                 weight: $article->weight,
                 quantity: $article->quantity,
                 purchase_price: $article->purchase_price,
-                subtotal: $article->subtotal
+                subtotal: $article->subtotal,
+                cod_fab: $article->article->cod_fab
             );
         })->toArray();
     }

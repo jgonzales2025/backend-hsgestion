@@ -13,6 +13,7 @@ class PurchaseOrderArticleResource extends JsonResource
             'id' => $this->resource->getId(),
             'purchase_order_id' => $this->resource->getPurchaseOrderId(),
             'article_id' => $this->resource->getArticleId(),
+            'cod_fab' => $this->resource->getCodFab(),
             'description' => $this->resource->getDescription(),
             'weight' => $this->resource->getWeight(),
             'quantity' => $this->resource->getQuantity(),

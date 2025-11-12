@@ -163,6 +163,7 @@ Route::get('dispatch-Article/{id}', [DispatchArticleController::class, 'show']);
 // Customers - Clientes
 Route::get('customers', [CustomerController::class, 'index']);
 Route::get('customers/unassigned', [CustomerController::class, 'findAllUnassigned']);
+Route::get('customers-suppliers', [CustomerController::class, 'findAllSuppliers']); // Traer clientes que son proveedores
 Route::get('customers/{id}', [CustomerController::class, 'show']);
 Route::put('customers/{id}', [CustomerController::class, 'update']);
 
@@ -200,6 +201,7 @@ Route::get('ingress-reasons', [IngressReasonController::class, 'index']);
 // Tipos de documentos
 Route::get('document-types', [DocumentTypeController::class, 'index']);
 Route::get('document-types/sales', [DocumentTypeController::class, 'indexSales']);
+Route::get('document-types/invoices', [DocumentTypeController::class, 'indexInvoices']);
 
 // Banks - Bancos
 Route::get('banks', [BankController::class, 'index']);

@@ -19,6 +19,7 @@ return new class extends Migration
             $table->boolean('st_sales')->default(true);
             $table->boolean('st_purchases')->default(true);
             $table->boolean('st_collections')->default(true);
+            $table->boolean('st_invoices')->default(false);
             $table->integer('status')->default(1);
             $table->timestamps();
         });

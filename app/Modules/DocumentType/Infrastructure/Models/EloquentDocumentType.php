@@ -9,7 +9,7 @@ class EloquentDocumentType extends Model
 {
     protected $table = 'document_types';
 
-    protected $fillable = ['cod_sunat', 'description', 'abbreviation', 'st_sales', 'st_purchases', 'st_collections', 'status'];
+    protected $fillable = ['cod_sunat', 'description', 'abbreviation', 'st_sales', 'st_purchases', 'st_collections', 'st_invoices', 'status'];
 
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -23,6 +23,7 @@ class EloquentDocumentType extends Model
             st_sales: $eloquentDocumentType->st_sales,
             st_purchases: $eloquentDocumentType->st_purchases,
             st_collections: $eloquentDocumentType->st_collections,
+            st_invoices: $eloquentDocumentType->st_invoices,
             status: $eloquentDocumentType->status
         );
     }

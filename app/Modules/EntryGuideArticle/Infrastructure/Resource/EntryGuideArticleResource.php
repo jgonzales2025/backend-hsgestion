@@ -15,10 +15,7 @@ class EntryGuideArticleResource extends JsonResource
             'article_id' => $this->resource->getArticle()->getId(),
             'description' => $this->resource->getDescription(),
             'quantity' => $this->resource->getQuantity(),
-            'serials' => $this->when(
-                isset($this->resource->serials) && !empty($this->resource->serials),
-                array_map(fn($itemSerial) => $itemSerial->getSerial(), $this->resource->serials ?? [])
-            )
+            'serials' => $this->resource->serials ?? []
         ];
     }
 }

@@ -20,7 +20,6 @@ class SaleDTO
     public ?string $observations;
     public $currency_type_id;
     public $subtotal;
-    public $inafecto;
     public $igv;
     public $total;
     public ?float $saldo;
@@ -50,7 +49,6 @@ class SaleDTO
         $this->observations = $data['observations'] ?? null;
         $this->currency_type_id = $data['currency_type_id'];
         $this->subtotal = $data['subtotal'];
-        $this->inafecto = $data['inafecto'];
         $this->igv = $data['igv'];
         $this->total = $data['total'];
         $this->saldo = $data['saldo'] ?? null;

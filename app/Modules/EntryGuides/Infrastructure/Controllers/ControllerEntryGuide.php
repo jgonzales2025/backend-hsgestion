@@ -48,35 +48,48 @@ class ControllerEntryGuide extends Controller
     public function index(): JsonResponse
     {
         $entryGuideUseCase = new FindAllEntryGuideUseCase($this->entryGuideRepositoryInterface);
-        $entryGuide = $entryGuideUseCase->execute();
+        $entryGuides = $entryGuideUseCase->execute();
 
         $result = [];
 
-        foreach ($entryGuide as $entryGuides) {
-            $entry = $this->entryGuideArticleRepositoryInterface->findById($entryGuides->getId());
-            $result[] = [
-                'entryGuide' => (new EntryGuideResource($entryGuides))->resolve(),
-                'purchase_guide_articles' => EntryGuideArticleResource::collection($entry)->resolve()
-            ];
+        foreach ($entryGuides as $entryGuide) {
+            $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
+            $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
+
+            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle) {
+                $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
+                return $article;
+            }, $articles);
+
+            $response = (new EntryGuideResource($entryGuide))->resolve();
+            $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
+            $result[] = $response;
         }
 
         return response()->json($result, 200);
     }
+
     public function show($id): JsonResponse
     {
         $entryGuideUseCase = new FindByIdEntryGuideUseCase($this->entryGuideRepositoryInterface);
         $entryGuide = $entryGuideUseCase->execute($id);
 
         $entryArticles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
+        $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
+        $entryArticles = array_map(function ($article) use ($serialsByArticle) {
+            $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
+            return $article;
+        }, $entryArticles);
 
         return response()->json(
             [
                 'entryGuide' => (new EntryGuideResource($entryGuide))->resolve(),
-                'entry_guide_articles' => EntryGuideArticleResource::collection($entryArticles)->resolve()
+                'articles' => EntryGuideArticleResource::collection($entryArticles)->resolve()
             ],
             200
         );
     }
+    
     public function store(EntryGuideRequest $request): JsonResponse
     {
         $entryGuideDTO = new EntryGuideDTO($request->validated());
@@ -90,35 +103,8 @@ class ControllerEntryGuide extends Controller
         );
         $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
-        $createEntryGuideArticleUseCase = new CreateEntryGuideArticle($this->entryGuideArticleRepositoryInterface, $this->articleRepositoryInterface);
-        $entryGuideArticle = array_map(function ($q) use ($entryGuide, $createEntryGuideArticleUseCase) {
-            $entryGuideArticleDTO = new EntryGuideArticleDTO([
-                'entry_guide_id' => $entryGuide->getId(),
-                'article_id' => $q['article_id'],
-                'description' => $q['description'],
-                'quantity' => $q['quantity'],
-            ]);
-            $guideArticle = $createEntryGuideArticleUseCase->execute($entryGuideArticleDTO);
-
-            // Array para almacenar los seriales
-            $serials = [];
-
-            if (!empty($q['serials'])) {
-                foreach ($q['serials'] as $serial) {
-                    $itemSerialDTO = new EntryItemSerialDTO([
-                        'entry_guide' => $entryGuide,
-                        'article' => $guideArticle,
-                        'serial' => $serial
-                    ]);
-                    $itemSerialUseCase = new CreateEntryItemSerialUseCase($this->entryItemSerialRepositoryInterface);
-                    $itemSerial = $itemSerialUseCase->execute($itemSerialDTO);
-                    $serials[] = $itemSerial;
-                }
-            }
-            $guideArticle->serials = $serials;
-            return $guideArticle;
-
-        }, $request->validated()['entry_guide_articles']);
+        
+        $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
 
         return response()->json(
             [
@@ -169,21 +155,38 @@ class ControllerEntryGuide extends Controller
         );
 
     }
-    private function createEntryGuideArticles($sale, array $entryGuideArticle): array
+    private function createEntryGuideArticles($entryGuide, array $articlesData): array
     {
 
-        $createSaleArticleUseCase = new CreateEntryGuideArticle($this->entryGuideArticleRepositoryInterface);
-
-        return array_map(function ($q) use ($sale, $createSaleArticleUseCase) {
-            $saleArticleDTO = new EntryGuideArticleDTO([
-                'entry_guide_id' => $sale->getId(),
+        $createEntryGuideArticleUseCase = new CreateEntryGuideArticle($this->entryGuideArticleRepositoryInterface, $this->articleRepositoryInterface);
+        return array_map(function ($q) use ($entryGuide, $createEntryGuideArticleUseCase) {
+            $entryGuideArticleDTO = new EntryGuideArticleDTO([
+                'entry_guide_id' => $entryGuide->getId(),
                 'article_id' => $q['article_id'],
                 'description' => $q['description'],
                 'quantity' => $q['quantity'],
             ]);
+            $guideArticle = $createEntryGuideArticleUseCase->execute($entryGuideArticleDTO);
 
-            return $createSaleArticleUseCase->execute($saleArticleDTO);
-        }, $entryGuideArticle);
+            // Array para almacenar los seriales
+            $serials = [];
+
+            if (!empty($q['serials'])) {
+                foreach ($q['serials'] as $serial) {
+                    $itemSerialDTO = new EntryItemSerialDTO([
+                        'entry_guide' => $entryGuide,
+                        'article' => $guideArticle,
+                        'serial' => $serial
+                    ]);
+                    $itemSerialUseCase = new CreateEntryItemSerialUseCase($this->entryItemSerialRepositoryInterface);
+                    $itemSerial = $itemSerialUseCase->execute($itemSerialDTO);
+                    $serials[] = $itemSerial;
+                }
+            }
+            $guideArticle->serials = $serials;
+
+            return $guideArticle;
+        }, $articlesData);
     }
     private function createEntryItemSerialGuideArticle($sale, array $entryGuideArticle): array
     {
@@ -192,7 +195,7 @@ class ControllerEntryGuide extends Controller
 
         return array_map(function ($q) use ($sale, $createSaleArticleUseCase) {
             $saleArticleDTO = new EntryItemSerialDTO([
-                'purchase_guide_id' => $sale->getId(),
+                'entry_guide_id' => $sale->getId(),
                 'article_id' => $q['article_id'],
                 'serial' => $q['serial'],
             ]);

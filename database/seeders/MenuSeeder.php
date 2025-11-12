@@ -119,12 +119,23 @@ class MenuSeeder extends Seeder
         ]);
 
         Menu::create([
+            'name' => 'caja_caja_chica',
+            'label' => 'Caja Chica',
+            'route' => '/caja/caja-chica',
+            'permission' => 'caja.caja_chica',
+            'parent_id' => $caja->id,
+            'order' => 1,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
+        Menu::create([
             'name' => 'caja_cancelacion_facturas',
             'label' => 'Cancelación de Facturas',
             'route' => '/caja/cancelacion-facturas',
             'permission' => 'caja.cancelacion_facturas',
             'parent_id' => $caja->id,
-            'order' => 1,
+            'order' => 2,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -135,7 +146,7 @@ class MenuSeeder extends Seeder
             'route' => '/caja/parte-diario',
             'permission' => 'caja.parte_diario',
             'parent_id' => $caja->id,
-            'order' => 2,
+            'order' => 3,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -146,7 +157,7 @@ class MenuSeeder extends Seeder
             'route' => '/caja/registro-cobranzas',
             'permission' => 'caja.registro_cobranzas',
             'parent_id' => $caja->id,
-            'order' => 3,
+            'order' => 4,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -157,7 +168,7 @@ class MenuSeeder extends Seeder
             'route' => '/caja/deposito-cheques',
             'permission' => 'caja.deposito_cheques',
             'parent_id' => $caja->id,
-            'order' => 4,
+            'order' => 5,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -168,7 +179,7 @@ class MenuSeeder extends Seeder
             'route' => '/caja/deposito-tarjetas',
             'permission' => 'caja.deposito_tarjetas',
             'parent_id' => $caja->id,
-            'order' => 5,
+            'order' => 6,
             'status' => 1,
             'type' => 'item',
         ]);
@@ -179,7 +190,7 @@ class MenuSeeder extends Seeder
             'route' => '/caja/consulta-voucher',
             'permission' => 'caja.consulta_voucher',
             'parent_id' => $caja->id,
-            'order' => 6,
+            'order' => 7,
             'status' => 1,
             'type' => 'item',
         ]);

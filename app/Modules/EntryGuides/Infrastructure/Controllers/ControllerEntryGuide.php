@@ -74,6 +74,10 @@ class ControllerEntryGuide extends Controller
         $entryGuideUseCase = new FindByIdEntryGuideUseCase($this->entryGuideRepositoryInterface);
         $entryGuide = $entryGuideUseCase->execute($id);
 
+        if (!$entryGuide) {
+            return response()->json(['message' => 'Guía de ingreso no encontrada'], 404);
+        }
+
         $entryArticles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
         $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
         $entryArticles = array_map(function ($article) use ($serialsByArticle) {
@@ -121,7 +125,7 @@ class ControllerEntryGuide extends Controller
         $entryGuide = $entryGuideUseCase->execute($id);
 
         if (!$entryGuide) {
-            return response()->json(['message' => ' no encontrada'], 404);
+            return response()->json(['message' => 'Guia de ingreso no encontrada'], 404);
         }
 
         $entryGuideDTO = new EntryGuideDTO($request->validated());
@@ -130,28 +134,22 @@ class ControllerEntryGuide extends Controller
             $this->companyRepositoryInterface,
             $this->branchRepositoryInterface,
             $this->customerRepositoryInterface,
+            $this->ingressReasonRepositoryInterface,
         );
 
         $entryGuide = $entryGuideUseCase->execute($entryGuideDTO, $id);
 
-        $this->entryGuideArticleRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
-
-
-
-        $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
-
         $this->entryItemSerialRepositoryInterface->deleteByIdEntryItemSerial($entryGuide->getId());
-
-        $entryGuideArticles = $this->createEntryItemSerialGuideArticle($entryGuide, $request->validated()['entry_item_serial']);
+        $this->entryGuideArticleRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
+        
+        $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
 
         return response()->json(
             [
                 'entryGuide' => (new EntryGuideResource($entryGuide))->resolve(),
-                'entry_guide_articles' => EntryGuideArticleResource::collection($entryGuideArticle)->resolve(),
-                'entry_item_serials' => EntryItemSerialResource::collection($entryGuideArticles)->resolve()
-
+                'articles' => EntryGuideArticleResource::collection($entryGuideArticle)->resolve()
             ],
-            201
+            200
         );
 
     }
@@ -187,20 +185,5 @@ class ControllerEntryGuide extends Controller
 
             return $guideArticle;
         }, $articlesData);
-    }
-    private function createEntryItemSerialGuideArticle($sale, array $entryGuideArticle): array
-    {
-
-        $createSaleArticleUseCase = new CreateEntryItemSerialUseCase($this->entryItemSerialRepositoryInterface);
-
-        return array_map(function ($q) use ($sale, $createSaleArticleUseCase) {
-            $saleArticleDTO = new EntryItemSerialDTO([
-                'entry_guide_id' => $sale->getId(),
-                'article_id' => $q['article_id'],
-                'serial' => $q['serial'],
-            ]);
-
-            return $createSaleArticleUseCase->execute($saleArticleDTO);
-        }, $entryGuideArticle);
     }
 }

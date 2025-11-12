@@ -6,7 +6,7 @@ class EntryGuideDTO
 {
     public $cia_id;
     public $branch_id;
-    public string $serie;
+    public ?string $serie;
     public ?string $correlative;
     public $date;
     public $customer_id;
@@ -19,7 +19,7 @@ class EntryGuideDTO
     public function __construct($array){
         $this->cia_id = $array['cia_id'];
         $this->branch_id = $array['branch_id'];
-        $this->serie = $array['serie'];
+        $this->serie = $array['serie'] ?? null;
         $this->correlative = $array['correlative'] ?? null;
         $this->date = $array['date'];
         $this->customer_id = $array['customer_id'];

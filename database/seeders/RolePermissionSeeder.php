@@ -32,6 +32,7 @@ class RolePermissionSeeder extends Seeder
             'compras.orden_compra_proveedores',
 
             // CAJA
+            'caja.caja_chica',
             'caja.cancelacion_facturas',
             'caja.parte_diario',
             'caja.registro_cobranzas',
@@ -260,6 +261,7 @@ class RolePermissionSeeder extends Seeder
             ['role_id' => $admin->id, 'menu_id' => 103],
             ['role_id' => $admin->id, 'menu_id' => 104],
             ['role_id' => $admin->id, 'menu_id' => 105],
+            ['role_id' => $admin->id, 'menu_id' => 106],
         ]);
 
         // Gerente

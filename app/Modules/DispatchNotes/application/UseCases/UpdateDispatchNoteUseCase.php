@@ -108,7 +108,8 @@ $data->destination_branch_id = $destination?->getId();
       destination_branch_client: $data->destination_branch_client,
       customer_id: $data->customer_id,
       supplier: $supplier,
-      address_supplier: $supplierAddress
+      address_supplier: $supplierAddress,
+      created_at: ''
     );
     return $this->dispatchNoteRepository->update($dispatchNote);
   }

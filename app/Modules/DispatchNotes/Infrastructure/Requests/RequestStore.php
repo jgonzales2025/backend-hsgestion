@@ -57,6 +57,12 @@ class RequestStore extends FormRequest
             'serie.required' => 'Debe indicar la serie del documento.',
             'date.required' => 'Debe ingresar una fecha.',
             'total_weight.required' => 'Debe ingresar el peso total.',
+            'customer_id.exists' =>'Selecciona un cliente' ,
+            // 'destination_branch_client_id.exists' =>'la direccion seleccionada no existe en el sistema',
+            // 'address_supplier_id.exists' => 'El cliente seleccionado no existe',
+            // 'supplier_id.exists' => 'El cliente seleccionado no existe',
+            // 'cod_conductor.exists' => 'El conductor seleccionado no existe',
+            // 'destination_branch_id.exists'=>'la destanacion de la sucursal no existe en el sistema',
         ];
     }
 }

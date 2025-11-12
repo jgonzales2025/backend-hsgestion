@@ -1,110 +1,77 @@
 <?php
 
 namespace App\Modules\PettyCashReceipt\Domain\Entities;
-
-use App\Modules\Company\Domain\Entities\Company;
+ 
 
 class PettyCashReceipt
 {
     private ?int $id;
-    private ?Company $company;
-    private string $tip_doc;
-    private string $serie;
-    private string $correlativo;
-    private string $fecha;
-    private ?string $delivered;
-    private int $reasonCode;
-    private int $currencyType;
+    private ?int $company;
+    private int $document_type;
+    private string $series;
+    private string $correlative;
+    private string $date;
+    private ?string $delivered_to;
+    private int $reason_code;
+    private int $currency_type;
     private float $amount;
-    private string $note;
+    private string $observation;
     private int $status;
-    private ?int $adi_user;
-    private ?string $add_date;
-    private ?int $mod_user;
-    private ?string $modifyDate;
+    private ?int $created_by;
+    private ?string $created_at_manual;
+    private ?int $updated_by;
+    private ?string $updated_at_manual;
 
     public function __construct(
         ?int $id,
-        ?Company $company,
-        string $tip_doc,
-        string $serie,
-        string $correlativo,
-        string $fecha,
-        ?string $delivered,
-        int $reasonCode,
-        int $currencyType,
+        ?int $company,
+        int $document_type,
+        string $series,
+        string $correlative,
+        string $date,
+        ?string $delivered_to,
+        int $reason_code,
+        int $currency_type,
         float $amount,
-        string $note,
+        string $observation,
         int $status,
-        ?int $adi_user,
-        ?string $add_date,
-        ?int $mod_user,
-        ?string $modifyDate
+        ?int $created_by,
+        ?string $created_at_manual,
+        ?int $updated_by,
+        ?string $updated_at_manual
     ) {
         $this->id = $id;
         $this->company = $company;
-        $this->tip_doc = $tip_doc;
-        $this->serie = $serie;
-        $this->correlativo = $correlativo;
-        $this->fecha = $fecha;
-        $this->delivered = $delivered;
-        $this->reasonCode = $reasonCode;
-        $this->currencyType = $currencyType;
+        $this->document_type = $document_type;
+        $this->series = $series;
+        $this->correlative = $correlative;
+        $this->date = $date;
+        $this->delivered_to = $delivered_to;
+        $this->reason_code = $reason_code;
+        $this->currency_type = $currency_type;
         $this->amount = $amount;
-        $this->note = $note;
+        $this->observation = $observation;
         $this->status = $status;
-        $this->adi_user = $adi_user;
-        $this->add_date = $add_date;
-        $this->mod_user = $mod_user;
-        $this->modifyDate = $modifyDate;
-    }
-   public function getId() {
-        return $this->id;
-    }
-    public function getCompany() {
-        return $this->company;
-    }
-    public function getTipDoc() {
-        return $this->tip_doc;
-    }
-    public function getSerie() {
-        return $this->serie;
-    }
-    public function getCorrelativo() {
-        return $this->correlativo;
-    }
-    public function getFecha() {
-        return $this->fecha;
-    }
-    public function getDelivered() {
-        return $this->delivered;
-    }
-    public function getReasonCode() {
-        return $this->reasonCode;
-    }
-    public function getCurrencyType() {
-        return $this->currencyType;
-    }
-    public function getAmount() {
-        return $this->amount;
-    }
-    public function getNote() {
-        return $this->note;
-    }
-    public function getStatus() {
-        return $this->status;
-    }
-    public function getAdiUser() {
-        return $this->adi_user;
-    }
-    public function getAddDate() {
-        return $this->add_date;
-    }
-    public function getModUser() {
-        return $this->mod_user;
-    }
-    public function getModifyDate() {
-        return $this->modifyDate;
+        $this->created_by = $created_by;
+        $this->created_at_manual = $created_at_manual;
+        $this->updated_by = $updated_by;
+        $this->updated_at_manual = $updated_at_manual;
     }
 
+    public function getId(): int|null { return $this->id; }
+    public function getCompany(): int { return $this->company; }
+    public function getDocumentType(): int { return $this->document_type; }
+    public function getSeries(): string { return $this->series; }
+    public function getCorrelative(): string { return $this->correlative; }
+    public function getDate(): string { return $this->date; }
+    public function getDeliveredTo(): ?string { return $this->delivered_to; }
+    public function getReasonCode(): int { return $this->reason_code; }
+    public function getCurrencyType(): int { return $this->currency_type; }
+    public function getAmount(): float { return $this->amount; }
+    public function getObservation(): string { return $this->observation; }
+    public function getStatus(): int { return $this->status; }
+    public function getCreatedBy(): ?int { return $this->created_by; }
+    public function getCreatedAtManual(): ?string { return $this->created_at_manual; }
+    public function getUpdatedBy(): ?int { return $this->updated_by; }
+    public function getUpdatedAtManual(): ?string { return $this->updated_at_manual; }
 }

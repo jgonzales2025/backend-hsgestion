@@ -83,7 +83,6 @@ class DispatchNotesController extends Controller
             $this->documentTypeRepositoryInterface,
             $this->driverRepositoryInterface,
             $this->customerRepositoryInterface,
-            $this->customerAddressRepositoryInterface
         );
 
 
@@ -153,7 +152,6 @@ class DispatchNotesController extends Controller
             $this->documentTypeRepositoryInterface,
             $this->driverRepositoryInterface,
             $this->customerRepositoryInterface,
-            $this->customerAddressRepositoryInterface
         );
         $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO, $dispatchNote);
 

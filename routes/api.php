@@ -28,6 +28,7 @@ use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitContro
 use App\Modules\MonthlyClosure\Infrastructure\Controllers\MonthlyClosureController;
 use App\Modules\PaymentType\Infrastructure\Controllers\PaymentTypeController;
 use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
+use App\Modules\PettyCashReceipt\Infrastructure\Controllers\PettyCashReceiptController;
 use App\Modules\PurchaseOrder\Infrastructure\Controllers\PurchaseOrderController;
 use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
 use App\Modules\ReferenceCode\Infrastructure\Controllers\ReferenceCodeController;
@@ -302,6 +303,12 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/entry-guides/{id}', [ControllerEntryGuide::class, 'show']);
     Route::post('/entry-guides', [ControllerEntryGuide::class, 'store']);
     Route::put('/entry-guides/{id}', [ControllerEntryGuide::class, 'update']);
+
+
+    //PettyCashReceiptUseCase
+   Route::get('/pettyCashReceipt', [PettyCashReceiptController::class, 'index']);
+  Route::post('/pettyCashReceipt', [PettyCashReceiptController::class, 'store']);
+  Route::put('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'update']);
 
 
 

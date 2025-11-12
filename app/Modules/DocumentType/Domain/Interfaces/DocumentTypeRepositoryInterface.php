@@ -11,4 +11,6 @@ interface DocumentTypeRepositoryInterface
     public function findById($id): ?DocumentType;
 
     public function findAllForSales(): array;
+
+    public function findAllForInvoices(): array;
 }

@@ -200,6 +200,7 @@ Route::get('ingress-reasons', [IngressReasonController::class, 'index']);
 // Tipos de documentos
 Route::get('document-types', [DocumentTypeController::class, 'index']);
 Route::get('document-types/sales', [DocumentTypeController::class, 'indexSales']);
+Route::get('document-types/invoices', [DocumentTypeController::class, 'indexInvoices']);
 
 // Banks - Bancos
 Route::get('banks', [BankController::class, 'index']);

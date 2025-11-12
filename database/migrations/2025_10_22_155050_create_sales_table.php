@@ -29,7 +29,7 @@ return new class extends Migration
             $table->text('observations')->nullable();
             $table->foreignId('currency_type_id')->constrained('currency_types')->onDelete('cascade');
             $table->decimal('subtotal', 8, 2);
-            $table->decimal('inafecto', 8, 2);
+            $table->decimal('inafecto', 8, 2)->nullable();
             $table->decimal('igv', 8,2);
             $table->decimal('total', 8, 2);
             $table->decimal('saldo', 8, 2)->nullable();

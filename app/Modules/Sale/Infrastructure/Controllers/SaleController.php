@@ -203,6 +203,8 @@ class SaleController extends Controller
         $saleCreditNoteUseCase = new UpdateCreditNoteUseCase($this->saleRepository, $this->companyRepository, $this->userRepository, $this->noteReasonRepository);
         $saleCreditNoteUpdated = $saleCreditNoteUseCase->execute($saleCreditNoteDTO, $id);
 
+        $this->saleArticleRepository->deleteBySaleId($saleCreditNoteUpdated->getId());
+
         $saleArticles = $this->createSaleArticles($saleCreditNoteUpdated, $request->validated()['sale_articles']);
         $this->logTransaction($request, $saleCreditNoteUpdated);
 

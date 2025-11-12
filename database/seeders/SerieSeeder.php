@@ -16,17 +16,81 @@ class SerieSeeder extends Seeder
         $series = [
             [
                 'company_id' => 1,
-                'serie_number' => '0001',
+                'serie_number' => 'OC01',
                 'branch_id' => 1,
-                'elec_document_type_id' => 0,
+                'elec_document_type_id' => 20,
                 'dir_document_type_id' => 0,
                 'status' => 1
             ],
             [
                 'company_id' => 1,
-                'serie_number' => '0002',
+                'serie_number' => 'OC02',
                 'branch_id' => 2,
-                'elec_document_type_id' => 0,
+                'elec_document_type_id' => 20,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 1,
+                'serie_number' => 'GI01',
+                'branch_id' => 1,
+                'elec_document_type_id' => 15,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 1,
+                'serie_number' => 'GI02',
+                'branch_id' => 2,
+                'elec_document_type_id' => 15,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 1,
+                'serie_number' => 'COT01',
+                'branch_id' => 1,
+                'elec_document_type_id' => 16,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 1,
+                'serie_number' => 'COT02',
+                'branch_id' => 2,
+                'elec_document_type_id' => 16,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 1,
+                'serie_number' => 'RIC01',
+                'branch_id' => 1,
+                'elec_document_type_id' => 18,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 1,
+                'serie_number' => 'RIC02',
+                'branch_id' => 2,
+                'elec_document_type_id' => 18,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 1,
+                'serie_number' => 'REC01',
+                'branch_id' => 1,
+                'elec_document_type_id' => 19,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 1,
+                'serie_number' => 'REC02',
+                'branch_id' => 2,
+                'elec_document_type_id' => 19,
                 'dir_document_type_id' => 0,
                 'status' => 1
             ],
@@ -144,17 +208,81 @@ class SerieSeeder extends Seeder
             ],
             [
                 'company_id' => 2,
-                'serie_number' => '0001',
+                'serie_number' => '0C01',
                 'branch_id' => 1,
-                'elec_document_type_id' => 0,
+                'elec_document_type_id' => 20,
                 'dir_document_type_id' => 0,
                 'status' => 1
             ],
             [
                 'company_id' => 2,
-                'serie_number' => '0002',
+                'serie_number' => 'OC02',
                 'branch_id' => 2,
-                'elec_document_type_id' => 0,
+                'elec_document_type_id' => 20,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 2,
+                'serie_number' => 'GI01',
+                'branch_id' => 1,
+                'elec_document_type_id' => 15,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 2,
+                'serie_number' => 'GI02',
+                'branch_id' => 2,
+                'elec_document_type_id' => 15,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 2,
+                'serie_number' => 'COT01',
+                'branch_id' => 1,
+                'elec_document_type_id' => 16,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 2,
+                'serie_number' => 'COT02',
+                'branch_id' => 2,
+                'elec_document_type_id' => 16,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 2,
+                'serie_number' => 'RIC01',
+                'branch_id' => 1,
+                'elec_document_type_id' => 18,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 2,
+                'serie_number' => 'RIC02',
+                'branch_id' => 2,
+                'elec_document_type_id' => 18,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 2,
+                'serie_number' => 'REC01',
+                'branch_id' => 1,
+                'elec_document_type_id' => 19,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 2,
+                'serie_number' => 'REC02',
+                'branch_id' => 2,
+                'elec_document_type_id' => 19,
                 'dir_document_type_id' => 0,
                 'status' => 1
             ],

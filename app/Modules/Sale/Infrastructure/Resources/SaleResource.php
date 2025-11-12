@@ -63,7 +63,6 @@ class SaleResource extends JsonResource
                 'reference'=>($this->resource->getCurrencyType()->getName()) == "SOLES" ? "S/" : "$",
             ],
             'subtotal' => $isNegative ? -$this->resource->getSubtotal() : $this->resource->getSubtotal(),
-            'inafecto' => $this->resource->getInafecto(),
             'igv' => $isNegative ? -$this->resource->getIgv() : $this->resource->getIgv(),
             'total' => $isNegative ? -$this->resource->getTotal() : $this->resource->getTotal(),
             'saldo' => $isNegative ? -$this->resource->getSaldo() : $this->resource->getSaldo(),

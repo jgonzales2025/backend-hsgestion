@@ -30,7 +30,6 @@ class Sale
     private ?string $observations;
     private CurrencyType $currencyType;
     private float $subtotal;
-    private float $inafecto;
     private float $igv;
     private float $total;
     private ?float $saldo;
@@ -61,7 +60,6 @@ class Sale
         ?string $observations,
         CurrencyType $currencyType,
         float $subtotal,
-        float $inafecto,
         float $igv,
         float $total,
         ?float $saldo,
@@ -91,7 +89,6 @@ class Sale
         $this->observations = $observations;
         $this->currencyType = $currencyType;
         $this->subtotal = $subtotal;
-        $this->inafecto = $inafecto;
         $this->igv = $igv;
         $this->total = $total;
         $this->saldo = $saldo;
@@ -122,7 +119,6 @@ class Sale
     public function getObservations(): string|null { return $this->observations; }
     public function getCurrencyType(): CurrencyType { return $this->currencyType; }
     public function getSubtotal(): float { return $this->subtotal; }
-    public function getInafecto(): float { return $this->inafecto; }
     public function getIgv(): float { return $this->igv; }
     public function getTotal(): float { return $this->total; }
     public function getSaldo(): ?float { return $this->saldo; }

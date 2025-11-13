@@ -41,7 +41,7 @@ class Customer
         ?string $customer_type_name,
         ?string $contact,
         ?bool $is_withholding_applicable,
-        ?int $status,
+        ?int $status = 1,
         int $st_assigned = 0,
         ?array $phones = null,
         ?array $emails = null,

@@ -34,7 +34,7 @@ class CustomerAllResource extends JsonResource
             ],
             'contact' => $this->resource->getContact(),
             'is_withholding_applicable' => $this->resource->isWithholdingApplicable(),
-            'status' => $this->resource->getStatus(),
+            'status' => $this->resource->getStatus() == 1 ? 'Activo' : 'Inactivo',
             'phones' => CustomerPhoneResource::collection($this->resource->getPhones()),
             'emails' => CustomerEmailResource::collection($this->resource->getEmails()),
             'addresses' => CustomerAddressResource::collection($this->resource->getAddresses())

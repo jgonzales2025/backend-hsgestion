@@ -165,6 +165,7 @@ Route::get('customers/unassigned', [CustomerController::class, 'findAllUnassigne
 Route::get('customers-suppliers', [CustomerController::class, 'findAllSuppliers']); // Traer clientes que son proveedores
 Route::get('customers/{id}', [CustomerController::class, 'show']);
 Route::put('customers/{id}', [CustomerController::class, 'update']);
+Route::put('customers-status/{id}', [CustomerController::class, 'updateStatus']);
 
 // Customer phones - Telefonos de clientes
 Route::get('customer-phones', [CustomerPhoneController::class, 'index']);

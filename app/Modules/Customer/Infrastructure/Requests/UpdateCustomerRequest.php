@@ -29,7 +29,6 @@ class UpdateCustomerRequest extends FormRequest
             'customer_type_id' => 'required|integer|exists:customer_types,id',
             'contact' => 'nullable|string|max:100',
             'is_withholding_applicable' => 'sometimes|boolean',
-            'status' => 'sometimes|integer',
 
             'phones' => 'sometimes|array|min:1',
             'phones.*.phone' => 'sometimes|string',

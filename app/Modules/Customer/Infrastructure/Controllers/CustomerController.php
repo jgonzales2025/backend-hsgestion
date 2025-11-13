@@ -53,6 +53,7 @@ use App\Services\ApiSunatService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use App\Modules\Customer\Application\UseCases\UpdateStatusUseCase;
 
 class CustomerController extends Controller
 {
@@ -91,7 +92,6 @@ class CustomerController extends Controller
 
         if ($role == 'Vendedor')
         {
-            Log::info('Creando portfolio para el vendedor');
             $userId = request()->get('user_id');
             $customerPortfolioDTO = new CustomerPortfolioDTO(['customer_ids' => [$customer->getId()], 'user_id' => $userId]);
             $customerPortfolioUseCase = new CreateCustomerPortfolioUseCase($this->customerPortfolioRepository, $this->customerRepository, $this->userRepository);
@@ -324,5 +324,19 @@ class CustomerController extends Controller
             'customer' => (new CustomerResource($customer))->resolve(),
             'address' => $address ? (new CustomerAddressResource($address))->resolve() : null
         ], 201);
+    }
+
+    public function updateStatus(int $id, Request $request): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'status' => 'required|in:0,1',
+        ]);
+
+        $status = $validatedData['status'];
+
+        $updateStatusUseCase = new UpdateStatusUseCase($this->customerRepository);
+        $updateStatusUseCase->execute($id, $status);
+
+        return response()->json(['message' => 'Status actualizado'], 200);
     }
 }

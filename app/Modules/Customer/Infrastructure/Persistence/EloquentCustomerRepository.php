@@ -23,7 +23,6 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
     public function findAll(?string $customerName, ?string $documentNumber): array
     {
         $customers = EloquentCustomer::all()->sortByDesc('created_at');
-
         return $customers->map(function (EloquentCustomer $customer) {
 
             $contactData = $this->getCustomerContactData($customer->id);
@@ -48,7 +47,6 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             'customer_type_id' => $customer->getCustomerTypeId(),
             'contact' => $customer->getContact(),
             'is_withholding_applicable' => $customer->isWithholdingApplicable(),
-            'status' => $customer->getStatus(),
             'st_assigned' => $customer->getStAssigned()
         ]);
 
@@ -100,8 +98,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             'second_lastname' => $customer->getSecondLastname(),
             'customer_type_id' => $customer->getCustomerTypeId(),
             'contact' => $customer->getContact(),
-            'is_withholding_applicable' => $customer->isWithholdingApplicable(),
-            'status' => $customer->getStatus(),
+            'is_withholding_applicable' => $customer->isWithholdingApplicable()
         ]);
 
         return $this->buildCustomer($eloquentCustomer, [], [], []);
@@ -173,6 +170,11 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
         ]);
 
         return $this->buildCustomer($eloquentCustomer, [], [], []);
+    }
+
+    public function updateStatus(int $customerId, int $status): void
+    {
+        EloquentCustomer::where('id', $customerId)->update(['status' => $status]);
     }
 
     private function buildCustomer(EloquentCustomer $customer, $phones = [], $emails = [], $addresses = []): Customer

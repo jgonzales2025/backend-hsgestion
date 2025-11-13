@@ -96,7 +96,7 @@ class EloquentCustomer extends Model
             lastname: $eloquentCustomer->lastname,
             second_lastname: $eloquentCustomer->second_lastname,
             customer_type_id: $eloquentCustomer->customer_type_id,
-            customer_type_name: $eloquentCustomer->customerType?->name,
+            customer_type_name: $eloquentCustomer->customerType?->description,
             contact: $eloquentCustomer->contact,
             is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
             status: $eloquentCustomer->status,

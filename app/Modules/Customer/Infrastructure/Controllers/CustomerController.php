@@ -337,6 +337,6 @@ class CustomerController extends Controller
         $updateStatusUseCase = new UpdateStatusUseCase($this->customerRepository);
         $updateStatusUseCase->execute($id, $status);
 
-        return response()->json(['message' => 'Status actualizado'], 200);
+        return response()->json(['message' => 'Estado actualizado correctamente'], 200);
     }
 }

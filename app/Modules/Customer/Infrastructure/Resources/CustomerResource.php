@@ -33,7 +33,7 @@ class CustomerResource extends JsonResource
             ],
             'contact' => $this->resource->getContact(),
             'is_withholding_applicable' => $this->resource->isWithholdingApplicable(),
-            'status' => $this->resource->getStatus()
+            'status' => $this->resource->getStatus() == 1 ? 'Activo' : 'Inactivo'
         ];
     }
 }

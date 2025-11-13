@@ -12,9 +12,9 @@ class EloquentBrandRepository implements BrandRepositoryInterface
     public function save(Brand $brand): ?Brand
     {
         $eloquentBrand = EloquentBrand::create([
-            'name' => $brand->getName(),
-            'status' => $brand->getStatus()
+            'name' => $brand->getName()
         ]);
+        $eloquentBrand->refresh();
 
         return new Brand(
             id: $eloquentBrand->id,
@@ -60,12 +60,11 @@ class EloquentBrandRepository implements BrandRepositoryInterface
         $eloquentBrand = EloquentBrand::find($brand->getId());
 
         if (!$eloquentBrand) {
-            throw new \Exception("Marca no encontrada");
+            return null;
         }
 
         $eloquentBrand->update([
-            'name' => $brand->getName(),
-            'status' => $brand->getStatus()
+            'name' => $brand->getName()
         ]);
 
         return new Brand(
@@ -73,6 +72,11 @@ class EloquentBrandRepository implements BrandRepositoryInterface
             name: $eloquentBrand->name,
             status: $eloquentBrand->status,
         );
+    }
+
+    public function updateStatus(int $brandId, int $status): void
+    {
+        EloquentBrand::where('id', $brandId)->update(['status' => $status]);
     }
 
 

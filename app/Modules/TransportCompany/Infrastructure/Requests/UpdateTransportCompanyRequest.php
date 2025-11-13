@@ -17,8 +17,7 @@ class UpdateTransportCompanyRequest extends FormRequest
             'ruc' => 'sometimes|string|max:11',
             'company_name' => 'sometimes|string|max:100',
             'address' => 'sometimes|string|max:255',
-            'nro_reg_mtc' => 'sometimes|string|max:10',
-            'status' => 'sometimes|integer',
+            'nro_reg_mtc' => 'sometimes|string|max:10'
         ];
     }
 }

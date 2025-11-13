@@ -19,8 +19,7 @@ class UpdateBrandUseCase
     {
         $brand = new Brand(
             id: $id,
-            name: $brandDTO->name,
-            status: $brandDTO->status,
+            name: $brandDTO->name
         );
 
        return $this->brandRepository->update($brand);

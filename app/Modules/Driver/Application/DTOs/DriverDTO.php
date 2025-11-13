@@ -9,7 +9,6 @@ class DriverDTO
     public $name;
     public $pat_surname;
     public $mat_surname;
-    public $status;
     public $license;
 
     public function __construct(array $data)
@@ -19,7 +18,6 @@ class DriverDTO
         $this->name = $data['name'];
         $this->pat_surname = $data['pat_surname'];
         $this->mat_surname = $data['mat_surname'];
-        $this->status = $data['status'];
         $this->license = $data['license'] ;
     }
 }

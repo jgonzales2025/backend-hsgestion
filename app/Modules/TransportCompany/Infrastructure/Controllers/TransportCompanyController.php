@@ -11,6 +11,7 @@ use App\Modules\TransportCompany\Application\UseCases\FindAllTransportCompaniesU
 use App\Modules\TransportCompany\Application\UseCases\FindByIdTransportCompanyUseCase;
 use App\Modules\TransportCompany\Application\UseCases\FindCompanyTransport;
 use App\Modules\TransportCompany\Application\UseCases\FindPrivateTransportUseCase;
+use App\Modules\TransportCompany\Application\UseCases\UpdateStatusTransportCompanyUseCase;
 use App\Modules\TransportCompany\Application\UseCases\UpdateTransportCompanyUseCase;
 use App\Modules\TransportCompany\Domain\Entities\TransportCompany;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
@@ -143,6 +144,20 @@ class TransportCompanyController extends Controller
 
         return response()->json(
              (new TransportCompanyResource($customer)), 201);
+    }
+
+    public function updateStatus(Request $request, $id): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'status' => 'required|integer|in:0,1',
+        ]);
+
+        $status = $validatedData['status'];
+
+        $transportUseCase = new UpdateStatusTransportCompanyUseCase($this->transportCompanyRepository);
+        $transportUseCase->execute($id, $status);
+
+        return response()->json(['message' => 'Estado actualizado correctamente'], 200);
     }
     
 }

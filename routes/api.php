@@ -109,6 +109,7 @@ Route::get('brands', [BrandController::class, 'index']);
 Route::post('brands', [BrandController::class, 'store']);
 Route::get('brands/{id}', [BrandController::class, 'show']);
 Route::put('brands/{id}', [BrandController::class, 'update']);
+Route::put('brands-status/{id}', [BrandController::class, 'updateStatus']);
 
 // Drivers - conductores
 Route::get('drivers',[DriverController::class, 'index']);
@@ -116,6 +117,9 @@ Route::post('drivers',[DriverController::class, 'store']);
 Route::get('drivers/{id}',[DriverController::class, 'show']);
 Route::put('drivers/{id}',[DriverController::class, 'update']);
 Route::post('drivers-sunatApi',[DriverController::class, 'storeCustomerBySunatApi']);
+Route::put('drivers-status/{id}',[DriverController::class, 'updateStatus']);
+
+
 
 // Categories - categorias
 Route::get('categories',[CategoryController::class, 'index']);
@@ -135,6 +139,7 @@ Route::get('transport-companies',[TransportCompanyController::class, 'index']);
 Route::post('transport-companies',[TransportCompanyController::class, 'store']);
 Route::get('transport-companies/{id}',[TransportCompanyController::class, 'show']);
 Route::put('transport-companies/{id}',[TransportCompanyController::class, 'update']);
+Route::put('transport-companies-status/{id}',[TransportCompanyController::class, 'updateStatus']);
 Route::post('transport-companies-sunat',[TransportCompanyController::class, 'storeCustomerBySunatApi']);
 
 // PercentageIGV - Porcentaje de IGV

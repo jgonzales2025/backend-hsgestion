@@ -26,7 +26,6 @@ class UpdateUserUseCase
             firstname: $userDTO->firstname,
             lastname: $userDTO->lastname,
             password: $userDTO->password ?? $existingUser->getPassword(),
-            status: $userDTO->status,
             roles: $userDTO->userRoles,
             assignment: null,
             st_login: null,

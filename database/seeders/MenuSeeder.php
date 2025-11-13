@@ -754,28 +754,6 @@ class MenuSeeder extends Seeder
         ]);
 
         Menu::create([
-            'name' => 'tablas_vendedores',
-            'label' => 'Vendedores',
-            'route' => '/tablas/vendedores',
-            'permission' => 'tablas.vendedores',
-            'parent_id' => $tabla->id,
-            'order' => 2,
-            'status' => 1,
-            'type' => 'item',
-        ]);
-
-        Menu::create([
-            'name' => 'tablas_personal_almacen',
-            'label' => 'Personal Almacén',
-            'route' => '/tablas/personal-almacen',
-            'permission' => 'tablas.personal_almacen',
-            'parent_id' => $tabla->id,
-            'order' => 3,
-            'status' => 1,
-            'type' => 'item',
-        ]);
-
-        Menu::create([
             'name' => 'tablas_empresa_transporte',
             'label' => 'Empresa Transporte',
             'route' => '/tablas/empresa-transporte',

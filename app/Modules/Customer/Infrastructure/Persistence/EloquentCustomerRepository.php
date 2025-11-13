@@ -49,6 +49,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             'is_withholding_applicable' => $customer->isWithholdingApplicable(),
             'st_assigned' => $customer->getStAssigned()
         ]);
+        $eloquentCustomer->refresh();
 
         return $this->buildCustomer($eloquentCustomer, [], [], []);
     }
@@ -168,6 +169,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             'lastname' => $customer->getLastname(),
             'second_lastname' => $customer->getSecondLastname()
         ]);
+        $eloquentCustomer->refresh();
 
         return $this->buildCustomer($eloquentCustomer, [], [], []);
     }

@@ -14,8 +14,7 @@ class UpdateBrandRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|max:30',
-            'status' => 'sometimes|integer',
+            'name' => 'sometimes|string|max:30'
         ];
     }
 }

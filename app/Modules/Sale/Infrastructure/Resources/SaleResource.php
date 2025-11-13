@@ -36,6 +36,8 @@ class SaleResource extends JsonResource
                     'lastname' => $customer->getLastName(),
                     'second_lastname' => $customer->getSecondLastName(),
                 ]),
+                'customer_type_id' => $customer->getCustomerTypeId(),
+                'customer_type_name' => $customer->getCustomerTypeName(),
             ],
             'date' => $this->resource->getDate(),
             'due_date' => $this->resource->getDueDate(),

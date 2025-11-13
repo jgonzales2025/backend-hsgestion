@@ -9,6 +9,7 @@ use App\Modules\Driver\Application\UseCases\FindAllDriversUseCases;
 use App\Modules\Driver\Application\UseCases\FindByIdDriverUseCase;
 use App\Modules\Driver\Application\UseCases\FindDriverByDocumentUseCase;
 use App\Modules\Driver\Application\UseCases\UpdateDriverUseCase;
+use App\Modules\Driver\Application\UseCases\UpdateStatusDriverUseCase;
 use App\Modules\Driver\Infrastructure\Persistence\EloquentDriverRepository;
 use App\Modules\Driver\Infrastructure\Requests\StoreDriverRequest;
 use App\Modules\Driver\Infrastructure\Requests\UpdateDriverRequest;
@@ -116,5 +117,19 @@ class DriverController extends Controller
 
         return response()->json(
          new DriverResource($customer), 201);
+    }
+
+    public function updateStatus(int $id, Request $request): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'status' => 'required|integer|in:0,1',
+        ]);
+
+        $status = $validatedData['status'];
+
+        $driverUseCase = new UpdateStatusDriverUseCase($this->driverRepository);
+        $driverUseCase->execute($id, $status);
+
+        return response()->json(['message' => 'Estado actualizado correctamente'], 200);
     }
 }

@@ -218,6 +218,7 @@ Route::get('banks', [BankController::class, 'index']);
 Route::post('banks', [BankController::class, 'store']);
 Route::get('banks/{id}', [BankController::class, 'show']);
 Route::put('banks/{id}', [BankController::class, 'update']);
+Route::put('banks-status/{id}', [BankController::class, 'updateStatus']);
 
 // Digital Wallets - Billeteras digitales
 //Route::get('digital-wallets', [DigitalWalletController::class, 'index']);

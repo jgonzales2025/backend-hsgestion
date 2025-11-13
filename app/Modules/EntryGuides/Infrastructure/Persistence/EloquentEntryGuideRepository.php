@@ -13,7 +13,6 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 
     public function findAll(): array
     {
-        // Cargar relaciones para evitar N+1
         $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])->get();
 
         return $eloquentAll->map(function ($entryGuide) {

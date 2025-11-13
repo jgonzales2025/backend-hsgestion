@@ -13,6 +13,7 @@ use App\Modules\Articles\Application\UseCases\FindAllArticlesPriceConvertionUseC
 use App\Modules\Articles\Application\UseCases\FindAllArticleUseCase;
 use App\Modules\Articles\Application\UseCases\FindByIdArticleUseCase;
 use App\Modules\Articles\Application\UseCases\FindByIdNotesDebito;
+use App\Modules\Articles\Application\UseCases\RequiredSerialUseCase;
 use App\Modules\Articles\Application\UseCases\UpdateArticleNotasDebitoUseCase;
 use App\Modules\Articles\Application\UseCases\UpdateArticleUseCase;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
@@ -275,6 +276,15 @@ class ArticleController extends Controller
       201
     );
   }
-    
 
+  public function requiredSerial(int $articleId): JsonResponse
+  {
+    $requiredSerial = new RequiredSerialUseCase($this->articleRepository);
+    $result = $requiredSerial->execute($articleId);
+
+    return response()->json([
+        'message' => $result ? 'success' : 'El artículo no requiere serial'
+    ], 200);
+  }
+    
 }

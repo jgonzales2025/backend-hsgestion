@@ -334,6 +334,13 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
         return $articles->map(fn($article) => $this->mapToDomain($article));
     }
+
+    public function requiredSerial(int $articleId): bool
+    {
+        $article = EloquentArticle::find($articleId);
+        return $article->series_enabled;
+    }
+
     private function mapToArray(Article $article): array
     {
         return [

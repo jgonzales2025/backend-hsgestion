@@ -12,9 +12,12 @@ class EntryItemSerialResource extends JsonResource{
             'id' => $this->resource->getId(),
             'entry_guide_id' => $this->resource->getEntryGuideId(),
             'article_id' => $this->resource->getArticleId(),
-            'serial' => $this->resource->getSerial(),
-        
+            'serial' => match($this->resource->getSerial()) {
+                0 => 'Vendido',
+                2 => 'En tránsito',
+                default => 'Disponible',
+            },
         ];
        
-}
+    }
 }

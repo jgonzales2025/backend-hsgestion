@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('entry_guide_id')->constrained('entry_guides')->onDelete('cascade');
             $table->foreignId('article_id')->constrained('articles')->onDelete('cascade');
             $table->string('serial');
-            $table->integer('status')->default(0); // 0: In Stock, 1: Sold
+            $table->integer('status')->default(1); // 0: vendido, 1: disponible, 2: en transito
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('purchase_item_serials');
+        Schema::dropIfExists('entry_item_serials');
     }
 };

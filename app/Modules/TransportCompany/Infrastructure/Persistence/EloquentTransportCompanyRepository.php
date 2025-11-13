@@ -31,9 +31,9 @@ class EloquentTransportCompanyRepository implements TransportCompanyRepositoryIn
             'ruc' => $transportCompany->getRuc(),
             'company_name' => $transportCompany->getCompanyName(),
             'address' => $transportCompany->getAddress(),
-            'nro_reg_mtc' => $transportCompany->getNroRegMtc(),
-            'status' => $transportCompany->getStatus(),
+            'nro_reg_mtc' => $transportCompany->getNroRegMtc()
         ]);
+        $eloquentTransport->refresh();
 
         return $this->mapToEntity($eloquentTransport);
     }
@@ -57,8 +57,7 @@ class EloquentTransportCompanyRepository implements TransportCompanyRepositoryIn
             'ruc' => $transportCompany->getRuc(),
             'company_name' => $transportCompany->getCompanyName(),
             'address' => $transportCompany->getAddress(),
-            'nro_reg_mtc' => $transportCompany->getNroRegMtc(),
-            'status' => $transportCompany->getStatus(),
+            'nro_reg_mtc' => $transportCompany->getNroRegMtc()
         ]);
 
         return $this->mapToEntity($eloquentTransport);
@@ -104,8 +103,7 @@ class EloquentTransportCompanyRepository implements TransportCompanyRepositoryIn
             'ruc' => $customer->getRuc(),
             'company_name' => $customer->getCompanyName(),
             'address' => $customer->getAddress(),
-            'nro_reg_mtc' => $customer->getNroRegMtc(),
-            'status' => $customer->getStatus(),
+            'nro_reg_mtc' => $customer->getNroRegMtc()
         ]);
 
         return $this->mapToEntity($eloquentTransport);

@@ -22,8 +22,7 @@ class CreateTransportCompanyUseCase
             ruc: $transportCompanyDTO->ruc,
             company_name: $transportCompanyDTO->company_name,
             address: $transportCompanyDTO->address,
-            nro_reg_mtc: $transportCompanyDTO->nro_reg_mtc,
-            status: $transportCompanyDTO->status,
+            nro_reg_mtc: $transportCompanyDTO->nro_reg_mtc
         );
 
         return $this->transportCompanyRepository->save($transportCompany);

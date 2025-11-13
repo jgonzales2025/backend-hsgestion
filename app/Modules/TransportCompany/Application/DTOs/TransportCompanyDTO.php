@@ -8,7 +8,6 @@ class TransportCompanyDTO
     public $company_name;
     public $address;
     public $nro_reg_mtc;
-    public $status;
 
     public function __construct(array $data)
     {
@@ -16,6 +15,5 @@ class TransportCompanyDTO
         $this->company_name = $data['company_name'];
         $this->address = $data['address'] ?? null;
         $this->nro_reg_mtc = $data['nro_reg_mtc'] ?? null;
-        $this->status = $data['status'] ?? 1;
     }
 }

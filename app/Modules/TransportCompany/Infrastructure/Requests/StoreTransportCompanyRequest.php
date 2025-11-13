@@ -17,8 +17,7 @@ class StoreTransportCompanyRequest extends FormRequest
             'ruc' => 'nullable|string|max:11',
             'company_name' => 'nullable|string|max:100',
             'address' => 'nullable|string|max:255',
-            'nro_reg_mtc' => 'nullable|string|max:10',
-            'status' => 'nullable|integer',
+            'nro_reg_mtc' => 'nullable|string|max:10'
         ];
     }
 }

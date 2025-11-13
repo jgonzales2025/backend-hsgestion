@@ -18,9 +18,9 @@ class EloquentUserRepository implements UserRepositoryInterface
             'firstname' => $user->getFirstname(),
             'lastname' => $user->getLastname(),
             'password' => password_hash($user->getPassword(), PASSWORD_BCRYPT),
-            'status' => $user->getStatus(),
             'password_item' => Hash::make($user->getPasswordItem()),
         ]);
+        $eloquentUser->refresh();
 
         return new User(
             id: $eloquentUser->id,
@@ -93,7 +93,6 @@ class EloquentUserRepository implements UserRepositoryInterface
         $data = [
             'firstname' => $user->getFirstname(),
             'lastname' => $user->getLastname(),
-            'status' => $user->getStatus(),
             'password_item' => $user->getPasswordItem()
         ];
 

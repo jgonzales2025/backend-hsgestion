@@ -10,7 +10,7 @@ use App\Modules\UserAssignment\Infrastructure\Models\EloquentUserAssignment;
 class EloquentUserAssignmentRepository implements UserAssignmentRepositoryInterface
 {
 
-    public function createUserAssignment(int $userId, array $assignments, int $status): ?array
+    public function createUserAssignment(int $userId, array $assignments): ?array
     {
         $userAssignment = [];
 
@@ -23,8 +23,8 @@ class EloquentUserAssignmentRepository implements UserAssignmentRepositoryInterf
                         'user_id' => $userId,
                         'company_id' => $branch->cia_id,
                         'branch_id' => $branch->id,
-                        'status' => $status,
                     ]);
+                    $eloquentAssignment->refresh();
 
                     $userAssignment[] = new UserAssignment(
                         id: $eloquentAssignment->id,
@@ -39,8 +39,8 @@ class EloquentUserAssignmentRepository implements UserAssignmentRepositoryInterf
                     'user_id' => $userId,
                     'company_id' => $assignment['company_id'],
                     'branch_id' => $assignment['branch_id'],
-                    'status' => $status,
                 ]);
+                $eloquentAssignment->refresh();
 
                 $userAssignment[] = new UserAssignment(
                     id: $eloquentAssignment->id,
@@ -55,13 +55,13 @@ class EloquentUserAssignmentRepository implements UserAssignmentRepositoryInterf
         return $userAssignment;
     }
 
-    public function updateUserAssignments(int $userId, array $assignments, int $status): array
+    public function updateUserAssignments(int $userId, array $assignments): array
     {
         // Eliminar las asignaciones anteriores
         $this->deleteUserAssignments($userId);
 
         // Crear las nuevas asignaciones
-        return $this->createUserAssignment($userId, $assignments, $status);
+        return $this->createUserAssignment($userId, $assignments);
     }
 
     public function deleteUserAssignments(int $userId): void

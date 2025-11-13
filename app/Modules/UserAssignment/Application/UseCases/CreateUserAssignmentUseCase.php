@@ -19,8 +19,7 @@ class CreateUserAssignmentUseCase
     {
         return $this->userAssignmentRepository->createUserAssignment(
             userId: $userAssignmentDTO->userId,
-            assignments: $userAssignmentDTO->assignments,
-            status: $userAssignmentDTO->status
+            assignments: $userAssignmentDTO->assignments
         );
 
     }

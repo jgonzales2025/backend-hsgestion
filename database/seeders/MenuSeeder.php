@@ -962,6 +962,17 @@ class MenuSeeder extends Seeder
             'type' => 'item',
         ]);
 
+        Menu::create([
+            'name' => 'tablas_motivos_caja_chica',
+            'label' => 'Motivos de Caja Chica',
+            'route' => '/tablas/motivos-caja-chica',
+            'permission' => 'tablas.motivos_caja_chica',
+            'parent_id' => $tabla->id,
+            'order' => 21,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
         // ===== MANTENIMIENTO =====
         $mantenimiento = Menu::create([
             'name' => 'mantenimiento',

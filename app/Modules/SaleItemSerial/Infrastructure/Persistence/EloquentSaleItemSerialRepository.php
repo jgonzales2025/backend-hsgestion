@@ -2,6 +2,7 @@
 
 namespace App\Modules\SaleItemSerial\Infrastructure\Persistence;
 
+use App\Modules\EntryItemSerial\Infrastructure\Models\EloquentEntryItemSerial;
 use App\Modules\SaleItemSerial\Domain\Entities\SaleItemSerial;
 use App\Modules\SaleItemSerial\Domain\Interfaces\SaleItemSerialRepositoryInterface;
 use App\Modules\SaleItemSerial\Infrastructure\Models\EloquentSaleItemSerial;
@@ -16,6 +17,10 @@ class EloquentSaleItemSerialRepository implements SaleItemSerialRepositoryInterf
             'article_id' => $saleItemSerial->getArticle()->getArticleId(),
             'serial' => $saleItemSerial->getSerial(),
         ]);
+
+        $eloquentEntryItemSerial = EloquentEntryItemSerial::where('serial', $saleItemSerial->getSerial())->first();
+        $eloquentEntryItemSerial->status = 0;
+        $eloquentEntryItemSerial->save();
 
         return new SaleItemSerial(
             id: $eloquentSaleItemSerial->id,

@@ -13,6 +13,7 @@ use App\Modules\Articles\Application\UseCases\FindAllArticlesPriceConvertionUseC
 use App\Modules\Articles\Application\UseCases\FindAllArticleUseCase;
 use App\Modules\Articles\Application\UseCases\FindByIdArticleUseCase;
 use App\Modules\Articles\Application\UseCases\FindByIdNotesDebito;
+use App\Modules\Articles\Application\UseCases\RequiredSerialUseCase;
 use App\Modules\Articles\Application\UseCases\UpdateArticleNotasDebitoUseCase;
 use App\Modules\Articles\Application\UseCases\UpdateArticleUseCase;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
@@ -244,18 +245,26 @@ class ArticleController extends Controller
     );
   }
 
-  public function indexArticlesForSales(Request $request): array
+  public function indexArticlesForSales(Request $request): array|JsonResponse
   {
     $description = $request->query("description");
+    $articleId = $request->query("article_id");
 
     $validatedData = $request->validate([
         'date' => 'date|required'
     ]);
 
     $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);
-    $articles = $articlesUseCase->execute($validatedData['date'], $description);
+    $articles = $articlesUseCase->execute($validatedData['date'], $description, $articleId);
 
-    return ArticleForSalesResource::collection($articles)->resolve();
+    if ($articleId)
+    {
+      return response()->json((new ArticleForSalesResource($articles[0]))->resolve());
+    }
+    else{
+      return ArticleForSalesResource::collection($articles)->resolve();
+    }
+    
   }
   
   public function storeNotesDebito(StoreArticleNotasDebito $request): JsonResponse
@@ -272,4 +281,14 @@ class ArticleController extends Controller
   }
 
 
+  public function requiredSerial(int $articleId): JsonResponse
+  {
+    $requiredSerial = new RequiredSerialUseCase($this->articleRepository);
+    $result = $requiredSerial->execute($articleId);
+
+    return response()->json([
+        'message' => $result ? 'success' : 'El artículo no requiere serial'
+    ], 200);
+  }
+    
 }

@@ -242,6 +242,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('articles-notas-listar',[ArticleController::class,'indexNotesDebito']);
     Route::put('articles-notas-editar/{id}',[ArticleController::class,'updateNotesDebito']);
     Route::get('articles-notas/{id}',[ArticleController::class,'showNotesDebito']);
+    Route::get('articles-required-serial/{id}',[ArticleController::class,'requiredSerial']);
 
     // Customer portfolios - Cartera de clientes
     Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index']);

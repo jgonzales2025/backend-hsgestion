@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\Articles\Infrastructure\Persistence;
 
 use App\Modules\Articles\Domain\Entities\Article;
@@ -224,12 +225,15 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticlePriceConvertion(string $date, ?string $description): array
+    public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId): array
     {
         $companyId = request()->get('company_id');
         $exchangeRate = EloquentExchangeRate::select('parallel_rate')->where('date', $date)->first();
 
         $articles = EloquentArticle::where('company_type_id', $companyId)
+            ->when($articleId, function ($query, $id) {
+                return $query->where('id', $id);
+            })
             ->when($description, function ($query, $name) {
                 return $query->where(function ($q) use ($name) {
                     $q->where('description', 'like', "%{$name}%")
@@ -316,7 +320,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
             );
         })->toArray();
-
     }
 
     public function findAllExcel(?string $description): Collection
@@ -345,6 +348,13 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
         return $articles->map(fn($article) => $this->mapToDomain($article));
     }
+
+    public function requiredSerial(int $articleId): bool
+    {
+        $article = EloquentArticle::find($articleId);
+        return $article->series_enabled;
+    }
+
     private function mapToArray(Article $article): array
     {
         return [

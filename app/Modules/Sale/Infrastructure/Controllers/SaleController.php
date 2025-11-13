@@ -9,8 +9,10 @@ use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
+use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\NoteReason\Domain\Interfaces\NoteReasonRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
+use App\Modules\PurchaseItemSerials\Application\UseCases\FindBySerialUseCase;
 use App\Modules\Sale\Application\DTOs\SaleCreditNoteDTO;
 use App\Modules\Sale\Application\DTOs\SaleDTO;
 use App\Modules\Sale\Application\UseCases\CreateSaleCreditNoteUseCase;
@@ -66,6 +68,7 @@ class SaleController extends Controller
         private readonly NoteReasonRepositoryInterface $noteReasonRepository,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
         private readonly SaleItemSerialRepositoryInterface $saleItemSerialRepository,
+        private readonly EntryItemSerialRepositoryInterface $entryItemSerialRepository,
     ){}
 
     public function index(Request $request): JsonResponse

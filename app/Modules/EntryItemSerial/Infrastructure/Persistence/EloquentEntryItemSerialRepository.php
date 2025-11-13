@@ -54,4 +54,18 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
         return $grouped;
     }
 
+    public function findBySerial(string $serial): ?EntryItemSerial
+    {
+        $entryItemSerial = EloquentEntryItemSerial::where('serial', $serial)->first();
+        if (!$entryItemSerial) {
+            return null;
+        }
+        return new EntryItemSerial(
+            id: $entryItemSerial->id,
+            entry_guide: $entryItemSerial->entry_guide_id,
+            article: $entryItemSerial->article_id,
+            serial: $entryItemSerial->serial,
+        );
+    }
+
 }

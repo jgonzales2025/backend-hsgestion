@@ -19,8 +19,7 @@ class StoreDriverRequest extends FormRequest
             'name' => 'required|string|max:20',
             'pat_surname' => 'required|string|max:20',
             'mat_surname' => 'required|string|max:20',
-            'license' => 'required|string|max:13',
-            'status' => 'required|integer',
+            'license' => 'required|string|max:13'
         ];
     }
 
@@ -50,9 +49,6 @@ class StoreDriverRequest extends FormRequest
             'license.required' => 'La licencia de conducir es obligatoria.',
             'license.string' => 'La licencia de conducir debe ser una cadena de texto.',
             'license.max' => 'La licencia de conducir no debe exceder los 13 caracteres.',
-
-            'status.required' => 'El estado es obligatorio.',
-            'status.integer' => 'El estado debe ser un número entero.'
         ];
     }
 }

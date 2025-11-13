@@ -49,9 +49,9 @@ class EloquentDriverRepository implements DriverRepositoryInterface
             'name' => $driver->getName(),
             'pat_surname' => $driver->getPatSurname(),
             'mat_surname' => $driver->getMatSurname(),
-            'license' => $driver->getLicense(),
-            'status' => $driver->getStatus()
+            'license' => $driver->getLicense()
         ]);
+        $eloquentDriver->refresh();
 
         return new Driver(
             id: $eloquentDriver->id,
@@ -99,7 +99,6 @@ class EloquentDriverRepository implements DriverRepositoryInterface
             'name' => $driver->getName(),
             'pat_surname' => $driver->getPatSurname(),
             'mat_surname' => $driver->getMatSurname(),
-            'status' => $driver->getStatus(),
             'license' => $driver->getLicense(),
         ]);
     }
@@ -120,5 +119,10 @@ class EloquentDriverRepository implements DriverRepositoryInterface
             license: $driver->license,
             document_type_name: $driver->customerDocumentType->abbreviation
         );
+    }
+
+    public function updateStatus(int $driverId, int $status): void
+    {
+        EloquentDriver::where('id', $driverId)->update(['status' => $status]);
     }
 }

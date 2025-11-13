@@ -157,7 +157,7 @@ class TransportCompanyController extends Controller
         $transportUseCase = new UpdateStatusTransportCompanyUseCase($this->transportCompanyRepository);
         $transportUseCase->execute($id, $status);
 
-        return response()->json(['message' => 'Estado actualizado'], 200);
+        return response()->json(['message' => 'Estado actualizado correctamente'], 200);
     }
     
 }

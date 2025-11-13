@@ -32,8 +32,7 @@ class UpdateDriverRequest extends FormRequest
                 'string',
                 'max:13',
                 Rule::unique('drivers', 'license')->ignore($driverId)
-            ],
-            'status' => 'sometimes|integer|in:0,1',
+            ]
         ];
     }
 
@@ -59,9 +58,6 @@ class UpdateDriverRequest extends FormRequest
             'license.string' => 'La licencia de conducir debe ser una cadena de texto.',
             'license.max' => 'La licencia de conducir no debe exceder los 13 caracteres.',
             'license.unique' => 'La licencia de conducir ya está registrada.',
-
-            'status.integer' => 'El estado debe ser un número entero.',
-            'status.in' => 'El estado debe ser 0 (inactivo) o 1 (activo).',
         ];
     }
 }

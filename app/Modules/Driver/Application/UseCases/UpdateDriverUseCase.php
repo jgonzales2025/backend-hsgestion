@@ -30,7 +30,6 @@ class UpdateDriverUseCase
             name: $driverDTO->name,
             pat_surname: $driverDTO->pat_surname,
             mat_surname: $driverDTO->mat_surname,
-            status: $driverDTO->status,
             license: $driverDTO->license,
             document_type_name: null
         );

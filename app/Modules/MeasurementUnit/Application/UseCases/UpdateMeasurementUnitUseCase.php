@@ -20,8 +20,7 @@ class UpdateMeasurementUnitUseCase
         $updatedMeasurementUnit = new MeasurementUnit(
             $measurementUnit->getId(),
             $measurementUnitDTO->name,
-            $measurementUnitDTO->abbreviation,
-            $measurementUnitDTO->status
+            $measurementUnitDTO->abbreviation
         );
 
         return $this->measurementUnitRepository->update($updatedMeasurementUnit);

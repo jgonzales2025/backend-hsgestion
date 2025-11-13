@@ -13,4 +13,6 @@ interface MeasurementUnitRepositoryInterface
     public function findById(int $id): ?MeasurementUnit;
 
     public function update(MeasurementUnit $measurementUnit): MeasurementUnit;
+
+    public function updateStatus(int $measurementUnitId, int $status): void;
 }

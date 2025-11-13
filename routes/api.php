@@ -156,6 +156,7 @@ Route::get('measurement-units', [MeasurementUnitController::class, 'index']);
 Route::post('measurement-units', [MeasurementUnitController::class, 'store']);
 Route::get('measurement-units/{id}', [MeasurementUnitController::class, 'show']);
 Route::put('measurement-units/{id}', [MeasurementUnitController::class, 'update']);
+Route::put('measurement-units-status/{id}', [MeasurementUnitController::class, 'updateStatus']);
 
 // Customer types - Tipos de clientes
 Route::get('customer-types', [CustomerTypeController::class, 'index']);

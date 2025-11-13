@@ -24,9 +24,9 @@ class EloquentMeasurementUnitRepository implements MeasurementUnitRepositoryInte
     {
         $eloquentMeasurementUnit = EloquentMeasurementUnit::create([
             'name' => $measurementUnit->getName(),
-            'abbreviation' => $measurementUnit->getAbbreviation(),
-            'status' => $measurementUnit->getStatus(),
+            'abbreviation' => $measurementUnit->getAbbreviation()
         ]);
+        $eloquentMeasurementUnit->refresh();
 
         return $this->mapToEntity($eloquentMeasurementUnit);
     }
@@ -48,8 +48,7 @@ class EloquentMeasurementUnitRepository implements MeasurementUnitRepositoryInte
 
         $eloquentMeasurementUnit->update([
             'name' => $measurementUnit->getName(),
-            'abbreviation' => $measurementUnit->getAbbreviation(),
-            'status' => $measurementUnit->getStatus(),
+            'abbreviation' => $measurementUnit->getAbbreviation()
         ]);
 
         return $this->mapToEntity($eloquentMeasurementUnit);
@@ -63,5 +62,10 @@ class EloquentMeasurementUnitRepository implements MeasurementUnitRepositoryInte
             abbreviation: $eloquentMeasurementUnit->abbreviation,
             status: $eloquentMeasurementUnit->status,
         );
+    }
+
+    public function updateStatus(int $measurementUnitId, int $status): void
+    {
+        EloquentMeasurementUnit::where('id', $measurementUnitId)->update(['status' => $status]);
     }
 }

@@ -16,8 +16,7 @@ class StoreMeasurementUnitRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:30|unique:measurement_units,name',
-            'abbreviation' => 'required|string|max:10|unique:measurement_units,abbreviation',
-            'status' => 'required|integer|in:0,1',
+            'abbreviation' => 'required|string|max:10|unique:measurement_units,abbreviation'
         ];
     }
 
@@ -33,10 +32,6 @@ class StoreMeasurementUnitRequest extends FormRequest
             'abbreviation.string' => 'La abreviatura debe ser una cadena de texto.',
             'abbreviation.max' => 'La abreviatura no puede exceder los 10 caracteres.',
             'abbreviation.unique' => 'La abreviatura ya está registrada.',
-
-            'status.required' => 'El estado es obligatorio.',
-            'status.integer' => 'El estado debe ser un valor numérico entero.',
-            'status.in' => 'El estado debe ser 0 (inactivo) o 1 (activo).',
         ];
     }
 }

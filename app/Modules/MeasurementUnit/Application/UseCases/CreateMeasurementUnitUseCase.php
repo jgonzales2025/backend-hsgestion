@@ -20,8 +20,7 @@ class CreateMeasurementUnitUseCase
         $measurementUnit = new MeasurementUnit(
             id: 0,
             name: $measurementUnitDTO->name,
-            abbreviation: $measurementUnitDTO->abbreviation,
-            status: $measurementUnitDTO->status,
+            abbreviation: $measurementUnitDTO->abbreviation
         );
 
         return $this->measurementUnitRepository->save($measurementUnit);

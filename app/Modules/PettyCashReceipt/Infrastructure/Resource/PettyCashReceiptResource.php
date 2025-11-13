@@ -2,29 +2,64 @@
 
 namespace App\Modules\PettyCashReceipt\Infrastructure\Resource;
 
+use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
+use App\Modules\DocumentType\Infrastructure\Models\EloquentDocumentType;
+use App\Modules\PettyCashMotive\Infrastructure\Models\EloquentPettyCashMotive;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PettyCashReceiptResource extends JsonResource{
-        public function toArray($request): array
+class PettyCashReceiptResource extends JsonResource
+{
+    public function toArray($request): array
     {
         return [
             'id' => $this->resource->getId(),
-            // 'company' => $this->resource->getCompany(),
-            'document_type' => $this->resource->getDocumentType(),
+              'document_type' => (function () {
+                $code = EloquentDocumentType::where('id', $this->resource->getDocumentType())->first();
+
+                if (!$code) {
+                    return "No hay nada walter";
+                }
+
+                return (object) [
+                    'id' => $code->id,
+                    'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
+                     'description' => $code->description,
+                    // 'name' => $code->address[0]['address'],
+    
+                ];
+            })(),
             'series' => $this->resource->getSeries(),
             'correlative' => $this->resource->getCorrelative(),
             'date' => $this->resource->getDate(),
             'delivered_to' => $this->resource->getDeliveredTo(),
-            'reason_code' => $this->resource->getReasonCode(),
-            'currency_type' => $this->resource->getCurrencyType(),
+            'reason_code' => (function () {
+                $code = EloquentPettyCashMotive::where('id', $this->resource->getReasonCode())->first();
+
+                if (!$code) {
+                    return "No hay nada walter";
+                }
+
+                return (object) [
+                    'id' => $code->id,
+                    'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
+                    'description' => $code->description,
+                    // 'name' => $code->address[0]['address'],
+    
+                ];
+            })(),
+            'currency_type' => [
+                'id' => $this->resource->getCurrencyType()?->getId(),
+                'name' => $this->resource->getCurrencyType()?->getName(),
+                'symbol' => $this->resource->getCurrencyType()?->getCommercialSymbol(),
+            ],
             'amount' => $this->resource->getAmount(),
             'observation' => $this->resource->getObservation(),
             'status' => $this->resource->getStatus(),
-            'created_by' => $this->resource->getCreatedBy(),
-            'created_at_manual' => $this->resource->getCreatedAtManual(),
-            'updated_by' => $this->resource->getUpdatedBy(),
-            'updated_at_manual' => $this->resource->getUpdatedAtManual(),
-            
+            'branch' => [
+                'id' => $this->resource->getBranch()->getId(),
+                'name' => $this->resource->getBranch()->getName(),
+                'address' => $this->resource->getBranch()->getAddress(),
+            ]
         ];
     }
 }

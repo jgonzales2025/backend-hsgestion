@@ -78,6 +78,8 @@ use App\Modules\PaymentType\Infrastructure\Persistence\EloquentPaymentTypeReposi
 use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface;
 use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRepository;
 use App\Modules\EntryGuideArticle\Domain\Interface\EntryGuideArticleRepositoryInterface;
+use App\Modules\PettyCashMotive\Domain\Interface\PettyCashMotiveInterfaceRepository;
+use App\Modules\PettyCashMotive\Infrastructure\Persistence\EloquentPettyCashMotiveRepository;
 use App\Modules\PettyCashReceipt\Domain\Interface\PettyCashReceiptRepositoryInterface;
 use App\Modules\PettyCashReceipt\Infrastructure\Persistence\EloquentPettyCashReceiptRepository;
 use App\Modules\PurchaseOrder\Domain\Interfaces\PurchaseOrderRepositoryInterface;
@@ -178,6 +180,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EntryItemSerialRepositoryInterface::class, EloquentEntryItemSerialRepository::class);
         $this->app->bind(PurchaseOrderRepositoryInterface::class, EloquentPurchaseOrderRepository::class);
  $this->app->bind(PettyCashReceiptRepositoryInterface::class, EloquentPettyCashReceiptRepository::class);
+ $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
 
     }
 

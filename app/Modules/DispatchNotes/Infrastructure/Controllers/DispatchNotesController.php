@@ -23,6 +23,7 @@ use App\Modules\DispatchNotes\Application\UseCases\FindAllDispatchNotesUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindByIdDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\GenerateDispatchNotePdfUseCase;
 use App\Modules\DispatchNotes\application\UseCases\UpdateDispatchNoteUseCase;
+use App\Modules\DispatchNotes\Application\UseCases\UpdateStatusDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Requests\RequestStore;
 use App\Modules\DispatchNotes\Infrastructure\Requests\RequestUpdate;
@@ -32,7 +33,9 @@ use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterfa
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
+use App\Modules\User\Application\UseCases\UpdateStatusUseCase;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class DispatchNotesController extends Controller
@@ -229,5 +232,16 @@ class DispatchNotesController extends Controller
             return $createSaleArticleUseCase->execute($saleArticleDTO);
         }, $articlesData);
     }
+   public function updateStatus(int $id, Request $request){
+        $validatedData = $request->validate([
+            'status' => 'required|in:0,1',
+        ]);
 
+        $status = $validatedData['status'];
+
+       $updateStatusUseCase = new UpdateStatusDispatchNoteUseCase($this->dispatchNoteRepository);
+       $updateStatusUseCase->execute($id, $status);
+
+       return response()->json(['message' => 'Status actualizado'], 200);
+   }
 }

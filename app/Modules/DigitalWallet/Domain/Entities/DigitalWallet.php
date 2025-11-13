@@ -12,9 +12,9 @@ class DigitalWallet
     private string $phone;
     private Company $company;
     private User $user;
-    private int $status;
+    private ?int $status;
 
-    public function __construct(?int $id, string $name, string $phone, Company $company, User $user, int $status)
+    public function __construct(?int $id, string $name, string $phone, Company $company, User $user, ?int $status = 1)
     {
         $this->id = $id;
         $this->name = $name;
@@ -29,5 +29,5 @@ class DigitalWallet
     public function getPhone(): string { return $this->phone; }
     public function getCompany(): Company { return $this->company; }
     public function getUser(): User { return $this->user; }
-    public function getStatus(): int { return $this->status; }
+    public function getStatus(): ?int { return $this->status; }
 }

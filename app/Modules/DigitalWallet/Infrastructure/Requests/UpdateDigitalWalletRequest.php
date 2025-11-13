@@ -28,8 +28,7 @@ class UpdateDigitalWalletRequest extends FormRequest
             'name' => 'required|string|max:30',
             'phone' => 'required|string|max:11',
             'company_id' => 'required|integer|exists:companies,id',
-            'user_id' => 'required|integer|exists:users,id',
-            'status' => 'required|integer',
+            'user_id' => 'required|integer|exists:users,id'
         ];
     }
 }

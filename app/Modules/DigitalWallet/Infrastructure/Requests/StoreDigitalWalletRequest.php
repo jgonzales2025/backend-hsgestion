@@ -28,8 +28,7 @@ class StoreDigitalWalletRequest extends FormRequest
             'name' => 'required|string|max:30',
             'phone' => 'required|string|max:11',
             'company_id' => 'required|integer|exists:companies,id',
-            'user_id' => 'required|integer|exists:users,id',
-            'status' => 'required|integer',
+            'user_id' => 'required|integer|exists:users,id'
         ];
     }
 
@@ -50,10 +49,7 @@ class StoreDigitalWalletRequest extends FormRequest
 
             'user_id.required' => 'El ID del usuario es obligatorio.',
             'user_id.integer' => 'El ID del usuario debe ser un número entero.',
-            'user_id.exists' => 'El usuario seleccionado no existe.',
-
-            'status.required' => 'El estado es obligatorio.',
-            'status.integer' => 'El estado debe ser un número entero.',
+            'user_id.exists' => 'El usuario seleccionado no existe.'
         ];
     }
 }

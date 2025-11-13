@@ -225,6 +225,7 @@ Route::put('banks-status/{id}', [BankController::class, 'updateStatus']);
 Route::post('digital-wallets', [DigitalWalletController::class, 'store']);
 Route::get('digital-wallets/{id}', [DigitalWalletController::class, 'show']);
 Route::put('digital-wallets/{id}', [DigitalWalletController::class, 'update']);
+Route::put('digital-wallets-status/{id}', [DigitalWalletController::class, 'updateStatus']);
 
 // Customer portfolios - Cartera de clientes
 Route::post('customer-portfolios', [CustomerPortfolioController::class, 'store']);

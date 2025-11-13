@@ -14,7 +14,6 @@ class CustomerDTO
     public $customer_type_id;
     public $contact;
     public $is_withholding_applicable;
-    public $status;
 
     public function __construct(array $data)
     {
@@ -28,6 +27,5 @@ class CustomerDTO
         $this->customer_type_id = $data['customer_type_id'] ?? null;
         $this->contact = $data['contact'] ?? null;
         $this->is_withholding_applicable = $data['is_withholding_applicable'] ?? null;
-        $this->status = $data['status'] ?? null;
     }
 }

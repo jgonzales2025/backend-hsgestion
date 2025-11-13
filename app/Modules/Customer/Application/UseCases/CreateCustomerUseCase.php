@@ -33,7 +33,6 @@ class CreateCustomerUseCase
             customer_type_name: null,
             contact: $customerDTO->contact,
             is_withholding_applicable: $customerDTO->is_withholding_applicable,
-            status: $customerDTO->status,
             phones: null,
             emails: null,
             addresses: null,

@@ -27,8 +27,7 @@ readonly class UpdateCustomerUseCase
           customer_type_id: $customerDTO->customer_type_id,
           customer_type_name: null,
           contact: $customerDTO->contact,
-          is_withholding_applicable: $customerDTO->is_withholding_applicable,
-          status: $customerDTO->status
+          is_withholding_applicable: $customerDTO->is_withholding_applicable
         );
 
         return $this->customerRepository->update($customer);

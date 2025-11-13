@@ -19,11 +19,11 @@ class CustomerTypeSeeder extends Seeder
                 'status' => 1
             ],
             [
-                'description' => 'DISTRIBUIDOR',
+                'description' => 'MAYORISTA',
                 'status' => 1
             ],
             [
-                'description' => 'MAYORISTA',
+                'description' => 'AUTORIZADO',
                 'status' => 1
             ]
         ];

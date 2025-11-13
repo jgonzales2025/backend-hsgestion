@@ -16,4 +16,5 @@ interface CustomerRepositoryInterface
     public function saveCustomerBySunatApi(Customer $customer): ?Customer;
     public function findCustomerByDocumentNumber(string $documentNumber): ?Customer;
     public function findAllCustomersSuppliers(): array;
+    public function updateStatus(int $customerId, int $status): void;
 }

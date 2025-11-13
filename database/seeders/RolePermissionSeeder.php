@@ -112,6 +112,7 @@ class RolePermissionSeeder extends Seeder
             'tablas.billetera_digital',
             'tablas.intentos_sesion',
             'tablas.notas_debito',
+            'tablas.motivos_caja_chica',
 
             // MANTENIMIENTO
             'mantenimiento.guias_ingreso_internas',
@@ -262,6 +263,7 @@ class RolePermissionSeeder extends Seeder
             ['role_id' => $admin->id, 'menu_id' => 104],
             ['role_id' => $admin->id, 'menu_id' => 105],
             ['role_id' => $admin->id, 'menu_id' => 106],
+            ['role_id' => $admin->id, 'menu_id' => 107],
         ]);
 
         // Gerente

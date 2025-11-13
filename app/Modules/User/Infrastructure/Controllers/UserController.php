@@ -15,6 +15,7 @@ use App\Modules\User\Application\UseCases\FindAllUserUseNameCase;
 use App\Modules\User\Application\UseCases\FindByUserNameUseCase;
 use App\Modules\User\Application\UseCases\GetUserByIdUseCase;
 use App\Modules\User\Application\UseCases\PasswordValidationUseCase;
+use App\Modules\User\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\User\Application\UseCases\UpdateUserStLoginUseCase;
 use App\Modules\User\Application\UseCases\UpdateUserUseCase;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
@@ -311,5 +312,18 @@ class UserController extends Controller
                 'user_authorized_id' => $isValid['user_id']
             ], 200);
         }
+    }
+
+    public function updateStatus(int $id, Request $request): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'status' => 'required|integer|in:0,1'
+        ]);
+        $status = $validatedData['status'];
+        
+        $updateStatusUseCase = new UpdateStatusUseCase($this->userRepository);
+        $updateStatusUseCase->execute($id, $status);
+
+        return response()->json(['message' => 'Estado actualizado correctamente'], 200);
     }
 }

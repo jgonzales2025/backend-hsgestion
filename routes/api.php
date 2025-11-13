@@ -126,6 +126,7 @@ Route::get('categories',[CategoryController::class, 'index']);
 Route::post('categories',[CategoryController::class, 'store']);
 Route::get('categories/{id}',[CategoryController::class, 'show']);
 Route::put('categories/{id}',[CategoryController::class, 'update']);
+Route::put('categories-status/{id}',[CategoryController::class, 'updateStatus']);
 
 // SubCategories - subcategorias
 Route::get('sub-categories',[SubCategoryController::class, 'index']);

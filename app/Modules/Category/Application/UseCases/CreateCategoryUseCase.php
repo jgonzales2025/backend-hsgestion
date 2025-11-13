@@ -19,8 +19,7 @@ class CreateCategoryUseCase
     {
         $category = new Category(
             id: 0,
-            name: $categoryDTO->name,
-            status: $categoryDTO->status,
+            name: $categoryDTO->name
         );
 
         return $this->categoryRepository->save($category);

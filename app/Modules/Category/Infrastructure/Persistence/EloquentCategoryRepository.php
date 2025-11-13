@@ -23,9 +23,9 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
     public function save(Category $category): Category
     {
         $eloquentCategory = EloquentCategory::create([
-            'name' => $category->getName(),
-            'status' => $category->getStatus(),
+            'name' => $category->getName()
         ]);
+        $eloquentCategory->refresh();
 
         return $this->mapToEntity($eloquentCategory);
     }
@@ -46,15 +46,19 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
         $eloquentCategory = EloquentCategory::find($category->getId());
 
         if (!$eloquentCategory) {
-            throw new \Exception("Categoria no encontrada");
+            return null;
         }
 
         $eloquentCategory->update([
-            'name' => $category->getName(),
-            'status' => $category->getStatus(),
+            'name' => $category->getName()
         ]);
 
         return $this->mapToEntity($eloquentCategory);
+    }
+
+    public function updateStatus(int $categoryId, int $status): void
+    {
+        EloquentCategory::where('id', $categoryId)->update(['status' => $status]);
     }
 
     private function mapToEntity($eloquentCategory): Category
@@ -65,4 +69,5 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
             status: $eloquentCategory->status,
         );
     }
+
 }

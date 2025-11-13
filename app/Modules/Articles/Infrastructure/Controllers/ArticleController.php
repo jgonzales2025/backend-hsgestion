@@ -103,12 +103,15 @@ class ArticleController extends Controller
     );
 
   }
-  public function indexNotesDebito(): array
+  public function indexNotesDebito(Request $request): array
   {
+    $name = $request->query("description");
+
+
 
     $articleUseCase = new FindAllArticlesNotesDebitoUseCase($this->articleRepository);
 
-    $article = $articleUseCase->execute();
+    $article = $articleUseCase->execute($name);
 
 
     return ArticleNotesDebitoResource::collection($article)->resolve();
@@ -276,6 +279,7 @@ class ArticleController extends Controller
       201
     );
   }
+
 
   public function requiredSerial(int $articleId): JsonResponse
   {

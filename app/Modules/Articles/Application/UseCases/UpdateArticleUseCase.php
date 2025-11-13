@@ -83,7 +83,6 @@ readonly class UpdateArticleUseCase
             category: $categoryType,
             currencyType: $currencyType,
             measurementUnit: $measurementUseCaseType,
-            precioIGv: null,
             user: $user,
             venta: $articleDTO->venta ?? false,
             subCategory: $subCategoryType,

@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
+use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\Customer\Infrastructure\Resources\CustomerCompanyResource;
+use App\Modules\CustomerAddress\Domain\Interfaces\CustomerAddressRepositoryInterface;
 use App\Modules\CustomerAddress\Infrastructure\Models\EloquentCustomerAddress;
 use App\Modules\CustomerAddress\Infrastructure\Resources\CustomerAddressResource;
 use App\Modules\DispatchArticle\Application\DTOS\DispatchArticleDTO;
@@ -45,8 +47,10 @@ class DispatchNotesController extends Controller
         private readonly DocumentTypeRepositoryInterface $documentTypeRepositoryInterface,
         private readonly DriverRepositoryInterface $driverRepositoryInterface,
         private readonly DispatchArticleRepositoryInterface $dispatchArticleRepositoryInterface,
-        private readonly GenerateDispatchNotePdfUseCase $generatePdfUseCase
-        ) {
+        private readonly GenerateDispatchNotePdfUseCase $generatePdfUseCase,
+        private readonly CustomerRepositoryInterface $customerRepositoryInterface,
+        private readonly CustomerAddressRepositoryInterface $customerAddressRepositoryInterface
+    ) {
     }
 
     public function index(): JsonResponse
@@ -69,7 +73,17 @@ class DispatchNotesController extends Controller
     public function store(RequestStore $store): JsonResponse
     {
         $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
-        $dispatchNoteUseCase = new CreateDispatchNoteUseCase($this->dispatchNoteRepository, $this->companyRepositoryInterface, $this->branchRepository, $this->serieRepositoryInterface, $this->emissionReasonRepositoryInterface, $this->transportCompany, $this->documentTypeRepositoryInterface, $this->driverRepositoryInterface);
+        $dispatchNoteUseCase = new CreateDispatchNoteUseCase(
+            $this->dispatchNoteRepository,
+            $this->companyRepositoryInterface,
+            $this->branchRepository,
+            $this->serieRepositoryInterface,
+            $this->emissionReasonRepositoryInterface,
+            $this->transportCompany,
+            $this->documentTypeRepositoryInterface,
+            $this->driverRepositoryInterface,
+            $this->customerRepositoryInterface,
+        );
 
 
         $dispatchNotesDTO->pdf = '1234';
@@ -118,20 +132,30 @@ class DispatchNotesController extends Controller
 
     public function update(RequestUpdate $store, $id): JsonResponse
     {
-      $saleUseCase = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
+        $saleUseCase = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
         $dispatchNote = $saleUseCase->execute($id);
 
         if (!$dispatchNote) {
             return response()->json(['message' => 'Venta no encontrada'], 404);
         }
-    
-      
+
+
 
         $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
-        $dispatchNoteUseCase = new UpdateDispatchNoteUseCase($this->dispatchNoteRepository, $this->companyRepositoryInterface, $this->branchRepository, $this->serieRepositoryInterface, $this->emissionReasonRepositoryInterface, $this->transportCompany, $this->documentTypeRepositoryInterface, $this->driverRepositoryInterface);
+        $dispatchNoteUseCase = new UpdateDispatchNoteUseCase(
+            $this->dispatchNoteRepository,
+            $this->companyRepositoryInterface,
+            $this->branchRepository,
+            $this->serieRepositoryInterface,
+            $this->emissionReasonRepositoryInterface,
+            $this->transportCompany,
+            $this->documentTypeRepositoryInterface,
+            $this->driverRepositoryInterface,
+            $this->customerRepositoryInterface,
+        );
         $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO, $dispatchNote);
-        
-        
+
+
         $this->dispatchArticleRepositoryInterface->deleteBySaleId($dispatchNotes->getId());
 
         $dispatchArticle = $this->createDispatchArticles($dispatchNotes, $store->validated()['dispatch_articles']);
@@ -146,11 +170,11 @@ class DispatchNotesController extends Controller
     }
 
 
-        public function generate(int $id): JsonResponse
+    public function generate(int $id): JsonResponse
     {
         try {
             $pdfUrl = $this->generatePdfUseCase->execute($id);
-            
+
             return response()->json([
                 'success' => true,
                 'pdf_url' => $pdfUrl
@@ -162,29 +186,30 @@ class DispatchNotesController extends Controller
             ], 200);
         }
     }
-public function traerProovedores() {
-    // Obtener company_id del usuario logeado
-    
-   $payload = JWTAuth::parseToken()->payload();
+    public function traerProovedores()
+    {
+        // Obtener company_id del usuario logeado
 
-    $loggedCompanyId = $payload->get('company_id');
+        $payload = JWTAuth::parseToken()->payload();
 
-    // Traer todos los proveedores excepto el de la compañía logeada
-    $proveedores = EloquentCustomer::where('record_type_id', 1)
-        ->where('id', '!=', $loggedCompanyId)
-        ->get();
-        
-   $adres = EloquentCustomerAddress::
-        where('id', '!=', $loggedCompanyId)
-        ->get();
-        
+        $loggedCompanyId = $payload->get('company_id');
+
+        // Traer todos los proveedores excepto el de la compañía logeada
+        $proveedores = EloquentCustomer::where('record_type_id', 1)
+            ->where('id', '!=', $loggedCompanyId)
+            ->get();
+
+        $adres = EloquentCustomerAddress::
+            where('id', '!=', $loggedCompanyId)
+            ->get();
+
         return response()->json([
             'customer' => $proveedores,
-          'addresses' => $adres,
-        
+            'addresses' => $adres,
+
         ]);
-    
-}    
+
+    }
     private function createDispatchArticles($sale, array $articlesData): array
     {
 

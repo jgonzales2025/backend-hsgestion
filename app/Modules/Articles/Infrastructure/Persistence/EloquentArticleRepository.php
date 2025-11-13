@@ -61,7 +61,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     {
         $companyId = request()->get('company_id');
 
-
         $articles = EloquentArticle::with([
             'measurementUnit',
             'brand',
@@ -70,22 +69,28 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'subCategory',
             'user',
             'company',
+            'referenceCodes', // 👈 incluimos relación
         ])
             ->where('company_type_id', $companyId)
             ->where('status_Esp', false)
             ->when($description, function ($query, $name) {
-                return $query->where(function ($q) use ($name) {
+                $query->where(function ($q) use ($name) {
                     $q->where('description', 'like', "%{$name}%")
                         ->orWhere('cod_fab', 'like', "%{$name}%")
-
-                    ;
+                        // 👇 búsqueda dentro de reference_codes relacionados
+                        ->orWhereHas('referenceCodes', function ($r) use ($name) {
+                            $r->where('ref_code', 'like', "%{$name}%");
+                        });
                 });
             })
             ->orderByDesc('created_at')
             ->get();
 
-        return $articles->map(fn($article) => $this->mapToDomain($article))->toArray();
+        // Mapear al dominio (puedes mantener tu método mapToDomain o hacerlo directo)
+        return $articles->map(fn(EloquentArticle $article) => $this->mapToDomain($article))->toArray();
+
     }
+
 
 
     public function findAllArticleNotasDebito(?string $description): array
@@ -105,18 +110,23 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             ->where('status_Esp', true)
             ->when($description, function ($query, $name) {
                 return $query->where(function ($q) use ($name) {
-                    $q->where('description', 'like', "%{$name}%")
+                    $q->where('description', 'like', "csr")
                         ->orWhere('cod_fab', 'like', "%{$name}%");
                 });
             })
             ->orderByDesc('created_at')
             ->get();
+        \Log::info('Resultado artículos', [$articles]);
 
         return $articles->map(fn($article) => $this->mapToDomain($article))->toArray();
     }
     public function findAllArticleNotesDebito(?string $description): array
     {
         $companyId = request()->get('company_id');
+
+        // 🔍 Log para asegurarte del valor recibido
+        \Log::info('company_id recibido', [$companyId]);
+        \Log::info('description recibido', [$description]);
 
         $articles = EloquentArticle::with([
             'measurementUnit',
@@ -128,15 +138,19 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'company',
         ])
             ->where('company_type_id', $companyId)
-            ->where('status_Esp', true)
+            ->where('status_Esp', true) // 👈 usar 1 en lugar de true
             ->when($description, function ($query, $name) {
                 return $query->where(function ($q) use ($name) {
-                    $q->where('description', 'like', "%{$name}%")
-                        ->orWhere('cod_fab', 'like', "%{$name}%");
+                    $q->where('filt_NameEsp', 'like', "%{$name}%");
+                    // ->orWhere('cod_fab', 'like', "%{$name}%");
                 });
             })
             ->orderByDesc('created_at')
             ->get();
+
+        \Log::info('Resultado artículos', ['count' => $articles->count()]);
+        \Log::info('Tipo de description', [gettype($description), $description]);
+
 
         return $articles->map(function ($article) {
             return new ArticleNotasDebito(
@@ -144,11 +158,11 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 user_id: $article->user_id,
                 company_id: $article->company_type_id,
                 filt_NameEsp: $article->filt_NameEsp,
-                status_Esp: $article->statusEsp
-
+                status_Esp: $article->status_Esp // 👈 revisar que este sea el nombre real
             );
         })->toArray();
     }
+
 
     public function findById(int $id): ?Article
     {

@@ -3,6 +3,7 @@ namespace App\Modules\DispatchNotes\Domain\Entities;
 
 use App\Modules\Branch\Domain\Entities\Branch;
 use App\Modules\Company\Domain\Entities\Company;
+use App\Modules\Customer\Domain\Entities\Customer;
 use App\Modules\Driver\Domain\Entities\Driver;
 use App\Modules\EmissionReason\Domain\Entities\EmissionReason;
 use App\Modules\TransportCompany\Domain\Entities\TransportCompany;
@@ -35,6 +36,8 @@ class DispatchNote
     private ?int $destination_branch_client;
     private int $customer_id;
     private string $created_at = ""; 
+    private ?Customer $supplier;
+    private ?Customer $address_supplier;
 
     public function __construct(
         ?int $id,
@@ -61,6 +64,9 @@ class DispatchNote
         ?DocumentType $document_type,
         ?int $destination_branch_client,
         int $customer_id,
+        ?Customer $supplier,
+        ?Customer $address_supplier,
+        ?string $created_at
 
     ) {
         $this->id = $id;
@@ -87,6 +93,9 @@ class DispatchNote
         $this->document_type = $document_type;
         $this->destination_branch_client = $destination_branch_client;
         $this->customer_id = $customer_id;
+        $this->supplier = $supplier;
+        $this->address_supplier = $address_supplier;
+        $this->created_at = $created_at;
     }
 
     // Getters
@@ -193,5 +202,13 @@ class DispatchNote
     {
         $this->created_at = $date;
     }
+ public function getSupplier(): ?Customer
+{
+    return $this->supplier;
+}
+public function getAddressSupplier(): ?Customer
+{
+    return $this->address_supplier;
+}
 
 }

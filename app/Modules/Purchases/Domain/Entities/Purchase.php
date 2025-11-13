@@ -1,0 +1,167 @@
+<?php
+
+namespace App\Modules\Purchases\Domain\Entities;
+
+class Purchase
+{
+    private ?int $id;
+    private int $company_id;
+    private int $branch_id;
+    private int $supplier_id;
+    private string $serie;
+    private string $correlative;
+    private float $exchange_type;
+    private string $methodpayment;
+    private float $currency;
+    private string $date;
+    private string $date_ven;
+    private int $days;
+    private string $observation;
+    private float $detraccion;
+    private string $fech_detraccion;
+    private float $amount_detraccion;
+    private bool $is_detracion;
+    private float $subtotal;
+    private float $total_desc;
+    private float $inafecto;
+    private float $igv;
+    private float $total;
+
+    public function __construct(
+        ?int $id,
+        int $company_id,
+        int $branch_id,
+        int $supplier_id,
+        string $serie,
+        string $correlative,
+        float $exchange_type,
+        string $methodpayment,
+        float $currency,
+        string $date,
+        string $date_ven,
+        int $days,
+        string $observation,
+        float $detraccion,
+        string $fech_detraccion,
+        float $amount_detraccion,
+        bool $is_detracion,
+        float $subtotal,
+        float $total_desc,
+        float $inafecto,
+        float $igv,
+        float $total
+    ) {
+        $this->id = $id;
+        $this->company_id = $company_id;
+        $this->branch_id = $branch_id;
+        $this->supplier_id = $supplier_id;
+        $this->serie = $serie;
+        $this->correlative = $correlative;
+        $this->exchange_type = $exchange_type;
+        $this->methodpayment = $methodpayment;
+        $this->currency = $currency;
+        $this->date = $date;
+        $this->date_ven = $date_ven;
+        $this->days = $days;
+        $this->observation = $observation;
+        $this->detraccion = $detraccion;
+        $this->fech_detraccion = $fech_detraccion;
+        $this->amount_detraccion = $amount_detraccion;
+        $this->is_detracion = $is_detracion;
+        $this->subtotal = $subtotal;
+        $this->total_desc = $total_desc;
+        $this->inafecto = $inafecto;
+        $this->igv = $igv;
+        $this->total = $total;
+    }
+
+    public function getId(): int|null
+    {
+        return $this->id;
+    }
+    public function getCompanyId(): int
+    {
+        return $this->company_id;
+    }
+    public function getBranchId(): int
+    {
+        return $this->branch_id;
+    }
+    public function getSupplierId(): int
+    {
+        return $this->supplier_id;
+    }
+    public function getSerie(): string
+    {
+        return $this->serie;
+    }
+    public function getCorrelative(): string
+    {
+        return $this->correlative;
+    }
+    public function getExchangeType(): string
+    {
+        return $this->exchange_type;
+    }
+    public function getMethodpayment(): string
+    {
+        return $this->methodpayment;
+    }
+    public function getCurrency(): float
+    {
+        return $this->currency;
+    }
+    public function getDate(): string
+    {
+        return $this->date;
+    }
+    public function getDateVen(): string
+    {
+        return $this->date_ven;
+    }
+    public function getDays(): int
+    {
+        return $this->days;
+    }
+    public function getObservation(): string
+    {
+        return $this->observation;
+    }
+    public function getDetraccion(): float
+    {
+        return $this->detraccion;
+    }
+    public function getFechDetraccion(): string
+    {
+        return $this->fech_detraccion;
+    }
+    public function getAmountDetraccion(): float
+    {
+        return $this->amount_detraccion;
+    }
+    public function getIsDetracion(): bool
+    {
+        return $this->is_detracion;
+    }
+    public function getSubtotal(): float
+    {
+        return $this->subtotal;
+    }
+    public function getTotalDesc(): float
+    {
+        return $this->total_desc;
+    }
+    public function getInafecto(): float
+    {
+        return $this->inafecto;
+    }
+    public function getIgv(): float
+    {
+        return $this->igv;
+    }
+    public function getTotal(): float
+    {
+        return $this->total;
+    }
+
+}

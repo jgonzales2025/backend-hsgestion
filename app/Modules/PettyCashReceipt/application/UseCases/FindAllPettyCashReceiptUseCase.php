@@ -10,9 +10,9 @@ class FindAllPettyCashReceiptUseCase
     {
     }
 
-    public function execute()
+    public function execute(?string $filter)
     {
-        return $this->pettyCashReceiptRepository->findAll();
+        return $this->pettyCashReceiptRepository->findAll($filter);
 
     }
 }

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('delivered_to', 191)->nullable();
             $table->unsignedBigInteger('reason_code');
 
-            $table->integer('currency_type')->default(1);
+            $table->integer('currency_type')->nullable();
             $table->decimal('amount', 12, 2)->default(0.00);
             $table->text('observation')->nullable();
 
@@ -36,6 +36,7 @@ return new class extends Migration
             $table->dateTime('created_at_manual')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->dateTime('updated_at_manual')->nullable();
+            $table->foreignId('branch_id')->constrained('branches');
 
             $table->timestamps();
         

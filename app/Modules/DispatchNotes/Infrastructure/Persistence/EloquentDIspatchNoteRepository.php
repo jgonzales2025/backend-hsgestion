@@ -151,4 +151,10 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'address_supplier_id' => $dispatchNote->getAddressSupplier()?->getId() ?? null
     ];
     }
+    public function updateStatus(int $dispatchNote,int $status): void
+    {
+     EloquentDispatchNote::where('id', $dispatchNote)->update(['status' => $status]);
+    
+    }
+
 }

@@ -28,6 +28,7 @@ use App\Modules\MeasurementUnit\Infrastructure\Controllers\MeasurementUnitContro
 use App\Modules\MonthlyClosure\Infrastructure\Controllers\MonthlyClosureController;
 use App\Modules\PaymentType\Infrastructure\Controllers\PaymentTypeController;
 use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController;
+use App\Modules\PettyCashMotive\Infrastructure\Controllers\PettyCashMotiveController;
 use App\Modules\PettyCashReceipt\Infrastructure\Controllers\PettyCashReceiptController;
 use App\Modules\PurchaseOrder\Infrastructure\Controllers\PurchaseOrderController;
 use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
@@ -111,38 +112,38 @@ Route::get('brands/{id}', [BrandController::class, 'show']);
 Route::put('brands/{id}', [BrandController::class, 'update']);
 
 // Drivers - conductores
-Route::get('drivers',[DriverController::class, 'index']);
-Route::post('drivers',[DriverController::class, 'store']);
-Route::get('drivers/{id}',[DriverController::class, 'show']);
-Route::put('drivers/{id}',[DriverController::class, 'update']);
-Route::post('drivers-sunatApi',[DriverController::class, 'storeCustomerBySunatApi']);
+Route::get('drivers', [DriverController::class, 'index']);
+Route::post('drivers', [DriverController::class, 'store']);
+Route::get('drivers/{id}', [DriverController::class, 'show']);
+Route::put('drivers/{id}', [DriverController::class, 'update']);
+Route::post('drivers-sunatApi', [DriverController::class, 'storeCustomerBySunatApi']);
 
 // Categories - categorias
-Route::get('categories',[CategoryController::class, 'index']);
-Route::post('categories',[CategoryController::class, 'store']);
-Route::get('categories/{id}',[CategoryController::class, 'show']);
-Route::put('categories/{id}',[CategoryController::class, 'update']);
+Route::get('categories', [CategoryController::class, 'index']);
+Route::post('categories', [CategoryController::class, 'store']);
+Route::get('categories/{id}', [CategoryController::class, 'show']);
+Route::put('categories/{id}', [CategoryController::class, 'update']);
 
 // SubCategories - subcategorias
-Route::get('sub-categories',[SubCategoryController::class, 'index']);
-Route::get('sub-categories/category/{id}',[SubCategoryController::class, 'findByCategoryId']);
-Route::post('sub-categories',[SubCategoryController::class, 'store']);
-Route::get('sub-categories/{id}',[SubCategoryController::class, 'show']);
-Route::put('sub-categories/{id}',[SubCategoryController::class, 'update']);
+Route::get('sub-categories', [SubCategoryController::class, 'index']);
+Route::get('sub-categories/category/{id}', [SubCategoryController::class, 'findByCategoryId']);
+Route::post('sub-categories', [SubCategoryController::class, 'store']);
+Route::get('sub-categories/{id}', [SubCategoryController::class, 'show']);
+Route::put('sub-categories/{id}', [SubCategoryController::class, 'update']);
 
 // TransportCompanies - Empresa de transportes
-Route::get('transport-companies',[TransportCompanyController::class, 'index']);
-Route::post('transport-companies',[TransportCompanyController::class, 'store']);
-Route::get('transport-companies/{id}',[TransportCompanyController::class, 'show']);
-Route::put('transport-companies/{id}',[TransportCompanyController::class, 'update']);
-Route::post('transport-companies-sunat',[TransportCompanyController::class, 'storeCustomerBySunatApi']);
+Route::get('transport-companies', [TransportCompanyController::class, 'index']);
+Route::post('transport-companies', [TransportCompanyController::class, 'store']);
+Route::get('transport-companies/{id}', [TransportCompanyController::class, 'show']);
+Route::put('transport-companies/{id}', [TransportCompanyController::class, 'update']);
+Route::post('transport-companies-sunat', [TransportCompanyController::class, 'storeCustomerBySunatApi']);
 
 // PercentageIGV - Porcentaje de IGV
-Route::get('percentage-igv',[PercentageIGVController::class, 'index']);
-Route::get('percentage-igv-current',[PercentageIGVController::class, 'findPercentageCurrent']);
-Route::post('percentage-igv',[PercentageIGVController::class, 'store']);
-Route::get('percentage-igv/{id}',[PercentageIGVController::class, 'show']);
-Route::put('percentage-igv/{id}',[PercentageIGVController::class, 'update']);
+Route::get('percentage-igv', [PercentageIGVController::class, 'index']);
+Route::get('percentage-igv-current', [PercentageIGVController::class, 'findPercentageCurrent']);
+Route::post('percentage-igv', [PercentageIGVController::class, 'store']);
+Route::get('percentage-igv/{id}', [PercentageIGVController::class, 'show']);
+Route::put('percentage-igv/{id}', [PercentageIGVController::class, 'update']);
 
 // MeasurementUnits - Unidades de medida
 Route::get('measurement-units', [MeasurementUnitController::class, 'index']);
@@ -164,7 +165,6 @@ Route::get('dispatch-Article/{id}', [DispatchArticleController::class, 'show']);
 // Customers - Clientes
 Route::get('customers', [CustomerController::class, 'index']);
 Route::get('customers/unassigned', [CustomerController::class, 'findAllUnassigned']);
-Route::get('customers-suppliers', [CustomerController::class, 'findAllSuppliers']); // Traer clientes que son proveedores
 Route::get('customers/{id}', [CustomerController::class, 'show']);
 Route::put('customers/{id}', [CustomerController::class, 'update']);
 Route::put('customers-status/{id}', [CustomerController::class, 'updateStatus']);
@@ -178,11 +178,11 @@ Route::get('provinces/{id}', [ProvinceController::class, 'index']);
 Route::get('districts/{coddep}/{codpro}', [DistrictController::class, 'index']);
 
 //PaymentType
-Route::get('paymentType', [PaymentTypeController::class,'index']);
-Route::get('paymentType/{id}', [PaymentTypeController::class,'show']);
+Route::get('paymentType', [PaymentTypeController::class, 'index']);
+Route::get('paymentType/{id}', [PaymentTypeController::class, 'show']);
 
 //currencyType
-Route::get('currency-type',[CurrencyTypeController::class,'index']);
+Route::get('currency-type', [CurrencyTypeController::class, 'index']);
 
 
 // Exchange Rates - Tipo de cambio
@@ -229,6 +229,7 @@ Route::get('dispatchNote/{id}', [DispatchNotesController::class, 'show']);
 Route::put('dispatchNote-update/{id}', [DispatchNotesController::class, 'update']);
 Route::get('dispatchNote-PDF/{id}', [DispatchNotesController::class, 'generate']);
 Route::get('dispatchNote-proveedor', [DispatchNotesController::class, 'traerProovedores']);
+Route::put('dispatchNote-status/{id}', [DispatchNotesController::class, 'updateStatus']);
 
 // Logs de sesion
 Route::get('logs-login', [LoginAttemptController::class, 'index']);
@@ -303,18 +304,24 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Ruta para traer los motivos de notas de credito o debito
     Route::get('/note-reasons', [NoteReasonController::class, 'index']);
 
-   //Entry Guide
-   Route::get('/entry-guides', [ControllerEntryGuide::class, 'index']);
+    //Entry Guide
+    Route::get('/entry-guides', [ControllerEntryGuide::class, 'index']);
     Route::get('/entry-guides/{id}', [ControllerEntryGuide::class, 'show']);
     Route::post('/entry-guides', [ControllerEntryGuide::class, 'store']);
     Route::put('/entry-guides/{id}', [ControllerEntryGuide::class, 'update']);
 
 
-    //PettyCashReceiptUseCase
-   Route::get('/pettyCashReceipt', [PettyCashReceiptController::class, 'index']);
-  Route::post('/pettyCashReceipt', [PettyCashReceiptController::class, 'store']);
-  Route::put('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'update']);
-
+    //PettyCashReceipt
+    Route::get('/pettyCashReceipt', [PettyCashReceiptController::class, 'index']);
+    Route::post('/pettyCashReceipt', [PettyCashReceiptController::class, 'store']);
+    Route::put('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'update']);
+    Route::get('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'show']);
+ //PettyCashReceiptMotive
+    Route::get('/pettyCashMotive', [PettyCashMotiveController::class, 'index']);
+    Route::post('/pettyCashMotive', [PettyCashMotiveController::class, 'store']);
+    Route::put('/pettyCashMotive/{id}', [PettyCashMotiveController::class, 'update']);
+    Route::get('/pettyCashMotive/{id}', [PettyCashMotiveController::class, 'show']);
+   
 
 
     // Ruta para las ordenes de compra

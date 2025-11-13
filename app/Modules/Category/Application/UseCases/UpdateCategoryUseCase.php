@@ -19,8 +19,7 @@ class UpdateCategoryUseCase
     {
         $category = new Category(
             id: $id,
-            name: $categoryDTO->name,
-            status: $categoryDTO->status,
+            name: $categoryDTO->name
         );
 
         return $this->categoryRepository->update($category);

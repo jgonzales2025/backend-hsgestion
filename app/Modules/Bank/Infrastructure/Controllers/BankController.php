@@ -8,6 +8,7 @@ use App\Modules\Bank\Application\UseCases\CreateBankUseCase;
 use App\Modules\Bank\Application\UseCases\FindAllBanksUseCase;
 use App\Modules\Bank\Application\UseCases\FindByIdBankUseCase;
 use App\Modules\Bank\Application\UseCases\UpdateBankUseCase;
+use App\Modules\Bank\Application\UseCases\UpdateStatusBankUseCase;
 use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface;
 use App\Modules\Bank\Infrastructure\Requests\StoreBankRequest;
 use App\Modules\Bank\Infrastructure\Requests\UpdateBankRequest;
@@ -59,5 +60,19 @@ class BankController extends Controller
         $bank = $bankUseCase->execute($id, $bankDTO);
 
         return response()->json(new BankResource($bank), 200);
+    }
+
+    public function updateStatus(int $id, Request $request): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'status' => 'required|integer|in:0,1',
+        ]);
+
+        $status = $validatedData['status'];
+
+        $bankUseCase = new UpdateStatusBankUseCase($this->bankRepository);
+        $bankUseCase->execute($id, $status);
+
+        return response()->json(['message' => 'Estado actualizado correctamente'], 200);
     }
 }

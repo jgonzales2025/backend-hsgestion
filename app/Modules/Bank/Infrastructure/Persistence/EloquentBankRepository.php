@@ -41,9 +41,9 @@ class EloquentBankRepository implements BankRepositoryInterface
             'account_number' => $bank->getAccountNumber(),
             'currency_type_id' => $bank->getCurrencyType()->getId(),
             'user_id' => $bank->getUser()->getId(),
-            'company_id' => $bank->getCompany()->getId(),
-            'status' => $bank->getStatus(),
+            'company_id' => $bank->getCompany()->getId()
         ]);
+        $eloquentBank->refresh();
 
         return new Bank(
             id: $eloquentBank->id,
@@ -90,8 +90,7 @@ class EloquentBankRepository implements BankRepositoryInterface
             'account_number' => $bank->getAccountNumber(),
             'currency_type_id' => $bank->getCurrencyType()->getId(),
             'user_id' => $bank->getUser()->getId(),
-            'company_id' => $bank->getCompany()->getId(),
-            'status' => $bank->getStatus(),
+            'company_id' => $bank->getCompany()->getId()
         ]);
 
         return new Bank(
@@ -104,5 +103,10 @@ class EloquentBankRepository implements BankRepositoryInterface
             company: $eloquentBank->company->toDomain($eloquentBank->company),
             status: $eloquentBank->status,
         );
+    }
+
+    public function updateStatus(int $bankId, int $status): void
+    {
+        EloquentBank::where('id', $bankId)->update(['status' => $status]);
     }
 }

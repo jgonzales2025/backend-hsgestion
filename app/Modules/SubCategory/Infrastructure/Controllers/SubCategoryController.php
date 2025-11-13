@@ -8,12 +8,14 @@ use App\Modules\SubCategory\Application\UseCases\CreateSubCategoryUseCase;
 use App\Modules\SubCategory\Application\UseCases\FindAllSubCategoriesUseCase;
 use App\Modules\SubCategory\Application\UseCases\FindByCategoryIdUseCase;
 use App\Modules\SubCategory\Application\UseCases\FindByIdSubCategoryUseCase;
+use App\Modules\SubCategory\Application\UseCases\UpdateStatusSubCategoryUseCase;
 use App\Modules\SubCategory\Application\UseCases\UpdateSubCategoryUseCase;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\SubCategory\Infrastructure\Requests\StoreSubCategoryRequest;
 use App\Modules\SubCategory\Infrastructure\Requests\UpdateSubCategoryRequest;
 use App\Modules\SubCategory\Infrastructure\Resources\SubCategoryResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class SubCategoryController extends Controller
@@ -50,6 +52,10 @@ class SubCategoryController extends Controller
         $subCategoryUseCase = new FindByIdSubCategoryUseCase($this->subCategoryRepository);
         $subCategory = $subCategoryUseCase->execute($id);
 
+        if (!$subCategory) {
+            return response()->json(['message' => 'Subcategoria no encontrada'],404);
+        }
+
         return response()->json(
             (new SubCategoryResource($subCategory))->resolve(),
             200
@@ -58,9 +64,16 @@ class SubCategoryController extends Controller
 
     public function update(UpdateSubCategoryRequest $request, $id): JsonResponse
     {
+        $subCategoryUseCase = new FindByIdSubCategoryUseCase($this->subCategoryRepository);
+        $subCategory = $subCategoryUseCase->execute($id);
+
+        if (!$subCategory) {
+            return response()->json(['message' => 'Subcategoria no encontrada'],404);
+        }
+
         $subCategoryDTO = new SubCategoryDTO($request->validated());
-        $subCategoryUseCase = new UpdateSubCategoryUseCase($this->subCategoryRepository);
-        $subCategory = $subCategoryUseCase->execute($id, $subCategoryDTO);
+        $subCategoryUpdateUseCase = new UpdateSubCategoryUseCase($this->subCategoryRepository);
+        $subCategory = $subCategoryUpdateUseCase->execute($id, $subCategoryDTO);
 
         return response()->json(
             (new SubCategoryResource($subCategory))->resolve(),
@@ -74,5 +87,21 @@ class SubCategoryController extends Controller
         $subCategories = $subCategoryUseCase->execute($id);
 
         return SubCategoryResource::collection($subCategories)->resolve();
+    }
+
+    public function updateStatus(int $id, Request $request): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'status' => 'required|integer|in:0,1',
+        ]);
+        $status = $validatedData['status'];
+
+        $subCategoryUseCase = new UpdateStatusSubCategoryUseCase($this->subCategoryRepository);
+        $subCategoryUseCase->execute($id, $status);
+
+        return response()->json(
+            ['message' => 'Estado actualizado correctamente'],
+            200
+        );
     }
 }

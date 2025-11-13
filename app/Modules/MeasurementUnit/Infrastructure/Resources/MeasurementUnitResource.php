@@ -12,7 +12,7 @@ class MeasurementUnitResource extends JsonResource
             'id' => $this->resource->getId(),
             'name' => $this->resource->getName(),
             'abbreviation' => $this->resource->getAbbreviation(),
-            'status' => $this->resource->getStatus(),
+            'status' => $this->resource->getStatus() == 1 ? 'Activo' : 'Inactivo'
         ];
     }
 }

@@ -15,4 +15,6 @@ interface SubCategoryRepositoryInterface
     public function update(SubCategory $subCategory): ?SubCategory;
 
     public function findByCategoryId(int $categoryId): array;
+
+    public function updateStatus(int $subCategoryId, int $status): void;
 }

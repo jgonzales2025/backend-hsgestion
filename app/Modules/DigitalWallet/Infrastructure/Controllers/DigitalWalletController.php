@@ -9,12 +9,14 @@ use App\Modules\DigitalWallet\Application\UseCases\CreateDigitalWalletUseCase;
 use App\Modules\DigitalWallet\Application\UseCases\FindAllDigitalWalletUseCase;
 use App\Modules\DigitalWallet\Application\UseCases\FindByIdDigitalWalletUseCase;
 use App\Modules\DigitalWallet\Application\UseCases\UpdateDigitalWalletUseCae;
+use App\Modules\DigitalWallet\Application\UseCases\UpdateStatusDigitalWalletUseCase;
 use App\Modules\DigitalWallet\Domain\Interfaces\DigitalWalletRepositoryInterface;
 use App\Modules\DigitalWallet\Infrastructure\Requests\StoreDigitalWalletRequest;
 use App\Modules\DigitalWallet\Infrastructure\Requests\UpdateDigitalWalletRequest;
 use App\Modules\DigitalWallet\Infrastructure\Resources\DigitalWalletResource;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DigitalWalletController extends Controller
 {
@@ -57,5 +59,19 @@ class DigitalWalletController extends Controller
         $digitalWallet = $digitalWalletUseCase->execute($id, $digitalWalletDTO);
 
         return response()->json(new DigitalWalletResource($digitalWallet), 200);
+    }
+
+    public function updateStatus(int $id, Request $request): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'status' => 'required|integer|in:0,1',
+        ]);
+
+        $status = $validatedData['status'];
+
+        $digitalWalletUseCase = new UpdateStatusDigitalWalletUseCase($this->digitalWalletRepository);
+        $digitalWalletUseCase->execute($id, $status);
+
+        return response()->json(['message' => 'Estado actualizado correctamente'], 200);
     }
 }

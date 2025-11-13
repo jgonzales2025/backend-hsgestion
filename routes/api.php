@@ -126,6 +126,7 @@ Route::get('categories',[CategoryController::class, 'index']);
 Route::post('categories',[CategoryController::class, 'store']);
 Route::get('categories/{id}',[CategoryController::class, 'show']);
 Route::put('categories/{id}',[CategoryController::class, 'update']);
+Route::put('categories-status/{id}',[CategoryController::class, 'updateStatus']);
 
 // SubCategories - subcategorias
 Route::get('sub-categories',[SubCategoryController::class, 'index']);
@@ -133,6 +134,7 @@ Route::get('sub-categories/category/{id}',[SubCategoryController::class, 'findBy
 Route::post('sub-categories',[SubCategoryController::class, 'store']);
 Route::get('sub-categories/{id}',[SubCategoryController::class, 'show']);
 Route::put('sub-categories/{id}',[SubCategoryController::class, 'update']);
+Route::put('sub-categories-status/{id}',[SubCategoryController::class, 'updateStatus']);
 
 // TransportCompanies - Empresa de transportes
 Route::get('transport-companies',[TransportCompanyController::class, 'index']);
@@ -154,6 +156,7 @@ Route::get('measurement-units', [MeasurementUnitController::class, 'index']);
 Route::post('measurement-units', [MeasurementUnitController::class, 'store']);
 Route::get('measurement-units/{id}', [MeasurementUnitController::class, 'show']);
 Route::put('measurement-units/{id}', [MeasurementUnitController::class, 'update']);
+Route::put('measurement-units-status/{id}', [MeasurementUnitController::class, 'updateStatus']);
 
 // Customer types - Tipos de clientes
 Route::get('customer-types', [CustomerTypeController::class, 'index']);
@@ -215,12 +218,14 @@ Route::get('banks', [BankController::class, 'index']);
 Route::post('banks', [BankController::class, 'store']);
 Route::get('banks/{id}', [BankController::class, 'show']);
 Route::put('banks/{id}', [BankController::class, 'update']);
+Route::put('banks-status/{id}', [BankController::class, 'updateStatus']);
 
 // Digital Wallets - Billeteras digitales
 //Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
 Route::post('digital-wallets', [DigitalWalletController::class, 'store']);
 Route::get('digital-wallets/{id}', [DigitalWalletController::class, 'show']);
 Route::put('digital-wallets/{id}', [DigitalWalletController::class, 'update']);
+Route::put('digital-wallets-status/{id}', [DigitalWalletController::class, 'updateStatus']);
 
 // Customer portfolios - Cartera de clientes
 Route::post('customer-portfolios', [CustomerPortfolioController::class, 'store']);

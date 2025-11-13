@@ -37,9 +37,9 @@ class EloquentDigitalWalletRepository implements DigitalWalletRepositoryInterfac
             'name' => $digitalWallet->getName(),
             'phone' => $digitalWallet->getPhone(),
             'company_id' => $digitalWallet->getCompany()->getId(),
-            'user_id' => $digitalWallet->getUser()->getId(),
-            'status' => $digitalWallet->getStatus(),
+            'user_id' => $digitalWallet->getUser()->getId()
         ]);
+        $eloquentDigitalWallet->refresh();
 
         return new DigitalWallet(
             id: $eloquentDigitalWallet->id,
@@ -81,8 +81,7 @@ class EloquentDigitalWalletRepository implements DigitalWalletRepositoryInterfac
             'name' => $digitalWallet->getName(),
             'phone' => $digitalWallet->getPhone(),
             'company_id' => $digitalWallet->getCompany()->getId(),
-            'user_id' => $digitalWallet->getUser()->getId(),
-            'status' => $digitalWallet->getStatus(),
+            'user_id' => $digitalWallet->getUser()->getId()
         ]);
 
         return new DigitalWallet(
@@ -93,5 +92,10 @@ class EloquentDigitalWalletRepository implements DigitalWalletRepositoryInterfac
             user: $eloquentDigitalWallet->user->toDomain($eloquentDigitalWallet->user),
             status: $eloquentDigitalWallet->status
         );
+    }
+
+    public function updateStatus(int $digitalWalletId, int $status): void
+    {
+        EloquentDigitalWallet::where('id', $digitalWalletId)->update(['status' => $status]);
     }
 }

@@ -6,7 +6,6 @@ class BrandDTO
 {
     public $id;
     public $name;
-    public $status;
 
     public function __construct(array $data)
     {

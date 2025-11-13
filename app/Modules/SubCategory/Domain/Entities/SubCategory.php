@@ -8,9 +8,9 @@ class SubCategory
     private string $name;
     private int $category_id;
     private ?string $category_name;
-    private int $status;
+    private ?int $status;
 
-    public function __construct(int $id, string $name, int $category_id, ?string $category_name, int $status)
+    public function __construct(int $id, string $name, int $category_id, ?string $category_name, ?int $status = 1)
     {
         $this->id = $id;
         $this->name = $name;
@@ -35,7 +35,7 @@ class SubCategory
     {
         return $this->category_name;
     }
-    public function getStatus(): int
+    public function getStatus(): ?int
     {
         return $this->status;
     }

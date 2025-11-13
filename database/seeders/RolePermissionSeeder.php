@@ -93,8 +93,6 @@ class RolePermissionSeeder extends Seeder
 
             // TABLAS
             'tablas.articulos',
-            'tablas.vendedores',
-            'tablas.personal_almacen',
             'tablas.empresa_transporte',
             'tablas.conductor',
             'tablas.marcas',
@@ -262,8 +260,6 @@ class RolePermissionSeeder extends Seeder
             ['role_id' => $admin->id, 'menu_id' => 103],
             ['role_id' => $admin->id, 'menu_id' => 104],
             ['role_id' => $admin->id, 'menu_id' => 105],
-            ['role_id' => $admin->id, 'menu_id' => 106],
-            ['role_id' => $admin->id, 'menu_id' => 107],
         ]);
 
         // Gerente

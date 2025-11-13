@@ -135,6 +135,7 @@ Route::get('transport-companies',[TransportCompanyController::class, 'index']);
 Route::post('transport-companies',[TransportCompanyController::class, 'store']);
 Route::get('transport-companies/{id}',[TransportCompanyController::class, 'show']);
 Route::put('transport-companies/{id}',[TransportCompanyController::class, 'update']);
+Route::put('transport-companies-status/{id}',[TransportCompanyController::class, 'updateStatus']);
 Route::post('transport-companies-sunat',[TransportCompanyController::class, 'storeCustomerBySunatApi']);
 
 // PercentageIGV - Porcentaje de IGV

@@ -120,4 +120,9 @@ class EloquentTransportCompanyRepository implements TransportCompanyRepositoryIn
 
         return $this->mapToEntity($transportCompany);
     }
+
+    public function updateStatus(int $transportCompanyId, int $status): void
+    {
+        EloquentTransportCompany::where('id', $transportCompanyId)->update(['status' => $status]);
+    }
 }

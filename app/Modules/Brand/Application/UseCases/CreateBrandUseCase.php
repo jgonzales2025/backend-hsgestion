@@ -19,8 +19,7 @@ class CreateBrandUseCase
     {
         $brand = new Brand(
             id: 0,
-            name: $brandDTO->name,
-            status: $brandDTO->status,
+            name: $brandDTO->name
         );
 
         return $this->brandRepository->save($brand);

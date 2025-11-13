@@ -109,6 +109,7 @@ Route::get('brands', [BrandController::class, 'index']);
 Route::post('brands', [BrandController::class, 'store']);
 Route::get('brands/{id}', [BrandController::class, 'show']);
 Route::put('brands/{id}', [BrandController::class, 'update']);
+Route::put('brands-status/{id}', [BrandController::class, 'updateStatus']);
 
 // Drivers - conductores
 Route::get('drivers',[DriverController::class, 'index']);

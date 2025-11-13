@@ -10,4 +10,5 @@ interface BrandRepositoryInterface
     public function findAll(): array;
     public function findById(int $id): ?Brand;
     public function update(Brand $brand): ?Brand;
+    public function updateStatus(int $brandId, int $status): void;
 }

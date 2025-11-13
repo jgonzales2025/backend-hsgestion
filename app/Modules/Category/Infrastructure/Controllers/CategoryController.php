@@ -8,11 +8,13 @@ use App\Modules\Category\Application\UseCases\CreateCategoryUseCase;
 use App\Modules\Category\Application\UseCases\FindAllCategoriesUseCase;
 use App\Modules\Category\Application\UseCases\FindByIdCategoryUseCase;
 use App\Modules\Category\Application\UseCases\UpdateCategoryUseCase;
+use App\Modules\Category\Application\UseCases\UpdateStatusCategoryUseCase;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
 use App\Modules\Category\Infrastructure\Requests\StoreCategoryRequest;
 use App\Modules\Category\Infrastructure\Requests\UpdateCategoryRequest;
 use App\Modules\Category\Infrastructure\Resources\CategoryResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
@@ -70,5 +72,18 @@ class CategoryController extends Controller
             (new CategoryResource($categoryUpdate))->resolve(),
               200
         );
+    }
+
+    public function updateStatus(int $id, Request $request): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'status' => 'required|integer|in:0,1',
+        ]);
+
+        $status = $validatedData['status'];
+        $updateStatusCategoryUseCase = new UpdateStatusCategoryUseCase($this->categoryRepository);
+        $updateStatusCategoryUseCase->execute($id, $status);
+
+        return response()->json(["message" => "Estado actualizado correctamente"], 200);
     }
 }

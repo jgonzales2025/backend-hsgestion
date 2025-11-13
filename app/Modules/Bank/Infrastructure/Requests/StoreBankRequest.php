@@ -29,8 +29,7 @@ class StoreBankRequest extends FormRequest
             'account_number' => 'required|string|max:20',
             'currency_type_id' => 'required|integer|exists:currency_types,id',
             'user_id' => 'required|integer|exists:users,id',
-            'company_id' => 'required|integer|exists:companies,id',
-            'status' => 'required|integer',
+            'company_id' => 'required|integer|exists:companies,id'
         ];
     }
 }

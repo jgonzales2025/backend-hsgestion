@@ -31,8 +31,7 @@ readonly class UpdateDigitalWalletUseCae
             name: $digitalWalletDTO->name,
             phone: $digitalWalletDTO->phone,
             company: $company,
-            user: $user,
-            status: $digitalWalletDTO->status,
+            user: $user
         );
 
         return $this->digitalWalletRepository->update($digitalWallet);

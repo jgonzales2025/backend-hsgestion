@@ -8,9 +8,9 @@ class UserAssignment
     private int $userId;
     private int $ciaId;
     private int $branchId;
-    private int $status;
+    private ?int $status;
 
-    public function __construct(int $id, int $userId, int $ciaId, int $branchId, int $status)
+    public function __construct(int $id, int $userId, int $ciaId, int $branchId, ?int $status = 1)
     {
         $this->id = $id;
         $this->userId = $userId;
@@ -38,7 +38,7 @@ class UserAssignment
         return $this->branchId;
     }
 
-    public function getStatus(): int
+    public function getStatus(): ?int
     {
         return $this->status;
     }

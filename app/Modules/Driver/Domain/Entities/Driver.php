@@ -10,11 +10,11 @@ class Driver
     private string $name;
     private string $pat_surname;
     private string $mat_surname;
-    private int $status;
+    private ?int $status;
     private ?string $license;
     private ?string $document_type_name;
 
-    public function __construct(?int $id, int $customer_document_type_id, string $doc_number, string $name, string $pat_surname, string $mat_surname, int $status, ?string $license, ?string $document_type_name)
+    public function __construct(?int $id, int $customer_document_type_id, string $doc_number, string $name, string $pat_surname, string $mat_surname, ?string $license, ?string $document_type_name, ?int $status = 1)
     {
         $this->id = $id;
         $this->customer_document_type_id = $customer_document_type_id;
@@ -57,7 +57,7 @@ class Driver
         return $this->mat_surname;
     }
 
-    public function getStatus(): int
+    public function getStatus(): ?int
     {
         return $this->status;
     }

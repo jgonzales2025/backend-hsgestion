@@ -15,9 +15,9 @@ class Bank
     private ?User $user;
     private ?string $date_at;
     private ?Company $company;
-    private int $status;
+    private ?int $status;
 
-    public function __construct(?int $id, string $name, string $account_number, ?CurrencyType $currency_type, ?User $user, ?string $date_at, ?Company $company, int $status)
+    public function __construct(?int $id, string $name, string $account_number, ?CurrencyType $currency_type, ?User $user, ?string $date_at, ?Company $company, ?int $status = 1)
     {
         $this->id = $id;
         $this->name = $name;
@@ -36,5 +36,5 @@ class Bank
     public function getUser(): User|null { return $this->user; }
     public function getDateAt(): string|null { return $this->date_at; }
     public function getCompany(): Company|null { return $this->company; }
-    public function getStatus(): int { return $this->status; }
+    public function getStatus(): ?int { return $this->status; }
 }

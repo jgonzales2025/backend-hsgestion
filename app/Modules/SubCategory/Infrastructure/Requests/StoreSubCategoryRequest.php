@@ -15,8 +15,7 @@ class StoreSubCategoryRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:30',
-            'category_id' => 'required|integer|exists:categories,id',
-            'status' => 'required|integer',
+            'category_id' => 'required|integer|exists:categories,id'
         ];
     }
 
@@ -29,10 +28,7 @@ class StoreSubCategoryRequest extends FormRequest
 
             'category_id.required' => 'La categoría es obligatoria.',
             'category_id.integer' => 'La categoría debe ser un valor numérico válido.',
-            'category_id.exists' => 'La categoría seleccionada no existe.',
-
-            'status.required' => 'El estado es obligatorio.',
-            'status.integer' => 'El estado debe ser un valor numérico válido.',
+            'category_id.exists' => 'La categoría seleccionada no existe.'
         ];
     }
 }

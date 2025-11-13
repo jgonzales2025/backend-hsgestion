@@ -13,4 +13,6 @@ interface CategoryRepositoryInterface
     public function findById(int $id): ?Category;
 
     public function update(Category $category): ?Category;
+
+    public function updateStatus(int $categoryId, int $status): void;
 }

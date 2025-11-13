@@ -31,8 +31,7 @@ readonly class CreateDigitalWalletUseCase
             name: $digitalWalletDTO->name,
             phone: $digitalWalletDTO->phone,
             company: $company,
-            user: $user,
-            status: $digitalWalletDTO->status,
+            user: $user
         );
 
         return $this->digitalWalletRepository->save($digitalWallet);

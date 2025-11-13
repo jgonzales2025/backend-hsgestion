@@ -10,4 +10,5 @@ interface DigitalWalletRepositoryInterface
     public function save(DigitalWallet $digitalWallet): ?DigitalWallet;
     public function findById(int $id): ?DigitalWallet;
     public function update(DigitalWallet $digitalWallet): ?DigitalWallet;
+    public function updateStatus(int $digitalWalletId, int $status): void;
 }

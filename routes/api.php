@@ -110,6 +110,7 @@ Route::get('brands', [BrandController::class, 'index']);
 Route::post('brands', [BrandController::class, 'store']);
 Route::get('brands/{id}', [BrandController::class, 'show']);
 Route::put('brands/{id}', [BrandController::class, 'update']);
+Route::put('brands-status/{id}', [BrandController::class, 'updateStatus']);
 
 // Drivers - conductores
 Route::get('drivers', [DriverController::class, 'index']);
@@ -150,6 +151,7 @@ Route::get('measurement-units', [MeasurementUnitController::class, 'index']);
 Route::post('measurement-units', [MeasurementUnitController::class, 'store']);
 Route::get('measurement-units/{id}', [MeasurementUnitController::class, 'show']);
 Route::put('measurement-units/{id}', [MeasurementUnitController::class, 'update']);
+Route::put('measurement-units-status/{id}', [MeasurementUnitController::class, 'updateStatus']);
 
 // Customer types - Tipos de clientes
 Route::get('customer-types', [CustomerTypeController::class, 'index']);
@@ -210,12 +212,14 @@ Route::get('banks', [BankController::class, 'index']);
 Route::post('banks', [BankController::class, 'store']);
 Route::get('banks/{id}', [BankController::class, 'show']);
 Route::put('banks/{id}', [BankController::class, 'update']);
+Route::put('banks-status/{id}', [BankController::class, 'updateStatus']);
 
 // Digital Wallets - Billeteras digitales
 //Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
 Route::post('digital-wallets', [DigitalWalletController::class, 'store']);
 Route::get('digital-wallets/{id}', [DigitalWalletController::class, 'show']);
 Route::put('digital-wallets/{id}', [DigitalWalletController::class, 'update']);
+Route::put('digital-wallets-status/{id}', [DigitalWalletController::class, 'updateStatus']);
 
 // Customer portfolios - Cartera de clientes
 Route::post('customer-portfolios', [CustomerPortfolioController::class, 'store']);

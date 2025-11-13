@@ -28,9 +28,9 @@ class EloquentSubCategoryRepository implements SubCategoryRepositoryInterface
     {
         $eloquentSubCategory = EloquentSubCategory::create([
             'name' => $subCategory->getName(),
-            'category_id' => $subCategory->getCategoryId(),
-            'status' => $subCategory->getStatus(),
+            'category_id' => $subCategory->getCategoryId()
         ]);
+        $eloquentSubCategory->refresh();
 
         return new SubCategory(
             id: $eloquentSubCategory->id,
@@ -46,7 +46,7 @@ class EloquentSubCategoryRepository implements SubCategoryRepositoryInterface
         $eloquentSubCategory = EloquentSubCategory::with('category')->find($id);
 
         if (!$eloquentSubCategory) {
-            throw new \Exception("Subcategoria no encontrada");
+            return null;
         }
 
         return new SubCategory(
@@ -62,14 +62,9 @@ class EloquentSubCategoryRepository implements SubCategoryRepositoryInterface
     {
         $eloquentSubCategory = EloquentSubCategory::find($subCategory->getId());
 
-        if (!$eloquentSubCategory) {
-            throw new \Exception("Subcategoria no encontrada");
-        }
-
         $eloquentSubCategory->update([
             'name' => $subCategory->getName(),
-            'category_id' => $subCategory->getCategoryId(),
-            'status' => $subCategory->getStatus(),
+            'category_id' => $subCategory->getCategoryId()
         ]);
 
         return new SubCategory(
@@ -96,5 +91,10 @@ class EloquentSubCategoryRepository implements SubCategoryRepositoryInterface
                 status: $subCategory->status
             );
         })->toArray();
+    }
+
+    public function updateStatus(int $subCategoryId, int $status): void
+    {
+        EloquentSubCategory::where('id', $subCategoryId)->update(['status' => $status]);
     }
 }

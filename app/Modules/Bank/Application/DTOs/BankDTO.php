@@ -9,7 +9,6 @@ class BankDTO
     public $currency_type_id;
     public $user_id;
     public $company_id;
-    public $status;
 
     public function __construct(array $data)
     {
@@ -18,6 +17,5 @@ class BankDTO
         $this->currency_type_id = $data['currency_type_id'];
         $this->user_id = $data['user_id'];
         $this->company_id = $data['company_id'];
-        $this->status = $data['status'];
     }
 }

@@ -31,8 +31,7 @@ class UpdateMeasurementUnitRequest extends FormRequest
                 'string',
                 'max:50',
                 Rule::unique('measurement_units', 'abbreviation')->ignore($measurementUnitId),
-            ],
-            'status' => 'sometimes|integer|min:0|max:1',
+            ]
         ];
     }
 
@@ -72,11 +71,7 @@ class UpdateMeasurementUnitRequest extends FormRequest
 
             'abbreviation.string' => 'La abreviatura debe ser una cadena de texto.',
             'abbreviation.max' => 'La abreviatura no puede exceder los 50 caracteres.',
-            'abbreviation.unique' => 'La abreviatura ya está registrada.',
-
-            'status.integer' => 'El estado debe ser un valor numérico entero.',
-            'status.min' => 'El estado debe ser 0 (inactivo) o 1 (activo).',
-            'status.max' => 'El estado debe ser 0 (inactivo) o 1 (activo).',
+            'abbreviation.unique' => 'La abreviatura ya está registrada.'
         ];
     }
 }

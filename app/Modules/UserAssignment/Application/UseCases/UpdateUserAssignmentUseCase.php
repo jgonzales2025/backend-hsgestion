@@ -18,8 +18,7 @@ class UpdateUserAssignmentUseCase
     {
         return $this->userAssignmentRepository->updateUserAssignments(
             userId: $userAssignmentDTO->userId,
-            assignments: $userAssignmentDTO->assignments,
-            status: $userAssignmentDTO->status
+            assignments: $userAssignmentDTO->assignments
         );
     }
 

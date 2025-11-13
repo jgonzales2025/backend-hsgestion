@@ -39,8 +39,7 @@ readonly class CreateBankUseCase
             currency_type: $currencyType,
             user: $user,
             date_at: null,
-            company: $company,
-            status: $bankDTO->status,
+            company: $company
         );
 
         return $this->bankRepository->save($bank);

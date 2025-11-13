@@ -9,7 +9,6 @@ class UserDTO
     public $lastname;
     public $userRoles;
     public $password;
-    public $status;
     public ?string $password_item;
 
     public function __construct(array $data) {
@@ -18,7 +17,6 @@ class UserDTO
         $this->lastname = $data['lastname'];
         $this->userRoles = $data['user_roles'] ?? [];
         $this->password = $data['password'] ?? null;
-        $this->status = $data['status'];
         $this->password_item = $data['password_item'] ?? null;
     }
 }

@@ -23,7 +23,6 @@ class CreateUserUseCase
             firstname: $userDTO->firstname,
             lastname: $userDTO->lastname,
             password: $userDTO->password,
-            status: $userDTO->status,
             roles: $userDTO->userRoles,
             assignment: null,
             st_login: null,

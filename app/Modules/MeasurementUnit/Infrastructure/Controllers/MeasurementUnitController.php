@@ -8,11 +8,13 @@ use App\Modules\MeasurementUnit\Application\UseCases\CreateMeasurementUnitUseCas
 use App\Modules\MeasurementUnit\Application\UseCases\FindAllMeasurementUnitUseCase;
 use App\Modules\MeasurementUnit\Application\UseCases\FindByIdMeasurementUnit;
 use App\Modules\MeasurementUnit\Application\UseCases\UpdateMeasurementUnitUseCase;
+use App\Modules\MeasurementUnit\Application\UseCases\UpdateStatusMeasurementUnitUseCase;
 use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInterface;
 use App\Modules\MeasurementUnit\Infrastructure\Requests\StoreMeasurementUnitRequest;
 use App\Modules\MeasurementUnit\Infrastructure\Requests\UpdateMeasurementUnitRequest;
 use App\Modules\MeasurementUnit\Infrastructure\Resources\MeasurementUnitResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class MeasurementUnitController extends Controller
 {
@@ -47,7 +49,7 @@ class MeasurementUnitController extends Controller
         $measurementUnit = $measurementUnitUseCase->execute($id);
 
         if (!$measurementUnit) {
-            return response()->json(['message' => 'Measurement Unit not found'], 404);
+            return response()->json(['message' => 'Unidad de medida no encontrada'], 404);
         }
 
         return response()->json(new MeasurementUnitResource($measurementUnit));
@@ -67,5 +69,18 @@ class MeasurementUnitController extends Controller
         $measurementUnitUpdate = $measurementUnitUpdateUseCase->execute($measurementUnit, $measurementUnitDTO);
 
         return response()->json(new MeasurementUnitResource($measurementUnitUpdate));
+    }
+
+    public function updateStatus(int $id, Request $request): JsonResponse
+    {
+        $validatedData = $request->validate([
+            'status' => 'required|integer|in:0,1',
+        ]);
+        $status = $validatedData['status'];
+
+        $updateStatusMeasurementUnitUseCase = new UpdateStatusMeasurementUnitUseCase($this->measurementUnitRepository);
+        $updateStatusMeasurementUnitUseCase->execute($id, $status);
+
+        return response()->json(['message' => 'Estado actualizado correctamente']);
     }
 }

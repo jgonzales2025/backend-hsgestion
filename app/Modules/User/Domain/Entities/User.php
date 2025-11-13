@@ -13,25 +13,13 @@ class User
     private string $firstname;
     private string $lastname;
     private ?string $password;
-    private int $status;
+    private ?int $status;
     private array|string|null $roles;
     private ?array $assignment;
     private ?int $st_login;
     private ?string $password_item;
 
-    /**
-     * @param int $id
-     * @param string|null $username
-     * @param string $firstname
-     * @param string $lastname
-     * @param ?string $password
-     * @param int $status
-     * @param array|string|null $roles
-     * @param array|null $assignment
-     * @param int|null $st_login
-     * @param string|null $password_item
-     */
-    public function __construct(int $id, ?string $username, string $firstname, string $lastname, ?string $password, int $status, array|string|null $roles, array|null $assignment, int|null $st_login, string|null $password_item = null)
+    public function __construct(int $id, ?string $username, string $firstname, string $lastname, ?string $password, array|string|null $roles, array|null $assignment, int|null $st_login, string|null $password_item = null, ?int $status = 1)
     {
         $this->id = $id;
         $this->username = $username;
@@ -50,7 +38,7 @@ class User
     public function getFirstname(): string { return $this->firstname; }
     public function getLastname(): string { return $this->lastname; }
     public function getPassword(): string|null { return $this->password; }
-    public function getStatus(): string { return $this->status; }
+    public function getStatus(): ?int { return $this->status; }
     public function getRoles(): array|string|null { return $this->roles; }
     public function getAssignment(): ?array { return $this->assignment; }
     public function getStLogin(): ?int { return $this->st_login; }
@@ -61,14 +49,6 @@ class User
     public function updateUser(string $firstname, string $lastname): void {
         $this->firstname = $firstname;
         $this->lastname = $lastname;
-    }
-
-    // --- Contraseña
-    public function changePassword(string $newPassword): void {
-        if (strlen($newPassword) < 8) {
-            throw new InvalidArgumentException("La contraseña debe tener al menos 8 caracteres");
-        }
-        $this->password = password_hash($newPassword, PASSWORD_BCRYPT);
     }
 
     // --- Estado

@@ -15,8 +15,7 @@ class UpdateSubCategoryRequest extends FormRequest
     {
         return [
             'name' => 'sometimes|string|max:30',
-            'category_id' => 'sometimes|integer|exists:categories,id',
-            'status' => 'sometimes|integer',
+            'category_id' => 'sometimes|integer|exists:categories,id'
         ];
     }
 
@@ -28,8 +27,6 @@ class UpdateSubCategoryRequest extends FormRequest
 
             'category_id.integer' => 'La categoría debe ser un valor numérico válido.',
             'category_id.exists' => 'La categoría seleccionada no existe.',
-
-            'status.integer' => 'El estado debe ser un valor numérico válido.',
         ];
     }
 }

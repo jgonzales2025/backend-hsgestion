@@ -14,7 +14,7 @@ class Driver
     private ?string $license;
     private ?string $document_type_name;
 
-    public function __construct(?int $id, int $customer_document_type_id, string $doc_number, string $name, string $pat_surname, string $mat_surname, ?int $status = 1, ?string $license, ?string $document_type_name)
+    public function __construct(?int $id, int $customer_document_type_id, string $doc_number, string $name, string $pat_surname, string $mat_surname, ?string $license, ?string $document_type_name, ?int $status = 1)
     {
         $this->id = $id;
         $this->customer_document_type_id = $customer_document_type_id;

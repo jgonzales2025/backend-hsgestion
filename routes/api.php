@@ -116,6 +116,9 @@ Route::post('drivers',[DriverController::class, 'store']);
 Route::get('drivers/{id}',[DriverController::class, 'show']);
 Route::put('drivers/{id}',[DriverController::class, 'update']);
 Route::post('drivers-sunatApi',[DriverController::class, 'storeCustomerBySunatApi']);
+Route::put('drivers-status/{id}',[DriverController::class, 'updateStatus']);
+
+
 
 // Categories - categorias
 Route::get('categories',[CategoryController::class, 'index']);

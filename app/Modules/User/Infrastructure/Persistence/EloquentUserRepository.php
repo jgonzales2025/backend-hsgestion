@@ -212,4 +212,9 @@ class EloquentUserRepository implements UserRepositoryInterface
 
         return false;
     }
+
+    public function updateStatus(int $id, int $status): void
+    {
+        EloquentUser::where('id', $id)->update(['status' => $status]);
+    }
 }

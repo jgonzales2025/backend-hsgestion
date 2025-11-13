@@ -14,4 +14,5 @@ interface UserRepositoryInterface
     public function updateStLogin(int $id, int $stLogin): void;
     public function findAllUsersByVendedor(): array;
     public function passwordValidation(string $password): bool|array;
+    public function updateStatus(int $id, int $status): void;
 }

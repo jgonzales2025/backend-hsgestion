@@ -91,6 +91,7 @@ Route::post('/users', [UserController::class, 'store']);
 Route::put('/users/{id}', [UserController::class, 'update']);
 Route::put('/users/status-login/{id}', [UserController::class, 'updateStLogin']);
 Route::get('/users-vendedor', [UserController::class, 'findAllUsersByVendedor']);
+Route::put('/users-status/{id}', [UserController::class, 'updateStatus']);
 
 // TIPOS DE DOCUMENTOS (DNI, RUC, ETC)
 Route::get('driver-document-types', [CustomerDocumentTypeController::class, 'indexForDrivers']);

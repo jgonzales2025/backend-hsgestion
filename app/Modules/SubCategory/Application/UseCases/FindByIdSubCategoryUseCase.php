@@ -11,7 +11,7 @@ class FindByIdSubCategoryUseCase
     { 
     }
 
-    public function execute(int $id): SubCategory
+    public function execute(int $id): ?SubCategory
     {
         return $this->subCategoryRepository->findById($id);
     }

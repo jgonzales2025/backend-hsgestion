@@ -18,8 +18,7 @@ class CreateSubCategoryUseCase
             id: 0,
             name: $subCategoryDTO->name,
             category_id: $subCategoryDTO->category_id,
-            category_name: null,
-            status: $subCategoryDTO->status,
+            category_name: null
         );
 
         return $this->subCategoryRepository->save($subCategory);

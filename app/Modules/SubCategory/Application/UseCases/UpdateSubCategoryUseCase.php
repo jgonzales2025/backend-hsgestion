@@ -19,8 +19,7 @@ class UpdateSubCategoryUseCase
             id: $id,
             name: $subCategoryDTO->name,
             category_id: $subCategoryDTO->category_id,
-            category_name: null,
-            status: $subCategoryDTO->status,
+            category_name: null
         );
 
         return $this->subCategoryRepository->update($subCategory);

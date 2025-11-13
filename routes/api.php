@@ -134,6 +134,7 @@ Route::get('sub-categories/category/{id}',[SubCategoryController::class, 'findBy
 Route::post('sub-categories',[SubCategoryController::class, 'store']);
 Route::get('sub-categories/{id}',[SubCategoryController::class, 'show']);
 Route::put('sub-categories/{id}',[SubCategoryController::class, 'update']);
+Route::put('sub-categories-status/{id}',[SubCategoryController::class, 'updateStatus']);
 
 // TransportCompanies - Empresa de transportes
 Route::get('transport-companies',[TransportCompanyController::class, 'index']);

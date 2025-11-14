@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained('companies');
             $table->foreignId('branch_id')->constrained('branches');
-            $table->foreignId('supplier_id')->constrained('suppliers');
+            $table->foreignId('supplier_id')->nullable();
             $table->string('serie');
             $table->string('correlative');
             $table->float('exchange_type');

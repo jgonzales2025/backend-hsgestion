@@ -5,7 +5,7 @@ use App\Modules\DetailPurchaseGuides\Domain\Entities\DetailPurchaseGuide;
 
 interface DetailPurchaseGuideRepositoryInterface{
     public function findAll(): array;
-    public function findById(int $id):?DetailPurchaseGuide;
+    public function findById(int $id):array;
     public function save(DetailPurchaseGuide $detailPurchaseGuide):?DetailPurchaseGuide;
 
 

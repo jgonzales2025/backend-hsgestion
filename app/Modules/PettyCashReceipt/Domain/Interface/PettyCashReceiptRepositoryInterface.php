@@ -11,4 +11,5 @@ interface PettyCashReceiptRepositoryInterface
     public function save(PettyCashReceipt $pettyCashReceipt): ?PettyCashReceipt;
     public function update(PettyCashReceipt $pettyCashReceipt): ?PettyCashReceipt;
     public function getLastDocumentNumber(string $serie): ?string;
+      public function updateStatus(int $pettyCashReceipt,int $status): void;
 }

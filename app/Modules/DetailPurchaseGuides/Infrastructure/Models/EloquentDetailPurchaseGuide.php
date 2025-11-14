@@ -5,7 +5,7 @@ namespace App\Modules\DetailPurchaseGuides\Infrastructure\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class EloquentDetailPurchaseGuide extends Model{
-    protected $table = 'detail_purchase_guide';
+    protected $table = 'detail_purchase_guides';
 
 
     protected $fillable = [

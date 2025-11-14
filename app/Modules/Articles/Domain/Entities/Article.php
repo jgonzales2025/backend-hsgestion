@@ -30,7 +30,7 @@ class Article
     private float $public_price_percent;
     private float $distributor_price_percent;
     private float $authorized_price_percent;
-    private int $status;
+    private ?int $status;
     private ?User $user;
     private bool $venta;
 
@@ -68,7 +68,6 @@ class Article
         float $public_price_percent,
         float $distributor_price_percent,
         float $authorized_price_percent,
-        int $status,
         ?Brand $brand,
         ?Category $category,
         ?CurrencyType $currencyType,
@@ -80,7 +79,8 @@ class Article
         ?string $image_url,
         ?int $state_modify_article,
         ?string $filtNameEsp,
-        ?bool $statusEsp
+        ?bool $statusEsp,
+        ?int $status = 1,
 
 
     ) {
@@ -212,7 +212,7 @@ class Article
     {
         return $this->authorized_price_percent;
     }
-    public function getStatus(): int
+    public function getStatus(): ?int
     {
         return $this->status;
     }

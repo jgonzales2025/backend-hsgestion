@@ -32,8 +32,12 @@ use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterface;
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
+use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
+use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
+use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
 use App\Modules\User\Application\UseCases\UpdateStatusUseCase;
+use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -52,7 +56,11 @@ class DispatchNotesController extends Controller
         private readonly DispatchArticleRepositoryInterface $dispatchArticleRepositoryInterface,
         private readonly GenerateDispatchNotePdfUseCase $generatePdfUseCase,
         private readonly CustomerRepositoryInterface $customerRepositoryInterface,
-        private readonly CustomerAddressRepositoryInterface $customerAddressRepositoryInterface
+        private readonly CustomerAddressRepositoryInterface $customerAddressRepositoryInterface,
+        private readonly TransactionLogRepositoryInterface $transactionLogRepositoryInterface,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
+        private readonly BranchRepositoryInterface $branchRepositoryInterface
     ) {
     }
 
@@ -108,6 +116,8 @@ class DispatchNotesController extends Controller
             return $createSaleArticleUseCase->execute($saleArticleDTO);
         }, array: $store->validated()['dispatch_articles']);
 
+        $this->logTransaction($store, $dispatchNotes);
+
         return response()->json(
             [
                 'sale' => (new DispatchNoteResource($dispatchNotes))->resolve(),
@@ -162,6 +172,8 @@ class DispatchNotesController extends Controller
         $this->dispatchArticleRepositoryInterface->deleteBySaleId($dispatchNotes->getId());
 
         $dispatchArticle = $this->createDispatchArticles($dispatchNotes, $store->validated()['dispatch_articles']);
+
+        $this->logTransaction($store, $dispatchNotes);
 
         return response()->json(
             [
@@ -243,5 +255,32 @@ class DispatchNotesController extends Controller
        $updateStatusUseCase->execute($id, $status);
 
        return response()->json(['message' => 'Status actualizado'], 200);
+   }
+
+   private function logTransaction($request, $dispatchNote): void
+   {
+        $transactionLogs = new CreateTransactionLogUseCase(
+            $this->transactionLogRepositoryInterface,
+            $this->userRepository,
+            $this->companyRepositoryInterface,
+            $this->documentTypeRepository,
+            $this->branchRepositoryInterface,
+        );
+
+        $transactionDTO = new TransactionLogDTO([
+            'user_id' => request()->get('user_id'),
+            'role_name' => request()->get('role'),
+            'description_log' => 'Guia de Remisión',
+            'action' => $request->method(),
+            'company_id' => request()->get('company_id'),
+            'branch_id' => $dispatchNote->getBranch()->getId(),
+            'document_type_id' => 9,
+            'serie' => $dispatchNote->getSerie(),
+            'correlative' => $dispatchNote->getCorrelativo(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+
+        $transactionLogs->execute($transactionDTO);
    }
 }

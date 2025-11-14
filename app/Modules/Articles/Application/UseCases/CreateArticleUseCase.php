@@ -110,7 +110,6 @@ readonly class CreateArticleUseCase
             public_price_percent: $articleDTO->public_price_percent,
             distributor_price_percent: $articleDTO->distributor_price_percent,
             authorized_price_percent: $articleDTO->authorized_price_percent,
-            status: $articleDTO->status, 
             brand: $brand,
             category: $categoryType,
             currencyType: $currencyType,

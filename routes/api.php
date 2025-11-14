@@ -227,14 +227,7 @@ Route::post('customer-portfolios', [CustomerPortfolioController::class, 'store']
 Route::put('customer-portfolios', [CustomerPortfolioController::class, 'updateAllCustomersByVendedor']);
 Route::put('customer-portfolios/{id}', [CustomerPortfolioController::class, 'update']);
 
-//dispatch Notes
-Route::get('dispatchNote', [DispatchNotesController::class, 'index']);
-Route::post('dispatchNote-save', [DispatchNotesController::class, 'store']);
-Route::get('dispatchNote/{id}', [DispatchNotesController::class, 'show']);
-Route::put('dispatchNote-update/{id}', [DispatchNotesController::class, 'update']);
-Route::get('dispatchNote-PDF/{id}', [DispatchNotesController::class, 'generate']);
-Route::get('dispatchNote-proveedor', [DispatchNotesController::class, 'traerProovedores']);
-Route::put('dispatchNote-status/{id}', [DispatchNotesController::class, 'updateStatus']);
+
 
 // Logs de sesion
 Route::get('logs-login', [LoginAttemptController::class, 'index']);
@@ -249,6 +242,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('articles-notas-debito',[ArticleController::class,'storeNotesDebito']);
     Route::get('articles-notas-listar',[ArticleController::class,'indexNotesDebito']);
     Route::put('articles-notas-editar/{id}',[ArticleController::class,'updateNotesDebito']);
+    Route::put('articles-status/{id}',[ArticleController::class,'updateStatus']);
     Route::get('articles-notas/{id}',[ArticleController::class,'showNotesDebito']);
     Route::get('articles-required-serial/{id}',[ArticleController::class,'requiredSerial']);
 
@@ -292,6 +286,15 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/collections-credits', [CollectionController::class, 'storeCollectionCreditNote']);
     Route::get('/collections/{id}', [CollectionController::class, 'showBySaleId']);
     Route::put('/collections/{id}', [CollectionController::class, 'cancelCharge']);
+
+    //dispatch Notes
+    Route::get('dispatchNote', [DispatchNotesController::class, 'index']);
+    Route::post('dispatchNote-save', [DispatchNotesController::class, 'store']);
+    Route::get('dispatchNote/{id}', [DispatchNotesController::class, 'show']);
+    Route::put('dispatchNote-update/{id}', [DispatchNotesController::class, 'update']);
+    Route::get('dispatchNote-PDF/{id}', [DispatchNotesController::class, 'generate']);
+    Route::get('dispatchNote-proveedor', [DispatchNotesController::class, 'traerProovedores']);
+    Route::put('dispatchNote-status/{id}', [DispatchNotesController::class, 'updateStatus']);
 
     // Ruta para traer los logs transaccionales
     Route::get('/logs-transaction', [TransactionLogController::class, 'index']);

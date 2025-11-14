@@ -84,7 +84,6 @@ class StoreArticleRequest extends FormRequest
             'public_price' => 'nullable|numeric|min:0',
             'distributor_price' => 'nullable|numeric|min:0',
             'authorized_price' => 'nullable|numeric|min:0',
-            'status' => 'nullable|integer',
             'user_id' => 'nullable|integer|exists:users,id',
             'sub_category_id' => 'nullable|integer|exists:sub_categories,id',
             'venta' => 'nullable|boolean',

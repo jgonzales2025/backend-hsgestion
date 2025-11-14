@@ -34,6 +34,8 @@ use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Modules\Articles\Application\UseCases\UpdateStatusArticleUseCase;
+
 class ArticleController extends Controller
 {
 
@@ -65,10 +67,6 @@ class ArticleController extends Controller
       )->deleteFileAfterSend(true);
 
     } catch (\Exception $e) {
-      \Log::error("Error exportando artículos", [
-        'error' => $e->getMessage(),
-        'trace' => $e->getTraceAsString()
-      ]);
 
       return response()->json([
         'error' => $e->getMessage()
@@ -289,6 +287,20 @@ class ArticleController extends Controller
     return response()->json([
         'message' => $result ? 'success' : 'El artículo no requiere serial'
     ], 200);
+  }
+
+  public function updateStatus(int $articleId, Request $request): JsonResponse
+  {
+    $validatedData = $request->validate([
+        'status' => 'required|integer|in:0,1'
+    ]);
+
+    $status = $validatedData['status'];
+
+    $updateStatus = new UpdateStatusArticleUseCase($this->articleRepository);
+    $updateStatus->execute($articleId, $status);
+
+    return response()->json(['message' => 'Estado actualizado correctamente'], 200);
   }
     
 }

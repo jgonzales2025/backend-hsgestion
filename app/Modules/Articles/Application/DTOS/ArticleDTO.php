@@ -27,7 +27,6 @@ class ArticleDTO
     public float $public_price_percent;
     public float $distributor_price_percent;
     public float $authorized_price_percent;
-    public bool $status;
     public int $user_id;
     public bool $venta;
     public int $sub_category_id;
@@ -64,7 +63,6 @@ class ArticleDTO
         $this->public_price_percent = isset($data['public_price_percent']) ? (float) $data['public_price_percent'] : 0;
         $this->distributor_price_percent = isset($data['distributor_price_percent']) ? (float) $data['distributor_price_percent'] : 0;
         $this->authorized_price_percent = isset($data['authorized_price_percent']) ? (float) $data['authorized_price_percent'] : 0;
-        $this->status = isset($data['status']) ? filter_var($data['status'], FILTER_VALIDATE_BOOLEAN) : true;
         $this->user_id = (int) ($data['user_id'] ?? 1);
         $this->venta = isset($data['venta']) ? filter_var($data['venta'], FILTER_VALIDATE_BOOLEAN) : false;
         $this->sub_category_id = (int) ($data['sub_category_id'] ?? null);

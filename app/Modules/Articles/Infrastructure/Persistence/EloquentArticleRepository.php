@@ -95,10 +95,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
 
 
-    public function findAllArticleNotasDebito(?string $description): array
+    public function findAllArticleNotesDebito(?string $description): array
     {
         $companyId = request()->get('company_id');
-
         $articles = EloquentArticle::with([
             'measurementUnit',
             'brand',
@@ -110,36 +109,10 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         ])
             ->where('company_type_id', $companyId)
             ->where('status_Esp', true)
-            ->when($description, function ($query, $name) {
-                return $query->where(function ($q) use ($name) {
-                    $q->where('description', 'like', "csr")
-                        ->orWhere('cod_fab', 'like', "%{$name}%");
-                });
-            })
-            ->orderByDesc('created_at')
-            ->get();
-
-        return $articles->map(fn($article) => $this->mapToDomain($article))->toArray();
-    }
-    public function findAllArticleNotesDebito(?string $description): array
-    {
-        $companyId = request()->get('company_id');
-
-        $articles = EloquentArticle::with([
-            'measurementUnit',
-            'brand',
-            'category',
-            'currencyType',
-            'subCategory',
-            'user',
-            'company',
-        ])
-            ->where('company_type_id', $companyId)
-            ->where('status_Esp', true) // 👈 usar 1 en lugar de true
-            ->when($description, function ($query, $name) {
-                return $query->where(function ($q) use ($name) {
-                    $q->where('filt_NameEsp', 'like', "%{$name}%");
-                    // ->orWhere('cod_fab', 'like', "%{$name}%");
+            ->when($description, function ($query, $description) {
+                return $query->where(function ($q) use ($description) {
+                    $q->where('description', 'like', "%{$description}%")
+                        ->orWhere('cod_fab', 'like', "%{$description}%");
                 });
             })
             ->orderByDesc('created_at')
@@ -151,12 +124,11 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 user_id: $article->user_id,
                 company_id: $article->company_type_id,
                 filt_NameEsp: $article->description,
-                status_Esp: $article->status_Esp // 👈 revisar que este sea el nombre real
+                status_Esp: $article->status_Esp
             );
         })->toArray();
     }
-
-
+    
     public function findById(int $id): ?Article
     {
 

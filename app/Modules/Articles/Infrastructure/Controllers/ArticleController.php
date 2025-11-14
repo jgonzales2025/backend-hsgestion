@@ -103,13 +103,11 @@ class ArticleController extends Controller
   }
   public function indexNotesDebito(Request $request): array
   {
-    $name = $request->query("description");
-
-
+    $description = $request->query("description");
 
     $articleUseCase = new FindAllArticlesNotesDebitoUseCase($this->articleRepository);
 
-    $article = $articleUseCase->execute($name);
+    $article = $articleUseCase->execute($description);
 
     return ArticleNotesDebitoResource::collection($article)->resolve();
   }

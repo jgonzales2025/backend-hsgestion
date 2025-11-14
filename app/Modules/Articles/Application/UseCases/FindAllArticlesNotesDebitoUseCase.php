@@ -13,8 +13,8 @@ class FindAllArticlesNotesDebitoUseCase
     
     }
 
-    public function execute(?string $name): array
+    public function execute(?string $description): array
     {
-        return $this->articleRepository->findAllArticleNotesDebito($name);
+        return $this->articleRepository->findAllArticleNotesDebito($description);
     }
 }

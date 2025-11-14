@@ -100,7 +100,6 @@ class DispatchNotesController extends Controller
         $dispatchNotesDTO->pdf = '1234';
         $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO);
 
-
         $createSaleArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
         $saleArticles = array_map(function ($article) use ($dispatchNotes, $createSaleArticleUseCase) {
             $saleArticleDTO = new DispatchArticleDTO([

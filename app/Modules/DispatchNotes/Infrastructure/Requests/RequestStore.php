@@ -43,6 +43,8 @@ class RequestStore extends FormRequest
             'document_type_id' => ['required', 'integer', 'exists:document_types,id'],
             'destination_branch_client_id' => ['nullable', 'integer', 'exists:customer_addresses,id'],
             'dispatch_articles' => 'required|array|min:1',
+            'dispatch_articles.*.serials' => 'nullable|array',
+            'dispatch_articles.*.serials.*' => 'required|distinct',
             'customer_id' => 'required|integer|exists:customers,id',
             'supplier_id' => 'nullable|integer|exists:customers,id',
             'address_supplier_id' => 'nullable|integer|exists:customers,id'

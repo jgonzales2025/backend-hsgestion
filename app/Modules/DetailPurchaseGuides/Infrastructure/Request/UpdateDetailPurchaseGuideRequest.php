@@ -3,7 +3,7 @@ namespace App\Modules\DetailPurchaseGuides\Infrastructure\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateDetailPurchaseGuideRequest extends FormRequest{
+class UpdateDetailPurchaseGuideRequest extends FormRequest{
     public function rules(){
         return [
             'articulo_id' => 'required|intenger',

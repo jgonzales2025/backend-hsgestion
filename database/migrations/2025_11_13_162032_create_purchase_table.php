@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('purchase', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id');
-            $table->foreignId('branch_id');
-            $table->foreignId('supplier_id');
+            $table->foreignId('company_id')->constrained('companies');
+            $table->foreignId('branch_id')->constrained('branches');
+            $table->foreignId('supplier_id')->constrained('suppliers');
             $table->string('serie');
             $table->string('correlative');
             $table->float('exchange_type');

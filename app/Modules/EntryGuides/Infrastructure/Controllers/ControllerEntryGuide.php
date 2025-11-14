@@ -93,13 +93,10 @@ class ControllerEntryGuide extends Controller
             return $article;
         }, $entryArticles);
 
-        return response()->json(
-            [
-                'entryGuide' => (new EntryGuideResource($entryGuide))->resolve(),
-                'articles' => EntryGuideArticleResource::collection($entryArticles)->resolve()
-            ],
-            200
-        );
+        $response = (new EntryGuideResource($entryGuide))->resolve();
+        $response['articles'] = EntryGuideArticleResource::collection($entryArticles)->resolve();
+        
+        return response()->json($response, 200);
     }
     
     public function store(EntryGuideRequest $request): JsonResponse
@@ -119,13 +116,10 @@ class ControllerEntryGuide extends Controller
 
         $this->logTransaction($request, $entryGuide);
 
-        return response()->json(
-            [
-                'entryGuide' => (new EntryGuideResource($entryGuide))->resolve(),
-                'articles' => EntryGuideArticleResource::collection($entryGuideArticle)->resolve()
-            ],
-            201
-        );
+        $response = (new EntryGuideResource($entryGuide))->resolve();
+        $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
+        
+        return response()->json($response, 201);
     }
 
     public function update(UpdateGuideRequest $request, $id): JsonResponse
@@ -153,14 +147,12 @@ class ControllerEntryGuide extends Controller
         
         $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
 
-        return response()->json(
-            [
-                'entryGuide' => (new EntryGuideResource($entryGuide))->resolve(),
-                'articles' => EntryGuideArticleResource::collection($entryGuideArticle)->resolve()
-            ],
-            200
-        );
+        $this->logTransaction($request, $entryGuide);
 
+        $response = (new EntryGuideResource($entryGuide))->resolve();
+        $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
+        
+        return response()->json($response, 200);
     }
     private function createEntryGuideArticles($entryGuide, array $articlesData): array
     {

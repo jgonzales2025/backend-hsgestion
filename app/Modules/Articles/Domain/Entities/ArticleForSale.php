@@ -237,10 +237,6 @@ class ArticleForSale
     {
         return $this->venta;
     }
-    public function getPrecioIGV(): float
-    {
-        return $this->precioIGv;
-    }
     public function getBrand(): Brand|null
     {
         return $this->brand;

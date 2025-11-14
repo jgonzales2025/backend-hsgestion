@@ -242,6 +242,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('articles-notas-debito',[ArticleController::class,'storeNotesDebito']);
     Route::get('articles-notas-listar',[ArticleController::class,'indexNotesDebito']);
     Route::put('articles-notas-editar/{id}',[ArticleController::class,'updateNotesDebito']);
+    Route::put('articles-status/{id}',[ArticleController::class,'updateStatus']);
     Route::get('articles-notas/{id}',[ArticleController::class,'showNotesDebito']);
     Route::get('articles-required-serial/{id}',[ArticleController::class,'requiredSerial']);
 

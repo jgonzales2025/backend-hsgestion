@@ -18,6 +18,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     {
 
         $eloquentArticle = EloquentArticle::create($this->mapToArray($article));
+        $eloquentArticle->refresh();
 
         $companyId = request()->get('company_id');
 
@@ -116,17 +117,12 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             })
             ->orderByDesc('created_at')
             ->get();
-        \Log::info('Resultado artículos', [$articles]);
 
         return $articles->map(fn($article) => $this->mapToDomain($article))->toArray();
     }
     public function findAllArticleNotesDebito(?string $description): array
     {
         $companyId = request()->get('company_id');
-
-        // 🔍 Log para asegurarte del valor recibido
-        \Log::info('company_id recibido', [$companyId]);
-        \Log::info('description recibido', [$description]);
 
         $articles = EloquentArticle::with([
             'measurementUnit',
@@ -147,10 +143,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             })
             ->orderByDesc('created_at')
             ->get();
-
-        \Log::info('Resultado artículos', ['count' => $articles->count()]);
-        \Log::info('Tipo de description', [gettype($description), $description]);
-
 
         return $articles->map(function ($article) {
             return new ArticleNotasDebito(
@@ -355,6 +347,11 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         return $article->series_enabled;
     }
 
+    public function updateStatus(int $articleId, int $status = 1): void
+    {
+        EloquentArticle::where('id', $articleId)->update(['status' => $status]);
+    }
+
     private function mapToArray(Article $article): array
     {
         return [
@@ -378,7 +375,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'public_price_percent' => $article->getPublicPricePercent(),
             'distributor_price_percent' => $article->getDistributorPricePercent(),
             'authorized_price_percent' => $article->getAuthorizedPricePercent(),
-            'status' => $article->getStatus(),
             'brand_id' => $article->getBrand()?->getId(),
             'venta' => $article->getVenta(),
             'user_id' => $article->getUser()?->getId(),

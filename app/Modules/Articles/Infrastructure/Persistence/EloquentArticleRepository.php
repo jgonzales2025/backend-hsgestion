@@ -22,14 +22,16 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
         $companyId = request()->get('company_id');
 
-        $sucursales = EloquentBranch::where('cia_id', $companyId)->get();
+        $sucursales = request()->get('branches');
 
-        $sucursales->map(function ($sucursal) use ($companyId, $eloquentArticle) {
+        $userId = request()->get('user_id');
+
+        collect($sucursales)->each(function ($branchId) use ($companyId, $eloquentArticle, $userId) {
             EloquentVisibleArticle::create([
                 'company_id' => $companyId,
-                'branch_id' => $sucursal->id,
+                'branch_id' => $branchId,
                 'article_id' => $eloquentArticle->id,
-                'user_id' => 1,
+                'user_id' => $userId,
                 'status' => true
             ]);
         });
@@ -89,7 +91,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
         // Mapear al dominio (puedes mantener tu método mapToDomain o hacerlo directo)
         return $articles->map(fn(EloquentArticle $article) => $this->mapToDomain($article))->toArray();
-
     }
 
 

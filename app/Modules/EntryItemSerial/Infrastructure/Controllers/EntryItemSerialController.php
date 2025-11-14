@@ -14,9 +14,10 @@ class EntryItemSerialController
     public function findSerialByArticleId(Request $request, int $articleId): JsonResponse
     {
         $serial = $request->query('serial');
+        $updated = $request->query('updated');
 
         $entryItemSerialUseCase = new FindSerialByArticleIdUseCase($this->entryItemSerialRepository);
-        $serial = $entryItemSerialUseCase->execute($articleId, $serial);
+        $serial = $entryItemSerialUseCase->execute($articleId, $updated, $serial);
         if (!$serial) {
             return response()->json(['message' => 'No se encontraron seriales para este artículo'], 404);
         }

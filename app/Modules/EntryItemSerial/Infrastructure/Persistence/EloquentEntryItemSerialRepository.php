@@ -68,10 +68,12 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
         );
     }
 
-    public function findSerialByArticleId(int $articleId, ?string $serial = null): ?array
+    public function findSerialByArticleId(int $articleId, ?bool $updated, ?string $serial = null): ?array
     {
         $rows = EloquentEntryItemSerial::where('article_id', $articleId)
-            ->where('status', 1)
+            ->when($updated === null, function ($query) {
+                return $query->where('status', 1);
+            })
             ->when($serial, function ($query, $serial) {
                 return $query->where('serial', 'like', "%{$serial}%");
             })

@@ -107,7 +107,6 @@ class ControllerEntryGuide extends Controller
         );
         $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
-        
         $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
 
         return response()->json(

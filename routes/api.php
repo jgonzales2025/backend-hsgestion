@@ -45,6 +45,7 @@ use App\Modules\DocumentType\Infrastructure\Controllers\DocumentTypeController;
 use App\Modules\LoginAttempt\Infrastructure\Controllers\LoginAttemptController;
 use App\Modules\Sale\Infrastructure\Controllers\SaleController;
 use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
+use App\Modules\EntryItemSerial\Infrastructure\Controllers\EntryItemSerialController;
 use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
 use App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController;
@@ -332,6 +333,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/purchase-orders', [PurchaseOrderController::class, 'store']);
     Route::get('/purchase-orders/{id}', [PurchaseOrderController::class, 'show']);
     Route::put('/purchase-orders/{id}', [PurchaseOrderController::class, 'update']);
+
+    // Ruta para traer las series de un articulo
+    Route::get('/entry-item-serial/{articleId}', [EntryItemSerialController::class, 'findSerialByArticleId']);
+
 
 });
 

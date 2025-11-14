@@ -138,7 +138,7 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
             'company_id' => $pettyCashReceipt->getCompany(),
             'document_type' => $pettyCashReceipt->getDocumentType(),
             'series' => $pettyCashReceipt->getSeries(),
-            'correlative' => $pettyCashReceipt->getCorrelative(),
+  
             'date' => $pettyCashReceipt->getDate(),
             'delivered_to' => $pettyCashReceipt->getDeliveredTo(),
             'reason_code' => $pettyCashReceipt->getReasonCode(),
@@ -171,5 +171,10 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
             updated_at_manual: $eloquentPettyCashReceipt->updated_at_manual,
             branch: $eloquentPettyCashReceipt->branch->toDomain($eloquentPettyCashReceipt->branch)
         );
+    }
+    public function updateStatus(int $pettyCashReceipt,int $status = 1): void
+    {
+        EloquentPettyCashReceipt::where('id',$pettyCashReceipt)->update(['status' =>$status]);
+        
     }
 }

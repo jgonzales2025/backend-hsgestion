@@ -35,6 +35,8 @@ use App\Modules\CustomerPortfolio\Domain\Interfaces\CustomerPortfolioRepositoryI
 use App\Modules\CustomerPortfolio\Infrastructure\Persistence\EloquentCustomerPortfolioRepository;
 use App\Modules\CustomerType\Domain\Interfaces\CustomerTypeRepositoryInterface;
 use App\Modules\CustomerType\Infrastructure\Persistence\EloquentCustomerTypeRepository;
+use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
+use App\Modules\DetailPurchaseGuides\Infrastructure\Persistence\EloquentDetailPurchaseGuideRepository;
 use App\Modules\DigitalWallet\Domain\Interfaces\DigitalWalletRepositoryInterface;
 use App\Modules\DigitalWallet\Infrastructure\Persistence\EloquentDigitalWalletRepository;
 use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
@@ -86,6 +88,8 @@ use App\Modules\PurchaseOrder\Domain\Interfaces\PurchaseOrderRepositoryInterface
 use App\Modules\PurchaseOrder\Infrastructure\Persistence\EloquentPurchaseOrderRepository;
 use App\Modules\PurchaseOrderArticle\Domain\Interfaces\PurchaseOrderArticleRepositoryInterface;
 use App\Modules\PurchaseOrderArticle\Infrastructure\Persistence\EloquentPurchaseOrderArticleRepository;
+use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
+use App\Modules\Purchases\Infrastructure\Persistence\EloquentPurchaseRepository;
 use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Persistence\EloquentSaleRepository;
@@ -95,6 +99,8 @@ use App\Modules\SaleItemSerial\Domain\Interfaces\SaleItemSerialRepositoryInterfa
 use App\Modules\SaleItemSerial\Infrastructure\Persistence\EloquentSaleItemSerialRepository;
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Serie\Infrastructure\Persistence\EloquentSerieRepository;
+use App\Modules\ShoppingIncomeGuide\Domain\Interface\ShoppingIncomeGuideRepositoryInterface;
+use App\Modules\ShoppingIncomeGuide\Infrastructure\Persistence\EloquentShoppingIncomeGuideRepository;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\SubCategory\Infrastructure\Persistence\EloquentSubCategoryRepository;
 use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
@@ -134,15 +140,17 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CustomerTypeRepositoryInterface::class, EloquentCustomerTypeRepository::class);
         $this->app->bind(CustomerRepositoryInterface::class, EloquentCustomerRepository::class);
         $this->app->bind(CustomerDocumentTypeRepositoryInterface::class, EloquentCustomerDocumentTypeRepository::class);
-            $this->app->bind(RecordTypeRepositoryInterface::class, EloquentBranchRepository::class);
+        $this->app->bind(RecordTypeRepositoryInterface::class, EloquentBranchRepository::class);
         $this->app->bind(BranchRepositoryInterface::class, EloquentBranchRepository::class);
         $this->app->bind(CompanyRepositoryInterface::class, EloquentCompanyRepository::class);
 
         $this->app->bind(CustomerPhoneRepositoryInterface::class, EloquentCustomerPhoneRepository::class);
         $this->app->bind(CustomerEmailRepositoryInterface::class, EloquentCustomerEmailRepository::class);
         $this->app->bind(DepartmentRepositoryInterface::class, EloquentDepartmentRepository::class);
-        $this->app->bind(ProvinceRepositoryInterface::class, EloquentProvinceRepository::class);;
-        $this->app->bind(ArticleRepositoryInterface::class, EloquentArticleRepository::class);;
+        $this->app->bind(ProvinceRepositoryInterface::class, EloquentProvinceRepository::class);
+        ;
+        $this->app->bind(ArticleRepositoryInterface::class, EloquentArticleRepository::class);
+        ;
         $this->app->bind(ProvinceRepositoryInterface::class, EloquentProvinceRepository::class);
         $this->app->bind(DistrictRepositoryInterface::class, EloquentDistrictRepository::class);
         $this->app->bind(CustomerAddressRepositoryInterface::class, EloquentCustomerAddressRepository::class);
@@ -170,8 +178,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransactionLogRepositoryInterface::class, EloquentTransactionLogRepository::class);
         $this->app->bind(MonthlyClosureRepositoryInterface::class, EloquentMonthlyClosureRepository::class);
         $this->app->bind(MonthlyClosureRepositoryInterface::class, EloquentMonthlyClosureRepository::class);
-        $this->app->bind(ArticleExporterInterface::class,ExcelArticleExporter::class);
-        $this->app->bind(PdfGeneratorInterface::class,DomPdfGenerator::class);
+        $this->app->bind(ArticleExporterInterface::class, ExcelArticleExporter::class);
+        $this->app->bind(PdfGeneratorInterface::class, DomPdfGenerator::class);
         $this->app->bind(NoteReasonRepositoryInterface::class, EloquentNoteReasonRepository::class);
         $this->app->bind(EntryGuideRepositoryInterface::class, EloquentEntryGuideRepository::class);
         $this->app->bind(PurchaseOrderArticleRepositoryInterface::class, EloquentPurchaseOrderArticleRepository::class);
@@ -179,7 +187,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EntryGuideArticleRepositoryInterface::class, EloquentEntryGuideArticleRepository::class);
         $this->app->bind(EntryItemSerialRepositoryInterface::class, EloquentEntryItemSerialRepository::class);
         $this->app->bind(PurchaseOrderRepositoryInterface::class, EloquentPurchaseOrderRepository::class);
- $this->app->bind(PettyCashReceiptRepositoryInterface::class, EloquentPettyCashReceiptRepository::class);
+        $this->app->bind(PettyCashReceiptRepositoryInterface::class, EloquentPettyCashReceiptRepository::class);
+        $this->app->bind(PurchaseRepositoryInterface::class, EloquentPurchaseRepository::class);
+  $this->app->bind(ShoppingIncomeGuideRepositoryInterface::class, EloquentShoppingIncomeGuideRepository::class);
+ $this->app->bind(DetailPurchaseGuideRepositoryInterface::class, EloquentDetailPurchaseGuideRepository::class);
  $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
 
     }

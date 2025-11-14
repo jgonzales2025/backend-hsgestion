@@ -7,6 +7,7 @@ use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\EntryGuideArticle\Application\DTOS\EntryGuideArticleDTO;
 use App\Modules\EntryGuideArticle\Application\UseCases\CreateEntryGuideArticle;
 use App\Modules\EntryGuides\Application\DTOS\EntryGuideDTO;
@@ -25,6 +26,10 @@ use App\Modules\EntryItemSerial\Application\DTOS\EntryItemSerialDTO;
 use App\Modules\EntryItemSerial\Infrastructure\Resource\EntryItemSerialResource;
 use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
 use App\Modules\EntryItemSerial\Application\UseCases\CreateEntryItemSerialUseCase;
+use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
+use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
+use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
+use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 
@@ -42,6 +47,9 @@ class ControllerEntryGuide extends Controller
         private readonly IngressReasonRepositoryInterface    $ingressReasonRepositoryInterface,
         private readonly ArticleRepositoryInterface          $articleRepositoryInterface,
         private readonly DocumentNumberGeneratorService      $documentNumberGeneratorService,
+        private readonly TransactionLogRepositoryInterface   $transactionLogRepositoryInterface,
+        private readonly UserRepositoryInterface             $userRepository,
+        private readonly DocumentTypeRepositoryInterface     $documentTypeRepository,
     ) {
     }
 
@@ -107,8 +115,9 @@ class ControllerEntryGuide extends Controller
         );
         $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
-        
         $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
+
+        $this->logTransaction($request, $entryGuide);
 
         return response()->json(
             [
@@ -185,5 +194,32 @@ class ControllerEntryGuide extends Controller
 
             return $guideArticle;
         }, $articlesData);
+    }
+
+    private function logTransaction($request, $entryGuide): void
+    {
+        $transactionLogs = new CreateTransactionLogUseCase(
+            $this->transactionLogRepositoryInterface,
+            $this->userRepository,
+            $this->companyRepositoryInterface,
+            $this->documentTypeRepository,
+            $this->branchRepositoryInterface,
+        );
+
+        $transactionDTO = new TransactionLogDTO([
+            'user_id' => request()->get('user_id'),
+            'role_name' => request()->get('role'),
+            'description_log' => 'Guia de Ingreso',
+            'action' => $request->method(),
+            'company_id' => request()->get('company_id'),
+            'branch_id' => $entryGuide->getBranch()->getId(),
+            'document_type_id' => 15,
+            'serie' => $entryGuide->getSerie(),
+            'correlative' => $entryGuide->getCorrelativo(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent()
+        ]);
+
+        $transactionLogs->execute($transactionDTO);
     }
 }

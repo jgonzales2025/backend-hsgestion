@@ -305,10 +305,20 @@ class SaleController extends Controller
             $this->branchRepository
         );
 
+        $documentTypeId = $sale->getDocumentType()->getId();
+
+        $description = match($documentTypeId) {
+            7 => 'Nota de crédito',
+            8 => 'Nota de débito',
+            1 => 'Venta',
+            3 => 'Venta',
+            default => 'Proforma'
+        };
+
         $transactionDTO = new TransactionLogDTO([
             'user_id' => request()->get('user_id'),
             'role_name' => request()->get('role'),
-            'description_log' => $sale->getDocumentType()->getId() == 7 ? 'Nota de crédito' : 'Venta',
+            'description_log' => $description,
             'action' => $request->method(),
             'company_id' => $sale->getCompany()->getId(),
             'branch_id' => $sale->getBranch()->getId(),

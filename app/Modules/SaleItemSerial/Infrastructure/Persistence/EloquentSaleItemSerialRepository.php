@@ -29,4 +29,25 @@ class EloquentSaleItemSerialRepository implements SaleItemSerialRepositoryInterf
             serial: $saleItemSerial->getSerial()
         );
     }
+
+    public function findSerialsBySaleId(int $saleId): array
+    {
+        $rows = EloquentSaleItemSerial::where('sale_id', $saleId)->get(['article_id', 'serial']);
+        $grouped = [];
+        foreach ($rows as $row) {
+            $grouped[$row->article_id][] = $row->serial;
+        }
+        return $grouped;
+    }
+
+    public function deleteSerialsBySaleId(int $saleId): void
+    {
+        $serials = $this->findSerialsBySaleId($saleId);
+        $allSerials = array_merge(...array_values($serials));
+        
+        EloquentEntryItemSerial::whereIn('serial', $allSerials)
+            ->update(['status' => 1]);
+
+        EloquentSaleItemSerial::where('sale_id', $saleId)->delete();
+    }
 }

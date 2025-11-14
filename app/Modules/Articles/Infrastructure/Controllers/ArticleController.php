@@ -111,7 +111,6 @@ class ArticleController extends Controller
 
     $article = $articleUseCase->execute($name);
 
-
     return ArticleNotesDebitoResource::collection($article)->resolve();
   }
   public function showNotesDebito(int $id): JsonResponse

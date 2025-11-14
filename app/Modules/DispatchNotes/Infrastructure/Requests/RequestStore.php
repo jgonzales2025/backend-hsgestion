@@ -35,7 +35,6 @@ class RequestStore extends FormRequest
             'doc_referencia' => ['nullable', 'string', 'max:50'],
             'num_referencia' => ['nullable', 'string', 'max:50'],
             'date_referencia' => ['nullable', 'date'],
-            'status' => ['nullable', 'boolean'],
             'cod_conductor' => ['nullable', 'integer', 'exists:drivers,id'],
             'license_plate' =>'string',
             'total_weight' => ['required', 'numeric'],

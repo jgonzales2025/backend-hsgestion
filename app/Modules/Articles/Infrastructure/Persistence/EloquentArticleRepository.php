@@ -43,7 +43,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     {
 
         $eloquentArticle = EloquentArticle::create([
-            'filt_NameEsp' => $article->getFiltNameEsp(),
+            'description' => $article->getFiltNameEsp(),
             'user_id' => $article->getUserId(),
             'company_type_id' => $article->getCompanyId(),
             'status_Esp' => true,
@@ -54,7 +54,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             id: $eloquentArticle->id,
             user_id: $article->getUserId(),
             company_id: $article->getCompanyId(),
-            filt_NameEsp: $article->getFiltNameEsp(),
+            filt_NameEsp: $eloquentArticle->description,
             status_Esp: $article->getStatusEsp()
 
         );
@@ -150,7 +150,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 id: $article->id,
                 user_id: $article->user_id,
                 company_id: $article->company_type_id,
-                filt_NameEsp: $article->filt_NameEsp,
+                filt_NameEsp: $article->description,
                 status_Esp: $article->status_Esp // 👈 revisar que este sea el nombre real
             );
         })->toArray();
@@ -181,7 +181,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             id: $article->id,
             user_id: $article->user_id,
             company_id: $article->company_type_id,
-            filt_NameEsp: $article->filt_NameEsp,
+            filt_NameEsp: $article->description,
             status_Esp: $article->statusEsp
 
         );
@@ -206,14 +206,14 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             throw new \Exception('Articulo no encontrado');
         }
         $eloquentArticle->update([
-            'filt_NameEsp' => $article->getFiltNameEsp(),
+            'description' => $article->getFiltNameEsp(),
             // 'status_Esp' => $article->getStatusEsp()
         ]);
         return new ArticleNotasDebito(
             id: $eloquentArticle->id,
             user_id: $eloquentArticle->user_id,
             company_id: $eloquentArticle->company_type_id,
-            filt_NameEsp: $eloquentArticle->filt_NameEsp,
+            filt_NameEsp: $eloquentArticle->description,
             status_Esp: $eloquentArticle->statusEsp
         );
     }

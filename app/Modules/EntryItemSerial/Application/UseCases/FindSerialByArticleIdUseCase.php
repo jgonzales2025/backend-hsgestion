@@ -13,8 +13,8 @@ class FindSerialByArticleIdUseCase{
         $this->entryItemSerialRepository = $entryItemSerialRepository;
     }
 
-    public function execute(int $articleId): ?array
+    public function execute(int $articleId, ?string $serial = null): ?array
     {
-        return $this->entryItemSerialRepository->findSerialByArticleId($articleId);
+        return $this->entryItemSerialRepository->findSerialByArticleId($articleId, $serial);
     }
 }

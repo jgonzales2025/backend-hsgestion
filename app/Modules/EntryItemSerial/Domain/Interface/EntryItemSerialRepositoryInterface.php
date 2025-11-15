@@ -10,5 +10,6 @@ interface EntryItemSerialRepositoryInterface{
     public function findSerialsByEntryGuideId(int $entryGuideId): array;
     public function deleteByIdEntryItemSerial(int $id): void;
     public function findBySerial(string $serial): ?EntryItemSerial;
-    public function findSerialByArticleId(int $articleId, ?bool $updated , ?string $serial = null): ?array;
+    public function findSerialByArticleId(int $articleId, int $branch_id, ?bool $updated , ?string $serial = null): ?array;
+    public function findBranchBySerial(string $serial): ?array;
 }

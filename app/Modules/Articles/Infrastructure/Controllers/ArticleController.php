@@ -35,6 +35,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Modules\Articles\Application\UseCases\UpdateStatusArticleUseCase;
+use App\Modules\EntryItemSerial\Application\UseCases\FindBranchBySerial;
+use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 
 class ArticleController extends Controller
 {
@@ -49,7 +51,8 @@ class ArticleController extends Controller
     private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
     private readonly SubCategoryRepositoryInterface $subCategoryRepository,
     private readonly CompanyRepositoryInterface $companyRepository,
-    private ExportArticlesToExcelUseCase $exportUseCase
+    private ExportArticlesToExcelUseCase $exportUseCase,
+    private EntryItemSerialRepositoryInterface $entryItemSerialRepository,
 
   ) {
   }
@@ -244,13 +247,33 @@ class ArticleController extends Controller
   {
     $description = $request->query("description");
     $articleId = $request->query("article_id");
+    $branchId = $request->query("branch_id");
 
     $validatedData = $request->validate([
         'date' => 'date|required'
     ]);
 
     $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);
-    $articles = $articlesUseCase->execute($validatedData['date'], $description, $articleId);
+    $articles = $articlesUseCase->execute($validatedData['date'], $description, $articleId, $branchId);
+    
+    if (empty($articles)) {
+      $entryItemSerialUseCase = new FindBranchBySerial($this->entryItemSerialRepository);
+      $branch = $entryItemSerialUseCase->execute($description);
+
+      if (!$branch)
+      {
+        return response()->json([
+          "message" => "La serie es incorrecta"
+        ], 404);
+      }else {
+        return response()->json([
+          "message" => "El artículo no se encuentra en esta sucursal",
+          'branch_id' => $branch['branch_id'],
+          "location" => $branch['name']
+        ]);
+      }
+      
+    }
 
     if ($articleId)
     {

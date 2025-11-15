@@ -11,6 +11,7 @@ class EntryItemSerial{
     private EntryGuide $entry_guide;
     private EntryGuideArticle $article;
     private string $serial;
+    private int $branch_id;
     private ?int $status;
 
     public function __construct(
@@ -18,12 +19,14 @@ class EntryItemSerial{
         EntryGuide $entry_guide,
         EntryGuideArticle $article,
         string $serial,
+        int $branch_id,
         ?int $status = 0
     ){
        $this->id = $id;
        $this->entry_guide = $entry_guide;
        $this->article = $article;
        $this->serial = $serial;
+       $this->branch_id = $branch_id;
        $this->status = $status;
     }
     public function getId():int|null{
@@ -38,7 +41,9 @@ class EntryItemSerial{
     public function getSerial():string{
         return $this->serial;
     }
-
+    public function getBranchId():int{
+        return $this->branch_id;
+    }
     public function getStatus():int|null{
         return $this->status;
     }

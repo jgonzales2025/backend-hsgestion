@@ -39,6 +39,8 @@ use App\Modules\DigitalWallet\Domain\Interfaces\DigitalWalletRepositoryInterface
 use App\Modules\DigitalWallet\Infrastructure\Persistence\EloquentDigitalWalletRepository;
 use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
 use App\Modules\DispatchArticle\Infrastructure\Persistence\EloquentDispatchArticleRepository;
+use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface;
+use App\Modules\DispatchArticleSerial\Infrastructure\Persistence\EloquentDispatchArticleSerialRepository;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\PdfGeneratorInterface;
 use App\Modules\DispatchNotes\Infrastructure\Persistence\DomPdfGenerator;
@@ -134,7 +136,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CustomerTypeRepositoryInterface::class, EloquentCustomerTypeRepository::class);
         $this->app->bind(CustomerRepositoryInterface::class, EloquentCustomerRepository::class);
         $this->app->bind(CustomerDocumentTypeRepositoryInterface::class, EloquentCustomerDocumentTypeRepository::class);
-            $this->app->bind(RecordTypeRepositoryInterface::class, EloquentBranchRepository::class);
+        $this->app->bind(RecordTypeRepositoryInterface::class, EloquentBranchRepository::class);
         $this->app->bind(BranchRepositoryInterface::class, EloquentBranchRepository::class);
         $this->app->bind(CompanyRepositoryInterface::class, EloquentCompanyRepository::class);
 
@@ -170,8 +172,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransactionLogRepositoryInterface::class, EloquentTransactionLogRepository::class);
         $this->app->bind(MonthlyClosureRepositoryInterface::class, EloquentMonthlyClosureRepository::class);
         $this->app->bind(MonthlyClosureRepositoryInterface::class, EloquentMonthlyClosureRepository::class);
-        $this->app->bind(ArticleExporterInterface::class,ExcelArticleExporter::class);
-        $this->app->bind(PdfGeneratorInterface::class,DomPdfGenerator::class);
+        $this->app->bind(ArticleExporterInterface::class, ExcelArticleExporter::class);
+        $this->app->bind(PdfGeneratorInterface::class, DomPdfGenerator::class);
         $this->app->bind(NoteReasonRepositoryInterface::class, EloquentNoteReasonRepository::class);
         $this->app->bind(EntryGuideRepositoryInterface::class, EloquentEntryGuideRepository::class);
         $this->app->bind(PurchaseOrderArticleRepositoryInterface::class, EloquentPurchaseOrderArticleRepository::class);
@@ -179,9 +181,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EntryGuideArticleRepositoryInterface::class, EloquentEntryGuideArticleRepository::class);
         $this->app->bind(EntryItemSerialRepositoryInterface::class, EloquentEntryItemSerialRepository::class);
         $this->app->bind(PurchaseOrderRepositoryInterface::class, EloquentPurchaseOrderRepository::class);
- $this->app->bind(PettyCashReceiptRepositoryInterface::class, EloquentPettyCashReceiptRepository::class);
- $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
-
+        $this->app->bind(PettyCashReceiptRepositoryInterface::class, EloquentPettyCashReceiptRepository::class);
+        $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
+        $this->app->bind(DispatchArticleSerialRepositoryInterface::class, EloquentDispatchArticleSerialRepository::class);
     }
 
     /**

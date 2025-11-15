@@ -2,6 +2,7 @@
 
 namespace App\Modules\EntryItemSerial\Infrastructure\Persistence;
 
+use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\EntryItemSerial\Domain\Entities\EntryItemSerial;
 use App\Modules\EntryItemSerial\Infrastructure\Models\EloquentEntryItemSerial;
@@ -14,13 +15,15 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
             'entry_guide_id' => $entryItemSerial->getEntryGuide()->getId(),
             'article_id' => $entryItemSerial->getEntryGuideArticle()->getArticle()->getId(),
             'serial' => $entryItemSerial->getSerial(),
+            'branch_id' => $entryItemSerial->getBranchId(),
         ]);
 
         return new EntryItemSerial(
             id: $eloquentEntryItemSerial->id,
             entry_guide: $entryItemSerial->getEntryGuide(),
             article: $entryItemSerial->getEntryGuideArticle(),
-            serial: $eloquentEntryItemSerial->serial
+            serial: $eloquentEntryItemSerial->serial,
+            branch_id: $eloquentEntryItemSerial->branch_id,
         );
     }
 
@@ -35,6 +38,7 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
             entry_guide: $entryItemSerial->entry_guide_id,
             article: $entryItemSerial->article_id,
             serial: $entryItemSerial->serial,
+            branch_id: $entryItemSerial->branch_id,
         );
     })->toArray();
     }
@@ -64,13 +68,15 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
             id: $entryItemSerial->id,
             entry_guide: $entryItemSerial->entry_guide_id,
             article: $entryItemSerial->article_id,
-            serial: $entryItemSerial->serial,
+            serial: $entryItemSerial->serial,   
+            branch_id: $entryItemSerial->branch_id,
         );
     }
 
-    public function findSerialByArticleId(int $articleId, ?bool $updated, ?string $serial = null): ?array
+    public function findSerialByArticleId(int $articleId, int $branch_id, ?bool $updated, ?string $serial = null): ?array
     {
         $rows = EloquentEntryItemSerial::where('article_id', $articleId)
+            ->where('branch_id', $branch_id)
             ->when($updated === null, function ($query) {
                 return $query->where('status', 1);
             })
@@ -84,6 +90,19 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
         }
 
         return $rows->pluck('serial')->toArray();
+    }
+
+    public function findBranchBySerial(string $serial): ?array
+    {
+        $entryItemSerial = EloquentEntryItemSerial::where('serial', $serial)->first();
+        if (!$entryItemSerial) {
+            return null;
+        }
+        $branch = EloquentBranch::where('id', $entryItemSerial->branch_id)->first();
+        return [
+            'branch_id' => $branch->id,
+            'name' => $branch->name,
+        ];
     }
 
 }

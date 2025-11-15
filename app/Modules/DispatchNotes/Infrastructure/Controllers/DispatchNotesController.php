@@ -17,6 +17,9 @@ use App\Modules\DispatchArticle\Application\UseCase\CreateDispatchArticleUseCase
 use App\Modules\DispatchArticle\Domain\Entities\DispatchArticle;
 use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
 use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
+use App\Modules\DispatchArticleSerial\Application\DTOs\DispatchArticleSerialDTO;
+use App\Modules\DispatchArticleSerial\Application\UseCases\CreateDispatchArticleSerialUseCase;
+use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface;
 use App\Modules\DispatchNotes\application\DTOS\DispatchNoteDTO;
 use App\Modules\DispatchNotes\application\UseCases\CreateDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindAllDispatchNotesUseCase;
@@ -60,7 +63,8 @@ class DispatchNotesController extends Controller
         private readonly TransactionLogRepositoryInterface $transactionLogRepositoryInterface,
         private readonly UserRepositoryInterface $userRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
-        private readonly BranchRepositoryInterface $branchRepositoryInterface
+        private readonly BranchRepositoryInterface $branchRepositoryInterface,
+        private readonly DispatchArticleSerialRepositoryInterface $dispatchArticleSerialRepository,
     ) {
     }
 
@@ -100,9 +104,10 @@ class DispatchNotesController extends Controller
         $dispatchNotesDTO->pdf = '1234';
         $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO);
 
-        $createSaleArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
-        $saleArticles = array_map(function ($article) use ($dispatchNotes, $createSaleArticleUseCase) {
-            $saleArticleDTO = new DispatchArticleDTO([
+        $status = $dispatchNotes->getEmissionReason()->getId() == 1 ? 0 : 2;
+        $createDispatchArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
+        $dispatchArticles = array_map(function ($article) use ($dispatchNotes, $createDispatchArticleUseCase, $status) {
+            $dispatchArticleDTO = new DispatchArticleDTO([
                 'dispatch_id' => $dispatchNotes->getId(),
                 'article_id' => $article['article_id'],
                 'quantity' => $article['quantity'],
@@ -112,15 +117,39 @@ class DispatchNotesController extends Controller
                 'subtotal_weight' => $article['subtotal_weight']
             ]);
 
-            return $createSaleArticleUseCase->execute($saleArticleDTO);
+            $dispatchArticle = $createDispatchArticleUseCase->execute($dispatchArticleDTO);
+
+            // Array para almacenar los seriales
+             $serials = [];
+
+            if (!empty($article['serials'])) {
+                foreach ($article['serials'] as $serial) {
+                    $dispatchArticleSerialDTO = new DispatchArticleSerialDTO([
+                        'dispatch_note_id' => $dispatchNotes->getId(),
+                        'article_id' => $dispatchArticle->getArticleID(),
+                        'serial' => $serial,
+                        'status' => $status,
+                        'origin_branch_id' => $dispatchNotes->getBranch()->getId(),
+                        'destination_branch_id' => $dispatchNotes->getDestinationBranch()?->getId(),
+                    ]);
+                    $dispatchArticleSerialUseCase = new CreateDispatchArticleSerialUseCase($this->dispatchArticleSerialRepository);
+                    $dispatchArticleSerial = $dispatchArticleSerialUseCase->execute($dispatchArticleSerialDTO);
+                    $serials[] = $dispatchArticleSerial;
+                }
+            }
+
+            //Agregar los seriales al objeto dispatchArticle
+            $dispatchArticle->serials = $serials;
+
+            return $dispatchArticle;
         }, array: $store->validated()['dispatch_articles']);
 
         $this->logTransaction($store, $dispatchNotes);
 
         return response()->json(
             [
-                'sale' => (new DispatchNoteResource($dispatchNotes))->resolve(),
-                'articles' => DispatchArticleResource::collection($saleArticles)->resolve()
+                'dispatchNote' => (new DispatchNoteResource($dispatchNotes))->resolve(),
+                'articles' => DispatchArticleResource::collection($dispatchArticles)->resolve()
             ],
             201
         );

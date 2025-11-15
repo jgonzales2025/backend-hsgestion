@@ -128,7 +128,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             );
         })->toArray();
     }
-    
+
     public function findById(int $id): ?Article
     {
 
@@ -190,7 +190,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId): array
+    public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId): array
     {
         $companyId = request()->get('company_id');
         $exchangeRate = EloquentExchangeRate::select('parallel_rate')->where('date', $date)->first();
@@ -199,10 +199,23 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             ->when($articleId, function ($query, $id) {
                 return $query->where('id', $id);
             })
-            ->when($description, function ($query, $name) {
-                return $query->where(function ($q) use ($name) {
+            // Filtrar por branch_id de manera independiente (si existe)
+            ->when($branchId, function ($query, $branch) {
+                return $query->whereHas('entryItemSerials', function ($q) use ($branch) {
+                    $q->where('branch_id', $branch);
+                });
+            })
+            ->when($description, function ($query, $name) use ($branchId) {
+                return $query->where(function ($q) use ($name, $branchId) {
                     $q->where('description', 'like', "%{$name}%")
-                        ->orWhere('cod_fab', 'like', "%{$name}%");
+                        ->orWhere('cod_fab', 'like', "%{$name}%")
+                        ->orWhereHas('entryItemSerials', function ($q) use ($name, $branchId) {
+                            $q->where('serial', "%{$name}%");
+                            // Solo aplicar filtro de branch si existe
+                            if ($branchId) {
+                                $q->where('branch_id', $branchId);
+                            }
+                        });
                 });
             })
             ->orderByDesc('created_at')

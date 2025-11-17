@@ -64,13 +64,13 @@ class Sale
         float $total,
         ?float $saldo,
         ?float $amount_amortized,
-        ?int $status,
         ?int $payment_status,
         ?bool $is_locked,
         ?string $serie_prof,
         ?string $correlative_prof,
         ?string $purchase_order,
         ?User $user_authorized,
+        ?int $status = null,
     ){
         $this->id = $id;
         $this->company = $company;

@@ -17,6 +17,7 @@ readonly class CreateEntryItemSerialUseCase{
             entry_guide:$entryItemSerial->entry_guide,
             article:$entryItemSerial->article,
             serial:$entryItemSerial->serial,
+            branch_id:$entryItemSerial->branch_id,
         );
         return $this->entryItemSerialRepositoryInterface->save($entryItemSerial);
     }

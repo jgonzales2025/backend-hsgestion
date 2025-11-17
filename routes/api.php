@@ -47,6 +47,7 @@ use App\Modules\DocumentType\Infrastructure\Controllers\DocumentTypeController;
 use App\Modules\LoginAttempt\Infrastructure\Controllers\LoginAttemptController;
 use App\Modules\Sale\Infrastructure\Controllers\SaleController;
 use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
+use App\Modules\DispatchArticleSerial\Infrastructure\Controllers\DispatchArticleSerialController;
 use App\Modules\EntryItemSerial\Infrastructure\Controllers\EntryItemSerialController;
 use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
@@ -127,6 +128,7 @@ Route::get('categories', [CategoryController::class, 'index']);
 Route::post('categories', [CategoryController::class, 'store']);
 Route::get('categories/{id}', [CategoryController::class, 'show']);
 Route::put('categories/{id}', [CategoryController::class, 'update']);
+Route::put('categories-status/{id}', [CategoryController::class, 'updateStatus']);
 
 // SubCategories - subcategorias
 Route::get('sub-categories', [SubCategoryController::class, 'index']);
@@ -134,6 +136,7 @@ Route::get('sub-categories/category/{id}', [SubCategoryController::class, 'findB
 Route::post('sub-categories', [SubCategoryController::class, 'store']);
 Route::get('sub-categories/{id}', [SubCategoryController::class, 'show']);
 Route::put('sub-categories/{id}', [SubCategoryController::class, 'update']);
+Route::put('sub-categories-status/{id}', [SubCategoryController::class, 'updateStatus']);
 
 // TransportCompanies - Empresa de transportes
 Route::get('transport-companies', [TransportCompanyController::class, 'index']);
@@ -345,6 +348,11 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Ruta para traer las series de un articulo
     Route::get('/entry-item-serial/{articleId}', [EntryItemSerialController::class, 'findSerialByArticleId']);
+
+    // Ruta para traer los movimientos de transferencia de un articulo
+    Route::get('/dispatch-serial-movements/{branchId}', [DispatchArticleSerialController::class, 'findAllMovements']);
+
+
     //purchase 
     Route::get('/purchases', [PurchaseController::class, 'index']);
     Route::post('/purchases', [PurchaseController::class, 'store']);

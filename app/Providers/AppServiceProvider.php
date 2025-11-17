@@ -41,6 +41,8 @@ use App\Modules\DigitalWallet\Domain\Interfaces\DigitalWalletRepositoryInterface
 use App\Modules\DigitalWallet\Infrastructure\Persistence\EloquentDigitalWalletRepository;
 use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
 use App\Modules\DispatchArticle\Infrastructure\Persistence\EloquentDispatchArticleRepository;
+use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface;
+use App\Modules\DispatchArticleSerial\Infrastructure\Persistence\EloquentDispatchArticleSerialRepository;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\PdfGeneratorInterface;
 use App\Modules\DispatchNotes\Infrastructure\Persistence\DomPdfGenerator;
@@ -188,6 +190,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(EntryItemSerialRepositoryInterface::class, EloquentEntryItemSerialRepository::class);
         $this->app->bind(PurchaseOrderRepositoryInterface::class, EloquentPurchaseOrderRepository::class);
         $this->app->bind(PettyCashReceiptRepositoryInterface::class, EloquentPettyCashReceiptRepository::class);
+        $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
+        $this->app->bind(DispatchArticleSerialRepositoryInterface::class, EloquentDispatchArticleSerialRepository::class);
         $this->app->bind(PurchaseRepositoryInterface::class, EloquentPurchaseRepository::class);
   $this->app->bind(ShoppingIncomeGuideRepositoryInterface::class, EloquentShoppingIncomeGuideRepository::class);
  $this->app->bind(DetailPurchaseGuideRepositoryInterface::class, EloquentDetailPurchaseGuideRepository::class);

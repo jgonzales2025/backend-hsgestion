@@ -64,7 +64,7 @@ class SerieSeeder extends Seeder
             ],
             [
                 'company_id' => 1,
-                'serie_number' => 'RIC01',
+                'serie_number' => 'RI01',
                 'branch_id' => 1,
                 'elec_document_type_id' => 18,
                 'dir_document_type_id' => 0,
@@ -72,7 +72,7 @@ class SerieSeeder extends Seeder
             ],
             [
                 'company_id' => 1,
-                'serie_number' => 'RIC02',
+                'serie_number' => 'RI02',
                 'branch_id' => 2,
                 'elec_document_type_id' => 18,
                 'dir_document_type_id' => 0,
@@ -80,7 +80,7 @@ class SerieSeeder extends Seeder
             ],
             [
                 'company_id' => 1,
-                'serie_number' => 'REC01',
+                'serie_number' => 'RE01',
                 'branch_id' => 1,
                 'elec_document_type_id' => 19,
                 'dir_document_type_id' => 0,
@@ -88,7 +88,7 @@ class SerieSeeder extends Seeder
             ],
             [
                 'company_id' => 1,
-                'serie_number' => 'REC02',
+                'serie_number' => 'RE02',
                 'branch_id' => 2,
                 'elec_document_type_id' => 19,
                 'dir_document_type_id' => 0,
@@ -256,7 +256,7 @@ class SerieSeeder extends Seeder
             ],
             [
                 'company_id' => 2,
-                'serie_number' => 'RIC01',
+                'serie_number' => 'RI01',
                 'branch_id' => 1,
                 'elec_document_type_id' => 18,
                 'dir_document_type_id' => 0,
@@ -264,7 +264,7 @@ class SerieSeeder extends Seeder
             ],
             [
                 'company_id' => 2,
-                'serie_number' => 'RIC02',
+                'serie_number' => 'RI02',
                 'branch_id' => 2,
                 'elec_document_type_id' => 18,
                 'dir_document_type_id' => 0,
@@ -272,7 +272,7 @@ class SerieSeeder extends Seeder
             ],
             [
                 'company_id' => 2,
-                'serie_number' => 'REC01',
+                'serie_number' => 'RE01',
                 'branch_id' => 1,
                 'elec_document_type_id' => 19,
                 'dir_document_type_id' => 0,
@@ -280,7 +280,7 @@ class SerieSeeder extends Seeder
             ],
             [
                 'company_id' => 2,
-                'serie_number' => 'REC02',
+                'serie_number' => 'RE02',
                 'branch_id' => 2,
                 'elec_document_type_id' => 19,
                 'dir_document_type_id' => 0,

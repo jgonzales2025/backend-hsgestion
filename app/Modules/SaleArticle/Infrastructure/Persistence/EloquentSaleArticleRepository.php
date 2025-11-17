@@ -49,7 +49,8 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
                 unit_price: $eloquentSaleArticle->unit_price,
                 public_price: $eloquentSaleArticle->public_price,
                 subtotal: $eloquentSaleArticle->subtotal,
-                state_modify_article: $eloquentSaleArticle->article->state_modify_article
+                state_modify_article: $eloquentSaleArticle->article->state_modify_article,
+                series_enabled: $eloquentSaleArticle->article->series_enabled
             );
         })->toArray();
     }

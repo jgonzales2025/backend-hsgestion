@@ -41,6 +41,7 @@ use App\Modules\SaleArticle\Infrastructure\Resources\SaleArticleCreditNoteResour
 use App\Modules\SaleArticle\Infrastructure\Resources\SaleArticleResource;
 use App\Modules\SaleItemSerial\Application\DTOs\SaleItemSerialDTO;
 use App\Modules\SaleItemSerial\Application\UseCases\CreateSaleItemSerialUseCase;
+use App\Modules\SaleItemSerial\Application\UseCases\DeleteSaleItemSerialBySaleIdUseCase;
 use App\Modules\SaleItemSerial\Domain\Interfaces\SaleItemSerialRepositoryInterface;
 use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
 use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
@@ -80,10 +81,16 @@ class SaleController extends Controller
         $result = [];
         foreach ($sales as $sale) {
             $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
+            $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
+
+            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle) {
+                $article->serials = $serialsByArticle[$article->getArticleId()] ?? [];
+                return $article;
+            }, $articles);
 
             $result[] = [
                 'sale' => (new SaleResource($sale))->resolve(),
-                'articles' => SaleArticleResource::collection($articles)->resolve(),
+                'articles' => SaleArticleResource::collection($articlesWithSerials)->resolve(),
             ];
         }
 
@@ -132,6 +139,11 @@ class SaleController extends Controller
         }
 
         $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
+        $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
+        $articles = array_map(function ($article) use ($serialsByArticle) {
+            $article->serials = $serialsByArticle[$article->getArticleId()] ?? [];
+            return $article;
+        }, $articles);
 
         return response()->json(
             [
@@ -178,8 +190,11 @@ class SaleController extends Controller
         $saleUpdated = $saleUseCase->execute($saleDTO, $sale);
 
         $this->saleArticleRepository->deleteBySaleId($saleUpdated->getId());
+        
+        $deleteSaleItemSerialBySaleIdUseCase = new DeleteSaleItemSerialBySaleIdUseCase($this->saleItemSerialRepository);
+        $deleteSaleItemSerialBySaleIdUseCase->execute($saleUpdated->getId());
 
-        $saleArticles = $this->createSaleArticles($saleUpdated, $request->validated()['sale_articles']);
+        $saleArticles = $this->updateSaleArticles($saleUpdated, $request->validated()['sale_articles']);
         $this->logTransaction($request, $saleUpdated);
 
         return response()->json([
@@ -231,6 +246,11 @@ class SaleController extends Controller
         }
 
         $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
+        $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
+        $articles = array_map(function ($article) use ($serialsByArticle) {
+            $article->serials = $serialsByArticle[$article->getArticleId()] ?? [];
+            return $article;
+        }, $articles);
 
         return response()->json([
             'sale' => (new SaleResource($sale))->resolve(),
@@ -275,6 +295,45 @@ class SaleController extends Controller
             // Array para almacenar los seriales
             $serials = [];
 
+            if (!empty($article['serials'])) {
+                foreach ($article['serials'] as $serial) {
+                    $itemSerialDTO = new SaleItemSerialDTO([
+                        'sale' => $sale,
+                        'article' => $saleArticle,
+                        'serial' => $serial,
+                    ]);
+                    $itemSerialUseCase = new CreateSaleItemSerialUseCase($this->saleItemSerialRepository);
+                    $itemSerial = $itemSerialUseCase->execute($itemSerialDTO);
+                    $serials[] = $itemSerial;
+                }
+            }
+
+            // Agregar los seriales al objeto saleArticle
+            $saleArticle->serials = $serials;
+
+            return $saleArticle;
+        }, $articlesData);
+    }
+
+    private function updateSaleArticles($sale, array $articlesData): array
+    {
+        $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository);
+
+        return array_map(function ($article) use ($sale, $createSaleArticleUseCase) {
+            $saleArticleDTO = new SaleArticleDTO([
+                'sale_id' => $sale->getId(),
+                'article_id' => $article['article_id'],
+                'description' => $article['description'],
+                'quantity' => $article['quantity'],
+                'unit_price' => $article['unit_price'],
+                'public_price' => $article['public_price'],
+                'subtotal' => $article['subtotal'],
+            ]);
+
+            $saleArticle = $createSaleArticleUseCase->execute($saleArticleDTO);
+
+            // Array para almacenar los seriales
+            $serials = [];
             if (!empty($article['serials'])) {
                 foreach ($article['serials'] as $serial) {
                     $itemSerialDTO = new SaleItemSerialDTO([

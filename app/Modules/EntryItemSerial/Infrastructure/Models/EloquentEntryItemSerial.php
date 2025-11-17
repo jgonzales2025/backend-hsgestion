@@ -12,6 +12,7 @@ class EloquentEntryItemSerial extends Model{
         'entry_guide_id',
         'article_id',
         'serial',
+        'branch_id'
     ];
        protected $hidden = ['created_at', 'updated_at'];
 }

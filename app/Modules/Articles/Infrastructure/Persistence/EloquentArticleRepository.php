@@ -43,7 +43,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     {
 
         $eloquentArticle = EloquentArticle::create([
-            'filt_NameEsp' => $article->getFiltNameEsp(),
+            'description' => $article->getFiltNameEsp(),
             'user_id' => $article->getUserId(),
             'company_type_id' => $article->getCompanyId(),
             'status_Esp' => true,
@@ -54,7 +54,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             id: $eloquentArticle->id,
             user_id: $article->getUserId(),
             company_id: $article->getCompanyId(),
-            filt_NameEsp: $article->getFiltNameEsp(),
+            filt_NameEsp: $eloquentArticle->description,
             status_Esp: $article->getStatusEsp()
 
         );
@@ -95,10 +95,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
 
 
-    public function findAllArticleNotasDebito(?string $description): array
+    public function findAllArticleNotesDebito(?string $description): array
     {
         $companyId = request()->get('company_id');
-
         $articles = EloquentArticle::with([
             'measurementUnit',
             'brand',
@@ -110,36 +109,10 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         ])
             ->where('company_type_id', $companyId)
             ->where('status_Esp', true)
-            ->when($description, function ($query, $name) {
-                return $query->where(function ($q) use ($name) {
-                    $q->where('description', 'like', "csr")
-                        ->orWhere('cod_fab', 'like', "%{$name}%");
-                });
-            })
-            ->orderByDesc('created_at')
-            ->get();
-
-        return $articles->map(fn($article) => $this->mapToDomain($article))->toArray();
-    }
-    public function findAllArticleNotesDebito(?string $description): array
-    {
-        $companyId = request()->get('company_id');
-
-        $articles = EloquentArticle::with([
-            'measurementUnit',
-            'brand',
-            'category',
-            'currencyType',
-            'subCategory',
-            'user',
-            'company',
-        ])
-            ->where('company_type_id', $companyId)
-            ->where('status_Esp', true) // 👈 usar 1 en lugar de true
-            ->when($description, function ($query, $name) {
-                return $query->where(function ($q) use ($name) {
-                    $q->where('filt_NameEsp', 'like', "%{$name}%");
-                    // ->orWhere('cod_fab', 'like', "%{$name}%");
+            ->when($description, function ($query, $description) {
+                return $query->where(function ($q) use ($description) {
+                    $q->where('description', 'like', "%{$description}%")
+                        ->orWhere('cod_fab', 'like', "%{$description}%");
                 });
             })
             ->orderByDesc('created_at')
@@ -150,12 +123,11 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 id: $article->id,
                 user_id: $article->user_id,
                 company_id: $article->company_type_id,
-                filt_NameEsp: $article->filt_NameEsp,
-                status_Esp: $article->status_Esp // 👈 revisar que este sea el nombre real
+                filt_NameEsp: $article->description,
+                status_Esp: $article->status_Esp
             );
         })->toArray();
     }
-
 
     public function findById(int $id): ?Article
     {
@@ -181,7 +153,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             id: $article->id,
             user_id: $article->user_id,
             company_id: $article->company_type_id,
-            filt_NameEsp: $article->filt_NameEsp,
+            filt_NameEsp: $article->description,
             status_Esp: $article->statusEsp
 
         );
@@ -206,19 +178,19 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             throw new \Exception('Articulo no encontrado');
         }
         $eloquentArticle->update([
-            'filt_NameEsp' => $article->getFiltNameEsp(),
+            'description' => $article->getFiltNameEsp(),
             // 'status_Esp' => $article->getStatusEsp()
         ]);
         return new ArticleNotasDebito(
             id: $eloquentArticle->id,
             user_id: $eloquentArticle->user_id,
             company_id: $eloquentArticle->company_type_id,
-            filt_NameEsp: $eloquentArticle->filt_NameEsp,
+            filt_NameEsp: $eloquentArticle->description,
             status_Esp: $eloquentArticle->statusEsp
         );
     }
 
-    public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId): array
+    public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId): array
     {
         $companyId = request()->get('company_id');
         $exchangeRate = EloquentExchangeRate::select('parallel_rate')->where('date', $date)->first();
@@ -227,10 +199,23 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             ->when($articleId, function ($query, $id) {
                 return $query->where('id', $id);
             })
-            ->when($description, function ($query, $name) {
-                return $query->where(function ($q) use ($name) {
+            // Filtrar por branch_id de manera independiente (si existe)
+            ->when($branchId, function ($query, $branch) {
+                return $query->whereHas('entryItemSerials', function ($q) use ($branch) {
+                    $q->where('branch_id', $branch);
+                });
+            })
+            ->when($description, function ($query, $name) use ($branchId) {
+                return $query->where(function ($q) use ($name, $branchId) {
                     $q->where('description', 'like', "%{$name}%")
-                        ->orWhere('cod_fab', 'like', "%{$name}%");
+                        ->orWhere('cod_fab', 'like', "%{$name}%")
+                        ->orWhereHas('entryItemSerials', function ($q) use ($name, $branchId) {
+                            $q->where('serial', "%{$name}%");
+                            // Solo aplicar filtro de branch si existe
+                            if ($branchId) {
+                                $q->where('branch_id', $branchId);
+                            }
+                        });
                 });
             })
             ->orderByDesc('created_at')

@@ -13,40 +13,20 @@ class PettyCashReceiptResource extends JsonResource
     {
         return [
             'id' => $this->resource->getId(),
-              'document_type' => (function () {
-                $code = EloquentDocumentType::where('id', $this->resource->getDocumentType())->first();
-
-                if (!$code) {
-                    return "No hay nada walter";
-                }
-
-                return (object) [
-                    'id' => $code->id,
-                    'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
-                     'description' => $code->description,
-                    // 'name' => $code->address[0]['address'],
-    
-                ];
-            })(),
+            'document_type' => [
+                'id' => $this->resource->getDocumentType()?->getId(),
+                'status' => $this->resource->getDocumentType()?->getStatus() == 1 ? 'Activo' : 'Inactivo',
+                'description' => $this->resource->getDocumentType()?->getDescription(),
+            ],
             'series' => $this->resource->getSeries(),
             'correlative' => $this->resource->getCorrelative(),
             'date' => $this->resource->getDate(),
             'delivered_to' => $this->resource->getDeliveredTo(),
-            'reason_code' => (function () {
-                $code = EloquentPettyCashMotive::where('id', $this->resource->getReasonCode())->first();
-
-                if (!$code) {
-                    return "No hay nada walter";
-                }
-
-                return (object) [
-                    'id' => $code->id,
-                    'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
-                    'description' => $code->description,
-                    // 'name' => $code->address[0]['address'],
-    
-                ];
-            })(),
+            'reason_code' => [
+                'id' => $this->resource->getReasonCode()?->getId(),
+                'status' => $this->resource->getReasonCode()?->getStatus() == 1 ? 'Activo' : 'Inactivo',
+                'description' => $this->resource->getReasonCode()?->getDescription(),
+            ],
             'currency_type' => [
                 'id' => $this->resource->getCurrencyType()?->getId(),
                 'name' => $this->resource->getCurrencyType()?->getName(),

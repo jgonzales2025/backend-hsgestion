@@ -46,6 +46,7 @@ use App\Modules\DocumentType\Infrastructure\Controllers\DocumentTypeController;
 use App\Modules\LoginAttempt\Infrastructure\Controllers\LoginAttemptController;
 use App\Modules\Sale\Infrastructure\Controllers\SaleController;
 use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
+use App\Modules\DispatchArticleSerial\Infrastructure\Controllers\DispatchArticleSerialController;
 use App\Modules\EntryItemSerial\Infrastructure\Controllers\EntryItemSerialController;
 use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
@@ -344,6 +345,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Ruta para traer las series de un articulo
     Route::get('/entry-item-serial/{articleId}', [EntryItemSerialController::class, 'findSerialByArticleId']);
+
+    // Ruta para traer los movimientos de transferencia de un articulo
+    Route::get('/dispatch-serial-movements/{branchId}', [DispatchArticleSerialController::class, 'findAllMovements']);
+
 
 
 });

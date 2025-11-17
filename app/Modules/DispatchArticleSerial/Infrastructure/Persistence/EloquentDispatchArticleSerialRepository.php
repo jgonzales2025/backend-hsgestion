@@ -14,11 +14,12 @@ class EloquentDispatchArticleSerialRepository implements DispatchArticleSerialRe
     {
         $eloquentDispatchArticleSerial = EloquentDispatchArticleSerial::create([
             'dispatch_note_id' => $dispatchArticleSerial->getDispatchNoteId(),
-            'article_id' => $dispatchArticleSerial->getArticleId(),
+            'article_id' => $dispatchArticleSerial->getArticle()->getId(),
             'serial' => $dispatchArticleSerial->getSerial(),
+            'emission_reasons_id' => $dispatchArticleSerial->getEmissionReasonsId(),
             'status' => $dispatchArticleSerial->getStatus(),
-            'origin_branch_id' => $dispatchArticleSerial->getOriginBranchId(),
-            'destination_branch_id' => $dispatchArticleSerial->getDestinationBranchId(),
+            'origin_branch_id' => $dispatchArticleSerial->getOriginBranch()->getId(),
+            'destination_branch_id' => $dispatchArticleSerial->getDestinationBranch()->getId(),
         ]);
 
         if ($eloquentDispatchArticleSerial->status == 2)
@@ -29,13 +30,33 @@ class EloquentDispatchArticleSerialRepository implements DispatchArticleSerialRe
         return new DispatchArticleSerial(
             $eloquentDispatchArticleSerial->id,
             $dispatchArticleSerial->getDispatchNoteId(),
-            $dispatchArticleSerial->getArticleId(),
+            $dispatchArticleSerial->getArticle(),
             $dispatchArticleSerial->getSerial(),
+            $dispatchArticleSerial->getEmissionReasonsId(),
             $dispatchArticleSerial->getStatus(),
-            $dispatchArticleSerial->getOriginBranchId(),
-            $dispatchArticleSerial->getDestinationBranchId(),
+            $dispatchArticleSerial->getOriginBranch(),
+            $dispatchArticleSerial->getDestinationBranch(),
         );
     }
 
+    public function findAllTransferMovements(int $branchId): array
+    {
+        $dispatchArticleSerials = EloquentDispatchArticleSerial::where('origin_branch_id', $branchId)
+            ->orWhere('destination_branch_id', $branchId)
+            ->get();
+
+        return $dispatchArticleSerials->map(function ($dispatchArticleSerial) {
+            return new DispatchArticleSerial(
+                $dispatchArticleSerial->id,
+                $dispatchArticleSerial->dispatch_note_id,
+                $dispatchArticleSerial->article->toDomain($dispatchArticleSerial->article),
+                $dispatchArticleSerial->serial,
+                $dispatchArticleSerial->emission_reasons_id,
+                $dispatchArticleSerial->status,
+                $dispatchArticleSerial->originBranch->toDomain($dispatchArticleSerial->originBranch),
+                $dispatchArticleSerial->destinationBranch->toDomain($dispatchArticleSerial->destinationBranch),
+            );
+        })->toArray();
+    }
 
 }

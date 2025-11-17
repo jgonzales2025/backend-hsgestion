@@ -3,6 +3,7 @@
 namespace App\Modules\DispatchNotes\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
@@ -63,8 +64,8 @@ class DispatchNotesController extends Controller
         private readonly TransactionLogRepositoryInterface $transactionLogRepositoryInterface,
         private readonly UserRepositoryInterface $userRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
-        private readonly BranchRepositoryInterface $branchRepositoryInterface,
         private readonly DispatchArticleSerialRepositoryInterface $dispatchArticleSerialRepository,
+        private readonly ArticleRepositoryInterface $articleRepository
     ) {
     }
 
@@ -128,11 +129,12 @@ class DispatchNotesController extends Controller
                         'dispatch_note_id' => $dispatchNotes->getId(),
                         'article_id' => $dispatchArticle->getArticleID(),
                         'serial' => $serial,
+                        'emission_reasons_id' => $dispatchNotes->getEmissionReason()->getId(),
                         'status' => $status,
-                        'origin_branch_id' => $dispatchNotes->getBranch()->getId(),
-                        'destination_branch_id' => $dispatchNotes->getDestinationBranch()?->getId(),
+                        'origin_branch' => $dispatchNotes->getBranch(),
+                        'destination_branch' => $dispatchNotes->getDestinationBranch(),
                     ]);
-                    $dispatchArticleSerialUseCase = new CreateDispatchArticleSerialUseCase($this->dispatchArticleSerialRepository);
+                    $dispatchArticleSerialUseCase = new CreateDispatchArticleSerialUseCase($this->dispatchArticleSerialRepository, $this->articleRepository, $this->branchRepository);
                     $dispatchArticleSerial = $dispatchArticleSerialUseCase->execute($dispatchArticleSerialDTO);
                     $serials[] = $dispatchArticleSerial;
                 }
@@ -292,7 +294,7 @@ class DispatchNotesController extends Controller
             $this->userRepository,
             $this->companyRepositoryInterface,
             $this->documentTypeRepository,
-            $this->branchRepositoryInterface,
+            $this->branchRepository,
         );
 
         $transactionDTO = new TransactionLogDTO([

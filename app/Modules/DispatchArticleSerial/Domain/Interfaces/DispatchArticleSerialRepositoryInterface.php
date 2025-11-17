@@ -7,4 +7,5 @@ use App\Modules\DispatchArticleSerial\Domain\Entities\DispatchArticleSerial;
 interface DispatchArticleSerialRepositoryInterface
 {
     public function save(DispatchArticleSerial $dispatchArticleSerial): ?DispatchArticleSerial;
+    public function findAllTransferMovements(int $branchId): array;
 }

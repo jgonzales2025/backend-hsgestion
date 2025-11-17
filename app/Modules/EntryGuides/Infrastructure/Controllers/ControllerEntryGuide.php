@@ -50,8 +50,7 @@ class ControllerEntryGuide extends Controller
         private readonly TransactionLogRepositoryInterface   $transactionLogRepositoryInterface,
         private readonly UserRepositoryInterface             $userRepository,
         private readonly DocumentTypeRepositoryInterface     $documentTypeRepository,
-    ) {
-    }
+    ) {}
 
     public function index(): JsonResponse
     {
@@ -95,10 +94,10 @@ class ControllerEntryGuide extends Controller
 
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryArticles)->resolve();
-        
+
         return response()->json($response, 200);
     }
-    
+
     public function store(EntryGuideRequest $request): JsonResponse
     {
         $entryGuideDTO = new EntryGuideDTO($request->validated());
@@ -118,7 +117,7 @@ class ControllerEntryGuide extends Controller
 
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
-        
+
         return response()->json($response, 201);
     }
 
@@ -144,14 +143,14 @@ class ControllerEntryGuide extends Controller
 
         $this->entryItemSerialRepositoryInterface->deleteByIdEntryItemSerial($entryGuide->getId());
         $this->entryGuideArticleRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
-        
+
         $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
 
         $this->logTransaction($request, $entryGuide);
 
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
-        
+
         return response()->json($response, 200);
     }
     private function createEntryGuideArticles($entryGuide, array $articlesData): array
@@ -171,17 +170,26 @@ class ControllerEntryGuide extends Controller
             $serials = [];
 
             if (!empty($q['serials'])) {
+                if ($entryGuide->getIngressReason()->getId() == 6) {
+                    $this->entryItemSerialRepositoryInterface->deleteByIdEntryItemSerial($entryGuide->getId());
+                }
+
+                $itemSerialUseCase = new CreateEntryItemSerialUseCase($this->entryItemSerialRepositoryInterface);
+
+                // Procesar todos los seriales de la misma manera
                 foreach ($q['serials'] as $serial) {
                     $itemSerialDTO = new EntryItemSerialDTO([
                         'entry_guide' => $entryGuide,
                         'article' => $guideArticle,
-                        'serial' => $serial
+                        'serial' => $serial,
+                        'branch_id' => $entryGuide->getBranch()->getId(),
                     ]);
-                    $itemSerialUseCase = new CreateEntryItemSerialUseCase($this->entryItemSerialRepositoryInterface);
+
                     $itemSerial = $itemSerialUseCase->execute($itemSerialDTO);
                     $serials[] = $itemSerial;
                 }
             }
+
             $guideArticle->serials = $serials;
 
             return $guideArticle;

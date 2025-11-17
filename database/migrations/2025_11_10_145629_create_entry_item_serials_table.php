@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('entry_guide_id')->constrained('entry_guides')->onDelete('cascade');
             $table->foreignId('article_id')->constrained('articles')->onDelete('cascade');
             $table->string('serial');
+            $table->foreignId('branch_id')->constrained('branches')->onDelete('cascade');
             $table->integer('status')->default(1); // 0: vendido, 1: disponible, 2: en transito
             $table->timestamps();
         });

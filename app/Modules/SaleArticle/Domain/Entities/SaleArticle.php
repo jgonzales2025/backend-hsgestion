@@ -14,8 +14,9 @@ class SaleArticle
     private float $unit_price;
     private float $public_price;
     private float $subtotal;
+    private ?bool $series_enabled;
 
-    public function __construct(int $id, int $sale_id, ?string $sku, int $article_id, ?string $description, int $quantity, float $unit_price, float $public_price, float $subtotal, ?int $state_modify_article = null)
+    public function __construct(int $id, int $sale_id, ?string $sku, int $article_id, ?string $description, int $quantity, float $unit_price, float $public_price, float $subtotal, ?int $state_modify_article = null, ?bool $series_enabled = null)
     {
         $this->id = $id;
         $this->sale_id = $sale_id;
@@ -27,6 +28,7 @@ class SaleArticle
         $this->public_price = $public_price;
         $this->subtotal = $subtotal;
         $this->state_modify_article = $state_modify_article;
+        $this->series_enabled = $series_enabled;
     }
 
     public function getId(): int { return $this->id; }
@@ -39,4 +41,5 @@ class SaleArticle
     public function getUnitPrice(): float { return $this->unit_price; }
     public function getPublicPrice(): float { return $this->public_price; }
     public function getSubtotal(): float { return $this->subtotal; }
+    public function getSeriesEnabled(): ?bool { return $this->series_enabled; }
 }

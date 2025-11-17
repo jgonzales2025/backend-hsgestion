@@ -91,7 +91,6 @@ readonly class CreateSaleUseCase
             total: $saleDTO->total,
             saldo: $saleDTO->total,
             amount_amortized: 0,
-            status: 1,
             payment_status: 0,
             is_locked: null,
             serie_prof: $saleDTO->serie_prof,

@@ -11,10 +11,14 @@ class EntryItemSerialController
 {
     public function __construct(private readonly EntryItemSerialRepositoryInterface $entryItemSerialRepository){}
 
-    public function findSerialByArticleId(int $articleId): JsonResponse
+    public function findSerialByArticleId(Request $request, int $articleId): JsonResponse
     {
+        $serial = $request->query('serial');
+        $updated = $request->query('updated');
+        $branch_id = $request->query('branch_id');
+
         $entryItemSerialUseCase = new FindSerialByArticleIdUseCase($this->entryItemSerialRepository);
-        $serial = $entryItemSerialUseCase->execute($articleId);
+        $serial = $entryItemSerialUseCase->execute($articleId, $branch_id, $updated, $serial);
         if (!$serial) {
             return response()->json(['message' => 'No se encontraron seriales para este artículo'], 404);
         }

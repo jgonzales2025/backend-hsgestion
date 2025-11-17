@@ -25,23 +25,25 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
         })->toArray();
 
     }
-    public function findById(int $id): ?DetailPurchaseGuide
+    public function findById(int $id): array
     {
-        $eloquentDetailPurchaseGuide = EloquentDetailPurchaseGuide::find($id);
+        $eloquentDetailPurchaseGuide = EloquentDetailPurchaseGuide::where('purchase_id', $id)->get();
         if (!$eloquentDetailPurchaseGuide) {
-            return null;
+            return [];
         }
 
-        return new DetailPurchaseGuide(
-            id: $eloquentDetailPurchaseGuide->id,
-            article_id: $eloquentDetailPurchaseGuide->article_id,
-            purchase_id: $eloquentDetailPurchaseGuide->purchase_id,
-            description: $eloquentDetailPurchaseGuide->description,
-            cantidad: $eloquentDetailPurchaseGuide->cantidad,
-            precio_costo: $eloquentDetailPurchaseGuide->precio_costo,
-            descuento: $eloquentDetailPurchaseGuide->descuento,
-            sub_total: $eloquentDetailPurchaseGuide->sub_total,
-        );
+ return $eloquentDetailPurchaseGuide->map(function ($item) {
+            return new DetailPurchaseGuide(
+                id: $item->id,
+                article_id: $item->article_id,
+                purchase_id: $item->purchase_id,
+                description: $item->description,
+                cantidad: $item->cantidad,
+                precio_costo: $item->precio_costo,
+                descuento: $item->descuento,
+                sub_total: $item->sub_total,
+            );
+        })->toArray();
 
     }
     public function save(DetailPurchaseGuide $detailPurchaseGuide): ?DetailPurchaseGuide

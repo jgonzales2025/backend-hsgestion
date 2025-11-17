@@ -9,6 +9,7 @@ use App\Modules\PettyCashReceipt\Application\DTOS\PettyCashReceiptDTO;
 use App\Modules\PettyCashReceipt\Application\UseCases\CreatePettyCashReceiptUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\FindAllPettyCashReceiptUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\FindByIdPettyCashReceiptUseCase;
+use App\Modules\PettyCashReceipt\Application\UseCases\UpdatePettyCashReceiptStatusUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\UpdatePettyCashReceiptUseCase;
 use App\Modules\PettyCashReceipt\Domain\Interface\PettyCashReceiptRepositoryInterface;
 use App\Modules\PettyCashReceipt\Infrastructure\Request\CreatePettyCashReceiptRequest;
@@ -25,12 +26,12 @@ class PettyCashReceiptController extends Controller
         private readonly PettyCashReceiptRepositoryInterface $pettyCashReceiptRepository,
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
-           private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
+        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
     ) {
     }
     public function index(Request $request): array
     {
-       $filter = $request->query('filter');
+        $filter = $request->query('filter');
 
         $pettyCashReceiptsUseCase = new FindAllPettyCashReceiptUseCase($this->pettyCashReceiptRepository);
         $pettyCashReceipts = $pettyCashReceiptsUseCase->execute($filter);
@@ -74,5 +75,20 @@ class PettyCashReceiptController extends Controller
 
         return response()->json(new PettyCashReceiptResource($updatePettyCashReceipt), 200);
 
+    }
+    public function updateStatus(int $pettyId, Request $request): JsonResponse
+    {
+        $validateStatus = $request->validate([
+            'status' => 'required|integer|in:0,1'
+        ]);
+        $status = $validateStatus['status'];
+
+
+        $updatePettyCashReceiptUseCase = new UpdatePettyCashReceiptStatusUseCase(
+            $this->pettyCashReceiptRepository,
+        );
+        $updatePettyCashReceiptUseCase->execute($pettyId, $status);
+
+        return response()->json(["message" => "estado actualizado"],200);
     }
 }

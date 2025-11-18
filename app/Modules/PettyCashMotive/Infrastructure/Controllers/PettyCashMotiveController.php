@@ -42,7 +42,10 @@ class PettyCashMotiveController extends Controller{
        
         $findByIdPettyCashMotive = new FindByIdPettyCashMotive($this->pettyCashMotiveInterfaceRepository);
         $pettyCashMotive  = $findByIdPettyCashMotive->execute($id);
-
+        if (!$pettyCashMotive) {
+            return response()->json(["message"=>"chas motive no encontrada"]);
+        }
+        
         return response()->json(
             new PettyCashMotiveResource($pettyCashMotive),200
         );

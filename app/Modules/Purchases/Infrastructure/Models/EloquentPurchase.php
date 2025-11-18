@@ -4,7 +4,7 @@ namespace App\Modules\Purchases\Infrastructure\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class EloquentPurchase extends Model{
-    protected $table = 'purchases';
+    protected $table = 'purchase';
     
     protected $fillable = [
         'company_id',

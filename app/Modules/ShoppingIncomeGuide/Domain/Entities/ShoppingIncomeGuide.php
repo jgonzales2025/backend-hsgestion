@@ -6,12 +6,12 @@ class ShoppingIncomeGuide
 {
     private ?int $id;
     private int $purchase_id;
-    private int $entry_guide_id;
+    private ?int $entry_guide_id;
 
     public function __construct(
         ?int $id,
         int $purchase_id,
-        int $entry_guide_id,
+        ?int $entry_guide_id,
     ) {
         $this->id = $id;
         $this->purchase_id = $purchase_id;
@@ -25,7 +25,7 @@ class ShoppingIncomeGuide
     {
         return $this->purchase_id;
     }
-    public function getEntryGuideId(): int
+    public function getEntryGuideId(): int|null
     {
         return $this->entry_guide_id;
     }

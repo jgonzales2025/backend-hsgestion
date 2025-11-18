@@ -8,22 +8,22 @@ class PurchaseDTO{
     public int $supplier_id;
     public string $serie;
     public string $correlative;
-    public float $exchange_type;
+    public  $exchange_type;
     public string $methodpayment;
-    public float $currency;
+    public  $currency;
     public string $date;
     public string $date_ven;
     public int $days;
     public string $observation;
-    public float $detraccion;
+    public  $detraccion;
     public string $fech_detraccion;
-    public float $amount_detraccion;
+    public  $amount_detraccion;
     public bool $is_detracion;
-    public float $subtotal;
-    public float $total_desc;
-    public float $inafecto;
-    public float $igv;
-    public float $total;
+    public  $subtotal;
+    public  $total_desc;
+    public  $inafecto;
+    public  $igv;
+    public  $total;
    
     public function __construct(array $array){
         $this->company_id = $array['company_id'];

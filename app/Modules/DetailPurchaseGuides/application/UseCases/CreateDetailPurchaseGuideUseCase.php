@@ -6,7 +6,7 @@ use App\Modules\DetailPurchaseGuides\Application\DTOS\DetailPurchaseGuideDTO;
 use App\Modules\DetailPurchaseGuides\Domain\Entities\DetailPurchaseGuide;
 use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
 
-class CreateDetailPurchaseGuide{
+class CreateDetailPurchaseGuideUseCase{
     public function __construct(private readonly DetailPurchaseGuideRepositoryInterface $detailPurchaseGuide){
     }
 

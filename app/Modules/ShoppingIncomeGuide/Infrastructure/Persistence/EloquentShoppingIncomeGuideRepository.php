@@ -20,14 +20,16 @@ class EloquentShoppingIncomeGuideRepository implements ShoppingIncomeGuideReposi
     })->toArray();
 
   }
-  public function findById(int $id): ?ShoppingIncomeGuide
+  public function findById(int $id): array
   {
-    $eloquentShoppingIncomeGuide = EloquentShoppingIncomeGuide::find($id);
-    return new ShoppingIncomeGuide(
-      id: $eloquentShoppingIncomeGuide->id,
-      purchase_id: $eloquentShoppingIncomeGuide->purchase_id,
-      entry_guide_id: $eloquentShoppingIncomeGuide->entry_guide_id
-    );
+    $eloquentShoppingIncomeGuide = EloquentShoppingIncomeGuide::where('purchase_id',$id)->get();
+    return $eloquentShoppingIncomeGuide->map(function ($item) {
+      return new ShoppingIncomeGuide(
+        id: $item->id,
+        purchase_id: $item->purchase_id,
+        entry_guide_id: $item->entry_guide_id
+      );
+    })->toArray();
 
   }
   public function save(ShoppingIncomeGuide $shoppingIncomeGuide): ?ShoppingIncomeGuide

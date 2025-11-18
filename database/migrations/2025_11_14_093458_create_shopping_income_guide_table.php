@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('shopping_income_guide', function (Blueprint $table) {
             $table->id();
             $table->foreignId('purchase_id')->constrained('purchase');
-            $table->foreignId('entry_guide_id')->constrained('entry_guides');
+            $table->foreignId('entry_guide_id')->nullable()->constrained('entry_guides');
             $table->timestamps();
         });
     }

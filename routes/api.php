@@ -31,6 +31,7 @@ use App\Modules\PercentageIGV\Infrastructure\Controllers\PercentageIGVController
 use App\Modules\PettyCashMotive\Infrastructure\Controllers\PettyCashMotiveController;
 use App\Modules\PettyCashReceipt\Infrastructure\Controllers\PettyCashReceiptController;
 use App\Modules\PurchaseOrder\Infrastructure\Controllers\PurchaseOrderController;
+use App\Modules\Purchases\Infrastructure\Controllers\PurchaseController;
 use App\Modules\RecordType\Infrastructure\Controllers\RecordTypeController;
 use App\Modules\ReferenceCode\Infrastructure\Controllers\ReferenceCodeController;
 use App\Modules\SubCategory\Infrastructure\Controllers\SubCategoryController;
@@ -239,17 +240,17 @@ Route::get('logs-login', [LoginAttemptController::class, 'index']);
 
 Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     //articles
-    Route::get('articles',[ArticleController::class,'index']);
-    Route::post('articles-save',[ArticleController::class,'store']);
-    Route::get('articles/{id}',[ArticleController::class,'show']);
-    Route::post('articlesupdate/{id}',[ArticleController::class,'update']);
-    Route::get('article-excel',[ArticleController::class,'export']);
-    Route::post('articles-notas-debito',[ArticleController::class,'storeNotesDebito']);
-    Route::get('articles-notas-listar',[ArticleController::class,'indexNotesDebito']);
-    Route::put('articles-notas-editar/{id}',[ArticleController::class,'updateNotesDebito']);
-    Route::put('articles-status/{id}',[ArticleController::class,'updateStatus']);
-    Route::get('articles-notas/{id}',[ArticleController::class,'showNotesDebito']);
-    Route::get('articles-required-serial/{id}',[ArticleController::class,'requiredSerial']);
+    Route::get('articles', [ArticleController::class, 'index']);
+    Route::post('articles-save', [ArticleController::class, 'store']);
+    Route::get('articles/{id}', [ArticleController::class, 'show']);
+    Route::post('articlesupdate/{id}', [ArticleController::class, 'update']);
+    Route::get('article-excel', [ArticleController::class, 'export']);
+    Route::post('articles-notas-debito', [ArticleController::class, 'storeNotesDebito']);
+    Route::get('articles-notas-listar', [ArticleController::class, 'indexNotesDebito']);
+    Route::put('articles-notas-editar/{id}', [ArticleController::class, 'updateNotesDebito']);
+    Route::put('articles-status/{id}', [ArticleController::class, 'updateStatus']);
+    Route::get('articles-notas/{id}', [ArticleController::class, 'showNotesDebito']);
+    Route::get('articles-required-serial/{id}', [ArticleController::class, 'requiredSerial']);
 
     // Customer portfolios - Cartera de clientes
     Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index']);
@@ -329,12 +330,14 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/pettyCashReceipt', [PettyCashReceiptController::class, 'store']);
     Route::put('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'update']);
     Route::get('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'show']);
- //PettyCashReceiptMotive
+     Route::put('/pettyCashReceiptstatus/{id}', [PettyCashReceiptController::class, 'updateStatus']);
+    
+    //PettyCashReceiptMotive
     Route::get('/pettyCashMotive', [PettyCashMotiveController::class, 'index']);
     Route::post('/pettyCashMotive', [PettyCashMotiveController::class, 'store']);
     Route::put('/pettyCashMotive/{id}', [PettyCashMotiveController::class, 'update']);
     Route::get('/pettyCashMotive/{id}', [PettyCashMotiveController::class, 'show']);
-   
+
 
 
     // Ruta para las ordenes de compra
@@ -350,6 +353,11 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/dispatch-serial-movements/{branchId}', [DispatchArticleSerialController::class, 'findAllMovements']);
 
 
+    //purchase 
+    Route::get('/purchases', [PurchaseController::class, 'index']);
+    Route::post('/purchases', [PurchaseController::class, 'store']);
+    Route::get('/purchases/{id}', [PurchaseController::class, 'show']);
+    Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
 
 });
 

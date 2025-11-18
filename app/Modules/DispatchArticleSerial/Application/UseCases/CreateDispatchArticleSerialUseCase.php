@@ -9,6 +9,8 @@ use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\DispatchArticleSerial\Application\DTOs\DispatchArticleSerialDTO;
 use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface;
 use App\Modules\DispatchArticleSerial\Domain\Entities\DispatchArticleSerial;
+use App\Modules\DispatchNotes\Application\UseCases\FindByIdDispatchNoteUseCase;
+use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 
 class CreateDispatchArticleSerialUseCase
 {
@@ -16,6 +18,7 @@ class CreateDispatchArticleSerialUseCase
         private DispatchArticleSerialRepositoryInterface $dispatchArticleSerialRepository, 
         private ArticleRepositoryInterface $articleRepository,
         private BranchRepositoryInterface $branchRepository,
+        private DispatchNotesRepositoryInterface $dispatchNoteRepository,
         )
     {}
 
@@ -25,9 +28,12 @@ class CreateDispatchArticleSerialUseCase
         $articleUseCase = new FindByIdArticleUseCase($this->articleRepository);
         $article = $articleUseCase->execute($dispatchArticleSerialDTO->articleId);
 
+        $dispatchUseCase = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
+        $dispatchNote = $dispatchUseCase->execute($dispatchArticleSerialDTO->dispatchNoteId);
+
         $dispatchArticleSerial = new DispatchArticleSerial(
             id: 0,
-            dispatch_note_id: $dispatchArticleSerialDTO->dispatchNoteId,
+            dispatch_note: $dispatchNote,
             article: $article,
             serial: $dispatchArticleSerialDTO->serial,
             emission_reasons_id: $dispatchArticleSerialDTO->emissionReasonsId,

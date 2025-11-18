@@ -10,7 +10,11 @@ class DispatchArticleSerialResource extends JsonResource
     {
         return [
             'id' => $this->resource->getId(),
-            'dispatch_note_id' => $this->resource->getDispatchNoteId(),
+            'dispatch_note' => [
+                'id' => $this->resource->getDispatchNote()->getId(),
+                'serie' => $this->resource->getDispatchNote()->getSerie(),
+                'correlative' => $this->resource->getDispatchNote()->getCorrelative(),
+            ],
             'article' => [
                 'id' => $this->resource->getArticle()->getId(),
                 'name' => $this->resource->getArticle()->getDescription(),

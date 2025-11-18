@@ -134,7 +134,7 @@ class DispatchNotesController extends Controller
                         'origin_branch' => $dispatchNotes->getBranch(),
                         'destination_branch' => $dispatchNotes->getDestinationBranch(),
                     ]);
-                    $dispatchArticleSerialUseCase = new CreateDispatchArticleSerialUseCase($this->dispatchArticleSerialRepository, $this->articleRepository, $this->branchRepository);
+                    $dispatchArticleSerialUseCase = new CreateDispatchArticleSerialUseCase($this->dispatchArticleSerialRepository, $this->articleRepository, $this->branchRepository, $this->dispatchNoteRepository);
                     $dispatchArticleSerial = $dispatchArticleSerialUseCase->execute($dispatchArticleSerialDTO);
                     $serials[] = $dispatchArticleSerial;
                 }

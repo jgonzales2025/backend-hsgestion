@@ -113,6 +113,10 @@ class EmissionReasonSeeder extends Seeder
             [
                 'description' => 'PARA REVISION DE GARANTIA',
                 'status' => 1
+            ],
+            [
+                'description' => 'ORDEN INTERNA PARA TRASLADO ENTRE ESTABLECIMIENTOS',
+                'status' => 1
             ]
         ];
 

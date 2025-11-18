@@ -13,7 +13,7 @@ class EloquentDispatchArticleSerialRepository implements DispatchArticleSerialRe
     public function save(DispatchArticleSerial $dispatchArticleSerial): ?DispatchArticleSerial
     {
         $eloquentDispatchArticleSerial = EloquentDispatchArticleSerial::create([
-            'dispatch_note_id' => $dispatchArticleSerial->getDispatchNoteId(),
+            'dispatch_note_id' => $dispatchArticleSerial->getDispatchNote()->getId(),
             'article_id' => $dispatchArticleSerial->getArticle()->getId(),
             'serial' => $dispatchArticleSerial->getSerial(),
             'emission_reasons_id' => $dispatchArticleSerial->getEmissionReasonsId(),
@@ -29,7 +29,7 @@ class EloquentDispatchArticleSerialRepository implements DispatchArticleSerialRe
 
         return new DispatchArticleSerial(
             $eloquentDispatchArticleSerial->id,
-            $dispatchArticleSerial->getDispatchNoteId(),
+            $dispatchArticleSerial->getDispatchNote(),
             $dispatchArticleSerial->getArticle(),
             $dispatchArticleSerial->getSerial(),
             $dispatchArticleSerial->getEmissionReasonsId(),

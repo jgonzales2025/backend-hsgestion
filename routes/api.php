@@ -48,6 +48,7 @@ use App\Modules\LoginAttempt\Infrastructure\Controllers\LoginAttemptController;
 use App\Modules\Sale\Infrastructure\Controllers\SaleController;
 use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
 use App\Modules\DispatchArticleSerial\Infrastructure\Controllers\DispatchArticleSerialController;
+use App\Modules\DispatchNotes\Infrastructure\Controllers\TransferOrderController;
 use App\Modules\EntryItemSerial\Infrastructure\Controllers\EntryItemSerialController;
 use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
@@ -204,6 +205,7 @@ Route::get('/payment-methods', [PaymentMethodController::class, 'findAllPaymentM
 
 // Emission Reasons - Motivos de emisión
 Route::get('emission-reasons', [EmissionReasonController::class, 'index']);
+Route::get('reason-transfer-orders', [EmissionReasonController::class, 'indexForTransferOrder']);
 Route::get('emission-reason/{id}', [EmissionReasonController::class, 'show']);
 
 // Ingress Reasons - Motivos de ingreso
@@ -301,6 +303,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('dispatchNote-PDF/{id}', [DispatchNotesController::class, 'generate']);
     Route::get('dispatchNote-proveedor', [DispatchNotesController::class, 'traerProovedores']);
     Route::put('dispatchNote-status/{id}', [DispatchNotesController::class, 'updateStatus']);
+    Route::post('transfer-orders', [TransferOrderController::class, 'store']);
 
     // Ruta para traer los logs transaccionales
     Route::get('/logs-transaction', [TransactionLogController::class, 'index']);

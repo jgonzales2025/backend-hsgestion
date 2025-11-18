@@ -12,8 +12,8 @@ class FindAllArticleUseCase
     {
         $this->articleRepository = $articleRepository;
     }
-    public function execute(?string $name)
+    public function execute(?string $name, ?int $branchId)
     {
-        return $this->articleRepository->findAllArticle($name);
+        return $this->articleRepository->findAllArticle($name, $branchId);
     }
 }

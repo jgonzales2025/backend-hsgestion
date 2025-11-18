@@ -22,6 +22,7 @@ class EloquentDispatchNote extends Model
     protected $fillable = [
         'cia_id',
         'branch_id',
+        'document_type_id',
         'serie',
         'correlativo',
         'date',
@@ -41,7 +42,7 @@ class EloquentDispatchNote extends Model
         'total_weight',
         'transfer_type',
         'vehicle_type',
-        'document_type_id',
+        'reference_document_type_id',
         'destination_branch_client',
         'customer_id',
         'supplier_id',

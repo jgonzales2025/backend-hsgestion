@@ -21,7 +21,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => true,
                 'st_purchases' => true,
                 'st_collections' => true,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -31,7 +32,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => false,
                 'st_purchases' => false,
                 'st_collections' => false,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -41,7 +43,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => true,
                 'st_purchases' => true,
                 'st_collections' => true,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -51,7 +54,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => false,
                 'st_purchases' => false,
                 'st_collections' => false,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -61,7 +65,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => false,
                 'st_purchases' => false,
                 'st_collections' => false,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -71,7 +76,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => false,
                 'st_purchases' => false,
                 'st_collections' => false,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -81,7 +87,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => false,
                 'st_purchases' => false,
                 'st_collections' => false,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -91,7 +98,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => false,
                 'st_purchases' => false,
                 'st_collections' => false,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -101,7 +109,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => false,
                 'st_purchases' => false,
                 'st_collections' => false,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -111,7 +120,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => false,
                 'st_purchases' => false,
                 'st_collections' => false,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -121,7 +131,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => false,
                 'st_purchases' => false,
                 'st_collections' => false,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -131,7 +142,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => false,
                 'st_purchases' => false,
                 'st_collections' => false,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -141,7 +153,8 @@ class DocumentTypeSeeder extends Seeder
                 'st_sales' => false,
                 'st_purchases' => false,
                 'st_collections' => false,
-                'st_invoices' => false,
+                'st_invoices' => false, 
+                'st_transfers' => true,
                 'status' => 1
             ],
             [
@@ -152,6 +165,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_purchases' => false,
                 'st_collections' => false,
                 'st_invoices' => false,
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -162,6 +176,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_purchases' => false,
                 'st_collections' => false,
                 'st_invoices' => false,
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -172,6 +187,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_purchases' => true,
                 'st_collections' => true,
                 'st_invoices' => false,
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -182,6 +198,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_purchases' => true,
                 'st_collections' => true,
                 'st_invoices' => false,
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -192,6 +209,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_purchases' => false,
                 'st_collections' => false,
                 'st_invoices' => true,
+                'st_transfers' => false,
                 'status' => 1
             ],
             [
@@ -202,6 +220,29 @@ class DocumentTypeSeeder extends Seeder
                 'st_purchases' => false,
                 'st_collections' => false,
                 'st_invoices' => true,
+                'st_transfers' => false,
+                'status' => 1
+            ],
+            [
+                'description' => 'ORDEN DE COMPRA',
+                'cod_sunat' => 0,
+                'abbreviation' => 'O/C',
+                'st_sales' => false,
+                'st_purchases' => true,
+                'st_collections' => false,
+                'st_invoices' => false,
+                'st_transfers' => false,
+                'status' => 1
+            ],
+            [
+                'description' => 'ORDEN INTERNA DE SALIDA',
+                'cod_sunat' => 0,
+                'abbreviation' => 'O/S',
+                'st_sales' => false,
+                'st_purchases' => false,
+                'st_collections' => false,
+                'st_invoices' => false,
+                'st_transfers' => true,
                 'status' => 1
             ],
         ];

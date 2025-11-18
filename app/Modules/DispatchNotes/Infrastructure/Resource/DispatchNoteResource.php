@@ -56,10 +56,10 @@ class DispatchNoteResource extends JsonResource
             'total_weight' => $this->resource->getTotalWeight(),
             'transfer_type' => $this->resource->getTransferType(),
             'vehicle_type' => $this->resource->getVehicleType(),
-            'document_type' => [
-                'id' => $this->resource->getDocumentType()->getId(),
-                'status' => ($this->resource->getDocumentType()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
-                'description' => $this->resource->getDocumentType()->getDescription(),
+            'reference_document_type' => [
+                'id' => $this->resource->getReferenceDocumentType()->getId(),
+                'status' => ($this->resource->getReferenceDocumentType()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+                'description' => $this->resource->getReferenceDocumentType()->getDescription(),
             ],
             'destination_branch_client_id' => (function () {
                 $code = EloquentCustomerAddress::where('id', $this->resource->getdestination_branch_client())->first();

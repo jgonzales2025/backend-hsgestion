@@ -71,4 +71,19 @@ class EloquentDispatchArticleSerialRepository implements DispatchArticleSerialRe
             ->toArray();
     }
 
+    public function updateStatusSerialEntry(int $branchId, string $serial): void
+    {
+        EloquentDispatchArticleSerial::where('serial', $serial)->update(['status' => 1]);
+        EloquentEntryItemSerial::where('serial', $serial)->update(['status' => 1, 'branch_id' => $branchId]);
+    }
+
+    public function deleteByTransferOrderId(int $transferOrderId, array $serials): void
+    {
+        foreach ($serials as $serial) {
+            EloquentEntryItemSerial::where('serial', $serial)->update(['status' => 1]);
+        }
+        
+        EloquentDispatchArticleSerial::where('dispatch_note_id', $transferOrderId)->delete();
+    }
+
 }

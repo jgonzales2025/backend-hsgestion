@@ -306,6 +306,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('transfer-orders', [TransferOrderController::class, 'store']);
     Route::get('transfer-orders', [TransferOrderController::class, 'index']);
     Route::get('transfer-orders/{id}', [TransferOrderController::class, 'show']);
+    Route::put('transfer-orders/{id}', [TransferOrderController::class, 'update']);
 
     // Ruta para traer los logs transaccionales
     Route::get('/logs-transaction', [TransactionLogController::class, 'index']);
@@ -356,6 +357,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Ruta para traer los movimientos de transferencia de un articulo
     Route::get('/dispatch-serial-movements/{branchId}', [DispatchArticleSerialController::class, 'findAllMovements']);
+
+    // Ruta para actualizar orden de salida
+    Route::put('/transfer-orders-status/{id}', [DispatchNotesController::class, 'updateStatusDispatch']);
 
 
     //purchase 

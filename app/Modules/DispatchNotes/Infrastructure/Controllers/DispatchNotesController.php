@@ -20,6 +20,7 @@ use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterf
 use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
 use App\Modules\DispatchArticleSerial\Application\DTOs\DispatchArticleSerialDTO;
 use App\Modules\DispatchArticleSerial\Application\UseCases\CreateDispatchArticleSerialUseCase;
+use App\Modules\DispatchArticleSerial\Application\UseCases\UpdateStatusSerialEntryUseCase;
 use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface;
 use App\Modules\DispatchNotes\application\DTOS\DispatchNoteDTO;
 use App\Modules\DispatchNotes\application\UseCases\CreateDispatchNoteUseCase;
@@ -28,6 +29,7 @@ use App\Modules\DispatchNotes\Application\UseCases\FindByIdDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\GenerateDispatchNotePdfUseCase;
 use App\Modules\DispatchNotes\application\UseCases\UpdateDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\UpdateStatusDispatchNoteUseCase;
+use App\Modules\DispatchNotes\Application\UseCases\UpdateStatusDispatchUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Requests\RequestStore;
 use App\Modules\DispatchNotes\Infrastructure\Requests\RequestUpdate;
@@ -329,5 +331,29 @@ class DispatchNotesController extends Controller
         ]);
 
         $transactionLogs->execute($transactionDTO);
+    }
+
+    public function updateStatusDispatch(int $id, Request $request)
+    {
+        $validatedData = $request->validate([
+            'destination_branch_id' => 'required',
+            'dispatch_articles' => 'required|array|min:1',
+            'dispatch_articles.*.article_id' => 'required|integer',
+            'dispatch_articles.*.serials' => 'required|array|min:1',
+            'dispatch_articles.*.serials.*' => 'string|distinct'
+        ]);
+
+        $updateStatusUseCase = new UpdateStatusDispatchUseCase($this->dispatchNoteRepository);
+        $updateStatusUseCase->execute($id);
+
+        $updateSerialEntryUseCase = new UpdateStatusSerialEntryUseCase($this->dispatchArticleSerialRepository);
+
+        foreach ($validatedData['dispatch_articles'] as $article) {
+            foreach ($article['serials'] as $serial) {
+                $updateSerialEntryUseCase->execute($validatedData['destination_branch_id'], $serial);
+            }
+        }
+
+        return response()->json(['message' => 'Orden de salida recepcionada correctamente.'], 200);
     }
 }

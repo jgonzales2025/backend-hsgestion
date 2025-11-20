@@ -95,4 +95,16 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
     {
         throw new \Exception('Not implemented');
     }
+
+    public function update(int $id, TransferOrder $transferOrder): void
+    {
+        $eloquentTransferOrder = EloquentDispatchNote::find($id);
+
+        $eloquentTransferOrder->update([
+            'branch_id' => $transferOrder->getBranch()->getId(),
+            'emission_reason_id' => $transferOrder->getEmissionReason()->getId(),
+            'destination_branch_id' => $transferOrder->getDestinationBranch()->getId(),
+            'observations' => $transferOrder->getObservations(),
+        ]);
+    }
 }

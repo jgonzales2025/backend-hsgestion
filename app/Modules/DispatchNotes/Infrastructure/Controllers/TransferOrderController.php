@@ -14,15 +14,19 @@ use App\Modules\DispatchArticleSerial\Application\DTOs\DispatchArticleSerialDTO;
 use App\Modules\DispatchArticleSerial\Application\UseCases\CreateDispatchArticleSerialUseCase;
 use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface;
 use App\Modules\DispatchNotes\application\DTOS\TransferOrderDTO;
+use App\Modules\DispatchNotes\application\DTOS\UpdateTransferOrderDTO;
 use App\Modules\DispatchNotes\application\UseCases\CreateTransferOrderUseCase;
 use App\Modules\DispatchNotes\application\UseCases\FindAllTransferOrdersUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindByIdTransferOrderUseCase;
+use App\Modules\DispatchNotes\application\UseCases\UpdateTransferOrderUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\TransferOrderRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Resource\TransferOrderResource;
 use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use App\Modules\DispatchNotes\Infrastructure\Requests\StoreTransferOrderRequest;
+use App\Modules\DispatchNotes\Infrastructure\Requests\UpdateTransferOrderRequest;
+use Illuminate\Http\JsonResponse;
 
 class TransferOrderController extends Controller
 {
@@ -141,5 +145,68 @@ class TransferOrderController extends Controller
         $response['dispatch_articles'] = DispatchArticleResource::collection($articlesWithSerials)->resolve();
 
         return response()->json($response);
+    }
+
+    public function update(int $id, UpdateTransferOrderRequest $request): JsonResponse
+    {
+        $transferOrderUseCase = new FindByIdTransferOrderUseCase($this->transferOrderRepository);
+        $transferOrder = $transferOrderUseCase->execute($id);
+
+        if (!$transferOrder) {
+            return response()->json(['message' => 'Orden de salida no encontrada'], 404);
+        }
+
+        if ($transferOrder->getStatus() == 1)
+        {
+            return response()->json(['message' => 'No se puede modificar una orden de salida que ya ha sido recibida.'], 400);
+        }
+
+        $updateTransferOrderDTO = new UpdateTransferOrderDTO($request->validated());
+        $updateTransferOrderUseCase = new UpdateTransferOrderUseCase($this->transferOrderRepository, $this->branchRepository, $this->emissionReasonRepository);
+        $updateTransferOrderUseCase->execute($id, $updateTransferOrderDTO);
+
+        $serials = $this->dispatchArticleSerialRepository->findSerialsByTransferOrderId($id);
+        $this->dispatchArticleSerialRepository->deleteByTransferOrderId($id, $serials);
+        $this->dispatchArticleRepositoryInterface->deleteBySaleId($id);
+
+        $createDispatchArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
+        array_map(function ($article) use ($transferOrder, $createDispatchArticleUseCase) {
+            $dispatchArticleDTO = new DispatchArticleDTO([
+                'dispatch_id' => $transferOrder->getId(),
+                'article_id' => $article['article_id'],
+                'quantity' => $article['quantity'],
+                'weight' => $article['weight'] ?? null,
+                'saldo' => $article['saldo'] ?? null,
+                'name' => $article['name'],
+                'subtotal_weight' => $article['subtotal_weight'] ?? null,
+            ]);
+
+            $dispatchArticle = $createDispatchArticleUseCase->execute($dispatchArticleDTO);
+
+            // Array para almacenar los seriales
+             $serials = [];
+
+            if (!empty($article['serials'])) {
+                foreach ($article['serials'] as $serial) {
+                    $dispatchArticleSerialDTO = new DispatchArticleSerialDTO([
+                        'dispatch_note_id' => $transferOrder->getId(),
+                        'article_id' => $dispatchArticle->getArticleID(),
+                        'serial' => $serial,
+                        'emission_reasons_id' => $transferOrder->getEmissionReason()->getId(),
+                        'status' => 2,
+                        'origin_branch' => $transferOrder->getBranch(),
+                        'destination_branch' => $transferOrder->getDestinationBranch(),
+                    ]);
+                    $dispatchArticleSerialUseCase = new CreateDispatchArticleSerialUseCase($this->dispatchArticleSerialRepository, $this->articleRepository, $this->branchRepository, $this->dispatchNoteRepository);
+                    $dispatchArticleSerial = $dispatchArticleSerialUseCase->execute($dispatchArticleSerialDTO);
+                    $serials[] = $dispatchArticleSerial;
+                }
+            }
+
+            //Agregar los seriales al objeto dispatchArticle
+            $dispatchArticle->serials = $serials;
+        }, array: $request->validated()['dispatch_articles']);
+
+        return response()->json(['message' => 'Orden de salida actualizada correctamente']);
     }
 }

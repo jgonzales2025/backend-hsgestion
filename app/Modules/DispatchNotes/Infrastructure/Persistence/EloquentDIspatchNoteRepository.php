@@ -157,4 +157,13 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
     
     }
 
+    public function updateStatusDispatch(int $transferOrderId): void
+    {
+        $transferOrder = EloquentDispatchNote::find($transferOrderId);
+        $transferOrder->update([
+            'status' => 1,
+            'arrival_date' => now()->toDateString(),
+        ]);
+    }
+
 }

@@ -15,6 +15,8 @@ use App\Modules\DispatchArticleSerial\Application\UseCases\CreateDispatchArticle
 use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface;
 use App\Modules\DispatchNotes\application\DTOS\TransferOrderDTO;
 use App\Modules\DispatchNotes\application\UseCases\CreateTransferOrderUseCase;
+use App\Modules\DispatchNotes\application\UseCases\FindAllTransferOrdersUseCase;
+use App\Modules\DispatchNotes\Application\UseCases\FindByIdTransferOrderUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\TransferOrderRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Resource\TransferOrderResource;
@@ -35,6 +37,30 @@ class TransferOrderController extends Controller
         private ArticleRepositoryInterface $articleRepository,
         private DispatchNotesRepositoryInterface $dispatchNoteRepository,
     ){}
+
+    public function index()
+    {
+        $companyId = request()->get('company_id');
+        $transferOrdersUseCase = new FindAllTransferOrdersUseCase($this->transferOrderRepository);
+        $transferOrders = $transferOrdersUseCase->execute($companyId);
+
+        $result = [];
+        foreach($transferOrders as $transferOrder) {
+            $articles = $this->dispatchArticleRepositoryInterface->findByDispatchNoteId($transferOrder->getId());
+            $serialsByArticle = $this->dispatchArticleSerialRepository->findSerialsByTransferOrderId($transferOrder->getId());
+            
+            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle) {
+                $article->serials = $serialsByArticle[$article->getArticleId()] ?? [];
+                return $article;
+            }, $articles);
+
+            $response = (new TransferOrderResource($transferOrder))->resolve();
+            $response['dispatch_articles'] = DispatchArticleResource::collection($articlesWithSerials)->resolve();
+            $result[] = $response;
+        }
+
+        return response()->json($result);
+    }
 
     public function store(StoreTransferOrderRequest $request)
     {
@@ -90,6 +116,29 @@ class TransferOrderController extends Controller
 
         $response = (new TransferOrderResource($transferOrder))->resolve();
         $response['dispatch_articles'] = DispatchArticleResource::collection($dispatchArticles)->resolve();
+
+        return response()->json($response);
+    }
+
+    public function show(int $id)
+    {
+        $findByIdTransferOrderUseCase = new FindByIdTransferOrderUseCase($this->transferOrderRepository);
+        $transferOrder = $findByIdTransferOrderUseCase->execute($id);
+
+        if (!$transferOrder) {
+            return response()->json(['message' => 'Orden de salida no encontrada'], 404);
+        }
+
+        $articles = $this->dispatchArticleRepositoryInterface->findByDispatchNoteId($transferOrder->getId());
+        $serialsByArticle = $this->dispatchArticleSerialRepository->findSerialsByTransferOrderId($transferOrder->getId());
+
+        $articlesWithSerials = array_map(function ($article) use ($serialsByArticle) {
+            $article->serials = $serialsByArticle[$article->getArticleId()] ?? [];
+            return $article;
+        }, $articles);
+
+        $response = (new TransferOrderResource($transferOrder))->resolve();
+        $response['dispatch_articles'] = DispatchArticleResource::collection($articlesWithSerials)->resolve();
 
         return response()->json($response);
     }

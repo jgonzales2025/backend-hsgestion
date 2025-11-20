@@ -51,6 +51,8 @@ return new class extends Migration {
             $table->foreignId('customer_id')->nullable()->constrained('customers');
             $table->foreignId('supplier_id')->nullable()->constrained('customers');
             $table->integer('address_supplier_id')->nullable(); 
+            $table->date('transfer_date')->nullable();
+            $table->date('arrival_date')->nullable();
         });
     }
 

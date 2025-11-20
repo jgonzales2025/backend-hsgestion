@@ -19,7 +19,7 @@ class EloquentDispatchArticleSerialRepository implements DispatchArticleSerialRe
             'emission_reasons_id' => $dispatchArticleSerial->getEmissionReasonsId(),
             'status' => $dispatchArticleSerial->getStatus(),
             'origin_branch_id' => $dispatchArticleSerial->getOriginBranch()->getId(),
-            'destination_branch_id' => $dispatchArticleSerial->getDestinationBranch()->getId(),
+            'destination_branch_id' => $dispatchArticleSerial->getDestinationBranch()?->getId(),
         ]);
 
         if ($eloquentDispatchArticleSerial->status == 2)
@@ -57,6 +57,18 @@ class EloquentDispatchArticleSerialRepository implements DispatchArticleSerialRe
                 $dispatchArticleSerial->destinationBranch->toDomain($dispatchArticleSerial->destinationBranch),
             );
         })->toArray();
+    }
+
+    public function findSerialsByTransferOrderId(int $transferOrderId): array
+    {
+        $rows = EloquentDispatchArticleSerial::where('dispatch_note_id', $transferOrderId)->get();
+
+        return $rows
+            ->groupBy('article_id')
+            ->map(function ($items) {
+                return $items->pluck('serial')->values()->toArray();
+            })
+            ->toArray();
     }
 
 }

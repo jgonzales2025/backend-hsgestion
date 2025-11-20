@@ -31,6 +31,8 @@ class TransferOrderResource extends JsonResource
             ],
             'observations' => $this->resource->getObservations(),
             'status' => $this->resource->getStatus() == 0 ? 'En traslado' : 'Entregado',
+            'transfer_date' => $this->resource->getTransferDate(),
+            'arrival_date' => $this->resource->getArrivalDate()
         ];
     }
 }

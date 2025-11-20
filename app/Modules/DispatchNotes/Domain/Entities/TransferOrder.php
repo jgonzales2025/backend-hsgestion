@@ -17,6 +17,8 @@ class TransferOrder
     private ?Branch $destination_branch;
     private ?string $observations;
     private ?bool $status;
+    private ?string $transfer_date;
+    private ?string $arrival_date;
 
     public function __construct(
         ?int $id,
@@ -28,6 +30,8 @@ class TransferOrder
         ?Branch $destination_branch,
         ?string $observations,
         ?bool $status = false,
+        ?string $transfer_date = null,
+        ?string $arrival_date = null
     ) {
         $this->id = $id;
         $this->company = $company;
@@ -38,6 +42,8 @@ class TransferOrder
         $this->destination_branch = $destination_branch;
         $this->observations = $observations;
         $this->status = $status;
+        $this->transfer_date = $transfer_date;
+        $this->arrival_date = $arrival_date;
     }
 
     public function getId(): ?int { return $this->id; }
@@ -49,4 +55,6 @@ class TransferOrder
     public function getDestinationBranch(): ?Branch { return $this->destination_branch; }
     public function getObservations(): ?string { return $this->observations; }
     public function getStatus(): ?bool { return $this->status; }
+    public function getTransferDate(): ?string { return $this->transfer_date; }
+    public function getArrivalDate(): ?string { return $this->arrival_date; }
 }

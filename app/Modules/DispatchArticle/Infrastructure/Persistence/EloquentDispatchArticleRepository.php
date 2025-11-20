@@ -75,4 +75,26 @@ class EloquentDispatchArticleRepository implements DispatchArticleRepositoryInte
         EloquentDispatchArticle::where('dispatch_id', $id)->delete();
     }
 
+    public function findByDispatchNoteId(int $id): ?array
+    {
+        $dispatchArticle = EloquentDispatchArticle::where('dispatch_id', $id)->get();
+        
+        if (!$dispatchArticle) {
+            return null;
+        }
+
+        return $dispatchArticle->map(function ($dispatchArticleData) {
+            return new DispatchArticle(
+                id: $dispatchArticleData->id,
+                dispatch_id: $dispatchArticleData->dispatch_id,
+                article_id: $dispatchArticleData->article_id,
+                quantity: $dispatchArticleData->quantity,
+                weight: $dispatchArticleData->weight,
+                saldo: $dispatchArticleData->saldo,
+                name: $dispatchArticleData->name,
+                subtotal_weight: $dispatchArticleData->subtotal_weight
+            );
+        })->toArray();
+    }
+
 }

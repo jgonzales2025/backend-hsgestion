@@ -10,6 +10,14 @@ class DispatchArticleResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        // Obtener y normalizar los serials
+        $serials = $this->resource->serials ?? [];
+        
+        // Si es un objeto único, convertirlo a array
+        if (!is_array($serials)) {
+            $serials = [$serials];
+        }
+        
         return [
             'id' => $this->resource->getId(),
             'dispatch_id' => $this->resource->getDispatchID(),
@@ -19,7 +27,11 @@ class DispatchArticleResource extends JsonResource
             'saldo' => $this->resource->getSaldo(),
             'name' => $this->resource->getName(),
             'subtotal_weight' => $this->resource->getsubTotalWeight(),
-          'cod_fab' =>  EloquentArticle::where('id', $this->resource->getArticleID())->value('cod_fab')
+            'cod_fab' =>  EloquentArticle::where('id', $this->resource->getArticleID())->value('cod_fab'),
+            'serials' => array_map(
+                fn($itemSerial) => method_exists($itemSerial, 'getSerial') ? $itemSerial->getSerial() : $itemSerial,
+                $serials
+            ),
         ];
     }
 }

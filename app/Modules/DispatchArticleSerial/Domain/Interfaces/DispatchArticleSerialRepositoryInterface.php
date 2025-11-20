@@ -8,4 +8,5 @@ interface DispatchArticleSerialRepositoryInterface
 {
     public function save(DispatchArticleSerial $dispatchArticleSerial): ?DispatchArticleSerial;
     public function findAllTransferMovements(int $branchId): array;
+    public function findSerialsByTransferOrderId(int $transferOrderId): array;
 }

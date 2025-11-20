@@ -4,7 +4,7 @@ namespace App\Modules\Branch\Domain\Entities;
 
 
 class Branch{
-    private int $id;
+    private ?int $id;
     private ?int $cia_id;
     private string $name;
     private string $address;
@@ -16,17 +16,7 @@ class Branch{
      // 🔹 Nuevo atributo opcional (lista de teléfonos)
     private array $phones;
 
-        /**
-     * @param int $id
-     * @param ?int $cia_id
-     * @param string $name
-     * @param string $address
-     * @param string $email
-     * @param string $start_date
-     * @param string $serie
-     * @param ?int $status
-     */
-    public function __construct(int $id, ?int $cia_id,
+    public function __construct(?int $id, ?int $cia_id,
     string $name,string $address,string $email,string $start_date,
     string $serie, ?int $status,  array $phones = []){
        $this->id = $id;
@@ -42,7 +32,7 @@ class Branch{
        
     }
 
-    public function getId(): int {
+    public function getId(): ?int {
         return $this->id;
     }
     public function getCia_id(): ?int {

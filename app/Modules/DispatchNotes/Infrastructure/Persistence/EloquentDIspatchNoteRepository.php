@@ -82,7 +82,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             total_weight: $dispatchNote->total_weight,
             transfer_type: $dispatchNote->transfer_type,
             vehicle_type: $dispatchNote->vehicle_type,
-            reference_document_type: $dispatchNote->reference_document_type?->toDomain($dispatchNote->reference_document_type),
+            reference_document_type: $dispatchNote->referenceDocumentType?->toDomain($dispatchNote->referenceDocumentType),
             destination_branch_client: $dispatchNote->destination_branch_client,
             customer_id: $dispatchNote->customer_id,
             supplier: $dispatchNote->supplier?->toDomain($dispatchNote->supplier),

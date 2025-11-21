@@ -15,7 +15,6 @@ class UpdatePurchaseUseCase{
     {
        $updatePurchase = new Purchase(
             id: $id,
-            company_id: $purchaseDTO->company_id,
             branch_id: $purchaseDTO->branch_id,
             supplier_id: $purchaseDTO->supplier_id,
             serie: $purchaseDTO->serie,

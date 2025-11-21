@@ -9,7 +9,6 @@ class CreatePurchaseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'company_id' => 'required|integer',
             'branch_id' => 'required|integer',
             'supplier_id' => 'required|integer',
             'serie' => 'required|string',
@@ -22,7 +21,7 @@ class CreatePurchaseRequest extends FormRequest
             'days' => 'required|integer',
             'observation' => 'required|string',
             'detraccion' => 'required|numeric',
-            'fech_detraccion' => 'required|string',
+            'fech_detraccion' => 'nullable|string',
             'amount_detraccion' => 'required|numeric',
             'is_detracion' => 'required|boolean',
             'subtotal' => 'required|numeric',

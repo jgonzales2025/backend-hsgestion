@@ -11,7 +11,6 @@ class PurchaseResource extends JsonResource
     {
         return [
             'id' => $this->resource->getId(),
-            'company_id' => $this->resource->getCompanyId(),
             'branch_id' => $this->resource->getBranchId(),
             'supplier_id' => $this->resource->getSupplierId(),
             'serie' => $this->resource->getSerie(),

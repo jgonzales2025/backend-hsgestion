@@ -54,7 +54,7 @@ class CreateEntryGuideUseCase{
             ingressReason: $ingressReason,
             reference_po_serie: $entryGuideDTO->reference_po_serie,
             reference_po_correlative: $entryGuideDTO->reference_po_correlative,
-            status: $entryGuideDTO->status,
+            status: null,
         );
 
         return $this->entryGuideRepositoryInterface->save($entryGuide);

@@ -28,7 +28,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
                 reference_po_serie: $entryGuide->reference_po_serie,
                 reference_po_correlative: $entryGuide->reference_po_correlative,
-                status: $entryGuide->status,
+                status: 1,
             );
         })->toArray();
     }

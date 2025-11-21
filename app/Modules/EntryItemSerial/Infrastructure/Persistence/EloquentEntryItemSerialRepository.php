@@ -13,7 +13,7 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
 
          $eloquentEntryItemSerial = EloquentEntryItemSerial::create([
             'entry_guide_id' => $entryItemSerial->getEntryGuide()->getId(),
-            'article_id' => $entryItemSerial->getEntryGuideArticle()->getArticle()->getId(),
+            'article_id' => $entryItemSerial->getArticle()->getId(),
             'serial' => $entryItemSerial->getSerial(),
             'branch_id' => $entryItemSerial->getBranchId(),
         ]);
@@ -21,7 +21,7 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
         return new EntryItemSerial(
             id: $eloquentEntryItemSerial->id,
             entry_guide: $entryItemSerial->getEntryGuide(),
-            article: $entryItemSerial->getEntryGuideArticle(),
+            article: $entryItemSerial->getArticle(),
             serial: $eloquentEntryItemSerial->serial,
             branch_id: $eloquentEntryItemSerial->branch_id,
         );
@@ -73,6 +73,14 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
         );
     }
 
+    /**
+     * Buscar seriales por id de articulo
+     * @param int $articleId
+     * @param int $branch_id
+     * @param mixed $updated
+     * @param mixed $serial
+     * @return array|null
+     */
     public function findSerialByArticleId(int $articleId, int $branch_id, ?bool $updated, ?string $serial = null): ?array
     {
         $rows = EloquentEntryItemSerial::where('article_id', $articleId)
@@ -92,6 +100,11 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
         return $rows->pluck('serial')->toArray();
     }
 
+    /**
+     * *Buscar sucursal por serial de articulo
+     * @param string $serial
+     * @return array{branch_id: mixed, name: mixed|null}
+     */
     public function findBranchBySerial(string $serial): ?array
     {
         $entryItemSerial = EloquentEntryItemSerial::where('serial', $serial)->first();

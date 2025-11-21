@@ -4,6 +4,7 @@ namespace App\Modules\DispatchArticleSerial\Infrastructure\Models;
 
 use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
+use App\Modules\DispatchNotes\Infrastructure\Models\EloquentDispatchNote;
 use Illuminate\Database\Eloquent\Model;
 
 class EloquentDispatchArticleSerial extends Model
@@ -22,6 +23,11 @@ class EloquentDispatchArticleSerial extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function dispatchNote()
+    {
+        return $this->belongsTo(EloquentDispatchNote::class, 'dispatch_note_id');
+    }
 
     public function article()
     {

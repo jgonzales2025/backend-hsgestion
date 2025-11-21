@@ -9,20 +9,20 @@ class DispatchArticle
     private int $dispatch_id;
     private int $article_id;
     private float $quantity;
-    private float $weight;
-    private float $saldo;
+    private ?float $weight;
+    private ?float $saldo;
     private string $name;
-    private float $subtotal_weight;
+    private ?float $subtotal_weight;
 
     public function __construct(
         ?int $id,
         int $dispatch_id,
         int $article_id,
         float $quantity,
-        float $weight,
-        float $saldo,
+        ?float $weight,
+        ?float $saldo,
         string $name,
-        float $subtotal_weight,
+        ?float $subtotal_weight,
 
     ) {
         $this->id = $id;
@@ -51,11 +51,11 @@ class DispatchArticle
     {
         return $this->quantity;
     }
-    public function getWeight(): float
+    public function getWeight(): ?float
     {
         return $this->weight;
     }
-    public function getSaldo(): float
+    public function getSaldo(): ?float
     {
         return $this->saldo;
     }
@@ -63,7 +63,7 @@ class DispatchArticle
     {
         return $this->name;
     }
-    public function getsubTotalWeight(): float
+    public function getsubTotalWeight(): ?float
     {
         return $this->subtotal_weight;
     }

@@ -1096,6 +1096,17 @@ class MenuSeeder extends Seeder
             'type' => 'item',
         ]);
 
+        Menu::create([
+            'name' => 'mantenimiento_cotizacion',
+            'label' => 'Cotización',
+            'route' => '/mantenimiento/cotizacion',
+            'permission' => 'mantenimiento.cotizacion',
+            'parent_id' => $mantenimiento->id,
+            'order' => 13,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
         // ===== ACTUALIZACIONES =====
         $actualizacion = Menu::create([
             'name' => 'actualizaciones',

@@ -11,7 +11,7 @@ class EloquentEmissionReasonRepository implements EmissionReasonRepositoryInterf
 
     public function findAll(): array
     {
-        $eloquentEmissionReasons = EloquentEmissionReason::all();
+        $eloquentEmissionReasons = EloquentEmissionReason::where('st_transfer', 0)->get();
 
         if ($eloquentEmissionReasons->isEmpty()) {
             return [];
@@ -36,5 +36,22 @@ class EloquentEmissionReasonRepository implements EmissionReasonRepositoryInterf
             description: $eloquentEmissionReason->description,
             status: $eloquentEmissionReason->status
          );
+    }
+    
+    public function findAllForTransferOrders(): array
+    {
+        $eloquentEmissionReasons = EloquentEmissionReason::where('st_transfer', 1)->get();
+
+        if ($eloquentEmissionReasons->isEmpty()) {
+            return [];
+        }
+
+        return $eloquentEmissionReasons->map(function ($eloquentEmissionReason) {
+            return new EmissionReason(
+                id: $eloquentEmissionReason->id,
+                description: $eloquentEmissionReason->description,
+                status: $eloquentEmissionReason->status
+            );
+        })->toArray();
     }
 }

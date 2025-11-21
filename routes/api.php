@@ -48,6 +48,7 @@ use App\Modules\LoginAttempt\Infrastructure\Controllers\LoginAttemptController;
 use App\Modules\Sale\Infrastructure\Controllers\SaleController;
 use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
 use App\Modules\DispatchArticleSerial\Infrastructure\Controllers\DispatchArticleSerialController;
+use App\Modules\DispatchNotes\Infrastructure\Controllers\TransferOrderController;
 use App\Modules\EntryItemSerial\Infrastructure\Controllers\EntryItemSerialController;
 use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
@@ -204,6 +205,7 @@ Route::get('/payment-methods', [PaymentMethodController::class, 'findAllPaymentM
 
 // Emission Reasons - Motivos de emisión
 Route::get('emission-reasons', [EmissionReasonController::class, 'index']);
+Route::get('reason-transfer-orders', [EmissionReasonController::class, 'indexForTransferOrder']);
 Route::get('emission-reason/{id}', [EmissionReasonController::class, 'show']);
 
 // Ingress Reasons - Motivos de ingreso
@@ -301,6 +303,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('dispatchNote-PDF/{id}', [DispatchNotesController::class, 'generate']);
     Route::get('dispatchNote-proveedor', [DispatchNotesController::class, 'traerProovedores']);
     Route::put('dispatchNote-status/{id}', [DispatchNotesController::class, 'updateStatus']);
+    Route::post('transfer-orders', [TransferOrderController::class, 'store']);
+    Route::get('transfer-orders', [TransferOrderController::class, 'index']);
+    Route::get('transfer-orders/{id}', [TransferOrderController::class, 'show']);
+    Route::put('transfer-orders/{id}', [TransferOrderController::class, 'update']);
 
     // Ruta para traer los logs transaccionales
     Route::get('/logs-transaction', [TransactionLogController::class, 'index']);
@@ -351,6 +357,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Ruta para traer los movimientos de transferencia de un articulo
     Route::get('/dispatch-serial-movements/{branchId}', [DispatchArticleSerialController::class, 'findAllMovements']);
+
+    // Ruta para actualizar orden de salida
+    Route::put('/transfer-orders-status/{id}', [TransferOrderController::class, 'updateStatusTransferOrder']);
 
 
     //purchase 

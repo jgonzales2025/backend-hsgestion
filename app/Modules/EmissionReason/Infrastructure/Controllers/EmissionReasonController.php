@@ -4,6 +4,7 @@ namespace App\Modules\EmissionReason\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\EmissionReason\Application\UseCases\FindAllEmissionReasonUseCase;
+use App\Modules\EmissionReason\Application\UseCases\FindAllForTransferOrderUseCase;
 use App\Modules\EmissionReason\Application\UseCases\FindByIdEmissionReasonUseCase;
 use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterface;
 use App\Modules\EmissionReason\Infrastructure\Resources\EmissionReasonResource;
@@ -29,5 +30,13 @@ class EmissionReasonController extends Controller
         return response()->json(
             new EmissionReasonResource($emissionReasons),200
         );
+    }
+
+    public function indexForTransferOrder(): array
+    {
+        $emissionReasonUseCase = new FindAllForTransferOrderUseCase($this->emissionReasonRepository);
+        $emissionReasons = $emissionReasonUseCase->execute();
+
+        return EmissionReasonResource::collection($emissionReasons)->resolve();
     }
 }

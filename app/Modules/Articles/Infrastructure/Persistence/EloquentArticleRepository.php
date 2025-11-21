@@ -60,10 +60,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticle(?string $description): array
+    public function findAllArticle(?string $description, ?int $branchId): array
     {
         $companyId = request()->get('company_id');
-
         $articles = EloquentArticle::with([
             'measurementUnit',
             'brand',
@@ -76,13 +75,19 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         ])
             ->where('company_type_id', $companyId)
             ->where('status_Esp', false)
-            ->when($description, function ($query, $name) {
-                $query->where(function ($q) use ($name) {
+            ->when($description, function ($query, $name) use ($branchId) {
+                $query->where(function ($q) use ($name, $branchId) {
                     $q->where('description', 'like', "%{$name}%")
                         ->orWhere('cod_fab', 'like', "%{$name}%")
                         // 👇 búsqueda dentro de reference_codes relacionados
                         ->orWhereHas('referenceCodes', function ($r) use ($name) {
                             $r->where('ref_code', 'like', "%{$name}%");
+                        })
+                        ->when($branchId, function ($qq) use ($name, $branchId) {
+                            $qq->orWhereHas('entryItemSerials', function ($q2) use ($name, $branchId) {
+                                $q2->where('serial', $name)
+                                   ->where('branch_id', $branchId);
+                            });
                         });
                 });
             })
@@ -194,7 +199,6 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     {
         $companyId = request()->get('company_id');
         $exchangeRate = EloquentExchangeRate::select('parallel_rate')->where('date', $date)->first();
-
         $articles = EloquentArticle::where('company_type_id', $companyId)
             ->when($articleId, function ($query, $id) {
                 return $query->where('id', $id);
@@ -209,12 +213,14 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 return $query->where(function ($q) use ($name, $branchId) {
                     $q->where('description', 'like', "%{$name}%")
                         ->orWhere('cod_fab', 'like', "%{$name}%")
-                        ->orWhereHas('entryItemSerials', function ($q) use ($name, $branchId) {
-                            $q->where('serial', "%{$name}%");
-                            // Solo aplicar filtro de branch si existe
-                            if ($branchId) {
-                                $q->where('branch_id', $branchId);
-                            }
+                        ->orWhereHas('referenceCodes', function ($r) use ($name) {
+                            $r->where('ref_code', 'like', "%{$name}%");
+                        })
+                        ->when($branchId, function ($qq) use ($name, $branchId) {
+                            $qq->orWhereHas('entryItemSerials', function ($q2) use ($name, $branchId) {
+                                $q2->where('serial', $name)
+                                   ->where('branch_id', $branchId);
+                            });
                         });
                 });
             })

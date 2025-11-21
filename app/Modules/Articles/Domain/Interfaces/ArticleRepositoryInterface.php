@@ -8,7 +8,7 @@ use App\Modules\Articles\Domain\Entities\ArticleNotasDebito;
 interface ArticleRepositoryInterface
 {
   public function save(Article $article): ?Article;
-  public function findAllArticle(?string $name): array;
+  public function findAllArticle(?string $name, ?int $branchId): array;
   public function findAllArticleNotesDebito(?string $name): array;
   public function findById(int $id): ?Article;
   public function update(Article $article): ?Article;

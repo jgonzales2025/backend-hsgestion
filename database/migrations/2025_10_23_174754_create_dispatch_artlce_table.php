@@ -16,11 +16,11 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignId('dispatch_id')->constrained('dispatch_notes');
             $table->foreignId('article_id')->constrained('articles');
-            $table->decimal('quantity');
-            $table->decimal('weight');
-            $table->decimal('saldo');
             $table->string('name');
-            $table->decimal('subtotal_weight');
+            $table->decimal('quantity');
+            $table->decimal('weight')->nullable();
+            $table->decimal('saldo')->nullable();
+            $table->decimal('subtotal_weight')->nullable();
         });
     }
 

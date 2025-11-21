@@ -19,7 +19,7 @@ class DispatchNote
     private ?EmissionReason $emission_reason;
     private ?string $description;
     private ?Branch $destination_branch;
-    private string $destination_address_customer;
+    private ?string $destination_address_customer;
     private ?TransportCompany $transport;
     private ?string $observations;
     private ?string $num_orden_compra;
@@ -28,13 +28,13 @@ class DispatchNote
     private ?string $date_referencia;
     private bool $status;
     private ?Driver $conductor;
-    private string $license_plate;
-    private float $total_weight;
-    private string $transfer_type;
-    private bool $vehicle_type;
-    private ?DocumentType $document_type;
+    private ?string $license_plate;
+    private ?float $total_weight;
+    private ?string $transfer_type;
+    private ?bool $vehicle_type;
+    private ?DocumentType $reference_document_type;
     private ?int $destination_branch_client;
-    private int $customer_id;
+    private ?int $customer_id;
     private string $created_at = ""; 
     private ?Customer $supplier;
     private ?Customer $address_supplier;
@@ -48,7 +48,7 @@ class DispatchNote
         ?EmissionReason $emission_reason,
         ?string $description,
         ?Branch $destination_branch,
-        string $destination_address_customer,
+        ?string $destination_address_customer,
         ?TransportCompany $transport,
         ?string $observations,
         ?string $num_orden_compra,
@@ -57,13 +57,13 @@ class DispatchNote
         ?string $date_referencia,
         bool $status,
         ?Driver $conductor,
-        string $license_plate,
-        float $total_weight,
-        string $transfer_type,
-        bool $vehicle_type,
-        ?DocumentType $document_type,
+        ?string $license_plate,
+        ?float $total_weight,
+        ?string $transfer_type,
+        ?bool $vehicle_type,
+        ?DocumentType $reference_document_type,
         ?int $destination_branch_client,
-        int $customer_id,
+        ?int $customer_id,
         ?Customer $supplier,
         ?Customer $address_supplier,
         ?string $created_at
@@ -90,7 +90,7 @@ class DispatchNote
         $this->total_weight = $total_weight;
         $this->transfer_type = $transfer_type;
         $this->vehicle_type = $vehicle_type;
-        $this->document_type = $document_type;
+        $this->reference_document_type = $reference_document_type;
         $this->destination_branch_client = $destination_branch_client;
         $this->customer_id = $customer_id;
         $this->supplier = $supplier;
@@ -131,7 +131,7 @@ class DispatchNote
     {
         return $this->destination_branch;
     }
-    public function getDestinationAddressCustomer(): string
+    public function getDestinationAddressCustomer(): ?string
     {
         return $this->destination_address_customer;
     }
@@ -167,31 +167,31 @@ class DispatchNote
     {
         return $this->conductor;
     }
-    public function getLicensePlate(): string
+    public function getLicensePlate(): ?string
     {
         return $this->license_plate;
     }
-    public function getTotalWeight(): float
+    public function getTotalWeight(): ?float
     {
         return $this->total_weight;
     }
-    public function getTransferType(): string
+    public function getTransferType(): ?string
     {
         return $this->transfer_type;
     }
-    public function getVehicleType(): bool
+    public function getVehicleType(): ?bool
     {
         return $this->vehicle_type;
     }
-    public function getDocumentType(): ?DocumentType
+    public function getReferenceDocumentType(): ?DocumentType
     {
-        return $this->document_type;
+        return $this->reference_document_type;
     }
     public function getdestination_branch_client(): int|null
     {
         return $this->destination_branch_client;
     }
-    public function getCustomerId(): int
+    public function getCustomerId(): ?int
     {
         return $this->customer_id;
     }

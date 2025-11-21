@@ -20,6 +20,7 @@ use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterf
 use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
 use App\Modules\DispatchArticleSerial\Application\DTOs\DispatchArticleSerialDTO;
 use App\Modules\DispatchArticleSerial\Application\UseCases\CreateDispatchArticleSerialUseCase;
+use App\Modules\DispatchArticleSerial\Application\UseCases\UpdateStatusSerialEntryUseCase;
 use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface;
 use App\Modules\DispatchNotes\application\DTOS\DispatchNoteDTO;
 use App\Modules\DispatchNotes\application\UseCases\CreateDispatchNoteUseCase;
@@ -28,6 +29,7 @@ use App\Modules\DispatchNotes\Application\UseCases\FindByIdDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\GenerateDispatchNotePdfUseCase;
 use App\Modules\DispatchNotes\application\UseCases\UpdateDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\UpdateStatusDispatchNoteUseCase;
+use App\Modules\DispatchNotes\Application\UseCases\UpdateStatusDispatchUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Requests\RequestStore;
 use App\Modules\DispatchNotes\Infrastructure\Requests\RequestUpdate;
@@ -121,7 +123,7 @@ class DispatchNotesController extends Controller
             $dispatchArticle = $createDispatchArticleUseCase->execute($dispatchArticleDTO);
 
             // Array para almacenar los seriales
-             $serials = [];
+            $serials = [];
 
             if (!empty($article['serials'])) {
                 foreach ($article['serials'] as $serial) {
@@ -162,27 +164,43 @@ class DispatchNotesController extends Controller
         $dispatchNoteUseCase = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
         $dispatchNotes = $dispatchNoteUseCase->execute($id);
 
+        if (!$dispatchNotes) {
+            return response()->json(['message' => 'Nota de despacho no encontrada'], 404);
+        }
+
         $dispatchArticle = $this->dispatchArticleRepositoryInterface->findById($dispatchNotes->getId());
 
+        $serialsByArticle = $this->dispatchArticleSerialRepository->findSerialsByTransferOrderId($dispatchNotes->getId());
+
+        $articlesWithSerials = array_map(function ($article) use ($serialsByArticle) {
+            $article->serials = $serialsByArticle[$article->getArticleId()] ?? [];
+            return $article;
+        }, $dispatchArticle);
 
         return response()->json(
             [
                 'dispatchNote' => (new DispatchNoteResource($dispatchNotes))->resolve(),
-                'dispatchArticle' => DispatchArticleResource::collection($dispatchArticle)->resolve()
+                'dispatchArticle' => DispatchArticleResource::collection($articlesWithSerials)->resolve()
             ]
         );
     }
 
     public function update(RequestUpdate $store, $id): JsonResponse
     {
+        if ($store->validated()['emission_reason_id'] == 1) {
+            return response()->json(['message' => 'No se puede modificar una nota de despacho emitida con motivo de venta.'], 400);
+        }
+
         $saleUseCase = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
         $dispatchNote = $saleUseCase->execute($id);
 
         if (!$dispatchNote) {
-            return response()->json(['message' => 'Venta no encontrada'], 404);
+            return response()->json(['message' => 'Guía de remisión no encontrada'], 404);
         }
 
-
+        if ($dispatchNote->getEmissionReason()->getId() == 1) {
+            return response()->json(['message' => 'No se puede modificar una nota de despacho emitida con motivo de venta.'], 400);
+        }
 
         $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
         $dispatchNoteUseCase = new UpdateDispatchNoteUseCase(
@@ -274,21 +292,22 @@ class DispatchNotesController extends Controller
             return $createSaleArticleUseCase->execute($saleArticleDTO);
         }, $articlesData);
     }
-   public function updateStatus(int $id, Request $request){
+    public function updateStatus(int $id, Request $request)
+    {
         $validatedData = $request->validate([
             'status' => 'required|in:0,1',
         ]);
 
         $status = $validatedData['status'];
 
-       $updateStatusUseCase = new UpdateStatusDispatchNoteUseCase($this->dispatchNoteRepository);
-       $updateStatusUseCase->execute($id, $status);
+        $updateStatusUseCase = new UpdateStatusDispatchNoteUseCase($this->dispatchNoteRepository);
+        $updateStatusUseCase->execute($id, $status);
 
-       return response()->json(['message' => 'Status actualizado'], 200);
-   }
+        return response()->json(['message' => 'Status actualizado'], 200);
+    }
 
-   private function logTransaction($request, $dispatchNote): void
-   {
+    private function logTransaction($request, $dispatchNote): void
+    {
         $transactionLogs = new CreateTransactionLogUseCase(
             $this->transactionLogRepositoryInterface,
             $this->userRepository,
@@ -312,5 +331,6 @@ class DispatchNotesController extends Controller
         ]);
 
         $transactionLogs->execute($transactionDTO);
-   }
+    }
+
 }

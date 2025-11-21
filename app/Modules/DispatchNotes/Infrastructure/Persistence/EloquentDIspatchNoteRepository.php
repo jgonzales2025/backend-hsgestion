@@ -44,7 +44,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
     public function findById(int $id): ?DispatchNote
     {
         $dispatchNote = EloquentDispatchNote::find($id);
-
         if (!$dispatchNote) {
             return null;
         }
@@ -71,19 +70,19 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             description: $dispatchNote->description,
             destination_branch: $dispatchNote->destination_branch?->toDomain($dispatchNote->destination_branch),
             destination_address_customer: $dispatchNote->destination_address_customer,
-            transport: $dispatchNote->transport->toDomain($dispatchNote->transport),
+            transport: $dispatchNote->transport?->toDomain($dispatchNote->transport),
             observations: $dispatchNote->observations,
             num_orden_compra: $dispatchNote->num_orden_compra,
             doc_referencia: $dispatchNote->doc_referencia,
             num_referencia: $dispatchNote->num_referencia,
             date_referencia: $dispatchNote->date_referencia,
             status: $dispatchNote->status,
-            conductor: $dispatchNote->conductor->toDomain($dispatchNote->conductor),
+            conductor: $dispatchNote->conductor?->toDomain($dispatchNote->conductor),
             license_plate: $dispatchNote->license_plate,
             total_weight: $dispatchNote->total_weight,
             transfer_type: $dispatchNote->transfer_type,
             vehicle_type: $dispatchNote->vehicle_type,
-            document_type: $dispatchNote->document_type->toDomain($dispatchNote->document_type),
+            reference_document_type: $dispatchNote->referenceDocumentType?->toDomain($dispatchNote->referenceDocumentType),
             destination_branch_client: $dispatchNote->destination_branch_client,
             customer_id: $dispatchNote->customer_id,
             supplier: $dispatchNote->supplier?->toDomain($dispatchNote->supplier),
@@ -115,7 +114,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             total_weight: $eloquentDispatchNote->total_weight,
             transfer_type: $eloquentDispatchNote->transfer_type,
             vehicle_type: $eloquentDispatchNote->vehicle_type,
-            document_type: $dispatchNote->getDocumentType(),
+            reference_document_type: $dispatchNote->getReferenceDocumentType(),
             destination_branch_client: $eloquentDispatchNote->destination_branch_client,
             customer_id: $eloquentDispatchNote->customer_id,
             supplier: $dispatchNote->getSupplier(),
@@ -126,6 +125,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
     private function mapToArray(DispatchNote $dispatchNote){
             return ['cia_id' => $dispatchNote->getCompany() ? $dispatchNote->getCompany()->getId() : null,
             'branch_id' => $dispatchNote->getBranch() ? $dispatchNote->getBranch()->getId() : null,
+            'document_type_id' => 9,
             'serie' => $dispatchNote->getSerie(),
             'correlativo' => $dispatchNote->getCorrelativo(),
             'emission_reason_id' => $dispatchNote->getEmissionReason() ? $dispatchNote->getEmissionReason()->getId() : null,
@@ -144,7 +144,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'total_weight' => $dispatchNote->getTotalWeight(),
             'transfer_type' => $dispatchNote->getTransferType(),
             'vehicle_type' => $dispatchNote->getVehicleType(),
-            'document_type_id' => $dispatchNote->getDocumentType() ? $dispatchNote->getDocumentType()->getId() : null,
+            'reference_document_type_id' => $dispatchNote->getReferenceDocumentType() ? $dispatchNote->getReferenceDocumentType()->getId() : null,
             'destination_branch_client' => $dispatchNote->getdestination_branch_client(),
             'customer_id' => $dispatchNote->getCustomerId(),
             'supplier_id' => $dispatchNote->getSupplier()?->getId() ?? null,
@@ -156,5 +156,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
      EloquentDispatchNote::where('id', $dispatchNote)->update(['status' => $status]);
     
     }
+
+    
 
 }

@@ -16,6 +16,7 @@ class SaleArticleResource extends JsonResource
             'description' => $this->resource->getDescription(),
             'quantity' => $this->resource->getQuantity(),
             'unit_price' => $this->resource->getUnitPrice(),
+            'public_price' => $this->resource->getPublicPrice(),
             'subtotal' => $this->resource->getSubTotal(),
             'state_modify_article' => $this->resource->getStateModifyArticle(),
             'series_enabled' => $this->resource->getSeriesEnabled(),

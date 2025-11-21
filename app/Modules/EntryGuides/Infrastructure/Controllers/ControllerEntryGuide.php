@@ -180,7 +180,7 @@ class ControllerEntryGuide extends Controller
                 foreach ($q['serials'] as $serial) {
                     $itemSerialDTO = new EntryItemSerialDTO([
                         'entry_guide' => $entryGuide,
-                        'article' => $guideArticle,
+                        'article' => $guideArticle->getArticle(),
                         'serial' => $serial,
                         'branch_id' => $entryGuide->getBranch()->getId(),
                     ]);

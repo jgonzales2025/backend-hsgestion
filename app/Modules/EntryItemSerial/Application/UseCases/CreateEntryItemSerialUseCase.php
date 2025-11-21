@@ -11,13 +11,13 @@ readonly class CreateEntryItemSerialUseCase{
         private readonly EntryItemSerialRepositoryInterface $entryItemSerialRepositoryInterface
     ){}
 
-    public function execute(EntryItemSerialDTO $entryItemSerial):?EntryItemSerial{
+    public function execute(EntryItemSerialDTO $entryItemSerialDTO):?EntryItemSerial{
         $entryItemSerial = new EntryItemSerial(
             id: 0,
-            entry_guide:$entryItemSerial->entry_guide,
-            article:$entryItemSerial->article,
-            serial:$entryItemSerial->serial,
-            branch_id:$entryItemSerial->branch_id,
+            entry_guide:$entryItemSerialDTO->entry_guide,
+            article:$entryItemSerialDTO->article,
+            serial:$entryItemSerialDTO->serial,
+            branch_id:$entryItemSerialDTO->branch_id,
         );
         return $this->entryItemSerialRepositoryInterface->save($entryItemSerial);
     }

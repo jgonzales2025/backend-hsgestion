@@ -2,12 +2,12 @@
 
 namespace App\Modules\EntryItemSerial\Application\DTOS;
 
+use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
-use App\Modules\EntryGuideArticle\Domain\Entities\EntryGuideArticle;
 
 class EntryItemSerialDTO{
     public EntryGuide $entry_guide;
-    public EntryGuideArticle $article;
+    public Article $article;
     public string $serial;
     public int $branch_id;
 

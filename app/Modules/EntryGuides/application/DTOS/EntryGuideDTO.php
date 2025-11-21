@@ -14,10 +14,9 @@ class EntryGuideDTO
     public $ingress_reason_id;
     public ?string $reference_po_serie;
     public ?string $reference_po_correlative;
-    public $status;
 
     public function __construct($array){
-        $this->cia_id = $array['cia_id'];
+        $this->cia_id = $array['company_id'];
         $this->branch_id = $array['branch_id'];
         $this->serie = $array['serie'] ?? null;
         $this->correlative = $array['correlative'] ?? null;
@@ -27,7 +26,6 @@ class EntryGuideDTO
         $this->ingress_reason_id = $array['ingress_reason_id'];
         $this->reference_po_serie = $array['reference_po_serie'] ?? null;
         $this->reference_po_correlative = $array['reference_po_correlative'] ?? null;
-        $this->status = $array['status'];
 
     }
 }

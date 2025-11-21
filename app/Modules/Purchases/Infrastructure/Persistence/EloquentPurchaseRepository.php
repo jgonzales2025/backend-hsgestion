@@ -15,7 +15,6 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         return $eloquentpurchase->map(function ($purchase) {
             return new Purchase(
                 id: $purchase->id,
-                company_id: $purchase->company_id,
                 branch_id: $purchase->branch_id,
                 supplier_id: $purchase->supplier_id,
                 serie: $purchase->serie,
@@ -49,7 +48,6 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         }
         return new Purchase(
             id: $eloquentpurchase->id,
-            company_id: $eloquentpurchase->company_id,
             branch_id: $eloquentpurchase->branch_id,
             supplier_id: $eloquentpurchase->supplier_id,
             serie: $eloquentpurchase->serie,
@@ -76,7 +74,6 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
     public function save(Purchase $purchase): ?Purchase
     {
         $eloquentpurchase = EloquentPurchase::create([
-            'company_id' => $purchase->getCompanyId(),
             'branch_id' => $purchase->getBranchId(),
             'supplier_id' => $purchase->getSupplierId(),
             'serie' => $purchase->getSerie(),
@@ -100,7 +97,6 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         ]);
         return new Purchase(
             id: $eloquentpurchase->id,
-            company_id: $eloquentpurchase->company_id,
             branch_id: $eloquentpurchase->branch_id,
             supplier_id: $eloquentpurchase->supplier_id,
             serie: $eloquentpurchase->serie,
@@ -131,7 +127,6 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         }
 
         $purchaseUpdtate->update([
-            'company_id' => $purchase->getCompanyId(),
             'branch_id' => $purchase->getBranchId(),
             'supplier_id' => $purchase->getSupplierId(),
             'serie' => $purchase->getSerie(),
@@ -155,7 +150,6 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         ]);
         return new Purchase(
             id: $purchaseUpdtate->id,
-            company_id: $purchaseUpdtate->company_id,
             branch_id: $purchaseUpdtate->branch_id,
             supplier_id: $purchaseUpdtate->supplier_id,
             serie: $purchaseUpdtate->serie,

@@ -17,6 +17,7 @@ class EntryGuideRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'company_id' => 'required|integer|exists:companies,id',
             'branch_id' => 'required|integer|exists:branches,id',
             'serie' => 'required|string',
             'date' => 'string',

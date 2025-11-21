@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('purchase', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')->constrained('companies');
             $table->foreignId('branch_id')->constrained('branches');
             $table->foreignId('supplier_id')->nullable();
             $table->string('serie');

@@ -17,7 +17,6 @@ class CreatePurchaseUseCase
 
         $puchaseCreate = new Purchase(
             id: 0,
-            company_id: $purchaseDTO->company_id,
             branch_id: $purchaseDTO->branch_id,
             supplier_id: $purchaseDTO->supplier_id,
             serie: $purchaseDTO->serie,

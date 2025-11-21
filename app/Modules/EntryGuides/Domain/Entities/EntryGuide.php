@@ -19,7 +19,7 @@ class EntryGuide
     private ?IngressReason $ingressReason;
     private ?string $reference_po_serie; //opcional purchase order
     private ?string $reference_po_correlative; //opcional purchase order
-    private bool $status;
+    private ?bool $status;
 
     public function __construct(
         ?int $id,
@@ -33,7 +33,7 @@ class EntryGuide
         ?IngressReason $ingressReason,
         ?string $reference_po_serie, //opcional purchase order
         ?string $reference_po_correlative, //opcional purchase order
-        bool $status,
+        ?bool $status,
     ) {
         $this->id = $id;
         $this->cia = $cia;
@@ -78,7 +78,7 @@ class EntryGuide
     {
         return $this->reference_po_correlative;
     }
-    public function getStatus(): bool
+    public function getStatus(): ?bool
     {
         return $this->status;
     }

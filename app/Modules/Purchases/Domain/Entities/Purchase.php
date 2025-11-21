@@ -5,7 +5,6 @@ namespace App\Modules\Purchases\Domain\Entities;
 class Purchase
 {
     private ?int $id;
-    private int $company_id;
     private int $branch_id;
     private int $supplier_id;
     private string $serie;
@@ -29,7 +28,6 @@ class Purchase
 
     public function __construct(
         ?int $id,
-        int $company_id,
         int $branch_id,
         int $supplier_id,
         string $serie,
@@ -52,7 +50,6 @@ class Purchase
         float $total
     ) {
         $this->id = $id;
-        $this->company_id = $company_id;
         $this->branch_id = $branch_id;
         $this->supplier_id = $supplier_id;
         $this->serie = $serie;
@@ -78,10 +75,6 @@ class Purchase
     public function getId(): int|null
     {
         return $this->id;
-    }
-    public function getCompanyId(): int
-    {
-        return $this->company_id;
     }
     public function getBranchId(): int
     {

@@ -68,4 +68,9 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
             sub_total: $eloquentDetailPurchaseGuide->sub_total,
         );
     }
+    public function deletedBy(int $id): void
+    {
+        EloquentDetailPurchaseGuide::where('purchase_id', $id)->delete();
+    
+    }
 }

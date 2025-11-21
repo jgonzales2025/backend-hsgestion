@@ -4,8 +4,10 @@ namespace App\Modules\Purchases\Infrastructure\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreatePurchaseRequest extends FormRequest{
-    public function rules():array{
+class CreatePurchaseRequest extends FormRequest
+{
+    public function rules(): array
+    {
         return [
             'company_id' => 'required|integer',
             'branch_id' => 'required|integer',
@@ -29,7 +31,15 @@ class CreatePurchaseRequest extends FormRequest{
             'igv' => 'required|numeric',
             'total' => 'required|numeric',
             'det_compras_guia_ingreso' => 'required|array',
-              'shopping_income_guide' => 'required|array',
+            'det_compras_guia_ingreso.*.article_id' => 'required|integer|exists:articles,id',
+            'det_compras_guia_ingreso.*.description' => 'required|string',
+            'det_compras_guia_ingreso.*.cantidad' => 'required|numeric',
+            'det_compras_guia_ingreso.*.precio_costo' => 'required|numeric',
+            'det_compras_guia_ingreso.*.descuento' => 'required|numeric',
+            'det_compras_guia_ingreso.*.sub_total' => 'required|numeric',
+            'shopping_income_guide' => 'required|array',
+            // 'shopping_income_guide.*.entry_guide_id' => 'required|integer',
+
         ];
     }
 }

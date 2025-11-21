@@ -13,21 +13,11 @@ class PettyCashMotiveResource extends JsonResource
         return [
             'id' => $this->resource->getId(),
             'description' => $this->resource->getDescription(),
-            'receipt_type' => (function () {
-                $code = EloquentDocumentType::where('st_invoices', true)
-                    ->where('id', $this->resource->getReceiptType())
-                    ->first();
-
-                if (!$code) {
-                    return "No hay nada, Walter ";
-                }
-
-                return (object) [
-                    'id' => $code->id,
-                    'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
-                    'description' => $code->description,
-                ];
-            })(),
+            'receipt_type' =>[
+                'id' => $this->resource->getReceiptType()->getId(),
+                'status' => $this->resource->getReceiptType()->getStatus() == 1 ? 'Activo' : 'Inactivo',
+                'description' => $this->resource->getReceiptType()->getDescription(),
+            ],
             'status' => ($this->resource->getStatus()) ? 'Activo' : 'Inactivo',
         ];
     }

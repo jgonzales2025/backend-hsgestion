@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('petty_cash_receipt', function (Blueprint $table) {
-             $table->id('id');
+            $table->id('id');
 
             $table->foreignId('company_id')
                 ->constrained('companies')
@@ -31,16 +31,11 @@ return new class extends Migration
             $table->decimal('amount', 12, 2)->default(0.00);
             $table->text('observation')->nullable();
 
-            $table->integer('status')->default(1);
-            $table->unsignedBigInteger('created_by')->nullable();
-            $table->dateTime('created_at_manual')->nullable();
-            $table->unsignedBigInteger('updated_by')->nullable();
-            $table->dateTime('updated_at_manual')->nullable();
+            $table->integer('status')->default(1); 
             $table->foreignId('branch_id')->constrained('branches');
 
             $table->timestamps();
-        
-        });
+        }); 
     }
 
     /**

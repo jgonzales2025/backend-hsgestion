@@ -17,13 +17,7 @@ return new class extends Migration
             // Campos principales
             $table->string('description');
             $table->integer('receipt_type')->nullable();
-            $table->integer('user_id')->nullable();
-            $table->date('date')->nullable();
-
-            // Campos de modificación
-            $table->integer('user_mod')->nullable();
-            $table->dateTime('date_mod')->nullable();
-
+            $table->integer('user_id')->nullable(); 
             // Estado
             $table->boolean('status')->default(true);
             $table->timestamps();

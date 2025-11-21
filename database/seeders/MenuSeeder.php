@@ -105,6 +105,28 @@ class MenuSeeder extends Seeder
             'type' => 'item',
         ]);
 
+        Menu::create([
+            'name' => 'listar_compras',
+            'label' => 'Listar compras',
+            'route' => '/compras/listar-compras',
+            'permission' => 'compras.listar_compras',
+            'parent_id' => $purchase->id,
+            'order' => 2,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
+        Menu::create([
+            'name' => 'registrar_compra',
+            'label' => 'Registrar compra',
+            'route' => '/compras/registrar-compra',
+            'permission' => 'compras.registrar_compra',
+            'parent_id' => $purchase->id,
+            'order' => 3,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
         // ===== CAJA =====
         $caja = Menu::create([
             'name' => 'caja',

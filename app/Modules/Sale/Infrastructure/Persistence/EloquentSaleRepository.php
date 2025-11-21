@@ -368,9 +368,9 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             status: $eloquentSale->status,
             payment_status: $eloquentSale->payment_status,
             is_locked: $eloquentSale->is_locked,
-            id_prof: $eloquentSale->id_prof,
-            serie_prof: $eloquentSale->series_prof,
-            correlative_prof: $eloquentSale->correlative_prof,
+            id_prof: $eloquentSale->reference_document_type_id,
+            serie_prof: $eloquentSale->reference_serie,
+            correlative_prof: $eloquentSale->reference_correlative,
             purchase_order: $eloquentSale->purchase_order,
             user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized)
         );

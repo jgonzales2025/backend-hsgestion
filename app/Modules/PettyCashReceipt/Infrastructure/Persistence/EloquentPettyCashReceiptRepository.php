@@ -20,6 +20,7 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
 
     public function save(PettyCashReceipt $pettyCashReceipt): ?PettyCashReceipt
     {
+        // dd($pettyCashReceipt);
         $eloquentPettyCashReceipt = EloquentPettyCashReceipt::create([
             'company_id' => $pettyCashReceipt->getCompany(),
             'document_type' => $pettyCashReceipt->getDocumentType()->getId(),
@@ -100,7 +101,7 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
             correlative: $eloquentPettyCashReceipt->correlative,
             date: $eloquentPettyCashReceipt->date,
             delivered_to: $eloquentPettyCashReceipt->delivered_to,
-            reason_code: $eloquentPettyCashReceipt->reason_code,
+            reason_code: $eloquentPettyCashReceipt->reasonCode?->toDomain($eloquentPettyCashReceipt->reasonCode),
             currency: $eloquentPettyCashReceipt->currency?->toDomain($eloquentPettyCashReceipt->currency),
             amount: $eloquentPettyCashReceipt->amount,
             observation: $eloquentPettyCashReceipt->observation,
@@ -118,11 +119,10 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
         $eloquentPettyCashReceipt->update([
             'company_id' => $pettyCashReceipt->getCompany(),
             'document_type' => $pettyCashReceipt->getDocumentType()->getId(),
-            'series' => $pettyCashReceipt->getSeries(),
-
+            'series' => $pettyCashReceipt->getSeries(), 
             'date' => $pettyCashReceipt->getDate(),
             'delivered_to' => $pettyCashReceipt->getDeliveredTo(),
-            'reason_code' => $pettyCashReceipt->getReasonCode(),
+            'reason_code' => $pettyCashReceipt->getReasonCode()->getId(),
             'currency_type' => $pettyCashReceipt->getCurrencyType()->getId(),
             'amount' => $pettyCashReceipt->getAmount(),
             'observation' => $pettyCashReceipt->getObservation(),
@@ -137,7 +137,7 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
             correlative: $eloquentPettyCashReceipt->correlative,
             date: $eloquentPettyCashReceipt->date,
             delivered_to: $eloquentPettyCashReceipt->delivered_to,
-            reason_code: $eloquentPettyCashReceipt->reason_code,
+             reason_code: $eloquentPettyCashReceipt->reasonCode?->toDomain($eloquentPettyCashReceipt->reasonCode),
             currency: $eloquentPettyCashReceipt->currency?->toDomain($eloquentPettyCashReceipt->currency),
             amount: $eloquentPettyCashReceipt->amount,
             observation: $eloquentPettyCashReceipt->observation,

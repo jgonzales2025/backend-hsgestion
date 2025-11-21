@@ -45,4 +45,9 @@ class EloquentShoppingIncomeGuideRepository implements ShoppingIncomeGuideReposi
       entry_guide_id: $eloquentShoppingIncomeGuide->entry_guide_id
     );
   }
+  public function deletedBy(int $id): void
+  {
+    EloquentShoppingIncomeGuide::where('purchase_id', $id)->delete();
+  
+  }
 }

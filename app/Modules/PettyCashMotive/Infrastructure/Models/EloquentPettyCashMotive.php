@@ -30,7 +30,7 @@ class EloquentPettyCashMotive extends Model{
                id: $pettyCashMotive->id,
                company_id: $pettyCashMotive->company_id,
                description: $pettyCashMotive->description,
-               receipt_type: $pettyCashMotive->documentType,
+               receipt_type: $pettyCashMotive->documentType->toDomain($pettyCashMotive->documentType),  
                user_id: $pettyCashMotive->user_id,
                status: $pettyCashMotive->status,
             );

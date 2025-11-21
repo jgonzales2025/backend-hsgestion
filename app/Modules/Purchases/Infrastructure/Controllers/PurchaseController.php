@@ -95,12 +95,27 @@ class PurchaseController extends Controller
     }
     public function update(PudatePurchaseRequest $request, int $id): JsonResponse
     {
-        $purchaseDTO = new PurchaseDTO($request->resolved());
+        $purchaseDTO = new PurchaseDTO($request->validated());
         $updatePurchaseUseCase = new UpdatePurchaseUseCase($this->purchaseRepository);
         $purchase = $updatePurchaseUseCase->execute($purchaseDTO, $id);
 
+        $this->detailPurchaseGuideRepository->deletedBy($purchase->getId());
+
+        $this->shoppingIncomeGuideRepository->deletedBy($purchase->getId());
+
+        $detailcompras = $this->createDetComprasGuiaIngreso($purchase, $request->validated()['det_compras_guia_ingreso']);
+        $shopping = $this->createShoppingIncomeGuide($purchase, $request->validated()['shopping_income_guide']);
+
+
+
+
         return response()->json(
-            new PurchaseResource($purchase),
+            [
+                'purchase' => new PurchaseResource($purchase),
+                'purchaseGuide' => DetailPurchaseGuideResource::collection($detailcompras)->resolve(),
+                'shoppingGuide' => ShoppingIncomeGuideResource::collection($shopping)->resolve()
+
+            ],
             201
         );
     }

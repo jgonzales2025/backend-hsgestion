@@ -15,10 +15,11 @@ class PurchaseOrder
     private ?string $delivery_date;
     private ?string $contact;
     private ?string $order_number_supplier;
+    private ?string $observations;
     private Customer $supplier;
     private ?string $status;
 
-    public function __construct(int $id, int $company_id, int $branch_id, string $serie, ?string $correlative, string $date, ?string $delivery_date, ?string $contact, ?string $order_number_supplier, Customer $supplier, ?string $status)
+    public function __construct(int $id, int $company_id, int $branch_id, string $serie, ?string $correlative, string $date, ?string $delivery_date, ?string $contact, ?string $order_number_supplier, ?string $observations, Customer $supplier, ?string $status)
     {
         $this->id = $id;
         $this->company_id = $company_id;
@@ -29,6 +30,7 @@ class PurchaseOrder
         $this->delivery_date = $delivery_date;
         $this->contact = $contact;
         $this->order_number_supplier = $order_number_supplier;
+        $this->observations = $observations;
         $this->supplier = $supplier;
         $this->status = $status;
     }
@@ -42,6 +44,7 @@ class PurchaseOrder
     public function getDeliveryDate(): ?string { return $this->delivery_date; }
     public function getContact(): ?string { return $this->contact; }
     public function getOrderNumberSupplier(): ?string { return $this->order_number_supplier; }
+    public function getObservations(): ?string { return $this->observations; }
     public function getSupplier(): Customer { return $this->supplier; }
     public function getStatus(): ?string { return $this->status; }
 }

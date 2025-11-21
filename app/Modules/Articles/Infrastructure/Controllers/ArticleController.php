@@ -29,6 +29,7 @@ use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInterface;
+use App\Modules\EntryItemSerial\Application\UseCases\FindBySerialUseCase;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
@@ -37,6 +38,9 @@ use Illuminate\Support\Facades\Storage;
 use App\Modules\Articles\Application\UseCases\UpdateStatusArticleUseCase;
 use App\Modules\EntryItemSerial\Application\UseCases\FindBranchBySerial;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
+use App\Modules\VisibleArticles\application\UseCases\FindStatusByArticleId;
+use App\Modules\VisibleArticles\Domain\Interfaces\VisibleArticleRepositoryInterface;
+use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 
 class ArticleController extends Controller
 {
@@ -53,7 +57,8 @@ class ArticleController extends Controller
     private readonly CompanyRepositoryInterface $companyRepository,
     private ExportArticlesToExcelUseCase $exportUseCase,
     private EntryItemSerialRepositoryInterface $entryItemSerialRepository,
-
+    private VisibleArticleRepositoryInterface $visibleArticleRepository,
+    private BranchRepositoryInterface $branchRepository
   ) {
   }
   public function export()
@@ -85,28 +90,27 @@ class ArticleController extends Controller
     $articleUseCase = new FindAllArticleUseCase($this->articleRepository);
 
     $article = $articleUseCase->execute($name, $branchId);
-    
+
     if (empty($article)) {
       $entryItemSerialUseCase = new FindBranchBySerial($this->entryItemSerialRepository);
       $branch = $entryItemSerialUseCase->execute($name);
 
-      if (!$branch)
-      {
+      if (!$branch) {
         return response()->json([
           "message" => "La serie es incorrecta"
         ], 404);
-      }else {
+      } else {
         return response()->json([
           "message" => "El artículo no se encuentra en esta sucursal",
           'branch_id' => $branch['branch_id'],
           "location" => $branch['name']
         ]);
       }
-      
+
     }
 
     return ArticleResource::collection($article)->resolve();
-  } 
+  }
   public function show(int $id): JsonResponse
   {
 
@@ -269,41 +273,51 @@ class ArticleController extends Controller
     $branchId = $request->query("branch_id");
 
     $validatedData = $request->validate([
-        'date' => 'date|required'
+      'date' => 'date|required'
     ]);
 
     $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);
     $articles = $articlesUseCase->execute($validatedData['date'], $description, $articleId, $branchId);
-    
-    if (empty($articles)) {
-      $entryItemSerialUseCase = new FindBranchBySerial($this->entryItemSerialRepository);
-      $branch = $entryItemSerialUseCase->execute($description);
 
-      if (!$branch)
-      {
+    if (empty($articles)) {
+      $entrySerialUseCase = new FindBySerialUseCase($this->entryItemSerialRepository);
+      $entrySerial = $entrySerialUseCase->execute($description);
+
+      if (!$entrySerial) {
         return response()->json([
           "message" => "La serie es incorrecta"
         ], 404);
-      }else {
+      }
+
+      $articleId = $entrySerial->getArticle()->getId();
+      $serialBranchId = $entrySerial->getBranchId();
+
+      $statusVisibleArticleUseCase = new FindStatusByArticleId($this->visibleArticleRepository);
+      $statusVisibleArticle = $statusVisibleArticleUseCase->execute($articleId, $branchId);
+
+      if ($statusVisibleArticle === null) {
+        return response()->json(['message' => 'El artículo no ha sido asignado a una sucursal.'], 404);
+      } else if ($statusVisibleArticle == 0) {
+        return response()->json(['message' => 'El artículo no se encuentra habilitado en esta sucursal.'], 404);
+      } else {
+        $branch = $this->branchRepository->findById($serialBranchId);
         return response()->json([
           "message" => "El artículo no se encuentra en esta sucursal",
-          'branch_id' => $branch['branch_id'],
-          "location" => $branch['name']
+          'branch_id' => $branch->getId(),
+          "location" => $branch->getName()
         ]);
       }
-      
+
     }
 
-    if ($articleId)
-    {
+    if ($articleId) {
       return response()->json((new ArticleForSalesResource($articles[0]))->resolve());
-    }
-    else{
+    } else {
       return ArticleForSalesResource::collection($articles)->resolve();
     }
-    
+
   }
-  
+
   public function storeNotesDebito(StoreArticleNotasDebito $request): JsonResponse
   {
     $articlesNotesDebitoDTO = new ArticleNotasDebitoDTO($request->validated());
@@ -324,14 +338,14 @@ class ArticleController extends Controller
     $result = $requiredSerial->execute($articleId);
 
     return response()->json([
-        'message' => $result ? 'success' : 'El artículo no requiere serial'
+      'message' => $result ? 'success' : 'El artículo no requiere serial'
     ], 200);
   }
 
   public function updateStatus(int $articleId, Request $request): JsonResponse
   {
     $validatedData = $request->validate([
-        'status' => 'required|integer|in:0,1'
+      'status' => 'required|integer|in:0,1'
     ]);
 
     $status = $validatedData['status'];
@@ -341,5 +355,5 @@ class ArticleController extends Controller
 
     return response()->json(['message' => 'Estado actualizado correctamente'], 200);
   }
-    
+
 }

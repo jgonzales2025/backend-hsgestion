@@ -63,32 +63,46 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     public function findAllArticle(?string $description, ?int $branchId): array
     {
         $companyId = request()->get('company_id');
-        $articles = EloquentArticle::with([
-            'measurementUnit',
-            'brand',
-            'category',
-            'currencyType',
-            'subCategory',
-            'user',
-            'company',
-            'referenceCodes', // 👈 incluimos relación
-        ])
-            ->where('company_type_id', $companyId)
-            ->where('status_Esp', false)
+        $articles = EloquentArticle::where('company_type_id', $companyId)
             ->when($description, function ($query, $name) use ($branchId) {
-                $query->where(function ($q) use ($name, $branchId) {
-                    $q->where('description', 'like', "%{$name}%")
-                        ->orWhere('cod_fab', 'like', "%{$name}%")
-                        // 👇 búsqueda dentro de reference_codes relacionados
-                        ->orWhereHas('referenceCodes', function ($r) use ($name) {
-                            $r->where('ref_code', 'like', "%{$name}%");
-                        })
-                        ->when($branchId, function ($qq) use ($name, $branchId) {
-                            $qq->orWhereHas('entryItemSerials', function ($q2) use ($name, $branchId) {
-                                $q2->where('serial', $name)
-                                   ->where('branch_id', $branchId);
-                            });
+                return $query->where(function ($mainGroup) use ($name, $branchId) {
+                    // Grupo 1: Búsqueda por Nombre/Código/Referencia (Validar con visibleArticles)
+                    $mainGroup->where(function ($subQ) use ($name, $branchId) {
+                        $subQ->where(function ($textQ) use ($name) {
+                            $textQ->where('description', 'like', "%{$name}%")
+                                ->orWhere('cod_fab', 'like', "%{$name}%")
+                                ->orWhereHas('referenceCodes', function ($r) use ($name) {
+                                    $r->where('ref_code', 'like', "%{$name}%");
+                                });
                         });
+
+                        if ($branchId) {
+                            $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
+                                $v->where('branch_id', $branchId);
+                                $v->where('status', 1);
+                            });
+                        }
+                    })
+                        // Grupo 2: Búsqueda por Serie (Validar con entryItemSerials y visibleArticles)
+                        ->orWhere(function ($subQ) use ($name, $branchId) {
+                        if ($branchId) {
+                            $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
+                                $s->where('serial', $name)
+                                    ->where('branch_id', $branchId);
+                            });
+                            // Validar también que sea visible en la sucursal
+                            $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
+                                $v->where('branch_id', $branchId)
+                                    ->where('status', 1);
+                            });
+                        }
+                    });
+                });
+            })
+            // Si NO hay descripción, mantener el filtro original (solo lo que tiene stock/series en la sucursal)
+            ->when(!$description && $branchId, function ($query) use ($branchId) {
+                return $query->whereHas('entryItemSerials', function ($q) use ($branchId) {
+                    $q->where('branch_id', $branchId);
                 });
             })
             ->orderByDesc('created_at')
@@ -203,25 +217,45 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             ->when($articleId, function ($query, $id) {
                 return $query->where('id', $id);
             })
-            // Filtrar por branch_id de manera independiente (si existe)
-            ->when($branchId, function ($query, $branch) {
-                return $query->whereHas('entryItemSerials', function ($q) use ($branch) {
-                    $q->where('branch_id', $branch);
+            ->when($description, function ($query, $name) use ($branchId) {
+                return $query->where(function ($mainGroup) use ($name, $branchId) {
+                    // Grupo 1: Búsqueda por Nombre/Código/Referencia (Validar con visibleArticles)
+                    $mainGroup->where(function ($subQ) use ($name, $branchId) {
+                        $subQ->where(function ($textQ) use ($name) {
+                            $textQ->where('description', 'like', "%{$name}%")
+                                ->orWhere('cod_fab', 'like', "%{$name}%")
+                                ->orWhereHas('referenceCodes', function ($r) use ($name) {
+                                    $r->where('ref_code', 'like', "%{$name}%");
+                                });
+                        });
+
+                        if ($branchId) {
+                            $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
+                                $v->where('branch_id', $branchId);
+                                $v->where('status', 1);
+                            });
+                        }
+                    })
+                        // Grupo 2: Búsqueda por Serie (Validar con entryItemSerials y visibleArticles)
+                        ->orWhere(function ($subQ) use ($name, $branchId) {
+                        if ($branchId) {
+                            $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
+                                $s->where('serial', $name)
+                                    ->where('branch_id', $branchId);
+                            });
+                            // Validar también que sea visible en la sucursal
+                            $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
+                                $v->where('branch_id', $branchId)
+                                    ->where('status', 1);
+                            });
+                        }
+                    });
                 });
             })
-            ->when($description, function ($query, $name) use ($branchId) {
-                return $query->where(function ($q) use ($name, $branchId) {
-                    $q->where('description', 'like', "%{$name}%")
-                        ->orWhere('cod_fab', 'like', "%{$name}%")
-                        ->orWhereHas('referenceCodes', function ($r) use ($name) {
-                            $r->where('ref_code', 'like', "%{$name}%");
-                        })
-                        ->when($branchId, function ($qq) use ($name, $branchId) {
-                            $qq->orWhereHas('entryItemSerials', function ($q2) use ($name, $branchId) {
-                                $q2->where('serial', $name)
-                                   ->where('branch_id', $branchId);
-                            });
-                        });
+            // Si NO hay descripción, mantener el filtro original (solo lo que tiene stock/series en la sucursal)
+            ->when(!$description && $branchId, function ($query) use ($branchId) {
+                return $query->whereHas('entryItemSerials', function ($q) use ($branchId) {
+                    $q->where('branch_id', $branchId);
                 });
             })
             ->orderByDesc('created_at')

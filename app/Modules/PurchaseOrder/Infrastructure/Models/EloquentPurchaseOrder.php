@@ -21,6 +21,7 @@ class EloquentPurchaseOrder extends Model
         'delivery_date',
         'contact',
         'order_number_supplier',
+        'observations',
         'supplier_id',
         'status'
     ];

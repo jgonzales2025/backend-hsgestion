@@ -17,7 +17,6 @@ class EntryGuideRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cia_id' => 'required|integer|exists:companies,id',
             'branch_id' => 'required|integer|exists:branches,id',
             'serie' => 'required|string',
             'date' => 'string',
@@ -26,7 +25,6 @@ class EntryGuideRequest extends FormRequest
             'ingress_reason_id' => 'required|integer|exists:ingress_reasons,id',
             'reference_po_serie' => 'string',
             'reference_po_correlative' => 'string',
-            'status' => 'integer',
             'entry_guide_articles'=> 'required|array|min:1',
             'entry_guide_articles.*.article_id' => 'required|integer|exists:articles,id',
             'entry_guide_articles.*.description' => 'required|string',

@@ -25,6 +25,16 @@ class EloquentSaleRepository implements SaleRepositoryInterface
     public function save(Sale $sale): ?Sale
     {
         $eloquentSale = EloquentSale::create($this->mapToArray($sale));
+
+        if (!is_null($eloquentSale->reference_document_type_id)) {
+            $cot = EloquentSale::where('id', $eloquentSale->reference_document_type_id)->first();
+
+            if ($cot) {
+                $cot->status = 0;
+                $cot->save();
+            }
+        }
+
         return $this->buildDomainSale($eloquentSale, $sale);
     }
 
@@ -248,8 +258,9 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'igv' => $sale->getIgv(),
             'total' => $sale->getTotal(),
             'saldo' => $sale->getTotal(),
-            'series_prof' => $sale->getSerieProf(),
-            'correlative_prof' => $sale->getCorrelativeProf(),
+            'reference_document_type_id' => $sale->getIdProf(),
+            'reference_serie' => $sale->getSerieProf(),
+            'reference_correlative' => $sale->getCorrelativeProf(),
             'purchase_order' => $sale->getPurchaseOrder(),
             'user_authorized_id' => $sale->getUserAuthorized()?->getId()
         ];
@@ -357,6 +368,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             status: $eloquentSale->status,
             payment_status: $eloquentSale->payment_status,
             is_locked: $eloquentSale->is_locked,
+            id_prof: $eloquentSale->id_prof,
             serie_prof: $eloquentSale->series_prof,
             correlative_prof: $eloquentSale->correlative_prof,
             purchase_order: $eloquentSale->purchase_order,
@@ -391,6 +403,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             status: $eloquentSale->status,
             payment_status: $eloquentSale->payment_status,
             is_locked: $eloquentSale->is_locked,
+            id_prof: $eloquentSale->id_prof,
             serie_prof: $eloquentSale->series_prof,
             correlative_prof: $eloquentSale->correlative_prof,
             purchase_order: $eloquentSale->purchase_order,

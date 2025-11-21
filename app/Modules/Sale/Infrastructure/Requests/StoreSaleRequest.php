@@ -33,6 +33,7 @@ class StoreSaleRequest extends FormRequest
             'inafecto' => 'required|numeric|min:0',
             'igv' => 'required|numeric|min:0',
             'total' => 'required|numeric|min:0',
+            'id_prof' => 'nullable|integer',
             'serie_prof' => 'nullable|string|max:10',
             'correlative_prof' => 'nullable|string|max:10',
             'purchase_order' => 'nullable|string|max:10',

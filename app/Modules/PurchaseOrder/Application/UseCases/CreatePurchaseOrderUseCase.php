@@ -35,6 +35,7 @@ readonly class CreatePurchaseOrderUseCase
             delivery_date: $purchaseOrderDTO->delivery_date,
             contact: $purchaseOrderDTO->contact,
             order_number_supplier: $purchaseOrderDTO->order_number_supplier,
+            observations: $purchaseOrderDTO->observations,
             supplier: $supplier,
             status: null
         );

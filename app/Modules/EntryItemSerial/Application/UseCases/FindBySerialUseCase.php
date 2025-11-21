@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\PurchaseItemSerials\Application\UseCases;
+namespace App\Modules\EntryItemSerial\Application\UseCases;
 
 use App\Modules\EntryItemSerial\Domain\Entities\EntryItemSerial;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;

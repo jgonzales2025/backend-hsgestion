@@ -92,6 +92,11 @@ class EloquentArticle extends Model
         return $this->hasMany(EloquentEntryItemSerial::class, 'article_id', 'id');
     }
 
+    public function visibleArticles()
+    {
+        return $this->hasMany(\App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle::class, 'article_id', 'id');
+    }
+
     public function toDomain(EloquentArticle $eloquentArticle): Article
     {
         return new Article(

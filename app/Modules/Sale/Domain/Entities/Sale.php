@@ -37,6 +37,7 @@ class Sale
     private ?int $status;
     private ?int $payment_status;
     private ?bool $is_locked;
+    private ?int $id_prof;
     private ?string $serie_prof;
     private ?string $correlative_prof;
     private ?string $purchase_order;
@@ -66,6 +67,7 @@ class Sale
         ?float $amount_amortized,
         ?int $payment_status,
         ?bool $is_locked,
+        ?int $id_prof,
         ?string $serie_prof,
         ?string $correlative_prof,
         ?string $purchase_order,
@@ -96,6 +98,7 @@ class Sale
         $this->status = $status;
         $this->payment_status = $payment_status;
         $this->is_locked = $is_locked;
+        $this->id_prof = $id_prof;
         $this->serie_prof = $serie_prof;
         $this->correlative_prof = $correlative_prof;
         $this->purchase_order = $purchase_order;
@@ -126,6 +129,7 @@ class Sale
     public function getStatus(): ?int { return $this->status; }
     public function getPaymentStatus(): ?int { return $this->payment_status; }
     public function getIsLocked(): ?bool { return $this->is_locked; }
+    public function getIdProf(): ?int { return $this->id_prof; }
     public function getSerieProf(): string|null { return $this->serie_prof; }
     public function getCorrelativeProf(): string|null { return $this->correlative_prof; }
     public function getPurchaseOrder(): string|null { return $this->purchase_order; }

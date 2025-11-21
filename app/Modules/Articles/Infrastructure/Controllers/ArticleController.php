@@ -77,14 +77,33 @@ class ArticleController extends Controller
     }
   }
 
-  public function index(Request $request): array
+  public function index(Request $request): array|JsonResponse
   {
     $name = $request->query("name");
+    $branchId = $request->query("branch_id");
 
     $articleUseCase = new FindAllArticleUseCase($this->articleRepository);
 
-    $article = $articleUseCase->execute($name);
+    $article = $articleUseCase->execute($name, $branchId);
+    
+    if (empty($article)) {
+      $entryItemSerialUseCase = new FindBranchBySerial($this->entryItemSerialRepository);
+      $branch = $entryItemSerialUseCase->execute($name);
 
+      if (!$branch)
+      {
+        return response()->json([
+          "message" => "La serie es incorrecta"
+        ], 404);
+      }else {
+        return response()->json([
+          "message" => "El artículo no se encuentra en esta sucursal",
+          'branch_id' => $branch['branch_id'],
+          "location" => $branch['name']
+        ]);
+      }
+      
+    }
 
     return ArticleResource::collection($article)->resolve();
   } 

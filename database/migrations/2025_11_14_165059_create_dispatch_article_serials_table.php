@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('dispatch_note_id')->constrained('dispatch_notes')->onDelete('cascade');
             $table->foreignId('article_id')->constrained('articles')->onDelete('cascade');
-            $table->string('serial');
+            $table->string('serial')->unique();
             $table->integer('status')->default(1);
             $table->foreignId('emission_reasons_id')->nullable()->constrained('emission_reasons')->onDelete('cascade');
             $table->foreignId('origin_branch_id')->nullable()->constrained('branches')->onDelete('cascade');

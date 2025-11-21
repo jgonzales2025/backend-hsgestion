@@ -74,7 +74,7 @@ class CreateDispatchNoteUseCase
     $transportCompany = $transportCompanyUseCase->execute($data->transport_id);
 
     $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepositoryInterface);
-    $documentType = $documentTypeUseCase->execute($data->document_type_id);
+    $referenceDocumentType = $documentTypeUseCase->execute($data->reference_document_type_id);
     if ($data->supplier_id !=null) {
     
       $supplierUseCase = new FindByIdCustomerUseCase($this->customerRepositoryInterface);
@@ -114,7 +114,7 @@ class CreateDispatchNoteUseCase
       total_weight: $data->total_weight,
       transfer_type: $data->transfer_type,
       vehicle_type: $data->vehicle_type,
-      document_type: $documentType,
+      reference_document_type: $referenceDocumentType,
       destination_branch_client: $data->destination_branch_client,
       customer_id: $data->customer_id,
       supplier: $supplier,

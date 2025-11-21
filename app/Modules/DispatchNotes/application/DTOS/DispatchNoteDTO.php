@@ -24,7 +24,7 @@ class DispatchNoteDTO
   public float $total_weight;
   public string $transfer_type;
   public ?bool $vehicle_type;
-  public int $document_type_id;
+  public int $reference_document_type_id;
   public ?int $destination_branch_client ;
   public int $customer_id;
   public ?int $supplier_id;
@@ -54,7 +54,7 @@ class DispatchNoteDTO
     $this->total_weight = $date['total_weight'];
     $this->transfer_type = $date['transfer_type'];
     $this->vehicle_type = $date['vehicle_type']?? 1;
-    $this->document_type_id = $date['document_type_id'] ?? 1;
+    $this->reference_document_type_id = $date['reference_document_type_id'] ?? 1;
     $this->destination_branch_client = $date['destination_branch_client_id'] ?? null;
     $this->customer_id = $date['customer_id'] ?? 1;
     $this->supplier_id = $date['supplier_id'] ?? null;

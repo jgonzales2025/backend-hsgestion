@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('description', 100);
             $table->integer('status')->default(1);
+            $table->boolean('st_transfer')->default(0);
             $table->timestamps();
         });
     }

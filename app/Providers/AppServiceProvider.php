@@ -45,9 +45,10 @@ use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRep
 use App\Modules\DispatchArticleSerial\Infrastructure\Persistence\EloquentDispatchArticleSerialRepository;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\PdfGeneratorInterface;
+use App\Modules\DispatchNotes\Domain\Interfaces\TransferOrderRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Persistence\DomPdfGenerator;
 use App\Modules\DispatchNotes\Infrastructure\Persistence\EloquentDIspatchNoteRepository;
-
+use App\Modules\DispatchNotes\Infrastructure\Persistence\EloquentTransferOrderRepository;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\DocumentType\Infrastructure\Persistence\EloquentDocumentTypeRepository;
 use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
@@ -149,10 +150,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CustomerPhoneRepositoryInterface::class, EloquentCustomerPhoneRepository::class);
         $this->app->bind(CustomerEmailRepositoryInterface::class, EloquentCustomerEmailRepository::class);
         $this->app->bind(DepartmentRepositoryInterface::class, EloquentDepartmentRepository::class);
-        $this->app->bind(ProvinceRepositoryInterface::class, EloquentProvinceRepository::class);
-        ;
-        $this->app->bind(ArticleRepositoryInterface::class, EloquentArticleRepository::class);
-        ;
+        $this->app->bind(ProvinceRepositoryInterface::class, EloquentProvinceRepository::class);;
+        $this->app->bind(ArticleRepositoryInterface::class, EloquentArticleRepository::class);;
         $this->app->bind(ProvinceRepositoryInterface::class, EloquentProvinceRepository::class);
         $this->app->bind(DistrictRepositoryInterface::class, EloquentDistrictRepository::class);
         $this->app->bind(CustomerAddressRepositoryInterface::class, EloquentCustomerAddressRepository::class);
@@ -193,10 +192,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
         $this->app->bind(DispatchArticleSerialRepositoryInterface::class, EloquentDispatchArticleSerialRepository::class);
         $this->app->bind(PurchaseRepositoryInterface::class, EloquentPurchaseRepository::class);
-  $this->app->bind(ShoppingIncomeGuideRepositoryInterface::class, EloquentShoppingIncomeGuideRepository::class);
- $this->app->bind(DetailPurchaseGuideRepositoryInterface::class, EloquentDetailPurchaseGuideRepository::class);
- $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
-
+        $this->app->bind(ShoppingIncomeGuideRepositoryInterface::class, EloquentShoppingIncomeGuideRepository::class);
+        $this->app->bind(DetailPurchaseGuideRepositoryInterface::class, EloquentDetailPurchaseGuideRepository::class);
+        $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
+        $this->app->bind(TransferOrderRepositoryInterface::class, EloquentTransferOrderRepository::class);
     }
 
     /**

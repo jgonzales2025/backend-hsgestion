@@ -125,6 +125,7 @@ class RolePermissionSeeder extends Seeder
             'mantenimiento.vista_principal_ventas',
             'mantenimiento.precios_articulos',
             'mantenimiento.guia_ingreso_contabilidad',
+            'mantenimiento.cotizacion',
 
             // ACTUALIZACIONES
             'actualizaciones.valorizacion_general',
@@ -260,6 +261,8 @@ class RolePermissionSeeder extends Seeder
             ['role_id' => $admin->id, 'menu_id' => 103],
             ['role_id' => $admin->id, 'menu_id' => 104],
             ['role_id' => $admin->id, 'menu_id' => 105],
+            ['role_id' => $admin->id, 'menu_id' => 106],
+            ['role_id' => $admin->id, 'menu_id' => 107],
         ]);
 
         // Gerente

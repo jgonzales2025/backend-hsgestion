@@ -7,6 +7,7 @@ use App\Modules\Category\Infrastructure\Models\EloquentCategory;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\CustomerAddress\Infrastructure\Models\EloquentCustomerAddress;
+use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 use App\Modules\Driver\Infrastructure\Models\EloquentDriver;
 use App\Modules\EmissionReason\Infrastructure\Models\EloquentEmissionReason;
 use App\Modules\MeasurementUnit\Infrastructure\Models\EloquentMeasurementUnit;
@@ -22,6 +23,7 @@ class EloquentDispatchNote extends Model
     protected $fillable = [
         'cia_id',
         'branch_id',
+        'document_type_id',
         'serie',
         'correlativo',
         'date',
@@ -41,12 +43,14 @@ class EloquentDispatchNote extends Model
         'total_weight',
         'transfer_type',
         'vehicle_type',
-        'document_type_id',
+        'reference_document_type_id',
         'destination_branch_client',
         'customer_id',
         'supplier_id',
         'address_supplier_id',
         'pdf',  
+        'transfer_date',
+        'arrival_date'
     ];
   public $timestamps = true;
 
@@ -96,5 +100,42 @@ class EloquentDispatchNote extends Model
     }
     public function address_supplier(){
         return $this->belongsTo(EloquentCustomer::class, 'address_supplier_id');
+    }
+    public function referenceDocumentType(): BelongsTo
+    {
+        return $this->belongsTo(EloquentDocumentType::class, 'reference_document_type_id');
+    }
+
+    public function toDomain(EloquentDispatchNote $dispatchNote): DispatchNote
+    {
+        return new DispatchNote(
+            $dispatchNote->id,
+            $dispatchNote->company->toDomain($dispatchNote->company),
+            $dispatchNote->branch->toDomain($dispatchNote->branch),
+            $dispatchNote->serie,
+            $dispatchNote->correlativo,
+            $dispatchNote->emission_reason->toDomain($dispatchNote->emission_reason),
+            $dispatchNote->description,
+            $dispatchNote->destination_branch->toDomain($dispatchNote->destination_branch),
+            $dispatchNote->destination_address_customer,
+            $dispatchNote->transport?->toDomain($dispatchNote->transport),
+            $dispatchNote->observations,
+            $dispatchNote->num_orden_compra,
+            $dispatchNote->doc_referencia,
+            $dispatchNote->num_referencia,
+            $dispatchNote->date_referencia,
+            $dispatchNote->status,
+            $dispatchNote->conductor?->toDomain($dispatchNote->conductor),
+            $dispatchNote->license_plate,
+            $dispatchNote->total_weight,
+            $dispatchNote->transfer_type,
+            $dispatchNote->vehicle_type,
+            $dispatchNote->reference_document_type?->toDomain($dispatchNote->reference_document_type),
+            $dispatchNote->destination_branch_client,
+            $dispatchNote->customer?->toDomain($dispatchNote->customer),
+            $dispatchNote->supplier?->toDomain($dispatchNote->supplier),
+            $dispatchNote->address_supplier?->toDomain($dispatchNote->address_supplier),
+            $dispatchNote->created_at,
+        );
     }
 }

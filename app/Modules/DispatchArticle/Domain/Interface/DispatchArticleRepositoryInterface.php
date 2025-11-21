@@ -11,6 +11,6 @@ interface DispatchArticleRepositoryInterface
   public function save(DispatchArticle $dispatchArticle): ?DispatchArticle;
   public function findById(int $id): ?array;
   public function deleteBySaleId(int $id): void;
-
+  public function findByDispatchNoteId(int $id): ?array;
 
 }

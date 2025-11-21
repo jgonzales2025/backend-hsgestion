@@ -277,6 +277,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Ruta para ventas
 
     Route::get('/sales-proformas', [SaleController::class, 'indexProformas']);
+    Route::get('/sales-by-customer', [SaleController::class, 'findAllSalesByCustomerId']);
     Route::get('/sales/by-document', [SaleController::class, 'showDocumentSale']);
     Route::get('/sales/by-document-debit', [SaleController::class, 'findSaleByDocumentForDebitNote']);
     Route::get('/sales/get-updated-quantities', [SaleController::class, 'getUpdatedQuantities']);

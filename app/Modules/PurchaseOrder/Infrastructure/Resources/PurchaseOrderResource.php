@@ -16,12 +16,13 @@ class PurchaseOrderResource extends JsonResource
             'date' => $this->resource->getDate(),
             'delivery_date' => $this->resource->getDeliveryDate(),
             'contact' => $this->resource->getContact(),
-            'order_number_supplier' => $this->resource->getOrderNumberSupplier(),
+            'order_number_supplier' => $this->resource->getOrderNumberSupplier() ?? null,
             'supplier' => [
                 'id' => $this->resource->getSupplier()->getId(),
                 'company_name' => $this->resource->getSupplier()->getCompanyName(),
             ],
-            'status' => $this->resource->getStatus() == 0 ? 'Pendiente' : 'Entregado'
+            'status' => $this->resource->getStatus() == 0 ? 'Pendiente' : 'Entregado',
+            'observations' => $this->resource->getObservations()
         ];
     }
 }

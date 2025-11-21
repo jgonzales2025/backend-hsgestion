@@ -19,6 +19,7 @@ use App\Modules\Sale\Application\UseCases\CreateSaleCreditNoteUseCase;
 use App\Modules\Sale\Application\UseCases\CreateSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllNoteCreditsByCustomerUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllProformasUseCase;
+use App\Modules\Sale\Application\UseCases\FindAllSalesByCustomerIdUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllSalesUseCase;
 use App\Modules\Sale\Application\UseCases\FindSaleWithUpdatedQuantitiesUseCase;
 use App\Modules\Sale\Application\UseCases\FindByDocumentSaleUseCase;
@@ -272,6 +273,21 @@ class SaleController extends Controller
 
         return response()->json([
             'sale' => (new SaleResource($sale))->resolve()
+        ]);
+    }
+
+    public function findAllSalesByCustomerId(Request $request): JsonResponse
+    {
+        $customerId = $request->query('customer_id');
+
+        $saleUseCase = new FindAllSalesByCustomerIdUseCase($this->saleRepository);
+        $sales = $saleUseCase->execute($customerId);
+        if (!$sales) {
+            return response()->json(['message' => 'Ventas no encontradas'], 404);
+        }
+
+        return response()->json([
+            'sales' => SaleResource::collection($sales)->resolve()
         ]);
     }
 

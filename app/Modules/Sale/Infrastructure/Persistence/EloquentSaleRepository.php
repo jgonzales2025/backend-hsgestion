@@ -25,6 +25,15 @@ class EloquentSaleRepository implements SaleRepositoryInterface
     public function save(Sale $sale): ?Sale
     {
         $eloquentSale = EloquentSale::create($this->mapToArray($sale));
+
+        if ($eloquentSale->serie_prof && $eloquentSale->correlative_prof) {
+            $cot = EloquentSale::where('serie', $eloquentSale->serie_prof)
+                ->where('document_number', $eloquentSale->correlative_prof)
+                ->first();
+            $cot->status = 0;
+            $cot->save();
+        }
+
         return $this->buildDomainSale($eloquentSale, $sale);
     }
 

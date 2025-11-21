@@ -70,6 +70,7 @@ readonly class UpdateSaleUseCase
             status: null,
             payment_status: $saleDTO->payment_status,
             is_locked: $sale->getIsLocked(),
+            id_prof: $saleDTO->id_prof,
             serie_prof: $saleDTO->serie_prof,
             correlative_prof: $saleDTO->correlative_prof,
             purchase_order: $saleDTO->purchase_order,

@@ -13,7 +13,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 
     public function findAll(): array
     {
-        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])->get();
+        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])
+        ->orderByDesc('id')
+        ->get();
 
         return $eloquentAll->map(function ($entryGuide) {
             return new EntryGuide(

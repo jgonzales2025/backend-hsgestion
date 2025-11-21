@@ -3,13 +3,11 @@
 namespace App\Modules\Purchases\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\DetailPurchaseGuides\Application\DTOS\DetailPurchaseGuideDTO;
-use App\Modules\DetailPurchaseGuides\Application\UseCases\CreateDetailPurchaseGuide;
+use App\Modules\DetailPurchaseGuides\Application\DTOS\DetailPurchaseGuideDTO; 
 use App\Modules\DetailPurchaseGuides\Application\UseCases\CreateDetailPurchaseGuideUseCase;
 use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
 use App\Modules\DetailPurchaseGuides\Infrastructure\Resource\DetailPurchaseGuideResource;
-use App\Modules\PurchaseOrder\Infrastructure\Requests\UpdatePurchaseOrderRequest;
-use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
+use App\Modules\Purchases\Application\DTOS\PurchaseDTO; 
 use App\Modules\Purchases\Application\UseCases\CreatePurchaseUseCase;
 use App\Modules\Purchases\Application\UseCases\FindAllPurchaseUseCase;
 use App\Modules\Purchases\Application\UseCases\FindByIdPurchaseUseCase;
@@ -22,8 +20,7 @@ use App\Modules\ShoppingIncomeGuide\Application\DTOS\ShoppingIncomeGuideDTO;
 use App\Modules\ShoppingIncomeGuide\Application\UseCases\CreateShoppingIncomeGuideUseCase;
 use App\Modules\ShoppingIncomeGuide\Domain\Interface\ShoppingIncomeGuideRepositoryInterface;
 use App\Modules\ShoppingIncomeGuide\Infrastructure\Resource\ShoppingIncomeGuideResource;
-use Illuminate\Http\JsonResponse;
-use Js;
+use Illuminate\Http\JsonResponse; 
 
 class PurchaseController extends Controller
 {
@@ -51,8 +48,7 @@ class PurchaseController extends Controller
         }
 
         return response()->json($result, 200);
-
-    }
+    } 
     public function show(int $id): JsonResponse
     {
         $findByIdPurchaseUseCase = new FindByIdPurchaseUseCase($this->purchaseRepository);
@@ -71,8 +67,7 @@ class PurchaseController extends Controller
 
             ],
             200
-        );
-
+        ); 
     }
     public function store(CreatePurchaseRequest $request): JsonResponse
     {
@@ -103,11 +98,8 @@ class PurchaseController extends Controller
 
         $this->shoppingIncomeGuideRepository->deletedBy($purchase->getId());
 
-        $detailcompras = $this->createDetComprasGuiaIngreso($purchase, $request->validated()['det_compras_guia_ingreso']);
-        $shopping = $this->createShoppingIncomeGuide($purchase, $request->validated()['shopping_income_guide']);
-
-
-
+        $detailcompras = $this->updateDetailCompra($purchase, $request->validated()['det_compras_guia_ingreso']);
+        $shopping = $this->updateShopping($purchase, $request->validated()['shopping_income_guide']);
 
         return response()->json(
             [
@@ -136,8 +128,7 @@ class PurchaseController extends Controller
                 'descuento' => $item['descuento'],
                 'sub_total' => $item['sub_total'],
             ]);
-
-
+ 
             $shoppingGuide = $createGuideUseCase->execute($detailDTO);
 
             return $shoppingGuide;
@@ -158,6 +149,42 @@ class PurchaseController extends Controller
 
             return $shoppingGuide;
 
+        }, $data);
+    }
+
+    private function updateShopping($shooping, array $data): array
+    {
+        $createShooping = new CreateShoppingIncomeGuideUseCase($this->shoppingIncomeGuideRepository);
+
+        return array_map(function ($purchase) use ($shooping, $createShooping) {
+            $shoopingDTO = new ShoppingIncomeGuideDTO([
+                'purchase_id' => $shooping->getId(),
+                'entry_guide_id' => $purchase['entry_guide_id']
+            ]);
+
+            $shooping = $createShooping->execute($shoopingDTO);
+            return $shooping;
+        }, $data);
+    }
+    private function updateDetailCompra($detail, array $data): array
+    {
+
+        $createDetail = new CreateDetailPurchaseGuideUseCase($this->detailPurchaseGuideRepository);
+
+        return array_map(function ($purchase) use ($detail, $createDetail) {
+            $detailDto = new DetailPurchaseGuideDTO([
+                'purchase_id' => $detail->getId(),
+                'article_id' => $purchase['article_id'],
+                'description' => $purchase['description'],
+                'cantidad' => $purchase['cantidad'],
+                'precio_costo' => $purchase['precio_costo'],
+                'descuento' => $purchase['descuento'],
+                'sub_total' => $purchase['sub_total'],
+            ]);
+
+            $createDetail = $createDetail->execute($detailDto);
+
+            return $createDetail;
         }, $data);
     }
 

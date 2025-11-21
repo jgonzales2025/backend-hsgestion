@@ -12,6 +12,7 @@ class PurchaseOrderDTO
     public ?string $delivery_date;
     public ?string $contact;
     public ?string $order_number_supplier;
+    public ?string $observations;
     public int $supplier_id;
     public ?int $status;
 
@@ -24,7 +25,8 @@ class PurchaseOrderDTO
         $this->date = $data['date'];
         $this->delivery_date = $data['delivery_date'];
         $this->contact = $data['contact'];
-        $this->order_number_supplier = $data['order_number_supplier'];
+        $this->order_number_supplier = $data['order_number_supplier'] ?? null;
+        $this->observations = $data['observations'] ?? null;
         $this->supplier_id = $data['supplier_id'];
         $this->status = $data['status'] ?? null;
     }

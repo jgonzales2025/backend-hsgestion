@@ -93,6 +93,7 @@ readonly class CreateSaleUseCase
             amount_amortized: 0,
             payment_status: 0,
             is_locked: null,
+            id_prof: $saleDTO->id_prof,
             serie_prof: $saleDTO->serie_prof,
             correlative_prof: $saleDTO->correlative_prof,
             purchase_order: $saleDTO->purchase_order,

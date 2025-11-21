@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('contact')->nullable();
             $table->foreignId('supplier_id')->constrained('customers')->onDelete('cascade');
             $table->string('order_number_supplier')->nullable();
+            $table->string('observations')->nullable();
             $table->integer('status')->default(0);
             $table->timestamps();
         });

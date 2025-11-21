@@ -2,14 +2,14 @@
 
 namespace App\Modules\EntryItemSerial\Domain\Entities;
 
-
+use App\Modules\Articles\Domain\Entities\Article;
 use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use App\Modules\EntryGuideArticle\Domain\Entities\EntryGuideArticle;
 
 class EntryItemSerial{
     private ?int $id;
     private EntryGuide $entry_guide;
-    private EntryGuideArticle $article;
+    private Article $article;
     private string $serial;
     private int $branch_id;
     private ?int $status;
@@ -17,7 +17,7 @@ class EntryItemSerial{
     public function __construct(
         ?int $id,
         EntryGuide $entry_guide,
-        EntryGuideArticle $article,
+        Article $article,
         string $serial,
         int $branch_id,
         ?int $status = 0
@@ -35,7 +35,7 @@ class EntryItemSerial{
     public function getEntryGuide():EntryGuide{
         return $this->entry_guide;
     }
-    public function getEntryGuideArticle():EntryGuideArticle{
+    public function getArticle(): Article{
         return $this->article;
     }
     public function getSerial():string{

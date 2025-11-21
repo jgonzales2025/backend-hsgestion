@@ -53,4 +53,18 @@ class EloquentVisibleArticleRepository implements VisibleArticleRepositoryInterf
             );
         })->toArray();
     }
+
+    public function findStatusByArticleId(int $articleId, int $branchId): ?int
+    {
+        $visible = EloquentVisibleArticle::where('article_id', $articleId)
+            ->where('branch_id', $branchId)
+            ->first();
+
+        if (!$visible) {
+            return null;
+        }
+        
+        return $visible->status;
+    }
+
 }

@@ -66,8 +66,8 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
         }
         return new EntryItemSerial(
             id: $entryItemSerial->id,
-            entry_guide: $entryItemSerial->entry_guide_id,
-            article: $entryItemSerial->article_id,
+            entry_guide: $entryItemSerial->entryGuide->toDomain($entryItemSerial->entryGuide),
+            article: $entryItemSerial->article->toDomain($entryItemSerial->article),
             serial: $entryItemSerial->serial,   
             branch_id: $entryItemSerial->branch_id,
         );

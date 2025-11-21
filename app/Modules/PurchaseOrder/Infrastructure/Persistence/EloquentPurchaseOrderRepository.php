@@ -31,6 +31,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
                 delivery_date: $purchaseOrder->delivery_date,
                 contact: $purchaseOrder->contact,
                 order_number_supplier: $purchaseOrder->order_number_supplier,
+                observations: $purchaseOrder->observations,
                 supplier: $purchaseOrder->supplier->toDomain($purchaseOrder->supplier),
                 status: $purchaseOrder->status
             );
@@ -48,6 +49,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             'delivery_date' => $purchaseOrder->getDeliveryDate(),
             'contact' => $purchaseOrder->getContact(),
             'order_number_supplier' => $purchaseOrder->getOrderNumberSupplier(),
+            'observations' => $purchaseOrder->getObservations(),
             'supplier_id' => $purchaseOrder->getSupplier()->getId()
         ]);
         $purchaseOrderEloquent->refresh();
@@ -62,6 +64,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             delivery_date: $purchaseOrderEloquent->delivery_date,
             contact: $purchaseOrderEloquent->contact,
             order_number_supplier: $purchaseOrderEloquent->order_number_supplier,
+            observations: $purchaseOrderEloquent->observations,
             supplier: $purchaseOrderEloquent->supplier?->toDomain($purchaseOrderEloquent->supplier),
             status: $purchaseOrderEloquent->status
         );
@@ -94,6 +97,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             delivery_date: $purchaseOrderEloquent->delivery_date,
             contact: $purchaseOrderEloquent->contact,
             order_number_supplier: $purchaseOrderEloquent->order_number_supplier,
+            observations: $purchaseOrderEloquent->observations,
             supplier: $purchaseOrderEloquent->supplier?->toDomain($purchaseOrderEloquent->supplier),
             status: $purchaseOrderEloquent->status
         );
@@ -115,6 +119,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             'delivery_date' => $purchaseOrder->getDeliveryDate(),
             'contact' => $purchaseOrder->getContact(),
             'order_number_supplier' => $purchaseOrder->getOrderNumberSupplier(),
+            'observations' => $purchaseOrder->getObservations(),
             'supplier_id' => $purchaseOrder->getSupplier()->getId(),
             'status' => $purchaseOrder->getStatus()
         ]);
@@ -130,6 +135,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             delivery_date: $purchaseOrderEloquent->delivery_date,
             contact: $purchaseOrderEloquent->contact,
             order_number_supplier: $purchaseOrderEloquent->order_number_supplier,
+            observations: $purchaseOrderEloquent->observations,
             supplier: $purchaseOrderEloquent->supplier?->toDomain($purchaseOrderEloquent->supplier),
             status: $purchaseOrderEloquent->status
         );

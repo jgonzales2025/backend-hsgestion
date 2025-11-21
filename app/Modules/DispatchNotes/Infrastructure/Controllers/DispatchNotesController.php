@@ -333,27 +333,4 @@ class DispatchNotesController extends Controller
         $transactionLogs->execute($transactionDTO);
     }
 
-    public function updateStatusDispatch(int $id, Request $request)
-    {
-        $validatedData = $request->validate([
-            'destination_branch_id' => 'required',
-            'dispatch_articles' => 'required|array|min:1',
-            'dispatch_articles.*.article_id' => 'required|integer',
-            'dispatch_articles.*.serials' => 'required|array|min:1',
-            'dispatch_articles.*.serials.*' => 'string|distinct'
-        ]);
-
-        $updateStatusUseCase = new UpdateStatusDispatchUseCase($this->dispatchNoteRepository);
-        $updateStatusUseCase->execute($id);
-
-        $updateSerialEntryUseCase = new UpdateStatusSerialEntryUseCase($this->dispatchArticleSerialRepository);
-
-        foreach ($validatedData['dispatch_articles'] as $article) {
-            foreach ($article['serials'] as $serial) {
-                $updateSerialEntryUseCase->execute($validatedData['destination_branch_id'], $serial);
-            }
-        }
-
-        return response()->json(['message' => 'Orden de salida recepcionada correctamente.'], 200);
-    }
 }

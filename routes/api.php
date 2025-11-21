@@ -359,7 +359,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/dispatch-serial-movements/{branchId}', [DispatchArticleSerialController::class, 'findAllMovements']);
 
     // Ruta para actualizar orden de salida
-    Route::put('/transfer-orders-status/{id}', [DispatchNotesController::class, 'updateStatusDispatch']);
+    Route::put('/transfer-orders-status/{id}', [TransferOrderController::class, 'updateStatusTransferOrder']);
 
 
     //purchase 

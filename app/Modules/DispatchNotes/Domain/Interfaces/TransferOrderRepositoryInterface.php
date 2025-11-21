@@ -10,6 +10,6 @@ interface TransferOrderRepositoryInterface
     public function save(TransferOrder $transferOrder): TransferOrder;
     public function getLastDocumentNumber(string $serie): ?string;
     public function findById(int $id): ?TransferOrder;
-    public function updateSerialStatus(int $transferOrderId, string $serial): void;
     public function update(int $id, TransferOrder $transferOrder): void;
+    public function updateStatusTransferOrder(int $transferOrderId): void;
 }

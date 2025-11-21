@@ -91,11 +91,6 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
         );
     }
 
-    public function updateSerialStatus(int $transferOrderId, string $serial): void
-    {
-        throw new \Exception('Not implemented');
-    }
-
     public function update(int $id, TransferOrder $transferOrder): void
     {
         $eloquentTransferOrder = EloquentDispatchNote::find($id);
@@ -105,6 +100,15 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
             'emission_reason_id' => $transferOrder->getEmissionReason()->getId(),
             'destination_branch_id' => $transferOrder->getDestinationBranch()->getId(),
             'observations' => $transferOrder->getObservations(),
+        ]);
+    }
+
+    public function updateStatusTransferOrder(int $transferOrderId): void
+    {
+        $transferOrder = EloquentDispatchNote::find($transferOrderId);
+        $transferOrder->update([
+            'status' => 1,
+            'arrival_date' => now()->toDateString(),
         ]);
     }
 }

@@ -12,12 +12,14 @@ use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterf
 use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
 use App\Modules\DispatchArticleSerial\Application\DTOs\DispatchArticleSerialDTO;
 use App\Modules\DispatchArticleSerial\Application\UseCases\CreateDispatchArticleSerialUseCase;
+use App\Modules\DispatchArticleSerial\Application\UseCases\UpdateStatusSerialEntryUseCase;
 use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface;
 use App\Modules\DispatchNotes\application\DTOS\TransferOrderDTO;
 use App\Modules\DispatchNotes\application\DTOS\UpdateTransferOrderDTO;
 use App\Modules\DispatchNotes\application\UseCases\CreateTransferOrderUseCase;
 use App\Modules\DispatchNotes\application\UseCases\FindAllTransferOrdersUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindByIdTransferOrderUseCase;
+use App\Modules\DispatchNotes\Application\UseCases\UpdateStatusTransferOrderUseCase;
 use App\Modules\DispatchNotes\application\UseCases\UpdateTransferOrderUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\TransferOrderRepositoryInterface;
@@ -27,6 +29,7 @@ use App\Services\DocumentNumberGeneratorService;
 use App\Modules\DispatchNotes\Infrastructure\Requests\StoreTransferOrderRequest;
 use App\Modules\DispatchNotes\Infrastructure\Requests\UpdateTransferOrderRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TransferOrderController extends Controller
 {
@@ -208,5 +211,41 @@ class TransferOrderController extends Controller
         }, array: $request->validated()['dispatch_articles']);
 
         return response()->json(['message' => 'Orden de salida actualizada correctamente']);
+    }
+
+    public function updateStatusTransferOrder(int $id, Request $request)
+    {
+        $findByIdTransferOrderUseCase = new FindByIdTransferOrderUseCase($this->transferOrderRepository);
+        $transferOrder = $findByIdTransferOrderUseCase->execute($id);
+
+        if (!$transferOrder) {
+            return response()->json(['message' => 'Orden de salida no encontrada'], 404);
+        }
+
+        if ($transferOrder->getStatus() == 1)
+        {
+            return response()->json(['message' => 'No se puede modificar una orden de salida que ya ha sido recibida.'], 400);
+        }
+
+        $validatedData = $request->validate([
+            'destination_branch_id' => 'required',
+            'dispatch_articles' => 'required|array|min:1',
+            'dispatch_articles.*.article_id' => 'required|integer',
+            'dispatch_articles.*.serials' => 'required|array|min:1',
+            'dispatch_articles.*.serials.*' => 'string|distinct'
+        ]);
+
+        $updateStatusUseCase = new UpdateStatusTransferOrderUseCase($this->transferOrderRepository);
+        $updateStatusUseCase->execute($id);
+
+        $updateSerialEntryUseCase = new UpdateStatusSerialEntryUseCase($this->dispatchArticleSerialRepository);
+
+        foreach ($validatedData['dispatch_articles'] as $article) {
+            foreach ($article['serials'] as $serial) {
+                $updateSerialEntryUseCase->execute($validatedData['destination_branch_id'], $serial);
+            }
+        }
+
+        return response()->json(['message' => 'Orden de salida recepcionada correctamente.'], 200);
     }
 }

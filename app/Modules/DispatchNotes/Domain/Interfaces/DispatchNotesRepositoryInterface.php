@@ -12,6 +12,6 @@ interface DispatchNotesRepositoryInterface
     public function update(DispatchNote $dispatchNote): ?DispatchNote;
     public function getLastDocumentNumber(): ?string;
     public function updateStatus(int $dispatchNoteId,int $status): void;
-    public function updateStatusDispatch(int $transferOrderId): void;
+    
 
 }

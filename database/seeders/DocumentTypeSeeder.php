@@ -245,6 +245,17 @@ class DocumentTypeSeeder extends Seeder
                 'st_transfers' => true,
                 'status' => 1
             ],
+            [
+                'description' => 'FACTURACION DE COMPRA',
+                'cod_sunat' => 0,
+                'abbreviation' => 'F/C',
+                'st_sales' => false,
+                'st_purchases' => true,
+                'st_collections' => false,
+                'st_invoices' => false,
+                'st_transfers' => true,
+                'status' => 1
+            ],
         ];
 
         DB::table('document_types')->insert($documentTypes);

@@ -36,10 +36,8 @@ class EntryGuideResource extends JsonResource{
             'ingress_reason'=> [
                 'id' => $this->resource->getIngressReason()->getId(),
                 'name' => $this->resource->getIngressReason()->getDescription(),
-            ]
-
-
-            
+                'status' =>( $this->resource->getIngressReason()->getStatus()) ? 'Activo' : 'Inactivo',
+            ] 
         ];
     }
 }

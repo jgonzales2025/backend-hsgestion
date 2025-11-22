@@ -8,7 +8,7 @@ class PurchaseDTO{
     public string $serie;
     public string $correlative;
     public  $exchange_type;
-    public string $methodpayment;
+    public int $methodpayment;
     public  $currency;
     public string $date;
     public string $date_ven;

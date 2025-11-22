@@ -16,7 +16,10 @@ class PurchaseResource extends JsonResource
             'serie' => $this->resource->getSerie(),
             'correlative' => $this->resource->getCorrelative(),
             'exchange_type' => $this->resource->getExchangeType(),
-            'methodpayment' => $this->resource->getMethodpayment(),
+            'methodpayment' => [
+                'id' => $this->resource->getMethodpayment()->getId(),
+                // 'name' => $this->resource->getMethodpayment()->getName(),
+            ],
             'currency' => $this->resource->getCurrency(),
             'date' => $this->resource->getDate(),
             'date_ven' => $this->resource->getDateVen(),

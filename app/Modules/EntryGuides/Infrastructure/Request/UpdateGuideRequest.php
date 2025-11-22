@@ -14,6 +14,7 @@ class UpdateGuideRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'company_id' => 'required|integer|exists:companies,id',
             'branch_id' => 'required|integer|exists:branches,id',
             'user_id' => 'required|integer|exists:users,id',
             'date' => 'string',

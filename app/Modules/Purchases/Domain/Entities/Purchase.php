@@ -2,6 +2,8 @@
 
 namespace App\Modules\Purchases\Domain\Entities;
 
+use App\Modules\PaymentMethod\Domain\Entities\PaymentMethod;
+
 class Purchase
 {
     private ?int $id;
@@ -10,7 +12,8 @@ class Purchase
     private string $serie;
     private string $correlative;
     private float $exchange_type;
-    private string $methodpayment;
+    // private string $methodpayment;
+    private ?PaymentMethod $methodpaymentO;
     private float $currency;
     private string $date;
     private string $date_ven;
@@ -33,7 +36,7 @@ class Purchase
         string $serie,
         string $correlative,
         float $exchange_type,
-        string $methodpayment,
+        ?PaymentMethod $methodpaymentO,
         float $currency,
         string $date,
         string $date_ven,
@@ -55,7 +58,7 @@ class Purchase
         $this->serie = $serie;
         $this->correlative = $correlative;
         $this->exchange_type = $exchange_type;
-        $this->methodpayment = $methodpayment;
+        $this->methodpaymentO = $methodpaymentO;
         $this->currency = $currency;
         $this->date = $date;
         $this->date_ven = $date_ven;
@@ -96,9 +99,9 @@ class Purchase
     {
         return $this->exchange_type;
     }
-    public function getMethodpayment(): string
+    public function getMethodpayment(): PaymentMethod | null
     {
-        return $this->methodpayment;
+        return $this->methodpaymentO;
     }
     public function getCurrency(): float
     {

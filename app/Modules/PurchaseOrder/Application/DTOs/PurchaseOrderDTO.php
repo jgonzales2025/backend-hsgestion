@@ -15,6 +15,9 @@ class PurchaseOrderDTO
     public ?string $observations;
     public int $supplier_id;
     public ?int $status;
+    public float $subtotal;
+    public float $igv;
+    public float $total;
 
     public function __construct(array $data)
     {
@@ -29,5 +32,8 @@ class PurchaseOrderDTO
         $this->observations = $data['observations'] ?? null;
         $this->supplier_id = $data['supplier_id'];
         $this->status = $data['status'] ?? null;
+        $this->subtotal = $data['subtotal'];
+        $this->igv = $data['igv'];
+        $this->total = $data['total'];
     }
 }

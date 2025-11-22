@@ -22,6 +22,9 @@ class StorePurchaseOrderRequest extends FormRequest
             'contact' => 'nullable|string|max:100',
             'observations' => 'nullable|string|max:255',
             'supplier_id' => 'required|integer|exists:customers,id',
+            'subtotal' => 'required|numeric|min:0',
+            'igv' => 'required|numeric|min:0',
+            'total' => 'required|numeric|min:0',
 
             // Articulos
             'articles' => 'required|array|min:1',
@@ -58,6 +61,15 @@ class StorePurchaseOrderRequest extends FormRequest
             'supplier_id.required' => 'El campo proveedor es obligatorio.',
             'supplier_id.integer' => 'El campo proveedor debe ser un número entero.',
             'supplier_id.exists' => 'El proveedor seleccionado no existe.',
+            'subtotal.required' => 'El campo subtotal es obligatorio.',
+            'subtotal.numeric' => 'El campo subtotal debe ser un número.',
+            'subtotal.min' => 'El campo subtotal debe ser mayor o igual a 0.',
+            'igv.required' => 'El campo igv es obligatorio.',
+            'igv.numeric' => 'El campo igv debe ser un número.',
+            'igv.min' => 'El campo igv debe ser mayor o igual a 0.',
+            'total.required' => 'El campo total es obligatorio.',
+            'total.numeric' => 'El campo total debe ser un número.',
+            'total.min' => 'El campo total debe ser mayor o igual a 0.',
         ];
     }
 }

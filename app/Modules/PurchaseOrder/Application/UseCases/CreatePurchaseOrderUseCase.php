@@ -37,7 +37,10 @@ readonly class CreatePurchaseOrderUseCase
             order_number_supplier: $purchaseOrderDTO->order_number_supplier,
             observations: $purchaseOrderDTO->observations,
             supplier: $supplier,
-            status: null
+            status: null,
+            subtotal: $purchaseOrderDTO->subtotal,
+            igv: $purchaseOrderDTO->igv,
+            total: $purchaseOrderDTO->total
         );
 
         return $this->purchaseOrderRepository->save($purchaseOrder);

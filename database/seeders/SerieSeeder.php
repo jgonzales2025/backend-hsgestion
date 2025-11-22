@@ -112,6 +112,22 @@ class SerieSeeder extends Seeder
             ],
             [
                 'company_id' => 1,
+                'serie_number' => 'FC01',
+                'branch_id' => 1,
+                'elec_document_type_id' => 22,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 1,
+                'serie_number' => 'FC02',
+                'branch_id' => 2,
+                'elec_document_type_id' => 22,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 1,
                 'serie_number' => 'B001',
                 'branch_id' => 1,
                 'elec_document_type_id' => 3,
@@ -315,6 +331,22 @@ class SerieSeeder extends Seeder
                 'serie_number' => 'OS02',
                 'branch_id' => 2,
                 'elec_document_type_id' => 21,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 2,
+                'serie_number' => 'FC01',
+                'branch_id' => 1,
+                'elec_document_type_id' => 22,
+                'dir_document_type_id' => 0,
+                'status' => 1
+            ],
+            [
+                'company_id' => 2,
+                'serie_number' => 'FC02',
+                'branch_id' => 2,
+                'elec_document_type_id' => 22,
                 'dir_document_type_id' => 0,
                 'status' => 1
             ],

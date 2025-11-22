@@ -236,6 +236,17 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         return $this->mapToDomainCreditNote($creditNote);
     }
 
+    public function findAllSalesByCustomerId(int $customerId): ?array
+    {
+        $sales = EloquentSale::all()->where('customer_id', $customerId)->whereIn('document_type_id', [1, 3])->where('status', 1);
+
+        if ($sales->isEmpty()) {
+            return null;
+        }
+
+        return $sales->map(fn($sale) => $this->mapToDomain($sale))->toArray();
+    }
+
     private function mapToArray(Sale $sale): array
     {
         return [

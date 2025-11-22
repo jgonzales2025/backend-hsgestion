@@ -19,4 +19,5 @@ interface SaleRepositoryInterface
     public function findAllCreditNotesByCustomerId(int $customerId): array;
     public function findCreditNoteById(int $id): ?SaleCreditNote;
     public function updateCreditNote(SaleCreditNote $saleCreditNote): ?SaleCreditNote;
+    public function findAllSalesByCustomerId(int $customerId): ?array;
 }

@@ -18,8 +18,11 @@ class PurchaseOrder
     private ?string $observations;
     private Customer $supplier;
     private ?string $status;
+    private float $subtotal;
+    private float $igv;
+    private float $total;
 
-    public function __construct(int $id, int $company_id, int $branch_id, string $serie, ?string $correlative, string $date, ?string $delivery_date, ?string $contact, ?string $order_number_supplier, ?string $observations, Customer $supplier, ?string $status)
+    public function __construct(int $id, int $company_id, int $branch_id, string $serie, ?string $correlative, string $date, ?string $delivery_date, ?string $contact, ?string $order_number_supplier, ?string $observations, Customer $supplier, ?string $status, float $subtotal, float $igv, float $total)
     {
         $this->id = $id;
         $this->company_id = $company_id;
@@ -33,6 +36,9 @@ class PurchaseOrder
         $this->observations = $observations;
         $this->supplier = $supplier;
         $this->status = $status;
+        $this->subtotal = $subtotal;
+        $this->igv = $igv;
+        $this->total = $total;
     }
 
     public function getId(): int { return $this->id; }
@@ -47,4 +53,7 @@ class PurchaseOrder
     public function getObservations(): ?string { return $this->observations; }
     public function getSupplier(): Customer { return $this->supplier; }
     public function getStatus(): ?string { return $this->status; }
+    public function getSubtotal(): float { return $this->subtotal; }
+    public function getIgv(): float { return $this->igv; }
+    public function getTotal(): float { return $this->total; }
 }

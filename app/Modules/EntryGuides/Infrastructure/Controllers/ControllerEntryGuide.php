@@ -32,7 +32,7 @@ use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterfa
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
-
+use Illuminate\Http\Request;
 
 class ControllerEntryGuide extends Controller
 {
@@ -52,10 +52,16 @@ class ControllerEntryGuide extends Controller
         private readonly DocumentTypeRepositoryInterface     $documentTypeRepository,
     ) {}
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        
+        $serie = $request->query('serie');
+        $correlativo = $request->query('correlativo');
+
+
+
         $entryGuideUseCase = new FindAllEntryGuideUseCase($this->entryGuideRepositoryInterface);
-        $entryGuides = $entryGuideUseCase->execute();
+        $entryGuides = $entryGuideUseCase->execute($serie, $correlativo);
 
         $result = [];
 
@@ -147,10 +153,10 @@ class ControllerEntryGuide extends Controller
         $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
 
         $this->logTransaction($request, $entryGuide);
-
+     
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
-
+       
         return response()->json($response, 200);
     }
     private function createEntryGuideArticles($entryGuide, array $articlesData): array

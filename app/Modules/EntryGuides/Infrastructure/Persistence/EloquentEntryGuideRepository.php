@@ -11,11 +11,26 @@ use PhpParser\Node\NullableType;
 class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 {
 
-    public function findAll(): array
+    public function findAll(?string $serie, ?string $correlativo): array
     {
-        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])
-        ->orderByDesc('id')
-        ->get();
+        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason']);
+
+
+        if (!empty($serie)) {
+            $query->where(function ($q) use ($serie) {
+                $q->where('serie', $serie);
+                //   ->orWhere('correlative', $seriecorrel);
+            });
+        }
+
+        if (!empty($correlativo)) {
+            $query->where(function ($q) use ($correlativo) {
+                $q->where('correlative', $correlativo);
+            });
+        }
+   
+        $eloquentAll = $query->orderByDesc('id')->get();
+
 
         return $eloquentAll->map(function ($entryGuide) {
             return new EntryGuide(
@@ -45,7 +60,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'date' => $entryGuide->getDate(),
             'customer_id' => $entryGuide->getCustomer()->getId(),
             'observations' => $entryGuide->getObservations(),
-            'ingress_reason_id' => 1,
+            'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
             'reference_po_serie' => $entryGuide->getReferenceCorrelative(),
             'reference_po_correlative' => $entryGuide->getReferenceCorrelative(),
             'status' => 1,
@@ -101,12 +116,12 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'date' => $entryGuide->getDate(),
             'customer_id' => $entryGuide->getCustomer()->getId(),
             'observations' => $entryGuide->getObservations(),
-            'ingress_reason_id' => 1,
+            'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
             'reference_po_serie' => $entryGuide->getReferenceCorrelative(),
             'reference_po_correlative' => $entryGuide->getReferenceCorrelative(),
-            'status' => $entryGuide->getStatus(),
+            'status' => 1,
         ]);
-        
+
         return new EntryGuide(
             id: $eloquentEntryGuide->id,
             cia: $eloquentEntryGuide->company?->toDomain($eloquentEntryGuide->company),

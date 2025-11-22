@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('serie');
             $table->string('correlative');
             $table->float('exchange_type');
-            $table->string('methodpayment');
+            $table->foreignId('methodpayment')->constrained('payment_methods');
             $table->float('currency');
             $table->date('date');
             $table->date('date_ven');

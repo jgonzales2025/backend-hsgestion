@@ -13,8 +13,9 @@ class CreatePurchaseRequest extends FormRequest
             'supplier_id' => 'required|integer',
             'serie' => 'required|string',
             'correlative' => 'required|string',
+            "entry_guide_id"=> 'numeric',  
             'exchange_type' => 'required|numeric',
-            'methodpayment' => 'required|string',
+            'methodpayment' => 'required|numeric|exists:payment_methods,id',
             'currency' => 'required|numeric',
             'date' => 'required|string',
             'date_ven' => 'required|string',
@@ -36,7 +37,7 @@ class CreatePurchaseRequest extends FormRequest
             'det_compras_guia_ingreso.*.precio_costo' => 'required|numeric',
             'det_compras_guia_ingreso.*.descuento' => 'required|numeric',
             'det_compras_guia_ingreso.*.sub_total' => 'required|numeric',
-            'shopping_income_guide' => 'required|array',
+    
             // 'shopping_income_guide.*.entry_guide_id' => 'required|integer',
 
         ];

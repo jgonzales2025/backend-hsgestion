@@ -3,11 +3,12 @@
 namespace App\Modules\Purchases\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\DetailPurchaseGuides\Application\DTOS\DetailPurchaseGuideDTO; 
+use App\Modules\DetailPurchaseGuides\Application\DTOS\DetailPurchaseGuideDTO;
 use App\Modules\DetailPurchaseGuides\Application\UseCases\CreateDetailPurchaseGuideUseCase;
 use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
 use App\Modules\DetailPurchaseGuides\Infrastructure\Resource\DetailPurchaseGuideResource;
-use App\Modules\Purchases\Application\DTOS\PurchaseDTO; 
+use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
+use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
 use App\Modules\Purchases\Application\UseCases\CreatePurchaseUseCase;
 use App\Modules\Purchases\Application\UseCases\FindAllPurchaseUseCase;
 use App\Modules\Purchases\Application\UseCases\FindByIdPurchaseUseCase;
@@ -20,7 +21,7 @@ use App\Modules\ShoppingIncomeGuide\Application\DTOS\ShoppingIncomeGuideDTO;
 use App\Modules\ShoppingIncomeGuide\Application\UseCases\CreateShoppingIncomeGuideUseCase;
 use App\Modules\ShoppingIncomeGuide\Domain\Interface\ShoppingIncomeGuideRepositoryInterface;
 use App\Modules\ShoppingIncomeGuide\Infrastructure\Resource\ShoppingIncomeGuideResource;
-use Illuminate\Http\JsonResponse; 
+use Illuminate\Http\JsonResponse;
 
 class PurchaseController extends Controller
 {
@@ -28,8 +29,8 @@ class PurchaseController extends Controller
         private readonly PurchaseRepositoryInterface $purchaseRepository,
         private readonly ShoppingIncomeGuideRepositoryInterface $shoppingIncomeGuideRepository,
         private readonly DetailPurchaseGuideRepositoryInterface $detailPurchaseGuideRepository,
-    ) {
-    }
+        private readonly PaymentMethodRepositoryInterface $paymentMethodRepository
+    ) {}
     public function index(): JsonResponse
     {
         $findAllPurchaseUseCase = new FindAllPurchaseUseCase($this->purchaseRepository);
@@ -48,7 +49,7 @@ class PurchaseController extends Controller
         }
 
         return response()->json($result, 200);
-    } 
+    }
     public function show(int $id): JsonResponse
     {
         $findByIdPurchaseUseCase = new FindByIdPurchaseUseCase($this->purchaseRepository);
@@ -67,22 +68,24 @@ class PurchaseController extends Controller
 
             ],
             200
-        ); 
+        );
     }
     public function store(CreatePurchaseRequest $request): JsonResponse
     {
         $purchaseDTO = new PurchaseDTO($request->validated());
-        $cretaePurchaseUseCase = new CreatePurchaseUseCase($this->purchaseRepository);
+        $cretaePurchaseUseCase = new CreatePurchaseUseCase($this->purchaseRepository, $this->paymentMethodRepository);
         $purchase = $cretaePurchaseUseCase->execute($purchaseDTO);
 
         $det_compras_guia_ingreso = $this->createDetComprasGuiaIngreso($purchase, $request->validated()['det_compras_guia_ingreso']);
-        $shopping_income_guide = $this->createShoppingIncomeGuide($purchase, $request->validated()['shopping_income_guide']);
+
+        $shopping_income_guide = $this->createShoppingIncomeGuide($purchase,  $request['entry_guide_id']);
+
 
         return response()->json(
             [
                 'purchase' => new PurchaseResource($purchase),
                 'purchaseGuide' => DetailPurchaseGuideResource::collection($det_compras_guia_ingreso)->resolve(),
-                'shoppingGuide' => ShoppingIncomeGuideResource::collection($shopping_income_guide)->resolve()
+                'shoppingGuide' => new ShoppingIncomeGuideResource($shopping_income_guide)
 
             ],
             201
@@ -128,28 +131,24 @@ class PurchaseController extends Controller
                 'descuento' => $item['descuento'],
                 'sub_total' => $item['sub_total'],
             ]);
- 
+
             $shoppingGuide = $createGuideUseCase->execute($detailDTO);
 
             return $shoppingGuide;
-
         }, $data);
     }
-    public function createShoppingIncomeGuide($purchase, array $data)
+    public function createShoppingIncomeGuide($purchase,  $data)
     {
         $createGuideUseCase = new CreateShoppingIncomeGuideUseCase($this->shoppingIncomeGuideRepository);
 
-        return array_map(function ($item) use ($purchase, $createGuideUseCase) {
-            // Crear relación purchase - entry_guide
-            $detailDTO = new ShoppingIncomeGuideDTO([
-                'purchase_id' => $purchase->getId(),
-                'entry_guide_id' => $item['entry_guide_id'],
-            ]);
-            $shoppingGuide = $createGuideUseCase->execute($detailDTO);
+        // Crear relación purchase - entry_guide
+        $detailDTO = new ShoppingIncomeGuideDTO([
+            'purchase_id' => $purchase->getId(),
+            'entry_guide_id' => $data,
+        ]);
+        $shoppingGuide = $createGuideUseCase->execute($detailDTO);
 
-            return $shoppingGuide;
-
-        }, $data);
+        return $shoppingGuide;
     }
 
     private function updateShopping($shooping, array $data): array
@@ -159,7 +158,7 @@ class PurchaseController extends Controller
         return array_map(function ($purchase) use ($shooping, $createShooping) {
             $shoopingDTO = new ShoppingIncomeGuideDTO([
                 'purchase_id' => $shooping->getId(),
-                'entry_guide_id' => $purchase['entry_guide_id']
+                'entry_guide_id' => $purchase->getEntryGuideId(),
             ]);
 
             $shooping = $createShooping->execute($shoopingDTO);
@@ -187,5 +186,4 @@ class PurchaseController extends Controller
             return $createDetail;
         }, $data);
     }
-
 }

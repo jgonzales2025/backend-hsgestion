@@ -33,7 +33,10 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
                 order_number_supplier: $purchaseOrder->order_number_supplier,
                 observations: $purchaseOrder->observations,
                 supplier: $purchaseOrder->supplier->toDomain($purchaseOrder->supplier),
-                status: $purchaseOrder->status
+                status: $purchaseOrder->status,
+                subtotal: $purchaseOrder->subtotal,
+                igv: $purchaseOrder->igv,
+                total: $purchaseOrder->total
             );
         })->toArray();
     }
@@ -50,7 +53,10 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             'contact' => $purchaseOrder->getContact(),
             'order_number_supplier' => $purchaseOrder->getOrderNumberSupplier(),
             'observations' => $purchaseOrder->getObservations(),
-            'supplier_id' => $purchaseOrder->getSupplier()->getId()
+            'supplier_id' => $purchaseOrder->getSupplier()->getId(),
+            'subtotal' => $purchaseOrder->getSubtotal(),
+            'igv' => $purchaseOrder->getIgv(),
+            'total' => $purchaseOrder->getTotal()
         ]);
         $purchaseOrderEloquent->refresh();
 
@@ -66,7 +72,10 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             order_number_supplier: $purchaseOrderEloquent->order_number_supplier,
             observations: $purchaseOrderEloquent->observations,
             supplier: $purchaseOrderEloquent->supplier?->toDomain($purchaseOrderEloquent->supplier),
-            status: $purchaseOrderEloquent->status
+            status: $purchaseOrderEloquent->status,
+            subtotal: $purchaseOrderEloquent->subtotal,
+            igv: $purchaseOrderEloquent->igv,
+            total: $purchaseOrderEloquent->total
         );
     }
 
@@ -99,7 +108,10 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             order_number_supplier: $purchaseOrderEloquent->order_number_supplier,
             observations: $purchaseOrderEloquent->observations,
             supplier: $purchaseOrderEloquent->supplier?->toDomain($purchaseOrderEloquent->supplier),
-            status: $purchaseOrderEloquent->status
+            status: $purchaseOrderEloquent->status,
+            subtotal: $purchaseOrderEloquent->subtotal,
+            igv: $purchaseOrderEloquent->igv,
+            total: $purchaseOrderEloquent->total
         );
     }
 
@@ -121,7 +133,10 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             'order_number_supplier' => $purchaseOrder->getOrderNumberSupplier(),
             'observations' => $purchaseOrder->getObservations(),
             'supplier_id' => $purchaseOrder->getSupplier()->getId(),
-            'status' => $purchaseOrder->getStatus()
+            'status' => $purchaseOrder->getStatus(),
+            'subtotal' => $purchaseOrder->getSubtotal(),
+            'igv' => $purchaseOrder->getIgv(),
+            'total' => $purchaseOrder->getTotal()
         ]);
         $purchaseOrderEloquent->refresh();
 
@@ -137,7 +152,10 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             order_number_supplier: $purchaseOrderEloquent->order_number_supplier,
             observations: $purchaseOrderEloquent->observations,
             supplier: $purchaseOrderEloquent->supplier?->toDomain($purchaseOrderEloquent->supplier),
-            status: $purchaseOrderEloquent->status
+            status: $purchaseOrderEloquent->status,
+            subtotal: $purchaseOrderEloquent->subtotal,
+            igv: $purchaseOrderEloquent->igv,
+            total: $purchaseOrderEloquent->total
         );
     }
 }

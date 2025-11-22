@@ -283,7 +283,7 @@ class SaleController extends Controller
         $saleUseCase = new FindAllSalesByCustomerIdUseCase($this->saleRepository);
         $sales = $saleUseCase->execute($customerId);
         if (!$sales) {
-            return response()->json(['message' => 'Ventas no encontradas'], 404);
+            return response()->json(['message' => 'Este cliente no tiene ventas registradas.'], 200);
         }
 
         return response()->json([

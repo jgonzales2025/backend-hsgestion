@@ -23,7 +23,10 @@ class EloquentPurchaseOrder extends Model
         'order_number_supplier',
         'observations',
         'supplier_id',
-        'status'
+        'status',
+        'subtotal',
+        'igv',
+        'total'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

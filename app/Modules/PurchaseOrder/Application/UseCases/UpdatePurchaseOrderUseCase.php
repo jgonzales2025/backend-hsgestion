@@ -30,8 +30,12 @@ readonly class UpdatePurchaseOrderUseCase
             delivery_date: $purchaseOrderDTO->delivery_date,
             contact: $purchaseOrderDTO->contact,
             order_number_supplier: $purchaseOrderDTO->order_number_supplier,
+            observations: $purchaseOrderDTO->observations,
             supplier: $supplier,
-            status: $purchaseOrderDTO->status
+            status: $purchaseOrderDTO->status,
+            subtotal: $purchaseOrderDTO->subtotal,
+            igv: $purchaseOrderDTO->igv,
+            total: $purchaseOrderDTO->total
         );
 
         return $this->purchaseOrderRepository->update($purchaseOrder);

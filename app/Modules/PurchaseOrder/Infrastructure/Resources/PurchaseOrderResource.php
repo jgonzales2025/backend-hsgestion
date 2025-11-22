@@ -22,7 +22,10 @@ class PurchaseOrderResource extends JsonResource
                 'company_name' => $this->resource->getSupplier()->getCompanyName(),
             ],
             'status' => $this->resource->getStatus() == 0 ? 'Pendiente' : 'Entregado',
-            'observations' => $this->resource->getObservations()
+            'observations' => $this->resource->getObservations(),
+            'subtotal' => $this->resource->getSubtotal() ?? null,
+            'igv' => $this->resource->getIgv() ?? null,
+            'total' => $this->resource->getTotal() ?? null,
         ];
     }
 }

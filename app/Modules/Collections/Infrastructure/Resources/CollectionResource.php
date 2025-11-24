@@ -31,7 +31,10 @@ class CollectionResource extends JsonResource
             'operation_number' => $this->resource->getOperationNumber(),
             'lote_number' => $this->resource->getLoteNumber(),
             'for_digits' => $this->resource->getForDigits(),
-            'status' => ($this->resource->getStatus()) == 1 ? 'Realizado' : 'Anulado'
+            'status' => ($this->resource->getStatus()) == 1 ? 'Realizado' : 'Anulado',
+            'credit_document_type_id' => $this->resource->getCreditDocumentTypeId(),
+            'credit_serie' => $this->resource->getCreditSerie(),
+            'credit_correlative' => $this->resource->getCreditCorrelative(),
         ];
     }
 }

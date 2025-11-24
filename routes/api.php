@@ -339,8 +339,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/pettyCashReceipt', [PettyCashReceiptController::class, 'store']);
     Route::put('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'update']);
     Route::get('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'show']);
-     Route::put('/pettyCashReceiptstatus/{id}', [PettyCashReceiptController::class, 'updateStatus']);
-    
+    Route::put('/pettyCashReceiptstatus/{id}', [PettyCashReceiptController::class, 'updateStatus']);
+
     //PettyCashReceiptMotive
     Route::get('/pettyCashMotive', [PettyCashMotiveController::class, 'index']);
     Route::post('/pettyCashMotive', [PettyCashMotiveController::class, 'store']);
@@ -354,6 +354,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/purchase-orders', [PurchaseOrderController::class, 'store']);
     Route::get('/purchase-orders/{id}', [PurchaseOrderController::class, 'show']);
     Route::put('/purchase-orders/{id}', [PurchaseOrderController::class, 'update']);
+    Route::get('/purchase-orders/{id}/pdf', [PurchaseOrderController::class, 'generatePdf']);
 
     // Ruta para traer las series de un articulo
     Route::get('/entry-item-serial/{articleId}', [EntryItemSerialController::class, 'findSerialByArticleId']);

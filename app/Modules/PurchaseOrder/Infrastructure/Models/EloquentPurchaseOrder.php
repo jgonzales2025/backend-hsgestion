@@ -4,7 +4,9 @@ namespace App\Modules\PurchaseOrder\Infrastructure\Models;
 
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
+use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
+use App\Modules\PaymentType\Infrastructure\Models\EloquentPaymentType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -19,7 +21,12 @@ class EloquentPurchaseOrder extends Model
         'correlative',
         'date',
         'delivery_date',
-        'contact',
+        'due_date',
+        'days',
+        'contact_name',
+        'contact_phone',
+        'currency_type_id',
+        'payment_type_id',
         'order_number_supplier',
         'observations',
         'supplier_id',
@@ -44,5 +51,15 @@ class EloquentPurchaseOrder extends Model
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(EloquentCustomer::class, 'supplier_id');
+    }
+
+    public function currencyType(): BelongsTo
+    {
+        return $this->belongsTo(EloquentCurrencyType::class, 'currency_type_id');
+    }
+
+    public function paymentType(): BelongsTo
+    {
+        return $this->belongsTo(EloquentPaymentType::class, 'payment_type_id');
     }
 }

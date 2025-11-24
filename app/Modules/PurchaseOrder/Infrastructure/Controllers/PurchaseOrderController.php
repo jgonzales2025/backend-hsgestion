@@ -3,7 +3,11 @@
 namespace App\Modules\PurchaseOrder\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
+use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\PurchaseOrder\Application\DTOs\PurchaseOrderDTO;
 use App\Modules\PurchaseOrder\Application\UseCases\CreatePurchaseOrderUseCase;
 use App\Modules\PurchaseOrder\Application\UseCases\FindAllPurchaseOrdersUseCase;
@@ -21,6 +25,7 @@ use App\Modules\PurchaseOrderArticle\Domain\Interfaces\PurchaseOrderArticleRepos
 use App\Modules\PurchaseOrderArticle\Infrastructure\Resources\PurchaseOrderArticleResource;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class PurchaseOrderController extends Controller
 {
@@ -28,8 +33,13 @@ class PurchaseOrderController extends Controller
         private readonly PurchaseOrderRepositoryInterface $purchaseOrderRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly DocumentNumberGeneratorService $documentNumberGenerator,
-        private readonly PurchaseOrderArticleRepositoryInterface $purchaseOrderArticleRepository
-    ){}
+        private readonly PurchaseOrderArticleRepositoryInterface $purchaseOrderArticleRepository,
+        private readonly CompanyRepositoryInterface $companyRepository,
+        private readonly BranchRepositoryInterface $branchRepository,
+        private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
+        private readonly PaymentTypeRepositoryInterface $paymentTypeRepository
+    ) {
+    }
 
     public function index(): array
     {
@@ -55,16 +65,18 @@ class PurchaseOrderController extends Controller
 
     public function store(StorePurchaseOrderRequest $request): JsonResponse
     {
-        $purchaseOrderDTO = new PurchaseOrderDTO($request->validated());
-        $purchaseOrderUseCase = new CreatePurchaseOrderUseCase($this->purchaseOrderRepository, $this->customerRepository, $this->documentNumberGenerator);
-        $purchaseOrder = $purchaseOrderUseCase->execute($purchaseOrderDTO);
+        return DB::transaction(function () use ($request) {
+            $purchaseOrderDTO = new PurchaseOrderDTO($request->validated());
+            $purchaseOrderUseCase = new CreatePurchaseOrderUseCase($this->purchaseOrderRepository, $this->customerRepository, $this->documentNumberGenerator, $this->branchRepository, $this->currencyTypeRepository, $this->paymentTypeRepository);
+            $purchaseOrder = $purchaseOrderUseCase->execute($purchaseOrderDTO);
 
-        $purchaseOrderArticles = $this->createPurchaseOrderArticles($purchaseOrder, $request->validated()['articles']);
+            $purchaseOrderArticles = $this->createPurchaseOrderArticles($purchaseOrder, $request->validated()['articles']);
 
-        $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
-        $response['articles'] = PurchaseOrderArticleResource::collection($purchaseOrderArticles)->resolve();
+            $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
+            $response['articles'] = PurchaseOrderArticleResource::collection($purchaseOrderArticles)->resolve();
 
-        return response()->json($response, 201);
+            return response()->json($response, 201);
+        });
     }
 
     public function show(int $id): JsonResponse
@@ -88,7 +100,7 @@ class PurchaseOrderController extends Controller
     public function update(UpdatePurchaseOrderRequest $request, int $id): JsonResponse
     {
         $purchaseOrderDTO = new PurchaseOrderDTO($request->validated());
-        $purchaseOrderUseCase = new UpdatePurchaseOrderUseCase($this->purchaseOrderRepository, $this->customerRepository);
+        $purchaseOrderUseCase = new UpdatePurchaseOrderUseCase($this->purchaseOrderRepository, $this->customerRepository, $this->branchRepository, $this->currencyTypeRepository, $this->paymentTypeRepository);
         $purchaseOrder = $purchaseOrderUseCase->execute($purchaseOrderDTO, $id);
 
         if (!$purchaseOrder) {
@@ -123,5 +135,28 @@ class PurchaseOrderController extends Controller
 
             return $createPurchaseOrderArticleUseCase->execute($purchaseOrderArticleDTO);
         }, $articlesData);
+    }
+
+    public function generatePdf(int $id)
+    {
+        $purchaseOrderUseCase = new FindByIdPurchaseOrderUseCase($this->purchaseOrderRepository);
+        $purchaseOrder = $purchaseOrderUseCase->execute($id);
+
+        if (!$purchaseOrder) {
+            return response()->json(['message' => 'Orden de compra no encontrada'], 404);
+        }
+
+        $articlesUseCase = new FindPurchaseOrderIdUseCase($this->purchaseOrderArticleRepository);
+        $articles = $articlesUseCase->execute($purchaseOrder->getId());
+
+        $company = $this->companyRepository->findById($purchaseOrder->getCompanyId());
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('purchase_order', [
+            'purchaseOrder' => $purchaseOrder,
+            'purchaseOrderArticles' => $articles,
+            'company' => $company
+        ]);
+
+        return $pdf->stream('orden_compra_' . $purchaseOrder->getCorrelative() . '.pdf');
     }
 }

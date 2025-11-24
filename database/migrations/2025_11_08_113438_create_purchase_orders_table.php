@@ -19,7 +19,12 @@ return new class extends Migration
             $table->string('correlative',8)->unique();
             $table->date('date');
             $table->date('delivery_date')->nullable();
-            $table->string('contact')->nullable();
+            $table->date('due_date')->nullable();
+            $table->integer('days')->nullable();
+            $table->string('contact_name')->nullable();
+            $table->string('contact_phone')->nullable();
+            $table->foreignId('currency_type_id')->constrained('currency_types')->onDelete('cascade');
+            $table->foreignId('payment_type_id')->constrained('payment_types')->onDelete('cascade');
             $table->foreignId('supplier_id')->constrained('customers')->onDelete('cascade');
             $table->string('order_number_supplier')->nullable();
             $table->string('observations')->nullable();

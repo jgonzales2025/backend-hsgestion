@@ -71,7 +71,8 @@ class SaleController extends Controller
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
         private readonly SaleItemSerialRepositoryInterface $saleItemSerialRepository,
         private readonly EntryItemSerialRepositoryInterface $entryItemSerialRepository,
-    ){}
+    ) {
+    }
 
     public function index(Request $request): JsonResponse
     {
@@ -100,18 +101,19 @@ class SaleController extends Controller
 
     public function store(StoreSaleRequest $request): JsonResponse
     {
-        $saleDTO = new SaleDTO($request->validated());
-        $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->documentNumberGeneratorService);
-        $sale = $saleUseCase->execute($saleDTO);
+        return DB::transaction(function () use ($request) {
+            $saleDTO = new SaleDTO($request->validated());
+            $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->documentNumberGeneratorService);
+            $sale = $saleUseCase->execute($saleDTO);
 
-        $saleArticles = $this->createSaleArticles($sale, $request->validated()['sale_articles']);
-        $this->logTransaction($request, $sale);
+            $saleArticles = $this->createSaleArticles($sale, $request->validated()['sale_articles']);
+            $this->logTransaction($request, $sale);
 
-        return response()->json([
-            'sale' => (new SaleResource($sale))->resolve(),
-            'articles' => SaleArticleResource::collection($saleArticles)->resolve()
-            ], 201
-        );
+            return response()->json([
+                'sale' => (new SaleResource($sale))->resolve(),
+                'articles' => SaleArticleResource::collection($saleArticles)->resolve()
+            ], 201);
+        });
     }
 
     public function storeCreditNote(StoreSaleCreditNoteRequest $request): JsonResponse
@@ -123,10 +125,12 @@ class SaleController extends Controller
         $saleArticles = $this->createSaleArticles($saleCreditNote, $request->validated()['sale_articles']);
         $this->logTransaction($request, $saleCreditNote);
 
-        return response()->json([
-            'sale' => (new SaleCreditNoteResource($saleCreditNote))->resolve(),
-            'articles' => SaleArticleResource::collection($saleArticles)->resolve()
-            ], 201
+        return response()->json(
+            [
+                'sale' => (new SaleCreditNoteResource($saleCreditNote))->resolve(),
+                'articles' => SaleArticleResource::collection($saleArticles)->resolve()
+            ],
+            201
         );
     }
 
@@ -191,17 +195,19 @@ class SaleController extends Controller
         $saleUpdated = $saleUseCase->execute($saleDTO, $sale);
 
         $this->saleArticleRepository->deleteBySaleId($saleUpdated->getId());
-        
+
         $deleteSaleItemSerialBySaleIdUseCase = new DeleteSaleItemSerialBySaleIdUseCase($this->saleItemSerialRepository);
         $deleteSaleItemSerialBySaleIdUseCase->execute($saleUpdated->getId());
 
         $saleArticles = $this->updateSaleArticles($saleUpdated, $request->validated()['sale_articles']);
         $this->logTransaction($request, $saleUpdated);
 
-        return response()->json([
-            'sale' => (new SaleResource($saleUpdated))->resolve(),
-            'articles' => SaleArticleResource::collection($saleArticles)->resolve()
-            ], 200
+        return response()->json(
+            [
+                'sale' => (new SaleResource($saleUpdated))->resolve(),
+                'articles' => SaleArticleResource::collection($saleArticles)->resolve()
+            ],
+            200
         );
     }
 
@@ -227,10 +233,12 @@ class SaleController extends Controller
         $saleArticles = $this->createSaleArticles($saleCreditNoteUpdated, $request->validated()['sale_articles']);
         $this->logTransaction($request, $saleCreditNoteUpdated);
 
-        return response()->json([
-            'sale' => (new SaleCreditNoteResource($saleCreditNoteUpdated))->resolve(),
-            'articles' => SaleArticleCreditNoteResource::collection($saleArticles)->resolve()
-            ], 200
+        return response()->json(
+            [
+                'sale' => (new SaleCreditNoteResource($saleCreditNoteUpdated))->resolve(),
+                'articles' => SaleArticleCreditNoteResource::collection($saleArticles)->resolve()
+            ],
+            200
         );
     }
 
@@ -382,7 +390,7 @@ class SaleController extends Controller
 
         $documentTypeId = $sale->getDocumentType()->getId();
 
-        $description = match($documentTypeId) {
+        $description = match ($documentTypeId) {
             7 => 'Nota de crédito',
             8 => 'Nota de débito',
             1 => 'Venta',

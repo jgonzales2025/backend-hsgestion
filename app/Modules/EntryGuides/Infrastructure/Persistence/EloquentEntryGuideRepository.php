@@ -46,8 +46,8 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'ingress_reason_id' => 1,
             'reference_po_serie' => $entryGuide->getReferenceCorrelative(),
             'reference_po_correlative' => $entryGuide->getReferenceCorrelative(),
-            'status' => $entryGuide->getStatus(),
         ]);
+        $eloquentEntryGuide->refresh();
         return new EntryGuide(
             id: $eloquentEntryGuide->id,
             cia: $eloquentEntryGuide->company?->toDomain($eloquentEntryGuide->company),

@@ -15,7 +15,7 @@ use App\Modules\Purchases\Application\UseCases\FindByIdPurchaseUseCase;
 use App\Modules\Purchases\Application\UseCases\UpdatePurchaseUseCase;
 use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 use App\Modules\Purchases\Infrastructure\Request\CreatePurchaseRequest;
-use App\Modules\Purchases\Infrastructure\Request\PudatePurchaseRequest;
+use App\Modules\Purchases\Infrastructure\Request\UpdatePurchaseRequest;
 use App\Modules\Purchases\Infrastructure\Resource\PurchaseResource;
 use App\Modules\ShoppingIncomeGuide\Application\DTOS\ShoppingIncomeGuideDTO;
 use App\Modules\ShoppingIncomeGuide\Application\UseCases\CreateShoppingIncomeGuideUseCase;
@@ -73,7 +73,7 @@ class PurchaseController extends Controller
     public function store(CreatePurchaseRequest $request): JsonResponse
     {
         $purchaseDTO = new PurchaseDTO($request->validated());
-        $cretaePurchaseUseCase = new CreatePurchaseUseCase($this->purchaseRepository, $this->paymentMethodRepository);
+        $cretaePurchaseUseCase = new CreatePurchaseUseCase($this->purchaseRepository, $this->paymentMethodRepository, $this->shoppingIncomeGuideRepository);
         $purchase = $cretaePurchaseUseCase->execute($purchaseDTO);
 
         $det_compras_guia_ingreso = $this->createDetComprasGuiaIngreso($purchase, $request->validated()['det_compras_guia_ingreso']);
@@ -91,10 +91,10 @@ class PurchaseController extends Controller
             201
         );
     }
-    public function update(PudatePurchaseRequest $request, int $id): JsonResponse
+    public function update(UpdatePurchaseRequest $request, int $id): JsonResponse
     {
         $purchaseDTO = new PurchaseDTO($request->validated());
-        $updatePurchaseUseCase = new UpdatePurchaseUseCase($this->purchaseRepository);
+        $updatePurchaseUseCase = new UpdatePurchaseUseCase($this->purchaseRepository, $this->paymentMethodRepository);
         $purchase = $updatePurchaseUseCase->execute($purchaseDTO, $id);
 
         $this->detailPurchaseGuideRepository->deletedBy($purchase->getId());
@@ -102,13 +102,13 @@ class PurchaseController extends Controller
         $this->shoppingIncomeGuideRepository->deletedBy($purchase->getId());
 
         $detailcompras = $this->updateDetailCompra($purchase, $request->validated()['det_compras_guia_ingreso']);
-        $shopping = $this->updateShopping($purchase, $request->validated()['shopping_income_guide']);
+        $shopping_income_guide = $this->createShoppingIncomeGuide($purchase,  $request['entry_guide_id']);
 
         return response()->json(
             [
                 'purchase' => new PurchaseResource($purchase),
                 'purchaseGuide' => DetailPurchaseGuideResource::collection($detailcompras)->resolve(),
-                'shoppingGuide' => ShoppingIncomeGuideResource::collection($shopping)->resolve()
+                'shoppingGuide' => new ShoppingIncomeGuideResource($shopping_income_guide)
 
             ],
             201
@@ -179,11 +179,32 @@ class PurchaseController extends Controller
                 'precio_costo' => $purchase['precio_costo'],
                 'descuento' => $purchase['descuento'],
                 'sub_total' => $purchase['sub_total'],
+                'total' => $purchase['total'],
             ]);
 
             $createDetail = $createDetail->execute($detailDto);
 
             return $createDetail;
         }, $data);
+    }
+    public function proovedor(int $id): JsonResponse
+    {
+        $findByIdPurchaseUseCase = new FindByIdPurchaseUseCase($this->purchaseRepository);
+        $purchase = $findByIdPurchaseUseCase->execute($id);
+        if (!$purchase) {
+            return response()->json(['message' => 'proovedor no encontrado'], 404);
+        }
+        $guide = $this->detailPurchaseGuideRepository->findById($purchase->getId());
+        $shopping = $this->shoppingIncomeGuideRepository->findById($purchase->getId());
+
+        return response()->json(
+            [
+                'purchase' => (new PurchaseResource($purchase))->resolve(),
+                'details' => DetailPurchaseGuideResource::collection($guide)->resolve(),
+                'shopping' => ShoppingIncomeGuideResource::collection($shopping)->resolve()
+
+            ],
+            200
+        );
     }
 }

@@ -328,18 +328,19 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     //Entry Guide
     Route::get('/entry-guides', [ControllerEntryGuide::class, 'index']);
+    Route::get('/entryp', [ControllerEntryGuide::class, 'indexC']);
     Route::get('/entry-guides/{id}', [ControllerEntryGuide::class, 'show']);
     Route::post('/entry-guides', [ControllerEntryGuide::class, 'store']);
     Route::put('/entry-guides/{id}', [ControllerEntryGuide::class, 'update']);
-
-
+    Route::post('/purchases/consolidate-guides', [ControllerEntryGuide::class, 'validateSameCustomer']);
+    Route::post('/downloadPdf/{id}', [ControllerEntryGuide::class, 'downloadPdf']);
     //PettyCashReceipt
     Route::get('/pettyCashReceipt', [PettyCashReceiptController::class, 'index']);
     Route::post('/pettyCashReceipt', [PettyCashReceiptController::class, 'store']);
     Route::put('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'update']);
     Route::get('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'show']);
-     Route::put('/pettyCashReceiptstatus/{id}', [PettyCashReceiptController::class, 'updateStatus']);
-    
+    Route::put('/pettyCashReceiptstatus/{id}', [PettyCashReceiptController::class, 'updateStatus']);
+
     //PettyCashReceiptMotive
     Route::get('/pettyCashMotive', [PettyCashMotiveController::class, 'index']);
     Route::post('/pettyCashMotive', [PettyCashMotiveController::class, 'store']);
@@ -356,11 +357,11 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Ruta para traer las series de un articulo
     Route::get('/entry-item-serial/{articleId}', [EntryItemSerialController::class, 'findSerialByArticleId']);
-//purchases
-Route::get('/purchases', [PurchaseController::class, 'index']);
-Route::get('/purchases/{id}', [PurchaseController::class, 'show']);
-Route::post('/purchases', [PurchaseController::class, 'store']);
-Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
+    //purchases
+    Route::get('/purchases', [PurchaseController::class, 'index']);
+    Route::get('/purchases/{id}', [PurchaseController::class, 'show']);
+    Route::post('/purchases', [PurchaseController::class, 'store']);
+    Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
 
     // Ruta para traer los movimientos de transferencia de un articulo
     Route::get('/dispatch-serial-movements/{branchId}', [DispatchArticleSerialController::class, 'findAllMovements']);
@@ -374,15 +375,11 @@ Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
     Route::post('/purchases', [PurchaseController::class, 'store']);
     Route::get('/purchases/{id}', [PurchaseController::class, 'show']);
     Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
-
 });
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);
-
-
-
 });
 
 Route::post('/refresh', [AuthController::class, 'refresh']);

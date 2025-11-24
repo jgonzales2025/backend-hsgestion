@@ -57,8 +57,10 @@ use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterfa
 use App\Modules\EmissionReason\Infrastructure\Persistence\EloquentEmissionReasonRepository;
 use App\Modules\EntryGuideArticle\Infrastructure\Persistence\EloquentEntryGuideArticleRepository;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
+use App\Modules\EntryGuides\Domain\Interfaces\EntryGuidePDF;
 use App\Modules\EntryGuides\Infrastructure\Models\EloquentEntryGuide;
 use App\Modules\EntryGuides\Infrastructure\Persistence\EloquentEntryGuideRepository;
+use App\Modules\EntryGuides\Infrastructure\Persistence\DomPdfEntryGuideGenerator;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\EntryItemSerial\Infrastructure\Persistence\EloquentEntryItemSerialRepository;
 use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
@@ -183,6 +185,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PdfGeneratorInterface::class, DomPdfGenerator::class);
         $this->app->bind(NoteReasonRepositoryInterface::class, EloquentNoteReasonRepository::class);
         $this->app->bind(EntryGuideRepositoryInterface::class, EloquentEntryGuideRepository::class);
+        $this->app->bind(EntryGuidePDF::class, DomPdfEntryGuideGenerator::class);
         $this->app->bind(PurchaseOrderArticleRepositoryInterface::class, EloquentPurchaseOrderArticleRepository::class);
         $this->app->bind(SaleItemSerialRepositoryInterface::class, EloquentSaleItemSerialRepository::class);
         $this->app->bind(EntryGuideArticleRepositoryInterface::class, EloquentEntryGuideArticleRepository::class);

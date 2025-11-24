@@ -28,7 +28,7 @@ class PurchaseDTO{
         $this->branch_id = $array['branch_id'];
         $this->supplier_id = $array['supplier_id'];
         $this->serie = $array['serie'];
-        $this->correlative = $array['correlative'];
+        $this->correlative = $array['correlative'] ?? '';
         $this->exchange_type = $array['exchange_type'];
         $this->methodpayment = $array['methodpayment'];
         $this->currency = $array['currency'];

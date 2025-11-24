@@ -2,6 +2,7 @@
 
 namespace App\Modules\Collections\Domain\Interfaces;
 
+use App\Modules\Collections\Domain\Entities\BulkCollection;
 use App\Modules\Collections\Domain\Entities\Collection;
 
 interface CollectionRepositoryInterface
@@ -12,4 +13,5 @@ interface CollectionRepositoryInterface
     public function findById(int $id): ?Collection;
     public function cancelCharge(int $id): void;
     public function saveCollectionCreditNote(Collection $collection): ?Collection;
+    public function saveBulkCollection(BulkCollection $collection, array $data): void;
 }

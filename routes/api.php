@@ -296,6 +296,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/collections-credits', [CollectionController::class, 'storeCollectionCreditNote']);
     Route::get('/collections/{id}', [CollectionController::class, 'showBySaleId']);
     Route::put('/collections/{id}', [CollectionController::class, 'cancelCharge']);
+    Route::post('/collections-bulk', [CollectionController::class, 'storeBulkCollection']);
 
     //dispatch Notes
     Route::get('dispatchNote', [DispatchNotesController::class, 'index']);

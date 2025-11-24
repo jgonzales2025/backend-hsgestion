@@ -12,6 +12,7 @@ class DetailPurchaseGuide
     private float $precio_costo;
     private float $descuento;
     private float $sub_total;
+    private float $total;
 
     public function __construct(
         ?int $id,
@@ -22,8 +23,9 @@ class DetailPurchaseGuide
         float $precio_costo,
         float $descuento,
         float $sub_total,
-    ){
-         
+        float $total,
+    ) {
+
         $this->id = $id;
         $this->article_id = $article_id;
         $this->purchase_id = $purchase_id;
@@ -32,7 +34,7 @@ class DetailPurchaseGuide
         $this->precio_costo = $precio_costo;
         $this->descuento = $descuento;
         $this->sub_total = $sub_total;
-    
+        $this->total = $total;
     }
     public function getId(): int|null
     {
@@ -67,7 +69,8 @@ class DetailPurchaseGuide
     {
         return $this->sub_total;
     }
-
-
-
+    public function getTotal(): float
+    {
+        return $this->total;
+    }
 }

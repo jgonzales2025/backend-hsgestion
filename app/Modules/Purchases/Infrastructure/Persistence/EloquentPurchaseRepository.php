@@ -8,6 +8,16 @@ use App\Modules\Purchases\Infrastructure\Models\EloquentPurchase;
 
 class EloquentPurchaseRepository implements PurchaseRepositoryInterface
 {
+    public function getLastDocumentNumber(): ?string
+    {
+        $purchase = EloquentPurchase::all()
+            ->sortByDesc('correlative')
+            ->first();
+
+        return $purchase?->correlative;
+    }
+
+
     public function findAll(): array
     {
         $eloquentpurchase = EloquentPurchase::with(['paymentMethod'])->get();
@@ -69,7 +79,6 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             igv: $eloquentpurchase->igv,
             total: $eloquentpurchase->total
         );
-
     }
     public function save(Purchase $purchase): ?Purchase
     {
@@ -155,7 +164,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             serie: $purchaseUpdtate->serie,
             correlative: $purchaseUpdtate->correlative,
             exchange_type: $purchaseUpdtate->exchange_type,
-             methodpaymentO: $purchaseUpdtate->paymentMethod->toDomain($purchaseUpdtate->paymentMethod),
+            methodpaymentO: $purchaseUpdtate->paymentMethod->toDomain($purchaseUpdtate->paymentMethod),
             currency: $purchaseUpdtate->currency,
             date: $purchaseUpdtate->date,
             date_ven: $purchaseUpdtate->date_ven,

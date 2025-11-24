@@ -30,9 +30,8 @@ class EntryGuideResource extends JsonResource{
             ,
             'customer'=> [
                 'id' => $this->resource->getCustomer()->getId(),
-                'name' => $this->resource->getCustomer()->getName(),
-            ]
-            ,
+                'name' => $this->resource->getCustomer()->getName()?? $this->resource->getCustomer()->getCompanyName(),
+            ],
             'ingress_reason'=> [
                 'id' => $this->resource->getIngressReason()->getId(),
                 'name' => $this->resource->getIngressReason()->getDescription(),

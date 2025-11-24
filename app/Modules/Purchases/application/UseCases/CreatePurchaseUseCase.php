@@ -2,6 +2,7 @@
 
 namespace App\Modules\Purchases\Application\UseCases;
 
+use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\PaymentMethod\Application\UseCases\FindByIdPaymentMethodUseCase;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
@@ -12,15 +13,24 @@ class CreatePurchaseUseCase
 {
     public function __construct(
         private readonly PurchaseRepositoryInterface $purchaseRepository,
-        private readonly PaymentMethodRepositoryInterface $paymentTypeRepository
-      )
-    {
-    }
+        private readonly PaymentMethodRepositoryInterface $paymentTypeRepository,
+
+    ) {}
 
     public function execute(PurchaseDTO $purchaseDTO): ?Purchase
     {
-       $metodoPago =  new FindByIdPaymentMethodUseCase($this->paymentTypeRepository);
-       $payment = $metodoPago->execute($purchaseDTO->methodpayment);
+        $lastDocumentNumber = $this->purchaseRepository->getLastDocumentNumber();
+
+        if ($lastDocumentNumber === null) {
+            $documentNumber = '00001';
+        } else {
+            $nextNumber = intval($lastDocumentNumber) + 1;
+            $documentNumber = str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+        }
+        $purchaseDTO->correlative = $documentNumber;
+
+        $metodoPago =  new FindByIdPaymentMethodUseCase($this->paymentTypeRepository);
+        $payment = $metodoPago->execute($purchaseDTO->methodpayment);
 
 
         $puchaseCreate = new Purchase(
@@ -47,6 +57,5 @@ class CreatePurchaseUseCase
             total: $purchaseDTO->total
         );
         return $this->purchaseRepository->save($puchaseCreate);
-
     }
 }

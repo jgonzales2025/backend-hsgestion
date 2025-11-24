@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('precio_costo', 8, 2);
             $table->decimal('descuento', 8, 2);
             $table->decimal('sub_total', 8, 2);
+            $table->decimal('total', 8, 4);
             $table->timestamps();
         });
     }

@@ -9,7 +9,7 @@ class ShoppingIncomeGuideResource extends JsonResource{
     public function toArray(Request $request): array{
         return [
             'purchase_id' => $this->resource->getPurchaseId(),
-             'entry_guide_id' => $this->getEntryGuideId(),
+             'entry_guide_id' => $this->resource->getEntryGuideId(),
         ];
     
 }

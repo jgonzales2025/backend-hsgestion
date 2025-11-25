@@ -238,7 +238,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 
     public function findAllSalesByCustomerId(int $customerId): ?array
     {
-        $sales = EloquentSale::all()->where('customer_id', $customerId)->whereIn('document_type_id', [1, 3])->where('payment_status', 0);
+        $sales = EloquentSale::all()->where('customer_id', $customerId)->whereIn('document_type_id', [1, 3])->where('payment_status', 0)->sortByDesc('created_at');
 
         if ($sales->isEmpty()) {
             return null;

@@ -65,10 +65,7 @@ Route::put('/roles/{id}', [RoleController::class, 'update']);
 
 Route::get('/usernames', [UserController::class, 'findAllUserName']);
 
-//visible Articulos
-Route::get('/visibleArticle/{id}', [VisibleArticleController::class, 'show']);
-Route::put('/visibleArticle/{id}', [VisibleArticleController::class, 'update']);
-Route::get('/visibleArticlelist/{id}', [VisibleArticleController::class, 'visibleBranch']);
+
 //recordType
 Route::get('/recordType', [RecordTypeController::class, 'index']);
 
@@ -242,6 +239,12 @@ Route::put('customer-portfolios/{id}', [CustomerPortfolioController::class, 'upd
 Route::get('logs-login', [LoginAttemptController::class, 'index']);
 
 Route::middleware(['auth:api', 'auth.custom'])->group(function () {
+
+    //visible Articulos
+    Route::get('/visibleArticle/{id}', [VisibleArticleController::class, 'show']);
+    Route::put('/visibleArticle/{id}', [VisibleArticleController::class, 'update']);
+    Route::get('/visibleArticlelist/{id}', [VisibleArticleController::class, 'visibleBranch']);
+
     //articles
     Route::get('articles', [ArticleController::class, 'index']);
     Route::post('articles-save', [ArticleController::class, 'store']);

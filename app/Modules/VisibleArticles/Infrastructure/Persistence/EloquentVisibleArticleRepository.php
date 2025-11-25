@@ -36,7 +36,7 @@ class EloquentVisibleArticleRepository implements VisibleArticleRepositoryInterf
     public function mostrar(int $id): array
     {
         $companyId = request()->get('company_id');
-
+        
         $visibleArticles = EloquentVisibleArticle::where('article_id', $id)
             ->where('company_id', $companyId)
             ->get();

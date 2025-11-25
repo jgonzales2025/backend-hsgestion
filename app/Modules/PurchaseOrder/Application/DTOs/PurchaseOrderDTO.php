@@ -10,7 +10,12 @@ class PurchaseOrderDTO
     public ?string $correlative;
     public string $date;
     public ?string $delivery_date;
-    public ?string $contact;
+    public ?string $due_date;
+    public ?int $days;
+    public int $currency_type_id;
+    public ?string $contact_name;
+    public ?string $contact_phone;
+    public int $payment_type_id;
     public ?string $order_number_supplier;
     public ?string $observations;
     public int $supplier_id;
@@ -27,7 +32,12 @@ class PurchaseOrderDTO
         $this->correlative = $data['correlative'] ?? null;
         $this->date = $data['date'];
         $this->delivery_date = $data['delivery_date'];
-        $this->contact = $data['contact'];
+        $this->due_date = $data['due_date'];
+        $this->days = $data['days'];
+        $this->currency_type_id = $data['currency_type_id'];
+        $this->contact_name = $data['contact_name'];
+        $this->contact_phone = $data['contact_phone'];
+        $this->payment_type_id = $data['payment_type_id'];
         $this->order_number_supplier = $data['order_number_supplier'] ?? null;
         $this->observations = $data['observations'] ?? null;
         $this->supplier_id = $data['supplier_id'];

@@ -4,6 +4,7 @@ namespace App\Modules\Collections\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\Collections\Application\DTOs\BulkCollectionDTO;
 use App\Modules\Collections\Application\DTOs\CollectionCreditNoteDTO;
 use App\Modules\Collections\Application\DTOs\CollectionDTO;
 use App\Modules\Collections\Application\UseCases\CancelChargeCollectionUseCase;
@@ -12,9 +13,12 @@ use App\Modules\Collections\Application\UseCases\CreateCollectionUseCase;
 use App\Modules\Collections\Application\UseCases\FindAllCollectionsUseCase;
 use App\Modules\Collections\Application\UseCases\FindByIdCollectionUseCase;
 use App\Modules\Collections\Application\UseCases\FindBySaleIdCollectionUseCase;
+use App\Modules\Collections\Application\UseCases\StoreBulkCollectionUseCase;
 use App\Modules\Collections\Domain\Interfaces\CollectionRepositoryInterface;
+use App\Modules\Collections\Infrastructure\Requests\StoreBulkCollectionRequest;
 use App\Modules\Collections\Infrastructure\Requests\StoreCollectionCreditNoteRequest;
 use App\Modules\Collections\Infrastructure\Requests\StoreCollectionRequest;
+use App\Modules\Collections\Infrastructure\Requests\StoreMasiveCollectionRequest;
 use App\Modules\Collections\Infrastructure\Resources\CollectionResource;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
@@ -148,5 +152,37 @@ class CollectionController extends Controller
         $transactionLogs->execute($transactionDTO);
 
         return response()->json(['message' => 'Cobranza anulada con exito'], 200);
+    }
+
+    public function storeBulkCollection(StoreBulkCollectionRequest $request): JsonResponse
+    {
+        $userId = request()->get('user_id');
+        $role = request()->get('role');
+        $companyId = request()->get('company_id');
+
+        $bulkCollectionDTO = new BulkCollectionDTO($request->validated());
+        $bulkCollectionUseCase = new StoreBulkCollectionUseCase($this->collectionRepository);
+        $bulkCollectionUseCase->execute($bulkCollectionDTO, $request->validated()['collections']);
+
+        $transactionLogs = new CreateTransactionLogUseCase($this->transactionLogRepository, $this->userRepository, $this->companyRepository, $this->documentTypeRepository, $this->branchRepository);
+        
+        foreach($request->validated()['collections'] as $collection){
+            $transactionDTO = new TransactionLogDTO([
+                'user_id' => $userId,
+                'role_name' => $role,
+                'description_log' => 'Cobranza masiva',
+                'action' => request()->method(),
+                'company_id' => $companyId,
+                'branch_id' => (int) substr($collection['serie'], -1),
+                'document_type_id' => $collection['sale_document_type_id'],
+                'serie' => $collection['serie'],
+                'correlative' => $collection['correlative'],
+                'ip_address' => request()->ip(),
+                'user_agent' => request()->userAgent(),
+            ]);
+            $transactionLogs->execute($transactionDTO); 
+        }
+        
+        return response()->json(['message' => 'Cobranza masiva guardada con exito'], 201);
     }
 }

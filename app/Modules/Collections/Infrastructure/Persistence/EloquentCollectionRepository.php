@@ -2,12 +2,12 @@
 
 namespace App\Modules\Collections\Infrastructure\Persistence;
 
+use App\Modules\Collections\Domain\Entities\BulkCollection;
 use App\Modules\Collections\Domain\Entities\Collection;
 use App\Modules\Collections\Domain\Interfaces\CollectionRepositoryInterface;
 use App\Modules\Collections\Infrastructure\Models\EloquentCollection;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class EloquentCollectionRepository implements CollectionRepositoryInterface
 {
@@ -103,6 +103,31 @@ class EloquentCollectionRepository implements CollectionRepositoryInterface
         $this->updateCreditNotePaymentStatus($eloquentCollection);
 
         return $this->mapToDomain($eloquentCollection);
+    }
+
+    public function saveBulkCollection(BulkCollection $collection, array $data): void
+    {
+        foreach ($data as $item) {
+            $eloquentCollection = EloquentCollection::create([
+                'company_id' => $collection->getCompanyId(),
+                'sale_id' => $item['sale_id'],
+                'sale_document_type_id' => $item['sale_document_type_id'],
+                'sale_serie' => $item['serie'],
+                'sale_correlative' => $item['correlative'],
+                'payment_method_id' => $collection->getPaymentMethodId(),
+                'payment_date' => $collection->getPaymentDate(),
+                'currency_type_id' => $collection->getCurrencyTypeId(),
+                'parallel_rate' => $collection->getParallelRate(),
+                'amount' => $item['amount'],
+                'bank_id' => $collection->getBankId(),
+                'operation_date' => $collection->getOperationDate(),
+                'operation_number' => $collection->getOperationNumber()
+            ]);
+            $eloquentCollection->refresh();
+
+            $this->updateSaleBalance($eloquentCollection);
+
+        }
     }
 
     private function mapToDomain(EloquentCollection $eloquentCollection): Collection

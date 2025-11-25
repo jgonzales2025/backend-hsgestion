@@ -289,6 +289,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/sales-credit-notes', [SaleController::class, 'storeCreditNote']);
     Route::put('/sales/{id}', [SaleController::class, 'update']);
     Route::put('/sales-credit-notes/{id}', [SaleController::class, 'updateCreditNote']);
+    Route::get('/sales/{id}/pdf', [SaleController::class, 'generatePdf']);
+
 
     // Ruta para cobranzas
     Route::get('/collections', [CollectionController::class, 'index']);
@@ -296,6 +298,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/collections-credits', [CollectionController::class, 'storeCollectionCreditNote']);
     Route::get('/collections/{id}', [CollectionController::class, 'showBySaleId']);
     Route::put('/collections/{id}', [CollectionController::class, 'cancelCharge']);
+    Route::post('/collections-bulk', [CollectionController::class, 'storeBulkCollection']);
 
     //dispatch Notes
     Route::get('dispatchNote', [DispatchNotesController::class, 'index']);
@@ -354,6 +357,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/purchase-orders', [PurchaseOrderController::class, 'store']);
     Route::get('/purchase-orders/{id}', [PurchaseOrderController::class, 'show']);
     Route::put('/purchase-orders/{id}', [PurchaseOrderController::class, 'update']);
+    Route::get('/purchase-orders/{id}/pdf', [PurchaseOrderController::class, 'generatePdf']);
 
     // Ruta para traer las series de un articulo
     Route::get('/entry-item-serial/{articleId}', [EntryItemSerialController::class, 'findSerialByArticleId']);

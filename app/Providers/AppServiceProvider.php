@@ -95,6 +95,8 @@ use App\Modules\PurchaseOrderArticle\Domain\Interfaces\PurchaseOrderArticleRepos
 use App\Modules\PurchaseOrderArticle\Infrastructure\Persistence\EloquentPurchaseOrderArticleRepository;
 use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 use App\Modules\Purchases\Infrastructure\Persistence\EloquentPurchaseRepository;
+use App\Modules\Purchases\Domain\Interface\GeneratepdfRepositoryInterface;
+use App\Modules\Purchases\Infrastructure\Persistence\DompdfAdapter;
 use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Persistence\EloquentSaleRepository;
@@ -195,6 +197,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
         $this->app->bind(DispatchArticleSerialRepositoryInterface::class, EloquentDispatchArticleSerialRepository::class);
         $this->app->bind(PurchaseRepositoryInterface::class, EloquentPurchaseRepository::class);
+        $this->app->bind(GeneratepdfRepositoryInterface::class, DompdfAdapter::class);
         $this->app->bind(ShoppingIncomeGuideRepositoryInterface::class, EloquentShoppingIncomeGuideRepository::class);
         $this->app->bind(DetailPurchaseGuideRepositoryInterface::class, EloquentDetailPurchaseGuideRepository::class);
         $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);

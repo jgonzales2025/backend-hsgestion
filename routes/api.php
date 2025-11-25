@@ -375,6 +375,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/purchases', [PurchaseController::class, 'store']);
     Route::get('/purchases/{id}', [PurchaseController::class, 'show']);
     Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
+    Route::get('/purchases-pdf/{id}', [PurchaseController::class, 'downloadPdf']);
 });
 
 Route::middleware('auth:api')->group(function () {

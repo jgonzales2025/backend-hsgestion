@@ -19,7 +19,9 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
 
     public function findAll(): array
     {
-        $eloquentpurchase = EloquentPurchase::with(['paymentMethod', 'branches', 'customers', 'currencyType'])->get();
+        $eloquentpurchase = EloquentPurchase::with(['paymentMethod', 'branches', 'customers', 'currencyType'])
+        ->orderByDesc('id')
+        ->get();
 
         return $eloquentpurchase->map(function ($purchase) {
             return new Purchase(

@@ -47,7 +47,7 @@ class PurchaseOrderResource extends JsonResource
                     'second_lastname' => $supplier->getSecondLastName(),
                 ]),
             ],
-            'status' => $this->resource->getStatus() == 0 ? 'Pendiente' : 'Entregado',
+            'status' => $this->resource->getStatus(),
             'observations' => $this->resource->getObservations(),
             'subtotal' => $this->resource->getSubtotal() ?? null,
             'igv' => $this->resource->getIgv() ?? null,

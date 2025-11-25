@@ -9,7 +9,7 @@ class ArticleSeeder extends Seeder
 {
     public function run(): void
     {
-       $articles =  [
+        $articles = [
             [
                 'cod_fab' => 'ART-001',
                 'description' => 'Monitor LED 24 pulgadas',
@@ -38,12 +38,11 @@ class ArticleSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
                 'venta' => true,
-                'sub_category_id'=>1,
-                'company_type_id'=>1,
-                'state_modify_article'=>0
-
+                'sub_category_id' => 1,
+                'company_type_id' => 1,
+                'state_modify_article' => 0
             ],
-               [
+            [
                 'cod_fab' => 'ART-002',
                 'description' => 'Lavadora',
                 'weight' => 3.5,
@@ -71,13 +70,108 @@ class ArticleSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
                 'venta' => true,
-                'sub_category_id'=>1,
-                'company_type_id'=>1,
-                'state_modify_article'=>0
-
+                'sub_category_id' => 1,
+                'company_type_id' => 1,
+                'state_modify_article' => 0
+            ],
+            [
+                'cod_fab' => 'ART-003',
+                'description' => 'Laptop HP Core i7 16GB RAM',
+                'weight' => 2.1,
+                'with_deduction' => false,
+                'series_enabled' => true,
+                'measurement_unit_id' => 1,
+                'brand_id' => 1,
+                'category_id' => 2,
+                'location' => 'A1-02',
+                'warranty' => '1 año',
+                'tariff_rate' => 18.00,
+                'igv_applicable' => true,
+                'plastic_bag_applicable' => false,
+                'min_stock' => 5,
+                'currency_type_id' => 1,
+                'purchase_price' => 1200.00,
+                'public_price' => 1440.00,
+                'distributor_price' => 1380.00,
+                'authorized_price' => 1320.00,
+                'public_price_percent' => 10.0,
+                'distributor_price_percent' => 5.0,
+                'authorized_price_percent' => 3.0,
+                'status' => 1,
+                'user_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+                'venta' => true,
+                'sub_category_id' => 1,
+                'company_type_id' => 1,
+                'state_modify_article' => 0
+            ],
+            [
+                'cod_fab' => 'ART-004',
+                'description' => 'Impresora Multifuncional Epson',
+                'weight' => 5.2,
+                'with_deduction' => false,
+                'series_enabled' => true,
+                'measurement_unit_id' => 1,
+                'brand_id' => 1,
+                'category_id' => 2,
+                'location' => 'B2-05',
+                'warranty' => '6 meses',
+                'tariff_rate' => 18.00,
+                'igv_applicable' => true,
+                'plastic_bag_applicable' => false,
+                'min_stock' => 8,
+                'currency_type_id' => 1,
+                'purchase_price' => 350.00,
+                'public_price' => 420.00,
+                'distributor_price' => 400.00,
+                'authorized_price' => 385.00,
+                'public_price_percent' => 10.0,
+                'distributor_price_percent' => 5.0,
+                'authorized_price_percent' => 3.0,
+                'status' => 1,
+                'user_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+                'venta' => true,
+                'sub_category_id' => 1,
+                'company_type_id' => 1,
+                'state_modify_article' => 0
+            ],
+            [
+                'cod_fab' => 'ART-005',
+                'description' => 'Refrigeradora Samsung 300L',
+                'weight' => 65.0,
+                'with_deduction' => false,
+                'series_enabled' => true,
+                'measurement_unit_id' => 1,
+                'brand_id' => 1,
+                'category_id' => 3,
+                'location' => 'C3-10',
+                'warranty' => '3 años',
+                'tariff_rate' => 18.00,
+                'igv_applicable' => true,
+                'plastic_bag_applicable' => false,
+                'min_stock' => 3,
+                'currency_type_id' => 1,
+                'purchase_price' => 800.00,
+                'public_price' => 960.00,
+                'distributor_price' => 920.00,
+                'authorized_price' => 880.00,
+                'public_price_percent' => 10.0,
+                'distributor_price_percent' => 5.0,
+                'authorized_price_percent' => 3.0,
+                'status' => 1,
+                'user_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+                'venta' => true,
+                'sub_category_id' => 1,
+                'company_type_id' => 1,
+                'state_modify_article' => 0
             ]
-            ];
-      DB::table('articles')->insert($articles);
+        ];
+        DB::table('articles')->insert($articles);
 
     }
 }

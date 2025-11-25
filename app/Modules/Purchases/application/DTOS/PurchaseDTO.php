@@ -36,7 +36,7 @@ class PurchaseDTO{
         $this->date_ven = $array['date_ven'];
         $this->days = $array['days'];
         $this->observation = $array['observation'] ?? '';
-        $this->detraccion = $array['detraccion'];
+        $this->detraccion = $array['detraccion'] ?? '';
         $this->fech_detraccion = $array['fech_detraccion'];
         $this->amount_detraccion = $array['amount_detraccion'];
         $this->is_detracion = $array['is_detracion'];

@@ -15,22 +15,22 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             ->first();
 
         return $purchase?->correlative;
-    } 
-    
+    }
+
     public function findAll(): array
     {
-        $eloquentpurchase = EloquentPurchase::with(['paymentMethod'])->get();
+        $eloquentpurchase = EloquentPurchase::with(['paymentMethod', 'branches', 'customers', 'currencyType'])->get();
 
         return $eloquentpurchase->map(function ($purchase) {
             return new Purchase(
                 id: $purchase->id,
-                branch_id: $purchase->branch_id,
-                supplier_id: $purchase->supplier_id,
+                branch: $purchase->branches->toDomain($purchase->branches),
+                supplier: $purchase->customers->toDomain($purchase->customers),
                 serie: $purchase->serie,
                 correlative: $purchase->correlative,
                 exchange_type: $purchase->exchange_type,
                 methodpaymentO: $purchase->paymentMethod->toDomain($purchase->paymentMethod),
-                currency: $purchase->currency,
+                currency: $purchase->currencyType->toDomain($purchase->currencyType),
                 date: $purchase->date,
                 date_ven: $purchase->date_ven,
                 days: $purchase->days,
@@ -50,20 +50,20 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
     }
     public function findById(int $id): ?Purchase
     {
-        $eloquentpurchase = EloquentPurchase::with(['paymentMethod'])->find($id);
+        $eloquentpurchase = EloquentPurchase::with(['paymentMethod', 'branches', 'customers', 'currencyType'])->find($id);
 
         if (!$eloquentpurchase) {
             return null;
         }
         return new Purchase(
             id: $eloquentpurchase->id,
-            branch_id: $eloquentpurchase->branch_id,
-            supplier_id: $eloquentpurchase->supplier_id,
+            branch: $eloquentpurchase->branches->toDomain($eloquentpurchase->branches),
+            supplier: $eloquentpurchase->customers->toDomain($eloquentpurchase->customers),
             serie: $eloquentpurchase->serie,
             correlative: $eloquentpurchase->correlative,
             exchange_type: $eloquentpurchase->exchange_type,
             methodpaymentO: $eloquentpurchase->paymentMethod->toDomain($eloquentpurchase->paymentMethod),
-            currency: $eloquentpurchase->currency,
+            currency: $eloquentpurchase->currencyType->toDomain($eloquentpurchase->currencyType),
             date: $eloquentpurchase->date,
             date_ven: $eloquentpurchase->date_ven,
             days: $eloquentpurchase->days,
@@ -82,13 +82,13 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
     public function save(Purchase $purchase): ?Purchase
     {
         $eloquentpurchase = EloquentPurchase::create([
-            'branch_id' => $purchase->getBranchId(),
-            'supplier_id' => $purchase->getSupplierId(),
+            'branch_id' => $purchase->getBranch()->getId(),
+            'supplier_id' => $purchase->getSupplier()->getId(),
             'serie' => $purchase->getSerie(),
             'correlative' => $purchase->getCorrelative(),
             'exchange_type' => $purchase->getExchangeType(),
             'methodpayment' => $purchase->getMethodpayment()->getId(),
-            'currency' => $purchase->getCurrency(),
+            'currency' => $purchase->getCurrency()->getId(),
             'date' => $purchase->getDate(),
             'date_ven' => $purchase->getDateVen(),
             'days' => $purchase->getDays(),
@@ -105,13 +105,13 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         ]);
         return new Purchase(
             id: $eloquentpurchase->id,
-            branch_id: $eloquentpurchase->branch_id,
-            supplier_id: $eloquentpurchase->supplier_id,
+            branch: $eloquentpurchase->branches->toDomain($eloquentpurchase->branches),
+            supplier: $eloquentpurchase->customers->toDomain($eloquentpurchase->customers),
             serie: $eloquentpurchase->serie,
             correlative: $eloquentpurchase->correlative,
             exchange_type: $eloquentpurchase->exchange_type,
             methodpaymentO: $eloquentpurchase->paymentMethod->toDomain($eloquentpurchase->paymentMethod),
-            currency: $eloquentpurchase->currency,
+            currency: $eloquentpurchase->currencyType->toDomain($eloquentpurchase->currencyType),
             date: $eloquentpurchase->date,
             date_ven: $eloquentpurchase->date_ven,
             days: $eloquentpurchase->days,
@@ -135,13 +135,13 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         }
 
         $purchaseUpdtate->update([
-            'branch_id' => $purchase->getBranchId(),
-            'supplier_id' => $purchase->getSupplierId(),
+            'branch_id' => $purchase->getBranch()->getId(),
+            'supplier_id' => $purchase->getSupplier()->getId(),
             'serie' => $purchase->getSerie(),
             'correlative' => $purchase->getCorrelative(),
             'exchange_type' => $purchase->getExchangeType(),
             'methodpayment' => $purchase->getMethodpayment()->getId(),
-            'currency' => $purchase->getCurrency(),
+            'currency' => $purchase->getCurrency()->getId(),
             'date' => $purchase->getDate(),
             'date_ven' => $purchase->getDateVen(),
             'days' => $purchase->getDays(),
@@ -158,13 +158,13 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         ]);
         return new Purchase(
             id: $purchaseUpdtate->id,
-            branch_id: $purchaseUpdtate->branch_id,
-            supplier_id: $purchaseUpdtate->supplier_id,
+            branch: $purchaseUpdtate->branches->toDomain($purchaseUpdtate->branches),
+            supplier: $purchaseUpdtate->customers->toDomain($purchaseUpdtate->customers),
             serie: $purchaseUpdtate->serie,
             correlative: $purchaseUpdtate->correlative,
             exchange_type: $purchaseUpdtate->exchange_type,
             methodpaymentO: $purchaseUpdtate->paymentMethod->toDomain($purchaseUpdtate->paymentMethod),
-            currency: $purchaseUpdtate->currency,
+            currency: $purchaseUpdtate->currencyType->toDomain($purchaseUpdtate->currencyType),
             date: $purchaseUpdtate->date,
             date_ven: $purchaseUpdtate->date_ven,
             days: $purchaseUpdtate->days,

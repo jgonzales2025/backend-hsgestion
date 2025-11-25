@@ -16,8 +16,8 @@ class VisibleArticleResource extends JsonResource
             'branch_id' => $this->resource->getBranch_id(),
             'article_id' => $this->resource->getArticle_id(),
             'user_id' => $this->resource->getUser_id(),
-             'branches' => EloquentBranch::where('id', $this->resource->getBranch_id())
-                    ->value('name'),
+            'branches' => EloquentBranch::where('id', $this->resource->getBranch_id())
+                ->value('name'),
             'status' => $this->resource->getStatus()
         ];
     }

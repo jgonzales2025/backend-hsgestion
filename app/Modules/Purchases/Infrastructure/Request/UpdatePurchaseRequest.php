@@ -20,7 +20,7 @@ class UpdatePurchaseRequest extends FormRequest
             'date_ven' => 'required|string',
             'days' => 'required|integer',
             'observation' => 'nullable|string',
-            'detraccion' => 'required|numeric',
+            'detraccion' => 'nullable|string',
             'fech_detraccion' => 'nullable|string',
             'amount_detraccion' => 'required|numeric',
             'is_detracion' => 'required|boolean',

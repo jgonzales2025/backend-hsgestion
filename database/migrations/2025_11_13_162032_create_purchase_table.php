@@ -24,7 +24,7 @@ return new class extends Migration
             $table->date('date_ven');
             $table->integer('days');
             $table->string('observation');
-            $table->float('detraccion');
+            $table->string('detraccion');
             $table->date('fech_detraccion');
             $table->float('amount_detraccion');
             $table->boolean('is_detracion');

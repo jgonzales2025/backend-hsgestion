@@ -33,6 +33,7 @@ class EloquentVisibleArticleRepository implements VisibleArticleRepositoryInterf
             'status' => $visibleArticle->getStatus()
         ]);
     }
+
     public function mostrar(int $id): array
     {
         $companyId = request()->get('company_id');
@@ -40,7 +41,9 @@ class EloquentVisibleArticleRepository implements VisibleArticleRepositoryInterf
         $visibleArticles = EloquentVisibleArticle::where('article_id', $id)
             ->where('company_id', $companyId)
             ->get();
-
+       if($visibleArticles->isEmpty()){
+            return ['message' => 'No se encontraron artículos visibles para este artículo.'];
+       }
         return $visibleArticles->map(function ($visible) {
             return new VisibleArticle(
                 id: $visible->id,

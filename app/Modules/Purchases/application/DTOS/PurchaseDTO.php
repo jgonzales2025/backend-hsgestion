@@ -3,13 +3,12 @@
 namespace App\Modules\Purchases\Application\DTOS;
 
 class PurchaseDTO{
-    public int $company_id;
     public int $branch_id;
     public int $supplier_id;
     public string $serie;
     public string $correlative;
     public  $exchange_type;
-    public string $methodpayment;
+    public int $methodpayment;
     public  $currency;
     public string $date;
     public string $date_ven;
@@ -26,11 +25,10 @@ class PurchaseDTO{
     public  $total;
    
     public function __construct(array $array){
-        $this->company_id = $array['company_id'];
         $this->branch_id = $array['branch_id'];
         $this->supplier_id = $array['supplier_id'];
         $this->serie = $array['serie'];
-        $this->correlative = $array['correlative'];
+        $this->correlative = $array['correlative'] ?? '';
         $this->exchange_type = $array['exchange_type'];
         $this->methodpayment = $array['methodpayment'];
         $this->currency = $array['currency'];

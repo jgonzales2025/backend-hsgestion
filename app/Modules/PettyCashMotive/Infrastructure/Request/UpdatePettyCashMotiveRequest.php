@@ -10,11 +10,11 @@ class UpdatePettyCashMotiveRequest extends FormRequest
 {
     public function prepareForValidation(): void
     {
-        $companyId = request()->get('company_id');
 
+        $companyId = request()->get('company_id');
         $this->merge([
             'user_id' => auth('api')->id(),
-            'company_type_id' => $companyId,
+            'company_id' => $companyId,
         ]);
     }
 
@@ -23,12 +23,16 @@ class UpdatePettyCashMotiveRequest extends FormRequest
         return [
             'company_id' => 'nullable|integer',
             'description' => 'required|string',
-            'receipt_type' => 'required|integer',
+            'receipt_type' => 'required|integer|in:18,19',
             'user_id' => 'nullable|integer',
-            'date' => 'nullable|string',
-            'user_mod' => 'nullable|integer',
-            'date_mod' => 'nullable|string',
-
         ];
     }
-}   
+    public function messages(): array
+    {
+        return [
+            'description.required' => 'El campo descripción es requerido',
+            'receipt_type.required' => 'El campo tipo de comprobante es requerido',
+            'receipt_type.in' => 'El campo tipo de comprobante debe ser 18 o 19',
+        ];
+    }
+}

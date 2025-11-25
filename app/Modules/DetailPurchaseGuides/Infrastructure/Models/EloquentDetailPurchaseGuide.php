@@ -4,7 +4,8 @@ namespace App\Modules\DetailPurchaseGuides\Infrastructure\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EloquentDetailPurchaseGuide extends Model{
+class EloquentDetailPurchaseGuide extends Model
+{
     protected $table = 'detail_purchase_guides';
 
 
@@ -16,9 +17,8 @@ class EloquentDetailPurchaseGuide extends Model{
         'precio_costo',
         'descuento',
         'sub_total',
+        'total',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
-
-
 }

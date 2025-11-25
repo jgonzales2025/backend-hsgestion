@@ -2,16 +2,18 @@
 
 namespace App\Modules\Purchases\Domain\Entities;
 
+use App\Modules\PaymentMethod\Domain\Entities\PaymentMethod;
+
 class Purchase
 {
     private ?int $id;
-    private int $company_id;
     private int $branch_id;
     private int $supplier_id;
     private string $serie;
     private string $correlative;
     private float $exchange_type;
-    private string $methodpayment;
+    // private string $methodpayment;
+    private ?PaymentMethod $methodpaymentO;
     private float $currency;
     private string $date;
     private string $date_ven;
@@ -29,13 +31,12 @@ class Purchase
 
     public function __construct(
         ?int $id,
-        int $company_id,
         int $branch_id,
         int $supplier_id,
         string $serie,
         string $correlative,
         float $exchange_type,
-        string $methodpayment,
+        ?PaymentMethod $methodpaymentO,
         float $currency,
         string $date,
         string $date_ven,
@@ -52,13 +53,12 @@ class Purchase
         float $total
     ) {
         $this->id = $id;
-        $this->company_id = $company_id;
         $this->branch_id = $branch_id;
         $this->supplier_id = $supplier_id;
         $this->serie = $serie;
         $this->correlative = $correlative;
         $this->exchange_type = $exchange_type;
-        $this->methodpayment = $methodpayment;
+        $this->methodpaymentO = $methodpaymentO;
         $this->currency = $currency;
         $this->date = $date;
         $this->date_ven = $date_ven;
@@ -78,10 +78,6 @@ class Purchase
     public function getId(): int|null
     {
         return $this->id;
-    }
-    public function getCompanyId(): int
-    {
-        return $this->company_id;
     }
     public function getBranchId(): int
     {
@@ -103,9 +99,9 @@ class Purchase
     {
         return $this->exchange_type;
     }
-    public function getMethodpayment(): string
+    public function getMethodpayment(): PaymentMethod | null
     {
-        return $this->methodpayment;
+        return $this->methodpaymentO;
     }
     public function getCurrency(): float
     {

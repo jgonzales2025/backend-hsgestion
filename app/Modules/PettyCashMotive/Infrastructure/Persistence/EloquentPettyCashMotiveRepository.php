@@ -14,11 +14,8 @@ class EloquentPettyCashMotiveRepository implements PettyCashMotiveInterfaceRepos
         $eloquentPettyCashMotive = EloquentPettyCashMotive::create([
             'company_id' => $pettyCashMotive->getCompanyId(),
             'description' => $pettyCashMotive->getDescription(),
-            'receipt_type' => $pettyCashMotive->getReceiptType(),
+            'receipt_type' => $pettyCashMotive->getReceiptType()->getId(),
             'user_id' => $pettyCashMotive->getUserId(),
-            'date' => $pettyCashMotive->getDate(),
-            'user_mod' => $pettyCashMotive->getUserMod(),
-            'date_mod' => $pettyCashMotive->getDateMod(),
             'status' => $pettyCashMotive->getStatus(),
         ]);
 
@@ -26,14 +23,10 @@ class EloquentPettyCashMotiveRepository implements PettyCashMotiveInterfaceRepos
             id: $eloquentPettyCashMotive->id,
             company_id: $eloquentPettyCashMotive->company_id,
             description: $eloquentPettyCashMotive->description,
-            receipt_type: $eloquentPettyCashMotive->receipt_type,
+            receipt_type: $eloquentPettyCashMotive->documentType?->toDomain($eloquentPettyCashMotive->documentType),
             user_id: $eloquentPettyCashMotive->user_id,
-            date: $eloquentPettyCashMotive->date,
-            user_mod: $eloquentPettyCashMotive->user_mod,
-            date_mod: $eloquentPettyCashMotive->date_mod,
             status: $eloquentPettyCashMotive->status,
         );
-
     }
     public function update(?PettyCashMotive $pettyCashMotive): ?PettyCashMotive
     {
@@ -44,48 +37,40 @@ class EloquentPettyCashMotiveRepository implements PettyCashMotiveInterfaceRepos
         $eloquentPettyCashMotive->update([
             'company_id' => $pettyCashMotive->getCompanyId(),
             'description' => $pettyCashMotive->getDescription(),
-            'receipt_type' => $pettyCashMotive->getReceiptType(),
+            'receipt_type' => $pettyCashMotive->getReceiptType()->getId(),
             'user_id' => $pettyCashMotive->getUserId(),
-            'date' => $pettyCashMotive->getDate(),
-            'user_mod' => $pettyCashMotive->getUserMod(),
-            'date_mod' => $pettyCashMotive->getDateMod(),
             'status' => $pettyCashMotive->getStatus(),
         ]);
         return new PettyCashMotive(
             id: $eloquentPettyCashMotive->id,
             company_id: $eloquentPettyCashMotive->company_id,
             description: $eloquentPettyCashMotive->description,
-            receipt_type: $eloquentPettyCashMotive->receipt_type,
+            receipt_type: $eloquentPettyCashMotive->documentType?->toDomain($eloquentPettyCashMotive->documentType),
             user_id: $eloquentPettyCashMotive->user_id,
-            date: $eloquentPettyCashMotive->date,
-            user_mod: $eloquentPettyCashMotive->user_mod,
-            date_mod: $eloquentPettyCashMotive->date_mod,
             status: $eloquentPettyCashMotive->status,
         );
     }
     public function findAll(?string $receipt_type): array
     {
-        $eloquentPettyCashMotive = EloquentPettyCashMotive::query()
+        $eloquentPettyCashMotive = EloquentPettyCashMotive::with(['documentType'])
             ->when($receipt_type, fn($q) => $q->where('receipt_type', $receipt_type))
             ->get();
+
         return $eloquentPettyCashMotive->map(function ($eloquentPettyCashMotive) {
 
             return new PettyCashMotive(
                 id: $eloquentPettyCashMotive->id,
                 company_id: $eloquentPettyCashMotive->company_id,
                 description: $eloquentPettyCashMotive->description,
-                receipt_type: $eloquentPettyCashMotive->receipt_type,
+                receipt_type: $eloquentPettyCashMotive->documentType?->toDomain($eloquentPettyCashMotive->documentType),
                 user_id: $eloquentPettyCashMotive->user_id,
-                date: $eloquentPettyCashMotive->date,
-                user_mod: $eloquentPettyCashMotive->user_mod,
-                date_mod: $eloquentPettyCashMotive->date_mod,
                 status: $eloquentPettyCashMotive->status,
             );
         })->toArray();
     }
     public function findById(int $id): ?PettyCashMotive
     {
-        $eloquentPettyCashMotive = EloquentPettyCashMotive::find($id);
+        $eloquentPettyCashMotive = EloquentPettyCashMotive::with(['documentType'])->find($id);
         if (!$eloquentPettyCashMotive) {
             return null;
         }
@@ -93,13 +78,9 @@ class EloquentPettyCashMotiveRepository implements PettyCashMotiveInterfaceRepos
             id: $eloquentPettyCashMotive->id,
             company_id: $eloquentPettyCashMotive->company_id,
             description: $eloquentPettyCashMotive->description,
-            receipt_type: $eloquentPettyCashMotive->receipt_type,
+            receipt_type: $eloquentPettyCashMotive->documentType?->toDomain($eloquentPettyCashMotive->documentType),
             user_id: $eloquentPettyCashMotive->user_id,
-            date: $eloquentPettyCashMotive->date,
-            user_mod: $eloquentPettyCashMotive->user_mod,
-            date_mod: $eloquentPettyCashMotive->date_mod,
             status: $eloquentPettyCashMotive->status,
         );
     }
-
 }

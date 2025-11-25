@@ -23,7 +23,20 @@ class EntryGuideResource extends JsonResource{
             'reference_correlative' => $this->resource->getReferenceCorrelative(),
 
             'status' => $this->resource->getStatus(),
-            
+            'branch'=> [
+                'id' => $this->resource->getBranch()->getId(),
+                'name' => $this->resource->getBranch()->getName(),
+            ]
+            ,
+            'customer'=> [
+                'id' => $this->resource->getCustomer()->getId(),
+                'name' => $this->resource->getCustomer()->getName()?? $this->resource->getCustomer()->getCompanyName(),
+            ],
+            'ingress_reason'=> [
+                'id' => $this->resource->getIngressReason()->getId(),
+                'name' => $this->resource->getIngressReason()->getDescription(),
+                'status' =>( $this->resource->getIngressReason()->getStatus()) ? 'Activo' : 'Inactivo',
+            ] 
         ];
     }
 }

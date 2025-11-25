@@ -484,4 +484,47 @@ class SaleController extends Controller
         return response()->json(array_values($creditNotes), 200);
     }
 
+    public function generatePdf(int $id)
+    {
+        $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
+        $sale = $saleUseCase->execute($id);
+
+        if (!$sale) {
+            return response()->json(['message' => 'Venta no encontrada'], 404);
+        }
+
+        $saleArticles = $this->saleArticleRepository->findBySaleId($sale->getId());
+
+        // Generate QR code data (SUNAT format)
+        $qrData = sprintf(
+            "%s|%s|%s|%s|%s|%s|%s|%s|%s",
+            $sale->getCompany()->getRuc(),
+            str_pad($sale->getDocumentType()->getCodSunat(), 2, '0', STR_PAD_LEFT),
+            $sale->getSerie(),
+            $sale->getDocumentNumber(),
+            number_format($sale->getIgv(), 2, '.', ''),
+            number_format($sale->getTotal(), 2, '.', ''),
+            $sale->getDate(),
+            $sale->getCustomer()->getCustomerDocumentTypeId(),
+            $sale->getCustomer()->getDocumentNumber()
+        );
+
+        // Generate QR code as base64 image using GD backend
+        $renderer = new \BaconQrCode\Renderer\ImageRenderer(
+            new \BaconQrCode\Renderer\RendererStyle\RendererStyle(150, 1),
+            new \BaconQrCode\Renderer\Image\SvgImageBackEnd()
+        );
+        $writer = new \BaconQrCode\Writer($renderer);
+        $qrCode = base64_encode($writer->writeString($qrData));
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('sale', [
+            'sale' => $sale,
+            'saleArticles' => $saleArticles,
+            'qrCode' => $qrCode
+        ]);
+
+        $documentTypeName = $sale->getDocumentType()->getDescription();
+        return $pdf->stream($documentTypeName . '_' . $sale->getSerie() . '-' . $sale->getDocumentNumber() . '.pdf');
+    }
+
 }

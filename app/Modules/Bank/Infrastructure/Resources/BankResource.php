@@ -17,6 +17,7 @@ class BankResource extends JsonResource
             'currencyType' => [
                 'id' => $this->resource->getCurrencyType()->getId(),
                 'name' => $this->resource->getCurrencyType()->getName(),
+                'commercial_symbol' => $this->resource->getCurrencyType()->getCommercialSymbol(),
             ],
             'user' => [
                 'id' => $this->resource->getUser()->getId(),

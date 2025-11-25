@@ -8,20 +8,29 @@ use App\Modules\Purchases\Infrastructure\Models\EloquentPurchase;
 
 class EloquentPurchaseRepository implements PurchaseRepositoryInterface
 {
+    public function getLastDocumentNumber(): ?string
+    {
+        $purchase = EloquentPurchase::all()
+            ->sortByDesc('correlative')
+            ->first();
+
+        return $purchase?->correlative;
+    }
+
+
     public function findAll(): array
     {
-        $eloquentpurchase = EloquentPurchase::all();
+        $eloquentpurchase = EloquentPurchase::with(['paymentMethod'])->get();
 
         return $eloquentpurchase->map(function ($purchase) {
             return new Purchase(
                 id: $purchase->id,
-                company_id: $purchase->company_id,
                 branch_id: $purchase->branch_id,
                 supplier_id: $purchase->supplier_id,
                 serie: $purchase->serie,
                 correlative: $purchase->correlative,
                 exchange_type: $purchase->exchange_type,
-                methodpayment: $purchase->methodpayment,
+                methodpaymentO: $purchase->paymentMethod->toDomain($purchase->paymentMethod),
                 currency: $purchase->currency,
                 date: $purchase->date,
                 date_ven: $purchase->date_ven,
@@ -42,20 +51,19 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
     }
     public function findById(int $id): ?Purchase
     {
-        $eloquentpurchase = EloquentPurchase::find($id);
+        $eloquentpurchase = EloquentPurchase::with(['paymentMethod'])->find($id);
 
         if (!$eloquentpurchase) {
             return null;
         }
         return new Purchase(
             id: $eloquentpurchase->id,
-            company_id: $eloquentpurchase->company_id,
             branch_id: $eloquentpurchase->branch_id,
             supplier_id: $eloquentpurchase->supplier_id,
             serie: $eloquentpurchase->serie,
             correlative: $eloquentpurchase->correlative,
             exchange_type: $eloquentpurchase->exchange_type,
-            methodpayment: $eloquentpurchase->methodpayment,
+            methodpaymentO: $eloquentpurchase->paymentMethod->toDomain($eloquentpurchase->paymentMethod),
             currency: $eloquentpurchase->currency,
             date: $eloquentpurchase->date,
             date_ven: $eloquentpurchase->date_ven,
@@ -71,18 +79,16 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             igv: $eloquentpurchase->igv,
             total: $eloquentpurchase->total
         );
-
     }
     public function save(Purchase $purchase): ?Purchase
     {
         $eloquentpurchase = EloquentPurchase::create([
-            'company_id' => $purchase->getCompanyId(),
             'branch_id' => $purchase->getBranchId(),
             'supplier_id' => $purchase->getSupplierId(),
             'serie' => $purchase->getSerie(),
             'correlative' => $purchase->getCorrelative(),
             'exchange_type' => $purchase->getExchangeType(),
-            'methodpayment' => $purchase->getMethodpayment(),
+            'methodpayment' => $purchase->getMethodpayment()->getId(),
             'currency' => $purchase->getCurrency(),
             'date' => $purchase->getDate(),
             'date_ven' => $purchase->getDateVen(),
@@ -100,13 +106,12 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         ]);
         return new Purchase(
             id: $eloquentpurchase->id,
-            company_id: $eloquentpurchase->company_id,
             branch_id: $eloquentpurchase->branch_id,
             supplier_id: $eloquentpurchase->supplier_id,
             serie: $eloquentpurchase->serie,
             correlative: $eloquentpurchase->correlative,
             exchange_type: $eloquentpurchase->exchange_type,
-            methodpayment: $eloquentpurchase->methodpayment,
+            methodpaymentO: $eloquentpurchase->paymentMethod->toDomain($eloquentpurchase->paymentMethod),
             currency: $eloquentpurchase->currency,
             date: $eloquentpurchase->date,
             date_ven: $eloquentpurchase->date_ven,
@@ -131,13 +136,12 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         }
 
         $purchaseUpdtate->update([
-            'company_id' => $purchase->getCompanyId(),
             'branch_id' => $purchase->getBranchId(),
             'supplier_id' => $purchase->getSupplierId(),
             'serie' => $purchase->getSerie(),
             'correlative' => $purchase->getCorrelative(),
             'exchange_type' => $purchase->getExchangeType(),
-            'methodpayment' => $purchase->getMethodpayment(),
+            'methodpayment' => $purchase->getMethodpayment()->getId(),
             'currency' => $purchase->getCurrency(),
             'date' => $purchase->getDate(),
             'date_ven' => $purchase->getDateVen(),
@@ -155,13 +159,12 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         ]);
         return new Purchase(
             id: $purchaseUpdtate->id,
-            company_id: $purchaseUpdtate->company_id,
             branch_id: $purchaseUpdtate->branch_id,
             supplier_id: $purchaseUpdtate->supplier_id,
             serie: $purchaseUpdtate->serie,
             correlative: $purchaseUpdtate->correlative,
             exchange_type: $purchaseUpdtate->exchange_type,
-            methodpayment: $purchaseUpdtate->methodpayment,
+            methodpaymentO: $purchaseUpdtate->paymentMethod->toDomain($purchaseUpdtate->paymentMethod),
             currency: $purchaseUpdtate->currency,
             date: $purchaseUpdtate->date,
             date_ven: $purchaseUpdtate->date_ven,

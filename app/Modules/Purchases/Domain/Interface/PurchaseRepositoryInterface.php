@@ -10,4 +10,5 @@ interface PurchaseRepositoryInterface{
     public function save(Purchase $purchase):?Purchase;
     public function update(Purchase $purchase):?Purchase;
 
+
 }

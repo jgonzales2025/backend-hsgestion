@@ -9,5 +9,6 @@ interface ShoppingIncomeGuideRepositoryInterface
     public function findAll(): array;
     public function findById(int $id):array;
     public function save(ShoppingIncomeGuide $shoppingIncomeGuide):?ShoppingIncomeGuide;
+   public function deletedBy(int $id):void;
 
 }

@@ -21,9 +21,9 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
                 precio_costo: $item->precio_costo,
                 descuento: $item->descuento,
                 sub_total: $item->sub_total,
+                total: $item->total,
             );
         })->toArray();
-
     }
     public function findById(int $id): array
     {
@@ -32,7 +32,7 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
             return [];
         }
 
- return $eloquentDetailPurchaseGuide->map(function ($item) {
+        return $eloquentDetailPurchaseGuide->map(function ($item) {
             return new DetailPurchaseGuide(
                 id: $item->id,
                 article_id: $item->article_id,
@@ -42,9 +42,9 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
                 precio_costo: $item->precio_costo,
                 descuento: $item->descuento,
                 sub_total: $item->sub_total,
+                total: $item->total,
             );
         })->toArray();
-
     }
     public function save(DetailPurchaseGuide $detailPurchaseGuide): ?DetailPurchaseGuide
     {
@@ -56,6 +56,7 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
             'precio_costo' => $detailPurchaseGuide->getPrecioCosto(),
             'descuento' => $detailPurchaseGuide->getDescuento(),
             'sub_total' => $detailPurchaseGuide->getSubTotal(),
+            'total' => $detailPurchaseGuide->getTotal(),
         ]);
         return new DetailPurchaseGuide(
             id: $eloquentDetailPurchaseGuide->id,
@@ -66,6 +67,11 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
             precio_costo: $eloquentDetailPurchaseGuide->precio_costo,
             descuento: $eloquentDetailPurchaseGuide->descuento,
             sub_total: $eloquentDetailPurchaseGuide->sub_total,
+            total: $eloquentDetailPurchaseGuide->total,
         );
+    }
+    public function deletedBy(int $id): void
+    {
+        EloquentDetailPurchaseGuide::where('purchase_id', $id)->delete();
     }
 }

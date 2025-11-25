@@ -22,6 +22,8 @@ use App\Modules\EntryGuides\Infrastructure\Resource\EntryGuideResource;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\EntryGuideArticle\Domain\Interface\EntryGuideArticleRepositoryInterface;
 use App\Modules\EntryGuideArticle\Infrastructure\Resource\EntryGuideArticleResource;
+use App\Modules\EntryGuides\Application\UseCases\GeneratePDF;
+use App\Modules\EntryGuides\Domain\Interfaces\EntryGuidePDF;
 use App\Modules\EntryItemSerial\Application\DTOS\EntryItemSerialDTO;
 use App\Modules\EntryItemSerial\Infrastructure\Resource\EntryItemSerialResource;
 use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
@@ -32,7 +34,8 @@ use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterfa
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ControllerEntryGuide extends Controller
 {
@@ -52,10 +55,43 @@ class ControllerEntryGuide extends Controller
         private readonly DocumentTypeRepositoryInterface     $documentTypeRepository,
     ) {}
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+
+        $serie = $request->query('serie');
+        $correlativo = $request->query('correlativo');
+
+
+
         $entryGuideUseCase = new FindAllEntryGuideUseCase($this->entryGuideRepositoryInterface);
-        $entryGuides = $entryGuideUseCase->execute();
+        $entryGuides = $entryGuideUseCase->execute($serie, $correlativo);
+
+        $result = [];
+
+        foreach ($entryGuides as $entryGuide) {
+            $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
+            $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
+
+            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle) {
+                $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
+                return $article;
+            }, $articles);
+
+            $response = (new EntryGuideResource($entryGuide))->resolve();
+            $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
+            $result[] = $response;
+        }
+
+        return response()->json($result, 200);
+    }
+
+    public function indexC(Request $request): JsonResponse
+    {
+
+        $serie = $request->query('serie');
+        $correlativo = $request->query('correlativo');
+
+        $entryGuides = $this->entryGuideRepositoryInterface->findByCorrelative($correlativo);
 
         $result = [];
 
@@ -221,5 +257,85 @@ class ControllerEntryGuide extends Controller
         ]);
 
         $transactionLogs->execute($transactionDTO);
+    }
+
+    public function validateSameCustomer(Request $request): JsonResponse
+    {
+        $ids = $request->input('ids');
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'Debe enviar un arreglo de IDs válido'], 400);
+        }
+
+        $ids = array_map('intval', $ids);
+
+        $isValid = $this->entryGuideRepositoryInterface->allBelongToSameCustomer($ids);
+
+        if (!$isValid) {
+            return response()->json(['message' => 'Todos los documentos deben pertenecer al mismo proveedor'], 422);
+        }
+
+        $entryGuides = $this->entryGuideRepositoryInterface->findByIds($ids);
+
+        $customerHeader = null;
+        foreach ($entryGuides as $entryGuide) {
+            if ($customerHeader === null) {
+                $customerHeader = [
+                    'id' => $entryGuide->getCustomer()?->getId(),
+                    'name' => $entryGuide->getCustomer()?->getName() ?? $entryGuide->getCustomer()?->getCompanyName() . " " . $entryGuide->getCustomer()?->getLastname() . ' ' . $entryGuide->getCustomer()?->getSecondLastname() . ' / ' . $entryGuide->getCustomer()?->getDocumentNumber() . ' / ' . (
+                        collect($entryGuide->getCustomer()?->getAddresses())
+                        ->first()
+                        ?->getAddress()
+                        ?: 'no hay direccion'
+                    )
+
+                ];
+            }
+            $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
+
+            foreach ($articles as $article) {
+                $key = $article->getArticle()->getId();
+                if (!isset($aggregated[$key])) {
+                    $aggregated[$key] = [
+                        'article_id' => $key,
+                        'description' => $article->getDescription(),
+                        'quantity' => $article->getQuantity(),
+                        'cod_fab' => $article->getArticle()->getCodFab(),
+                    ];
+                } else {
+                    $aggregated[$key]['quantity'] += $article->getQuantity();
+                }
+            }
+        }
+
+        return response()->json([
+            'customer' => $customerHeader,
+            'articles' => array_values($aggregated)
+        ], 200);
+    }
+
+    public function downloadPdf($id)
+    {
+        try {
+            $useCase = new GeneratePDF(
+                $this->entryGuideRepositoryInterface,
+                app(EntryGuidePDF::class)
+            );
+            $path = $useCase->execute((int) $id);
+
+            $fullPath = storage_path('app/public/' . $path);
+
+            if (!Storage::disk('public')->exists($path)) {
+                return response()->json(['message' => 'PDF no encontrado'], 404);
+            }
+
+            return response()->download(
+                $fullPath,
+                basename($path),
+                ['Content-Type' => 'application/pdf']
+            );
+        } catch (\Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

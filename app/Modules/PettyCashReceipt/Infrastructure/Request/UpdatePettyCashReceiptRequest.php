@@ -26,7 +26,7 @@ class UpdatePettyCashReceiptRequest extends FormRequest
             'delivered_to' => 'required|string',
             'reason_code' => 'required|integer',
             'currency_type' => 'required|integer',
-            'amount' => 'required|integer',
+            'amount' => 'required|numeric',
             'observation' => 'nullable|string',
             'status' => 'nullable|integer',
             'created_by' => 'nullable|integer',

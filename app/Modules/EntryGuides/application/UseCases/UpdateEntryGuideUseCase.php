@@ -50,7 +50,7 @@ class UpdateEntryGuideUseCase{
             ingressReason: $ingressReason,
             reference_po_serie: $entryGuideDTO->reference_po_serie ?? null,
             reference_po_correlative: $entryGuideDTO->reference_po_correlative ?? null,
-            status: $entryGuideDTO->status,
+            status: null,
         );
         return $this->entryGuideRepositoryInterface->update($entryGuide);
     }

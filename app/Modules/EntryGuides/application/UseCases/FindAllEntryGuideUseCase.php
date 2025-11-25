@@ -10,7 +10,7 @@ class FindAllEntryGuideUseCase{
      public function __construct(private readonly EntryGuideRepositoryInterface $entryGuideRepositoryInterface){}
     
 
-     public function execute(){
-        return $this->entryGuideRepositoryInterface->findAll();
+     public function execute(?string $serie,?string $correlativo){
+        return $this->entryGuideRepositoryInterface->findAll($serie, $correlativo);
      }
     }

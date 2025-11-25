@@ -14,6 +14,7 @@ class UpdateGuideRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'company_id' => 'required|integer|exists:companies,id',
             'branch_id' => 'required|integer|exists:branches,id',
             'user_id' => 'required|integer|exists:users,id',
             'date' => 'string',
@@ -22,7 +23,7 @@ class UpdateGuideRequest extends FormRequest
             'ingress_reason_id' => 'required|integer|exists:ingress_reasons,id',
             'reference_serie' => 'nullable|string',
             'reference_correlative' => 'nullable|string',
-            'entry_guide_articles'=> 'required|array|min:1',
+            'entry_guide_articles' => 'required|array|min:1',
             'entry_guide_articles.*.article_id' => 'required|integer|exists:articles,id',
             'entry_guide_articles.*.description' => 'required|string',
             'entry_guide_articles.*.quantity' => 'required|numeric',
@@ -86,6 +87,5 @@ class UpdateGuideRequest extends FormRequest
                 'Hay números de serie duplicados en la guía de ingreso.'
             );
         }
-
     }
 }

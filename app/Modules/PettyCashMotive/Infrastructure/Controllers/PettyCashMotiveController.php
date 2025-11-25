@@ -3,6 +3,7 @@
 namespace App\Modules\PettyCashMotive\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PettyCashMotive\Application\DTOS\PettyCashMotiveDTO;
 use App\Modules\PettyCashMotive\Application\UseCases\CreatePettyCashMotive;
 use App\Modules\PettyCashMotive\Application\UseCases\FindAllPettyCashMotive;
@@ -16,7 +17,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PettyCashMotiveController extends Controller{
-    public function __construct(private readonly PettyCashMotiveInterfaceRepository $pettyCashMotiveInterfaceRepository){}
+    public function __construct(private readonly PettyCashMotiveInterfaceRepository $pettyCashMotiveInterfaceRepository,
+                                private readonly DocumentTypeRepositoryInterface $documentTypeInterfaceRepository){}
 
     public function index(Request $request):array{
 
@@ -31,7 +33,7 @@ class PettyCashMotiveController extends Controller{
     public function store(CreatePettyCashMotiveRequest $request):JsonResponse
        {
         $pettyCashMotiveDTO = new PettyCashMotiveDTO($request->validated());
-        $createPettyCashMotive = new CreatePettyCashMotive($this->pettyCashMotiveInterfaceRepository);
+        $createPettyCashMotive = new CreatePettyCashMotive($this->pettyCashMotiveInterfaceRepository,$this->documentTypeInterfaceRepository);
         $pettyCashMotive = $createPettyCashMotive->execute($pettyCashMotiveDTO);
 
         return response()->json(
@@ -52,7 +54,7 @@ class PettyCashMotiveController extends Controller{
     }
    public function update(int $id,UpdatePettyCashMotiveRequest $request):JsonResponse{
  $pettyCashMotiveDTO = new PettyCashMotiveDTO($request->validated());
-      $updatePettyCashMotive = new UpdatePettyCashMotiveUseCase($this->pettyCashMotiveInterfaceRepository);
+      $updatePettyCashMotive = new UpdatePettyCashMotiveUseCase($this->pettyCashMotiveInterfaceRepository,$this->documentTypeInterfaceRepository);
       $pettyCashMotive = $updatePettyCashMotive->execute($pettyCashMotiveDTO,$id);
    
       return response()->json(

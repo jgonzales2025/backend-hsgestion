@@ -5,6 +5,8 @@ namespace App\Modules\PettyCashReceipt\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
+use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
+use App\Modules\PettyCashMotive\Domain\Interface\PettyCashMotiveInterfaceRepository;
 use App\Modules\PettyCashReceipt\Application\DTOS\PettyCashReceiptDTO;
 use App\Modules\PettyCashReceipt\Application\UseCases\CreatePettyCashReceiptUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\FindAllPettyCashReceiptUseCase;
@@ -26,9 +28,10 @@ class PettyCashReceiptController extends Controller
         private readonly PettyCashReceiptRepositoryInterface $pettyCashReceiptRepository,
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
-        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
-    ) {
-    }
+        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
+        private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
+        private readonly PettyCashMotiveInterfaceRepository $pettyCashMotiveRepository
+    ) {}
     public function index(Request $request): array
     {
         $filter = $request->query('filter');
@@ -37,7 +40,6 @@ class PettyCashReceiptController extends Controller
         $pettyCashReceipts = $pettyCashReceiptsUseCase->execute($filter);
 
         return PettyCashReceiptResource::collection($pettyCashReceipts)->resolve();
-
     }
     public function show(int $id): JsonResponse
     {
@@ -45,7 +47,6 @@ class PettyCashReceiptController extends Controller
         $pettyCashReceipt = $pettyCashReceiptUseCase->execute($id);
 
         return response()->json(new PettyCashReceiptResource($pettyCashReceipt), 200);
-
     }
     public function store(CreatePettyCashReceiptRequest $request)
     {
@@ -55,12 +56,13 @@ class PettyCashReceiptController extends Controller
             $this->pettyCashReceiptRepository,
             $this->branchRepository,
             $this->currencyTypeRepository,
-            $this->documentNumberGeneratorService
+            $this->documentNumberGeneratorService,
+            $this->documentTypeRepository,
+            $this->pettyCashMotiveRepository
         );
         $eloquentCreatePettyCash = $eloquentCreatePettyCashReceiptUseCase->execute($eloquentCreatePettyCash);
 
         return response()->json(new PettyCashReceiptResource($eloquentCreatePettyCash), 201);
-
     }
     public function update(int $id, UpdatePettyCashReceiptRequest $request)
     {
@@ -69,12 +71,13 @@ class PettyCashReceiptController extends Controller
         $updatePettyCashReceiptUseCase = new UpdatePettyCashReceiptUseCase(
             $this->pettyCashReceiptRepository,
             $this->branchRepository,
-            $this->currencyTypeRepository
+            $this->currencyTypeRepository,
+            $this->documentTypeRepository,
+            $this->pettyCashMotiveRepository
         );
         $updatePettyCashReceipt = $updatePettyCashReceiptUseCase->execute($eloquentCreatePettyCash, $id);
 
         return response()->json(new PettyCashReceiptResource($updatePettyCashReceipt), 200);
-
     }
     public function updateStatus(int $pettyId, Request $request): JsonResponse
     {
@@ -89,6 +92,6 @@ class PettyCashReceiptController extends Controller
         );
         $updatePettyCashReceiptUseCase->execute($pettyId, $status);
 
-        return response()->json(["message" => "estado actualizado"],200);
+        return response()->json(["message" => "estado actualizado"], 200);
     }
 }

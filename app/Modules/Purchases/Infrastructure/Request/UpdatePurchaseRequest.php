@@ -4,7 +4,7 @@ namespace App\Modules\Purchases\Infrastructure\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreatePurchaseRequest extends FormRequest
+class UpdatePurchaseRequest extends FormRequest
 {
     public function rules(): array
     {

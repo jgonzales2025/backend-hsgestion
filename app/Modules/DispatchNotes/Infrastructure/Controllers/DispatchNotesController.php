@@ -104,7 +104,7 @@ class DispatchNotesController extends Controller
         );
 
 
-        $dispatchNotesDTO->pdf = '1234';
+      
         $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO);
 
         $status = $dispatchNotes->getEmissionReason()->getId() == 1 ? 0 : 2;

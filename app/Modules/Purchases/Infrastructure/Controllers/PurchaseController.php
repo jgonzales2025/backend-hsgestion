@@ -31,25 +31,32 @@ class PurchaseController extends Controller
         private readonly DetailPurchaseGuideRepositoryInterface $detailPurchaseGuideRepository,
         private readonly PaymentMethodRepositoryInterface $paymentMethodRepository
     ) {}
+
     public function index(): JsonResponse
     {
         $findAllPurchaseUseCase = new FindAllPurchaseUseCase($this->purchaseRepository);
         $purchases = $findAllPurchaseUseCase->execute();
 
         $result = [];
+
         foreach ($purchases as $purchase) {
             $guide = $this->detailPurchaseGuideRepository->findById($purchase->getId());
             $shopping = $this->shoppingIncomeGuideRepository->findById($purchase->getId());
-            $result[] = [
-                'purchase' => (new PurchaseResource($purchase))->resolve(),
-                'details' => DetailPurchaseGuideResource::collection($guide)->resolve(),
-                'shopping' => ShoppingIncomeGuideResource::collection($shopping)->resolve()
+            
+                 $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping);
 
-            ];
+            $result[] = array_merge(
+                (new PurchaseResource($purchase))->resolve(),
+                [
+                    'details' => DetailPurchaseGuideResource::collection($guide)->resolve(),
+                    'shopping' => $entryGuideIds,
+                ]
+            );
         }
 
         return response()->json($result, 200);
     }
+
     public function show(int $id): JsonResponse
     {
         $findByIdPurchaseUseCase = new FindByIdPurchaseUseCase($this->purchaseRepository);
@@ -59,14 +66,15 @@ class PurchaseController extends Controller
         }
         $guide = $this->detailPurchaseGuideRepository->findById($purchase->getId());
         $shopping = $this->shoppingIncomeGuideRepository->findById($purchase->getId());
-
+           $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping);
         return response()->json(
-            [
-                'purchase' => (new PurchaseResource($purchase))->resolve(),
-                'details' => DetailPurchaseGuideResource::collection($guide)->resolve(),
-                'shopping' => ShoppingIncomeGuideResource::collection($shopping)->resolve()
-
-            ],
+           array_merge(
+                (new PurchaseResource($purchase))->resolve(),
+                [
+                    'purchaseGuide' => DetailPurchaseGuideResource::collection($guide)->resolve(),
+                    'shoppingGuide' =>$entryGuideIds,
+                ]
+            ),
             200
         );
     }
@@ -78,16 +86,18 @@ class PurchaseController extends Controller
 
         $det_compras_guia_ingreso = $this->createDetComprasGuiaIngreso($purchase, $request->validated()['det_compras_guia_ingreso']);
 
-        $shopping_income_guide = $this->createShoppingIncomeGuide($purchase,  $request['entry_guide_id']);
+        $shopping_income_guide = $this->updateShopping($purchase,  $request->validated()['entry_guide']);
 
+        $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping_income_guide);
 
         return response()->json(
-            [
-                'purchase' => new PurchaseResource($purchase),
-                'purchaseGuide' => DetailPurchaseGuideResource::collection($det_compras_guia_ingreso)->resolve(),
-                'shoppingGuide' => new ShoppingIncomeGuideResource($shopping_income_guide)
-
-            ],
+            array_merge(
+                (new PurchaseResource($purchase))->resolve(),
+                [
+                    'purchaseGuide' => DetailPurchaseGuideResource::collection($det_compras_guia_ingreso)->resolve(),
+                    'entry_guide' => $entryGuideIds,
+                ]
+            ),
             201
         );
     }
@@ -102,15 +112,18 @@ class PurchaseController extends Controller
         $this->shoppingIncomeGuideRepository->deletedBy($purchase->getId());
 
         $detailcompras = $this->updateDetailCompra($purchase, $request->validated()['det_compras_guia_ingreso']);
-        $shopping_income_guide = $this->createShoppingIncomeGuide($purchase,  $request['entry_guide_id']);
+        $shopping_income_guide = $this->updateShopping($purchase,  $request->validated()['entry_guide']);
+
+        $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping_income_guide);
 
         return response()->json(
-            [
-                'purchase' => new PurchaseResource($purchase),
-                'purchaseGuide' => DetailPurchaseGuideResource::collection($detailcompras)->resolve(),
-                'shoppingGuide' => new ShoppingIncomeGuideResource($shopping_income_guide)
-
-            ],
+          array_merge(
+                (new PurchaseResource($purchase))->resolve(),
+                [
+                    'purchaseGuide' => DetailPurchaseGuideResource::collection($detailcompras)->resolve(),
+                    'entry_guide' => $entryGuideIds,
+                ]
+            ),
             201
         );
     }
@@ -155,19 +168,18 @@ class PurchaseController extends Controller
     {
         $createShooping = new CreateShoppingIncomeGuideUseCase($this->shoppingIncomeGuideRepository);
 
-        return array_map(function ($purchase) use ($shooping, $createShooping) {
+        return array_map(function ($entryGuideId) use ($shooping, $createShooping) {
             $shoopingDTO = new ShoppingIncomeGuideDTO([
                 'purchase_id' => $shooping->getId(),
-                'entry_guide_id' => $purchase->getEntryGuideId(),
+                'entry_guide_id' => (int) $entryGuideId,
             ]);
 
-            $shooping = $createShooping->execute($shoopingDTO);
-            return $shooping;
+            $result = $createShooping->execute($shoopingDTO);
+            return $result;
         }, $data);
     }
     private function updateDetailCompra($detail, array $data): array
     {
-
         $createDetail = new CreateDetailPurchaseGuideUseCase($this->detailPurchaseGuideRepository);
 
         return array_map(function ($purchase) use ($detail, $createDetail) {
@@ -202,7 +214,6 @@ class PurchaseController extends Controller
                 'purchase' => (new PurchaseResource($purchase))->resolve(),
                 'details' => DetailPurchaseGuideResource::collection($guide)->resolve(),
                 'shopping' => ShoppingIncomeGuideResource::collection($shopping)->resolve()
-
             ],
             200
         );

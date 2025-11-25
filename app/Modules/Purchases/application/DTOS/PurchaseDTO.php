@@ -30,12 +30,12 @@ class PurchaseDTO{
         $this->serie = $array['serie'];
         $this->correlative = $array['correlative'] ?? '';
         $this->exchange_type = $array['exchange_type'];
-        $this->methodpayment = $array['methodpayment'];
-        $this->currency = $array['currency'];
+        $this->methodpayment = $array['methodpayment_id'];
+        $this->currency = $array['currency_id'];
         $this->date = $array['date'];
         $this->date_ven = $array['date_ven'];
         $this->days = $array['days'];
-        $this->observation = $array['observation'];
+        $this->observation = $array['observation'] ?? '';
         $this->detraccion = $array['detraccion'];
         $this->fech_detraccion = $array['fech_detraccion'];
         $this->amount_detraccion = $array['amount_detraccion'];

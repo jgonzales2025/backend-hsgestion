@@ -15,9 +15,8 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             ->first();
 
         return $purchase?->correlative;
-    }
-
-
+    } 
+    
     public function findAll(): array
     {
         $eloquentpurchase = EloquentPurchase::with(['paymentMethod'])->get();

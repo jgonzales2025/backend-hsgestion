@@ -14,8 +14,8 @@ class CreatePurchaseRequest extends FormRequest
             'serie' => 'required|string',
             "entry_guide_id" => 'numeric',
             'exchange_type' => 'required|numeric',
-            'methodpayment' => 'required|numeric|exists:payment_methods,id',
-            'currency' => 'required|numeric',
+            'methodpayment_id' => 'required|numeric|exists:payment_methods,id',
+            'currency_id' => 'required|numeric',
             'date' => 'required|string',
             'date_ven' => 'required|string',
             'days' => 'required|integer',
@@ -39,6 +39,8 @@ class CreatePurchaseRequest extends FormRequest
             'det_compras_guia_ingreso.*.total' => 'required|numeric',
             //descuento no puede ser mayor que el sub_total
             'det_compras_guia_ingreso.*.descuento' => 'required|numeric|lte:det_compras_guia_ingreso.*.sub_total',
+            'entry_guide' => 'required|array',
+            'entry_guide.*' => 'required|integer|exists:entry_guides,id',
 
         ];
     }

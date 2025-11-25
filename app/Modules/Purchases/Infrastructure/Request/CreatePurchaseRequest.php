@@ -50,6 +50,7 @@ class CreatePurchaseRequest extends FormRequest
             'det_compras_guia_ingreso.*.descuento.lte' => 'El descuento no puede ser mayor que el sub_total',
             'supplier_id.exists' => 'El proveedor no existe',
            'currency_id.exists' => 'La moneda no existe',
+        //    'entry_guide.*entry_guide_id.exists' => 'La guía de ingreso no existe',
         ];
     }
 }

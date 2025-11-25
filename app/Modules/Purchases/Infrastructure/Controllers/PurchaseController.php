@@ -25,6 +25,9 @@ use App\Modules\ShoppingIncomeGuide\Application\UseCases\CreateShoppingIncomeGui
 use App\Modules\ShoppingIncomeGuide\Domain\Interface\ShoppingIncomeGuideRepositoryInterface;
 use App\Modules\ShoppingIncomeGuide\Infrastructure\Resource\ShoppingIncomeGuideResource;
 use Illuminate\Http\JsonResponse;
+use App\Modules\Purchases\Application\UseCases\GeneratePurchasePdfUseCase;
+use App\Modules\Purchases\Domain\Interface\GeneratepdfRepositoryInterface;
+use Illuminate\Http\Response;
 
 class PurchaseController extends Controller
 {
@@ -144,6 +147,16 @@ class PurchaseController extends Controller
             ),
             201
         );
+    }
+    public function downloadPdf(int $id): Response
+    {
+        $useCase = new GeneratePurchasePdfUseCase(
+            $this->purchaseRepository,
+            $this->detailPurchaseGuideRepository,
+            $this->shoppingIncomeGuideRepository,
+            app(GeneratepdfRepositoryInterface::class)
+        );
+        return $useCase->execute($id);
     }
 
     public function createDetComprasGuiaIngreso($purchase, array $data)

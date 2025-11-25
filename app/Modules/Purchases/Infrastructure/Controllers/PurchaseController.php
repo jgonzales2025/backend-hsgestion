@@ -27,6 +27,7 @@ use App\Modules\ShoppingIncomeGuide\Infrastructure\Resource\ShoppingIncomeGuideR
 use Illuminate\Http\JsonResponse;
 use App\Modules\Purchases\Application\UseCases\GeneratePurchasePdfUseCase;
 use App\Modules\Purchases\Domain\Interface\GeneratepdfRepositoryInterface;
+use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\Response;
 
 class PurchaseController extends Controller
@@ -39,6 +40,7 @@ class PurchaseController extends Controller
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
+        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
     ) {}
 
     public function index(): JsonResponse
@@ -96,6 +98,7 @@ class PurchaseController extends Controller
             $this->branchRepository,
             $this->customerRepository,
             $this->currencyRepository,
+            $this->documentNumberGeneratorService,
         );
         $purchase = $cretaePurchaseUseCase->execute($purchaseDTO);
 

@@ -31,7 +31,8 @@ class EloquentPurchase extends Model{
         'total_desc',
         'inafecto',
         'igv',
-        'total'
+        'total',
+        'is_igv',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

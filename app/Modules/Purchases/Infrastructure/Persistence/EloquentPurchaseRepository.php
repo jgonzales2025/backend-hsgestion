@@ -45,7 +45,8 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 total_desc: $purchase->total_desc,
                 inafecto: $purchase->inafecto,
                 igv: $purchase->igv,
-                total: $purchase->total
+                total: $purchase->total,
+                is_igv: $purchase->is_igv,
 
             );
         })->toArray();
@@ -78,7 +79,8 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             total_desc: $eloquentpurchase->total_desc,
             inafecto: $eloquentpurchase->inafecto,
             igv: $eloquentpurchase->igv,
-            total: $eloquentpurchase->total
+            total: $eloquentpurchase->total,
+            is_igv: $eloquentpurchase->is_igv,
         );
     }
     public function save(Purchase $purchase): ?Purchase
@@ -103,7 +105,8 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'total_desc' => $purchase->getTotalDesc(),
             'inafecto' => $purchase->getInafecto(),
             'igv' => $purchase->getIgv(),
-            'total' => $purchase->getTotal()
+            'total' => $purchase->getTotal(),
+            'is_igv' => $purchase->getIsIgv(),
         ]);
         return new Purchase(
             id: $eloquentpurchase->id,
@@ -126,7 +129,8 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             total_desc: $eloquentpurchase->total_desc,
             inafecto: $eloquentpurchase->inafecto,
             igv: $eloquentpurchase->igv,
-            total: $eloquentpurchase->total
+            total: $eloquentpurchase->total,
+            is_igv: $eloquentpurchase->is_igv,
         );
     }
     public function update(Purchase $purchase): ?Purchase
@@ -156,7 +160,8 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'total_desc' => $purchase->getTotalDesc(),
             'inafecto' => $purchase->getInafecto(),
             'igv' => $purchase->getIgv(),
-            'total' => $purchase->getTotal()
+            'total' => $purchase->getTotal(),
+            'is_igv' => $purchase->getIsIgv(),
         ]);
         return new Purchase(
             id: $purchaseUpdtate->id,
@@ -179,7 +184,8 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             total_desc: $purchaseUpdtate->total_desc,
             inafecto: $purchaseUpdtate->inafecto,
             igv: $purchaseUpdtate->igv,
-            total: $purchaseUpdtate->total
+            total: $purchaseUpdtate->total,
+            is_igv: $purchaseUpdtate->is_igv,
         );
     }
 }

@@ -60,7 +60,8 @@ class UpdatePurchaseUseCase{
             total_desc: $purchaseDTO->total_desc,
             inafecto: $purchaseDTO->inafecto,
             igv: $purchaseDTO->igv,
-            total: $purchaseDTO->total
+            total: $purchaseDTO->total,
+            is_igv: $purchaseDTO->is_igv,
         );
         return $this->purchaseRepository->update($updatePurchase);
     }

@@ -41,6 +41,7 @@ class CreatePurchaseRequest extends FormRequest
             'det_compras_guia_ingreso.*.descuento' => 'required|numeric|lte:det_compras_guia_ingreso.*.sub_total',
             'entry_guide' => 'required|array',
             'entry_guide.*' => 'required|integer|exists:entry_guides,id',
+            'is_igv' => 'required|boolean',
 
         ];
     }

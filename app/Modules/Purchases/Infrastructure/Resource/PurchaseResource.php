@@ -17,7 +17,7 @@ class PurchaseResource extends JsonResource
             ],
             'supplier' =>[
                 'id' => $this->resource->getSupplier()->getId(),
-                'name' => $this->resource->getSupplier()->getName(),
+                'name' => $this->resource->getSupplier()->getName() ?? $this->resource->getSupplier()-> getCompanyName(),
             ],
             'serie' => $this->resource->getSerie(),
             'correlative' => $this->resource->getCorrelative(),
@@ -42,8 +42,8 @@ class PurchaseResource extends JsonResource
             'total_desc' => $this->resource->getTotalDesc(),
             'inafecto' => $this->resource->getInafecto(),
             'igv' => $this->resource->getIgv(),
-            'total' => $this->resource->getTotal()
-
+            'total' => $this->resource->getTotal(),
+            'is_igv' => $this->resource->getIsIgv(),
         ];
     }
 }

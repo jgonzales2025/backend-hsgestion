@@ -2,24 +2,26 @@
 
 namespace App\Modules\Purchases\Domain\Entities;
 
+use App\Modules\Branch\Domain\Entities\Branch;
+use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
+use App\Modules\Customer\Domain\Entities\Customer;
 use App\Modules\PaymentMethod\Domain\Entities\PaymentMethod;
 
 class Purchase
 {
     private ?int $id;
-    private int $branch_id;
-    private int $supplier_id;
+    private ?Branch $branch;
+    private ?Customer $supplier;
     private string $serie;
     private string $correlative;
     private float $exchange_type;
-    // private string $methodpayment;
     private ?PaymentMethod $methodpaymentO;
-    private float $currency;
+    private ?CurrencyType $currency;
     private string $date;
     private string $date_ven;
     private int $days;
     private string $observation;
-    private float $detraccion;
+    private string $detraccion;
     private string $fech_detraccion;
     private float $amount_detraccion;
     private bool $is_detracion;
@@ -31,18 +33,18 @@ class Purchase
 
     public function __construct(
         ?int $id,
-        int $branch_id,
-        int $supplier_id,
+        ?Branch $branch,
+        ?Customer $supplier,
         string $serie,
         string $correlative,
         float $exchange_type,
         ?PaymentMethod $methodpaymentO,
-        float $currency,
+        ?CurrencyType $currency,
         string $date,
         string $date_ven,
         int $days,
         string $observation,
-        float $detraccion,
+        string $detraccion,
         string $fech_detraccion,
         float $amount_detraccion,
         bool $is_detracion,
@@ -53,8 +55,8 @@ class Purchase
         float $total
     ) {
         $this->id = $id;
-        $this->branch_id = $branch_id;
-        $this->supplier_id = $supplier_id;
+        $this->branch = $branch;
+        $this->supplier = $supplier;
         $this->serie = $serie;
         $this->correlative = $correlative;
         $this->exchange_type = $exchange_type;
@@ -79,13 +81,13 @@ class Purchase
     {
         return $this->id;
     }
-    public function getBranchId(): int
+    public function getBranch(): Branch|null
     {
-        return $this->branch_id;
+        return $this->branch;
     }
-    public function getSupplierId(): int
+    public function getSupplier(): Customer | null
     {
-        return $this->supplier_id;
+        return $this->supplier;
     }
     public function getSerie(): string
     {
@@ -103,7 +105,7 @@ class Purchase
     {
         return $this->methodpaymentO;
     }
-    public function getCurrency(): float
+    public function getCurrency(): CurrencyType | null
     {
         return $this->currency;
     }
@@ -123,7 +125,7 @@ class Purchase
     {
         return $this->observation;
     }
-    public function getDetraccion(): float
+    public function getDetraccion(): string
     {
         return $this->detraccion;
     }

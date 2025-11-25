@@ -9,18 +9,18 @@ class CreatePurchaseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'branch_id' => 'required|integer',
-            'supplier_id' => 'required|integer',
+            'branch_id' => 'required|integer', 
             'serie' => 'required|string',
             "entry_guide_id" => 'numeric',
             'exchange_type' => 'required|numeric',
             'methodpayment_id' => 'required|numeric|exists:payment_methods,id',
+            'supplier_id' => 'required|integer|exists:customers,id',
             'currency_id' => 'required|numeric',
             'date' => 'required|string',
             'date_ven' => 'required|string',
             'days' => 'required|integer',
             'observation' => 'nullable|string',
-            'detraccion' => 'required|numeric',
+            'detraccion' => 'nullable|string',
             'fech_detraccion' => 'nullable|string',
             'amount_detraccion' => 'required|numeric',
             'is_detracion' => 'required|boolean',
@@ -48,6 +48,8 @@ class CreatePurchaseRequest extends FormRequest
     {
         return [
             'det_compras_guia_ingreso.*.descuento.lte' => 'El descuento no puede ser mayor que el sub_total',
+            'supplier_id.exists' => 'El proveedor no existe',
+           'currency_id.exists' => 'La moneda no existe',
         ];
     }
 }

@@ -11,8 +11,14 @@ class PurchaseResource extends JsonResource
     {
         return [
             'id' => $this->resource->getId(),
-            'branch_id' => $this->resource->getBranchId(),
-            'supplier_id' => $this->resource->getSupplierId(),
+            'branch' =>[
+                'id' => $this->resource->getBranch()->getId(),
+                'name' => $this->resource->getBranch()->getName(),
+            ],
+            'supplier' =>[
+                'id' => $this->resource->getSupplier()->getId(),
+                'name' => $this->resource->getSupplier()->getName(),
+            ],
             'serie' => $this->resource->getSerie(),
             'correlative' => $this->resource->getCorrelative(),
             'exchange_type' => $this->resource->getExchangeType(),
@@ -20,7 +26,10 @@ class PurchaseResource extends JsonResource
                 'id' => $this->resource->getMethodpayment()->getId(),
                 'name' => $this->resource->getMethodpayment()?->getDescription(),
             ],
-            'currency' => $this->resource->getCurrency(),
+            'currency' =>[
+                'id' => $this->resource->getCurrency()->getId(),
+                'name' => $this->resource->getCurrency()->getName(),
+            ],
             'date' => $this->resource->getDate(),
             'date_ven' => $this->resource->getDateVen(),
             'days' => $this->resource->getDays(),

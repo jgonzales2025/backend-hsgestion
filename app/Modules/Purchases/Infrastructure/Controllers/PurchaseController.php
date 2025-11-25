@@ -3,6 +3,9 @@
 namespace App\Modules\Purchases\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
+use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DetailPurchaseGuides\Application\DTOS\DetailPurchaseGuideDTO;
 use App\Modules\DetailPurchaseGuides\Application\UseCases\CreateDetailPurchaseGuideUseCase;
 use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
@@ -29,7 +32,10 @@ class PurchaseController extends Controller
         private readonly PurchaseRepositoryInterface $purchaseRepository,
         private readonly ShoppingIncomeGuideRepositoryInterface $shoppingIncomeGuideRepository,
         private readonly DetailPurchaseGuideRepositoryInterface $detailPurchaseGuideRepository,
-        private readonly PaymentMethodRepositoryInterface $paymentMethodRepository
+        private readonly PaymentMethodRepositoryInterface $paymentMethodRepository,
+        private readonly BranchRepositoryInterface $branchRepository,
+        private readonly CustomerRepositoryInterface $customerRepository,
+        private readonly CurrencyTypeRepositoryInterface $currencyRepository,
     ) {}
 
     public function index(): JsonResponse
@@ -42,14 +48,14 @@ class PurchaseController extends Controller
         foreach ($purchases as $purchase) {
             $guide = $this->detailPurchaseGuideRepository->findById($purchase->getId());
             $shopping = $this->shoppingIncomeGuideRepository->findById($purchase->getId());
-            
-                 $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping);
+
+            $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping);
 
             $result[] = array_merge(
                 (new PurchaseResource($purchase))->resolve(),
                 [
                     'details' => DetailPurchaseGuideResource::collection($guide)->resolve(),
-                    'shopping' => $entryGuideIds,
+                    'entry_guide' => $entryGuideIds,
                 ]
             );
         }
@@ -66,13 +72,13 @@ class PurchaseController extends Controller
         }
         $guide = $this->detailPurchaseGuideRepository->findById($purchase->getId());
         $shopping = $this->shoppingIncomeGuideRepository->findById($purchase->getId());
-           $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping);
+        $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping);
         return response()->json(
-           array_merge(
+            array_merge(
                 (new PurchaseResource($purchase))->resolve(),
                 [
                     'purchaseGuide' => DetailPurchaseGuideResource::collection($guide)->resolve(),
-                    'shoppingGuide' =>$entryGuideIds,
+                    'entry_guide' => $entryGuideIds,
                 ]
             ),
             200
@@ -81,7 +87,13 @@ class PurchaseController extends Controller
     public function store(CreatePurchaseRequest $request): JsonResponse
     {
         $purchaseDTO = new PurchaseDTO($request->validated());
-        $cretaePurchaseUseCase = new CreatePurchaseUseCase($this->purchaseRepository, $this->paymentMethodRepository, $this->shoppingIncomeGuideRepository);
+        $cretaePurchaseUseCase = new CreatePurchaseUseCase(
+            $this->purchaseRepository,
+            $this->paymentMethodRepository,
+            $this->branchRepository,
+            $this->customerRepository,
+            $this->currencyRepository,
+        );
         $purchase = $cretaePurchaseUseCase->execute($purchaseDTO);
 
         $det_compras_guia_ingreso = $this->createDetComprasGuiaIngreso($purchase, $request->validated()['det_compras_guia_ingreso']);
@@ -104,7 +116,13 @@ class PurchaseController extends Controller
     public function update(UpdatePurchaseRequest $request, int $id): JsonResponse
     {
         $purchaseDTO = new PurchaseDTO($request->validated());
-        $updatePurchaseUseCase = new UpdatePurchaseUseCase($this->purchaseRepository, $this->paymentMethodRepository);
+        $updatePurchaseUseCase = new UpdatePurchaseUseCase(
+            $this->purchaseRepository,
+            $this->paymentMethodRepository,
+            $this->branchRepository,
+            $this->customerRepository,
+            $this->currencyRepository,
+        );
         $purchase = $updatePurchaseUseCase->execute($purchaseDTO, $id);
 
         $this->detailPurchaseGuideRepository->deletedBy($purchase->getId());
@@ -117,7 +135,7 @@ class PurchaseController extends Controller
         $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping_income_guide);
 
         return response()->json(
-          array_merge(
+            array_merge(
                 (new PurchaseResource($purchase))->resolve(),
                 [
                     'purchaseGuide' => DetailPurchaseGuideResource::collection($detailcompras)->resolve(),

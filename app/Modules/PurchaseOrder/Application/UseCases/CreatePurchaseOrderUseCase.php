@@ -54,6 +54,7 @@ readonly class CreatePurchaseOrderUseCase
             due_date: $purchaseOrderDTO->due_date,
             days: $purchaseOrderDTO->days,
             currencyType: $currencyType,
+            parallel_rate: $purchaseOrderDTO->parallel_rate,
             contact_name: $purchaseOrderDTO->contact_name,
             contact_phone: $purchaseOrderDTO->contact_phone,
             paymentType: $paymentType,

@@ -51,6 +51,7 @@ readonly class UpdatePurchaseOrderUseCase
             contact_name: $purchaseOrderDTO->contact_name,
             contact_phone: $purchaseOrderDTO->contact_phone,
             currencyType: $currencyType,
+            parallel_rate: $purchaseOrderDTO->parallel_rate,
             paymentType: $paymentType,
             order_number_supplier: $purchaseOrderDTO->order_number_supplier,
             observations: $purchaseOrderDTO->observations,

@@ -22,6 +22,7 @@ class StorePurchaseOrderRequest extends FormRequest
             'due_date' => 'nullable|date',
             'days' => 'nullable|integer',
             'currency_type_id' => 'required|integer|exists:currency_types,id',
+            'parallel_rate' => 'required|numeric',
             'contact_name' => 'nullable|string|max:100',
             'contact_phone' => 'nullable|string|max:20',
             'payment_type_id' => 'required|integer|exists:payment_types,id',

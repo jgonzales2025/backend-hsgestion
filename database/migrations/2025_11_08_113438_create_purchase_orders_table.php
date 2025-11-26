@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('contact_name')->nullable();
             $table->string('contact_phone')->nullable();
             $table->foreignId('currency_type_id')->constrained('currency_types')->onDelete('cascade');
+            $table->decimal('parallel_rate', 10, 2);
             $table->foreignId('payment_type_id')->constrained('payment_types')->onDelete('cascade');
             $table->foreignId('supplier_id')->constrained('customers')->onDelete('cascade');
             $table->string('order_number_supplier')->nullable();

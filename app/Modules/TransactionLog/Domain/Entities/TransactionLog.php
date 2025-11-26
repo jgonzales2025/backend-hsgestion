@@ -22,8 +22,9 @@ class TransactionLog
     private string $correlative;
     private string $ipAddress;
     private ?string $userAgent;
+    private ?string $createdAt;
 
-    public function __construct(?int $id,User $user, ?int $roleId, string $role_name, string $description_log, string $action, Company $company, Branch $branch, DocumentType $documentType, string $serie, string $correlative, string $ipAddress, ?string $userAgent)
+    public function __construct(?int $id,User $user, ?int $roleId, string $role_name, string $description_log, string $action, Company $company, Branch $branch, DocumentType $documentType, string $serie, string $correlative, string $ipAddress, ?string $userAgent, ?string $createdAt = null)
     {
         $this->id = $id;
         $this->user = $user;
@@ -38,6 +39,7 @@ class TransactionLog
         $this->correlative = $correlative;
         $this->ipAddress = $ipAddress;
         $this->userAgent = $userAgent;
+        $this->createdAt = $createdAt;
     }
 
     public function getId(): ?int { return $this->id; }
@@ -53,4 +55,5 @@ class TransactionLog
     public function getCorrelative(): string { return $this->correlative; }
     public function getIpAddress(): string { return $this->ipAddress; }
     public function getUserAgent(): ?string { return $this->userAgent; }
+    public function getCreatedAt(): ?string { return $this->createdAt; }
 }

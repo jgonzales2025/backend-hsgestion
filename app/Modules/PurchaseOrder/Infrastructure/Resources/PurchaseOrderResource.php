@@ -29,7 +29,9 @@ class PurchaseOrderResource extends JsonResource
             'currency_type' => [
                 'id' => $this->resource->getCurrencyType()->getId(),
                 'name' => $this->resource->getCurrencyType()->getName(),
+                'commercial_symbol' => $this->resource->getCurrencyType()->getCommercialSymbol(),
             ],
+            'parallel_rate' => $this->resource->getParallelRate(),
             'payment_type' => [
                 'id' => $this->resource->getPaymentType()->getId(),
                 'name' => $this->resource->getPaymentType()->getName(),

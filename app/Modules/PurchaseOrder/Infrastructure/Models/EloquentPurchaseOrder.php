@@ -26,6 +26,7 @@ class EloquentPurchaseOrder extends Model
         'contact_name',
         'contact_phone',
         'currency_type_id',
+        'parallel_rate',
         'payment_type_id',
         'order_number_supplier',
         'observations',

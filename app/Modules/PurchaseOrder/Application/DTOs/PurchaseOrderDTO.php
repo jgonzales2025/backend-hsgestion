@@ -13,6 +13,7 @@ class PurchaseOrderDTO
     public ?string $due_date;
     public ?int $days;
     public int $currency_type_id;
+    public float $parallel_rate;
     public ?string $contact_name;
     public ?string $contact_phone;
     public int $payment_type_id;
@@ -35,6 +36,7 @@ class PurchaseOrderDTO
         $this->due_date = $data['due_date'];
         $this->days = $data['days'];
         $this->currency_type_id = $data['currency_type_id'];
+        $this->parallel_rate = $data['parallel_rate'];
         $this->contact_name = $data['contact_name'];
         $this->contact_phone = $data['contact_phone'];
         $this->payment_type_id = $data['payment_type_id'];

@@ -135,7 +135,7 @@
             margin-top: 20px;
             font-style: italic;
             font-size: 10px;
-            border-top: 1px solid #ccc;
+            /*border-top: 1px solid #ccc;*/
             padding-top: 5px;
         }
         .page-number:before {
@@ -210,6 +210,12 @@
                 <td class="label">TELÉFONO:</td>
                 <td>{{ $purchaseOrder->getContactPhone() }}</td>
             </tr>
+            <tr>
+                <td class="label">USUARIO:</td>
+                <td>{{ $transactionLog?->getUser()?->getFirstname() }} {{ $transactionLog?->getUser()?->getLastname() }}</td>
+                <td class="label">FECHA DE IMPRESIÓN:</td>
+                <td>{{ now()->format('Y-m-d H:i:s') }}</td>
+            </tr>
         </table>
 
         <!-- Order Information -->
@@ -220,20 +226,22 @@
                 <td>{{ $purchaseOrder->getDate() }}</td>
                 <td class="label">FECHA ENTREGA:</td>
                 <td>{{ $purchaseOrder->getDeliveryDate() }}</td>
+                <td class="label">TIPO DE CAMBIO:</td>
+                <td>{{ $purchaseOrder->getParallelRate() }}</td>
             </tr>
             <tr>
                 <td class="label">FORMA PAGO:</td>
                 <td>{{ $purchaseOrder->getPaymentType()->getName() }}</td>
                 <td class="label">MONEDA:</td>
-                <td>{{ $purchaseOrder->getCurrencyType()->getName() }}</td>
+                <td>{{ $purchaseOrder->getCurrencyType()->getName() }}</td> 
             </tr>
             <tr>
                 <td class="label">LUGAR ENTREGA:</td>
-                <td colspan="3">{{ $purchaseOrder->getBranch()->getName() }} - {{ $purchaseOrder->getBranch()->getAddress() }}</td>
+                <td colspan="4">{{ $purchaseOrder->getBranch()->getName() }} - {{ $purchaseOrder->getBranch()->getAddress() }}</td>
             </tr>
              <tr>
                 <td class="label">OBSERVACIONES:</td>
-                <td colspan="3">{{ $purchaseOrder->getObservations() }}</td>
+                <td colspan="4">{{ $purchaseOrder->getObservations() }}</td>
             </tr>
         </table>
 

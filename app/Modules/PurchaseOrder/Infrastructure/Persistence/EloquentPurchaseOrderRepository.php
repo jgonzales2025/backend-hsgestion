@@ -34,6 +34,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
                 contact_name: $purchaseOrder->contact_name,
                 contact_phone: $purchaseOrder->contact_phone,
                 currencyType: $purchaseOrder->currencyType->toDomain($purchaseOrder->currencyType),
+                parallel_rate: $purchaseOrder->parallel_rate,
                 paymentType: $purchaseOrder->paymentType->toDomain($purchaseOrder->paymentType),
                 order_number_supplier: $purchaseOrder->order_number_supplier,
                 observations: $purchaseOrder->observations,
@@ -60,6 +61,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             'contact_name' => $purchaseOrder->getContactName(),
             'contact_phone' => $purchaseOrder->getContactPhone(),
             'currency_type_id' => $purchaseOrder->getCurrencyType()->getId(),
+            'parallel_rate' => $purchaseOrder->getParallelRate(),
             'payment_type_id' => $purchaseOrder->getPaymentType()->getId(),
             'order_number_supplier' => $purchaseOrder->getOrderNumberSupplier(),
             'observations' => $purchaseOrder->getObservations(),
@@ -83,6 +85,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             contact_name: $purchaseOrderEloquent->contact_name,
             contact_phone: $purchaseOrderEloquent->contact_phone,
             currencyType: $purchaseOrderEloquent->currencyType->toDomain($purchaseOrderEloquent->currencyType),
+            parallel_rate: $purchaseOrderEloquent->parallel_rate,
             paymentType: $purchaseOrderEloquent->paymentType->toDomain($purchaseOrderEloquent->paymentType),
             order_number_supplier: $purchaseOrderEloquent->order_number_supplier,
             observations: $purchaseOrderEloquent->observations,
@@ -124,6 +127,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             contact_name: $purchaseOrderEloquent->contact_name,
             contact_phone: $purchaseOrderEloquent->contact_phone,
             currencyType: $purchaseOrderEloquent->currencyType->toDomain($purchaseOrderEloquent->currencyType),
+            parallel_rate: $purchaseOrderEloquent->parallel_rate,
             paymentType: $purchaseOrderEloquent->paymentType->toDomain($purchaseOrderEloquent->paymentType),
             order_number_supplier: $purchaseOrderEloquent->order_number_supplier,
             observations: $purchaseOrderEloquent->observations,
@@ -142,7 +146,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
         if (!$purchaseOrderEloquent) {
             return null;
         }
-
+        
         $purchaseOrderEloquent->update([
             'company_id' => $purchaseOrder->getCompanyId(),
             'branch_id' => $purchaseOrder->getBranch()->getId(),
@@ -154,6 +158,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             'contact_name' => $purchaseOrder->getContactName(),
             'contact_phone' => $purchaseOrder->getContactPhone(),
             'currency_type_id' => $purchaseOrder->getCurrencyType()->getId(),
+            'parallel_rate' => $purchaseOrder->getParallelRate(),
             'payment_type_id' => $purchaseOrder->getPaymentType()->getId(),
             'order_number_supplier' => $purchaseOrder->getOrderNumberSupplier(),
             'observations' => $purchaseOrder->getObservations(),
@@ -164,7 +169,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             'total' => $purchaseOrder->getTotal()
         ]);
         $purchaseOrderEloquent->refresh();
-
+              
         return new PurchaseOrder(
             id: $purchaseOrderEloquent->id,
             company_id: $purchaseOrderEloquent->company_id,
@@ -178,6 +183,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             contact_name: $purchaseOrderEloquent->contact_name,
             contact_phone: $purchaseOrderEloquent->contact_phone,
             currencyType: $purchaseOrderEloquent->currencyType->toDomain($purchaseOrderEloquent->currencyType),
+            parallel_rate: $purchaseOrderEloquent->parallel_rate,
             paymentType: $purchaseOrderEloquent->paymentType->toDomain($purchaseOrderEloquent->paymentType),
             order_number_supplier: $purchaseOrderEloquent->order_number_supplier,
             observations: $purchaseOrderEloquent->observations,

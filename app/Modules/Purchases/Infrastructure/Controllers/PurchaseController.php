@@ -131,11 +131,14 @@ class PurchaseController extends Controller
         );
         $purchase = $updatePurchaseUseCase->execute($purchaseDTO, $id);
 
+        $existingDetails = $this->detailPurchaseGuideRepository->findById(12);
+        dd($existingDetails);
         $this->detailPurchaseGuideRepository->deletedBy($purchase->getId());
 
         $this->shoppingIncomeGuideRepository->deletedBy($purchase->getId());
 
-        $detailcompras = $this->updateDetailCompra($purchase, $request->validated()['det_compras_guia_ingreso']);
+
+        $detailcompras = $this->updateDetailCompra($purchase, $request->validated()['det_compras_guia_ingreso'], $existingDetails);
         $shopping_income_guide = $this->updateShopping($purchase,  $request->validated()['entry_guide']);
 
         $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping_income_guide);
@@ -173,10 +176,13 @@ class PurchaseController extends Controller
                 'purchase_id' => $purchase->getId(),
                 'article_id' => $item['article_id'],
                 'description' => $item['description'],
-                'cantidad' => $item['cantidad'],
+                'cantidad' => $item['cantidad'] - $item['cantidad_update'],
                 'precio_costo' => $item['precio_costo'],
                 'descuento' => $item['descuento'],
                 'sub_total' => $item['sub_total'],
+                'total' => $item['total'],
+                'cantidad_update' =>  $item['cantidad_update'],
+                'process_status' => $item['process_status'],
             ]);
 
             $shoppingGuide = $createGuideUseCase->execute($detailDTO);
@@ -212,20 +218,38 @@ class PurchaseController extends Controller
             return $result;
         }, $data);
     }
-    private function updateDetailCompra($detail, array $data): array
+    private function updateDetailCompra($detail, array $data, $existingDetails = []): array
     {
         $createDetail = new CreateDetailPurchaseGuideUseCase($this->detailPurchaseGuideRepository);
 
-        return array_map(function ($purchase) use ($detail, $createDetail) {
+        return array_map(function ($purchase) use ($detail, $createDetail, $existingDetails) {
+            
+            $cantidad = $purchase['cantidad'] ?? 0;
+         
+            // Find existing detail for this article
+            $existingDetail = null;
+            foreach ($existingDetails as $item) {
+                if ($item->getArticleId() == $purchase['article_id']) {
+                    $existingDetail = $item;
+                    break;
+                }
+            }
+
+            if ($existingDetail) {
+                $cantidad = $existingDetail->getCantidad() - ($purchase['cantidad_update'] ?? 0);
+            }
+      
             $detailDto = new DetailPurchaseGuideDTO([
                 'purchase_id' => $detail->getId(),
                 'article_id' => $purchase['article_id'],
                 'description' => $purchase['description'],
-                'cantidad' => $purchase['cantidad'],
+                'cantidad' => $cantidad,
                 'precio_costo' => $purchase['precio_costo'],
                 'descuento' => $purchase['descuento'],
                 'sub_total' => $purchase['sub_total'],
                 'total' => $purchase['total'],
+                'cantidad_update' => $purchase['cantidad_update'],
+                'process_status' => $purchase['process_status'],
             ]);
 
             $createDetail = $createDetail->execute($detailDto);

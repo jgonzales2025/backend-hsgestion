@@ -12,6 +12,8 @@ class DetailPurchaseGuideDTO
   public float $descuento;
   public float $sub_total;
   public float $total;
+  public float $cantidad_update;
+  public string $process_status;
 
   public function __construct(array $array)
   {
@@ -23,5 +25,7 @@ class DetailPurchaseGuideDTO
     $this->descuento = $array['descuento'];
     $this->sub_total = $array['sub_total'];
     $this->total = $array['total'] ?? 0;
+    $this->cantidad_update = $array['cantidad_update'] ?? 0;
+    $this->process_status = $array['process_status'] ?? 'pendiente';
   }
 }

@@ -21,6 +21,8 @@ class CreateDetailPurchaseGuideUseCase{
                 descuento: $detailPurchaseGuideDTO->descuento,
                 sub_total: $detailPurchaseGuideDTO->sub_total,
                 total: $detailPurchaseGuideDTO->total,
+                cantidad_update: $detailPurchaseGuideDTO->cantidad_update,
+                process_status: $detailPurchaseGuideDTO->process_status,
             );
         return $this->detailPurchaseGuide->save($detailPurchaseGuide);
     }

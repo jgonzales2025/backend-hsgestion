@@ -361,7 +361,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/purchase-orders/{id}', [PurchaseOrderController::class, 'show']);
     Route::put('/purchase-orders/{id}', [PurchaseOrderController::class, 'update']);
     Route::get('/purchase-orders/{id}/pdf', [PurchaseOrderController::class, 'generatePdf']);
-
+    Route::get('/purchase-supplier', [PurchaseOrderController::class, 'validateSameCustomer']);
     // Ruta para traer las series de un articulo
     Route::get('/entry-item-serial/{articleId}', [EntryItemSerialController::class, 'findSerialByArticleId']);
     //purchases

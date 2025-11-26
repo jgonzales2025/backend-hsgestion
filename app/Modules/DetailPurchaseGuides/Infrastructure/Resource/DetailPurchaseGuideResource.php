@@ -19,6 +19,8 @@ class DetailPurchaseGuideResource extends JsonResource
             'descuento' => $this->resource->getDescuento(),
             'sub_total' => $this->resource->getSubTotal(),
             'total' => $this->resource->getTotal(),
+            'cantidad_update' => $this->resource->getCantidadUpdate(),
+            'process_status' => $this->resource->getProcessStatus(),
         ];
     }
 }

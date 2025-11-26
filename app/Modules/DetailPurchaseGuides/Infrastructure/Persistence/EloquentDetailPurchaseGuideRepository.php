@@ -22,6 +22,8 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
                 descuento: $item->descuento,
                 sub_total: $item->sub_total,
                 total: $item->total,
+                cantidad_update: $item->cantidad_update,
+                process_status: $item->process_status,
             );
         })->toArray();
     }
@@ -43,6 +45,8 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
                 descuento: $item->descuento,
                 sub_total: $item->sub_total,
                 total: $item->total,
+                cantidad_update: $item->cantidad_update,
+                process_status: $item->process_status,
             );
         })->toArray();
     }
@@ -57,6 +61,8 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
             'descuento' => $detailPurchaseGuide->getDescuento(),
             'sub_total' => $detailPurchaseGuide->getSubTotal(),
             'total' => $detailPurchaseGuide->getTotal(),
+            'cantidad_update' => $detailPurchaseGuide->getCantidadUpdate(),
+            'process_status' => $detailPurchaseGuide->getProcessStatus(),
         ]);
         return new DetailPurchaseGuide(
             id: $eloquentDetailPurchaseGuide->id,
@@ -68,6 +74,8 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
             descuento: $eloquentDetailPurchaseGuide->descuento,
             sub_total: $eloquentDetailPurchaseGuide->sub_total,
             total: $eloquentDetailPurchaseGuide->total,
+            cantidad_update: $eloquentDetailPurchaseGuide->cantidad_update,
+            process_status: $eloquentDetailPurchaseGuide->process_status,
         );
     }
     public function deletedBy(int $id): void

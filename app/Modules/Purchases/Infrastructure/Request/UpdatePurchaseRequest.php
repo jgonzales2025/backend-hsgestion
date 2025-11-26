@@ -32,13 +32,17 @@ class UpdatePurchaseRequest extends FormRequest
             'det_compras_guia_ingreso' => 'required|array',
             'det_compras_guia_ingreso.*.article_id' => 'required|integer|exists:articles,id',
             'det_compras_guia_ingreso.*.description' => 'required|string',
-            'det_compras_guia_ingreso.*.cantidad' => 'required|numeric',
+            'det_compras_guia_ingreso.*.cantidad' => 'nullable|numeric',
             'det_compras_guia_ingreso.*.precio_costo' => 'required|numeric',
             'det_compras_guia_ingreso.*.descuento' => 'required|numeric',
             'det_compras_guia_ingreso.*.sub_total' => 'required|numeric',
             'det_compras_guia_ingreso.*.total' => 'required|numeric',
             //descuento no puede ser mayor que el sub_total
-            'det_compras_guia_ingreso.*.descuento' => 'required|numeric|lte:det_compras_guia_ingreso.*.sub_total',
+            // 'det_compras_guia_ingreso.*.descuento' => 'required|numeric|lte:det_compras_guia_ingreso.*.sub_total',
+        
+            //  'det_compras_guia_ingreso.*.cantidad_update' => 'required|numeric|min:0|lte:det_compras_guia_ingreso.*.cantidad',
+          
+            'det_compras_guia_ingreso.*.process_status' => 'nullable|string',
             'entry_guide' => 'required|array',
             'entry_guide.*' => 'required|integer|exists:entry_guides,id',
             'is_igv' => 'required|boolean',
@@ -48,7 +52,13 @@ class UpdatePurchaseRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'det_compras_guia_ingreso.*.descuento.lte' => 'El descuento no puede ser mayor que el sub_total',
+            'det_compras_guia_ingreso.*.cantidad_update.required' => 'La cantidad actualizada es obligatoria',
+            // 'det_compras_guia_ingreso.*.cantidad_update.numeric' => 'La cantidad actualizada debe ser un numero',
+            // 'det_compras_guia_ingreso.*.cantidad_update.min' => 'La cantidad actualizada debe ser mayor o igual a 0',
+            // 'det_compras_guia_ingreso.*.cantidad_update.lte' => 'La cantidad actualizada no puede ser mayor que la cantidad',
+            // 'det_compras_guia_ingreso.*.descuento.lte' => 'El descuento no puede ser mayor que el sub_total',
+            // 'det_compras_guia_ingreso.*.cantidad_update.lte' => 'La cantidad actualizada no puede ser mayor que la cantidad',
+        
         ];
     }
 }

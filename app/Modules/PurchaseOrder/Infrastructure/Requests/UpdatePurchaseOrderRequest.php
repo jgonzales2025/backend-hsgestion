@@ -31,6 +31,8 @@ class UpdatePurchaseOrderRequest extends FormRequest
             'observations' => 'nullable|string|max:255',
             'supplier_id' => 'required|integer|exists:customers,id',
             'status' => 'required|integer|in:0,1',
+            'percentage_igv' => 'required|integer',
+            'is_igv_included' => 'required|boolean',
             'subtotal' => 'required|numeric|min:0',
             'igv' => 'required|numeric|min:0',
             'total' => 'required|numeric|min:0',

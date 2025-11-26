@@ -57,6 +57,8 @@ readonly class UpdatePurchaseOrderUseCase
             observations: $purchaseOrderDTO->observations,
             supplier: $supplier,
             status: $purchaseOrderDTO->status,
+            percentage_igv: $purchaseOrderDTO->percentage_igv,
+            is_igv_included: $purchaseOrderDTO->is_igv_included,
             subtotal: $purchaseOrderDTO->subtotal,
             igv: $purchaseOrderDTO->igv,
             total: $purchaseOrderDTO->total

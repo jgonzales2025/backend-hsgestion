@@ -40,6 +40,8 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
                 observations: $purchaseOrder->observations,
                 supplier: $purchaseOrder->supplier->toDomain($purchaseOrder->supplier),
                 status: $purchaseOrder->status,
+                percentage_igv: $purchaseOrder->percentage_igv,
+                is_igv_included: $purchaseOrder->is_igv_included,
                 subtotal: $purchaseOrder->subtotal,
                 igv: $purchaseOrder->igv,
                 total: $purchaseOrder->total
@@ -66,6 +68,8 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             'order_number_supplier' => $purchaseOrder->getOrderNumberSupplier(),
             'observations' => $purchaseOrder->getObservations(),
             'supplier_id' => $purchaseOrder->getSupplier()->getId(),
+            'percentage_igv' => $purchaseOrder->getPercentageIgv(),
+            'is_igv_included' => $purchaseOrder->getIsIgvIncluded(),
             'subtotal' => $purchaseOrder->getSubtotal(),
             'igv' => $purchaseOrder->getIgv(),
             'total' => $purchaseOrder->getTotal()
@@ -91,6 +95,8 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             observations: $purchaseOrderEloquent->observations,
             supplier: $purchaseOrderEloquent->supplier->toDomain($purchaseOrderEloquent->supplier),
             status: $purchaseOrderEloquent->status,
+            percentage_igv: $purchaseOrderEloquent->percentage_igv,
+            is_igv_included: $purchaseOrderEloquent->is_igv_included,
             subtotal: $purchaseOrderEloquent->subtotal,
             igv: $purchaseOrderEloquent->igv,
             total: $purchaseOrderEloquent->total
@@ -133,6 +139,8 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             observations: $purchaseOrderEloquent->observations,
             supplier: $purchaseOrderEloquent->supplier->toDomain($purchaseOrderEloquent->supplier),
             status: $purchaseOrderEloquent->status,
+            percentage_igv: $purchaseOrderEloquent->percentage_igv,
+            is_igv_included: $purchaseOrderEloquent->is_igv_included,
             subtotal: $purchaseOrderEloquent->subtotal,
             igv: $purchaseOrderEloquent->igv,
             total: $purchaseOrderEloquent->total
@@ -164,6 +172,8 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             'observations' => $purchaseOrder->getObservations(),
             'supplier_id' => $purchaseOrder->getSupplier()->getId(),
             'status' => $purchaseOrder->getStatus(),
+            'percentage_igv' => $purchaseOrder->getPercentageIgv(),
+            'is_igv_included' => $purchaseOrder->getIsIgvIncluded(),
             'subtotal' => $purchaseOrder->getSubtotal(),
             'igv' => $purchaseOrder->getIgv(),
             'total' => $purchaseOrder->getTotal()
@@ -189,6 +199,8 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             observations: $purchaseOrderEloquent->observations,
             supplier: $purchaseOrderEloquent->supplier?->toDomain($purchaseOrderEloquent->supplier),
             status: $purchaseOrderEloquent->status,
+            percentage_igv: $purchaseOrderEloquent->percentage_igv,
+            is_igv_included: $purchaseOrderEloquent->is_igv_included,
             subtotal: $purchaseOrderEloquent->subtotal,
             igv: $purchaseOrderEloquent->igv,
             total: $purchaseOrderEloquent->total

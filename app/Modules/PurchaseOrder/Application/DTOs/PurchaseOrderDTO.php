@@ -21,6 +21,8 @@ class PurchaseOrderDTO
     public ?string $observations;
     public int $supplier_id;
     public ?int $status;
+    public int $percentage_igv;
+    public bool $is_igv_included;
     public float $subtotal;
     public float $igv;
     public float $total;
@@ -44,6 +46,8 @@ class PurchaseOrderDTO
         $this->observations = $data['observations'] ?? null;
         $this->supplier_id = $data['supplier_id'];
         $this->status = $data['status'] ?? null;
+        $this->percentage_igv = $data['percentage_igv'];
+        $this->is_igv_included = $data['is_igv_included'];
         $this->subtotal = $data['subtotal'];
         $this->igv = $data['igv'];
         $this->total = $data['total'];

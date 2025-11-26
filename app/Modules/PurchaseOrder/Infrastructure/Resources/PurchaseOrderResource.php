@@ -51,6 +51,8 @@ class PurchaseOrderResource extends JsonResource
             ],
             'status' => $this->resource->getStatus(),
             'observations' => $this->resource->getObservations(),
+            'percentage_igv' => $this->resource->getPercentageIgv(),
+            'is_igv_included' => $this->resource->getIsIgvIncluded(),
             'subtotal' => $this->resource->getSubtotal() ?? null,
             'igv' => $this->resource->getIgv() ?? null,
             'total' => $this->resource->getTotal() ?? null,

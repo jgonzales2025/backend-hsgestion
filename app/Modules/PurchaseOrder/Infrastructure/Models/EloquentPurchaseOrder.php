@@ -32,6 +32,8 @@ class EloquentPurchaseOrder extends Model
         'observations',
         'supplier_id',
         'status',
+        'percentage_igv',
+        'is_igv_included',
         'subtotal',
         'igv',
         'total'

@@ -8,6 +8,7 @@ use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\EntryGuideArticle\Domain\Interface\EntryGuideArticleRepositoryInterface;
+use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\PurchaseOrder\Application\DTOs\PurchaseOrderDTO;
 use App\Modules\PurchaseOrder\Application\UseCases\CreatePurchaseOrderUseCase;
@@ -24,6 +25,11 @@ use App\Modules\PurchaseOrderArticle\Application\UseCases\DeleteByPurchaseOrderI
 use App\Modules\PurchaseOrderArticle\Application\UseCases\FindPurchaseOrderIdUseCase;
 use App\Modules\PurchaseOrderArticle\Domain\Interfaces\PurchaseOrderArticleRepositoryInterface;
 use App\Modules\PurchaseOrderArticle\Infrastructure\Resources\PurchaseOrderArticleResource;
+use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
+use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
+use App\Modules\TransactionLog\Application\UseCases\FindByDocumentUseCase;
+use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
+use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -41,6 +47,9 @@ class PurchaseOrderController extends Controller
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
          private readonly EntryGuideArticleRepositoryInterface $entryGuideArticleRepositoryInterface,
+        private readonly TransactionLogRepositoryInterface $transactionLogRepository,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
     ) {
     }
 
@@ -77,6 +86,7 @@ class PurchaseOrderController extends Controller
 
             $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
             $response['articles'] = PurchaseOrderArticleResource::collection($purchaseOrderArticles)->resolve();
+            $this->logTransaction($request, $purchaseOrder);
 
             return response()->json($response, 201);
         });
@@ -102,23 +112,26 @@ class PurchaseOrderController extends Controller
 
     public function update(UpdatePurchaseOrderRequest $request, int $id): JsonResponse
     {
-        $purchaseOrderDTO = new PurchaseOrderDTO($request->validated());
-        $purchaseOrderUseCase = new UpdatePurchaseOrderUseCase($this->purchaseOrderRepository, $this->customerRepository, $this->branchRepository, $this->currencyTypeRepository, $this->paymentTypeRepository);
-        $purchaseOrder = $purchaseOrderUseCase->execute($purchaseOrderDTO, $id);
+        return DB::transaction(function () use ($request, $id) {
+            $purchaseOrderDTO = new PurchaseOrderDTO($request->validated());
+            $purchaseOrderUseCase = new UpdatePurchaseOrderUseCase($this->purchaseOrderRepository, $this->customerRepository, $this->branchRepository, $this->currencyTypeRepository, $this->paymentTypeRepository);
+            $purchaseOrder = $purchaseOrderUseCase->execute($purchaseOrderDTO, $id);
 
-        if (!$purchaseOrder) {
-            return response()->json(['message' => 'Orden de compra no encontrada'], 404);
-        }
+            if (!$purchaseOrder) {
+                return response()->json(['message' => 'Orden de compra no encontrada'], 404);
+            }
 
-        $articlesDeleteUseCase = new DeleteByPurchaseOrderIdUseCase($this->purchaseOrderArticleRepository);
-        $articlesDeleteUseCase->execute($purchaseOrder->getId());
+            $articlesDeleteUseCase = new DeleteByPurchaseOrderIdUseCase($this->purchaseOrderArticleRepository);
+            $articlesDeleteUseCase->execute($purchaseOrder->getId());
 
-        $purchaseOrderArticles = $this->createPurchaseOrderArticles($purchaseOrder, $request->validated()['articles']);
+            $purchaseOrderArticles = $this->createPurchaseOrderArticles($purchaseOrder, $request->validated()['articles']);
+            $this->logTransaction($request, $purchaseOrder);
 
-        $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
-        $response['articles'] = PurchaseOrderArticleResource::collection($purchaseOrderArticles)->resolve();
+            $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
+            $response['articles'] = PurchaseOrderArticleResource::collection($purchaseOrderArticles)->resolve();
 
-        return response()->json($response, 201);
+            return response()->json($response, 201);
+        });
     }
 
     private function createPurchaseOrderArticles($purchaseOrder, array $articlesData): array
@@ -152,12 +165,16 @@ class PurchaseOrderController extends Controller
         $articlesUseCase = new FindPurchaseOrderIdUseCase($this->purchaseOrderArticleRepository);
         $articles = $articlesUseCase->execute($purchaseOrder->getId());
 
+        $transactionLogUseCase = new FindByDocumentUseCase($this->transactionLogRepository);
+        $transactionLog = $transactionLogUseCase->execute($purchaseOrder->getSerie(), $purchaseOrder->getCorrelative());
+
         $company = $this->companyRepository->findById($purchaseOrder->getCompanyId());
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('purchase_order', [
             'purchaseOrder' => $purchaseOrder,
             'purchaseOrderArticles' => $articles,
-            'company' => $company
+            'company' => $company,
+            'transactionLog' => $transactionLog
         ]);
 
         return $pdf->stream('orden_compra_' . $purchaseOrder->getCorrelative() . '.pdf');
@@ -212,5 +229,30 @@ class PurchaseOrderController extends Controller
             'customer' => $customerHeader,
              'articles' => array_values($aggregated)
         ], 200);
+    private function logTransaction($request, $purchaseOrder): void
+    {
+        $transactionLogs = new CreateTransactionLogUseCase(
+            $this->transactionLogRepository,
+            $this->userRepository,
+            $this->companyRepository,
+            $this->documentTypeRepository,
+            $this->branchRepository
+        );
+
+        $transactionDTO = new TransactionLogDTO([
+            'user_id' => request()->get('user_id'),
+            'role_name' => request()->get('role'),
+            'description_log' => 'Orden de Compra',
+            'action' => $request->method(),
+            'company_id' => $purchaseOrder->getCompanyId(),
+            'branch_id' => $purchaseOrder->getBranch()->getId(),
+            'document_type_id' => 20,
+            'serie' => $purchaseOrder->getSerie(),
+            'correlative' => $purchaseOrder->getCorrelative(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        $transactionLogs->execute($transactionDTO);
     }
 }

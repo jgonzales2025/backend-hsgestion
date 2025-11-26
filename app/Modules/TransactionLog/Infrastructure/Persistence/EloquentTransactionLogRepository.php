@@ -51,4 +51,30 @@ class EloquentTransactionLogRepository implements TransactionLogRepositoryInterf
             'user_agent' => $transactionLog->getUserAgent(),
         ]);
     }
+
+    public function findByDocument(string $serie, string $correlative): ?TransactionLog
+    {
+        $transactionLog = EloquentTransactionLog::where('serie', $serie)->where('correlative', $correlative)->where('action', 'POST')->first();
+
+        if (!$transactionLog) {
+            return null;
+        }
+
+        return new TransactionLog(
+            id: $transactionLog->id,
+            user: $transactionLog->user->toDomain($transactionLog->user),
+            roleId: $transactionLog->role_id,
+            role_name: $transactionLog->role_name,
+            description_log: $transactionLog->description_log,
+            action: $transactionLog->action,
+            company: $transactionLog->company->toDomain($transactionLog->company),
+            branch: $transactionLog->branch->toDomain($transactionLog->branch),
+            documentType: $transactionLog->documentType->toDomain($transactionLog->documentType),
+            serie: $transactionLog->serie,
+            correlative: $transactionLog->correlative,
+            ipAddress: $transactionLog->ip_address,
+            userAgent: $transactionLog->user_agent,
+            createdAt: $transactionLog->created_at,
+        );
+    }
 }

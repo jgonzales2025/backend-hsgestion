@@ -54,6 +54,7 @@ readonly class CreatePurchaseOrderUseCase
             due_date: $purchaseOrderDTO->due_date,
             days: $purchaseOrderDTO->days,
             currencyType: $currencyType,
+            parallel_rate: $purchaseOrderDTO->parallel_rate,
             contact_name: $purchaseOrderDTO->contact_name,
             contact_phone: $purchaseOrderDTO->contact_phone,
             paymentType: $paymentType,
@@ -61,6 +62,8 @@ readonly class CreatePurchaseOrderUseCase
             observations: $purchaseOrderDTO->observations,
             supplier: $supplier,
             status: null,
+            percentage_igv: $purchaseOrderDTO->percentage_igv,
+            is_igv_included: $purchaseOrderDTO->is_igv_included,
             subtotal: $purchaseOrderDTO->subtotal,
             igv: $purchaseOrderDTO->igv,
             total: $purchaseOrderDTO->total

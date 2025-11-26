@@ -191,7 +191,7 @@
                 <tr>
                     <td class="label">R.U.C.:</td>
                     <td>{{ $customer->getDocumentNumber() }}</td>
-                    <td class="label">RAZÓN SOCIAL:</td>
+                    <td class="label" colspan="2" style="text-align: right;">RAZÓN SOCIAL:</td>
                     <td>{{ $customer->getCompanyName() }}</td>
                 </tr>
             @else
@@ -205,13 +205,19 @@
 
             <tr>
                 <td class="label">DIRECCIÓN:</td>
-                <td colspan="3">
+                <td colspan="4">
                     @php
                         $addresses = $customer->getAddresses();
                         $address = $addresses && count($addresses) > 0 ? $addresses[0]->getAddress() : '';
                     @endphp
                     {{ $address }}
                 </td>
+            </tr>
+            <tr>
+                <td class="label">USUARIO:</td>
+                <td>{{ $transactionLog->getUser()->getFirstname() }} {{ $transactionLog->getUser()->getLastname() }}</td>
+                <td class="label" colspan="3" style="text-align: right;">FECHA DE IMPRESIÓN:</td>
+                <td>{{ now()->format('Y-m-d H:i:s') }}</td>
             </tr>
         </table>
 
@@ -223,6 +229,8 @@
                 <td>{{ $sale->getDate() }}</td>
                 <td class="label">FECHA VENCIMIENTO:</td>
                 <td>{{ $sale->getDueDate() }}</td>
+                <td class="label">TIPO DE CAMBIO:</td>
+                <td>{{ $sale->getParallelRate() }}</td>
             </tr>
             <tr>
                 <td class="label">FORMA PAGO:</td>
@@ -232,7 +240,7 @@
             </tr>
             <tr>
                 <td class="label">SUCURSAL:</td>
-                <td colspan="3">{{ $sale->getBranch()->getName() }} - {{ $sale->getBranch()->getAddress() }}</td>
+                <td colspan="4">{{ $sale->getBranch()->getName() }} - {{ $sale->getBranch()->getAddress() }}</td>
             </tr>
             @if($sale->getObservations())
                 <tr>

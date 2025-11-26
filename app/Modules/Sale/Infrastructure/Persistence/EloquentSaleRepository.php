@@ -207,6 +207,9 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 'serie' => $creditNote->serie,
                 'document_number' => $creditNote->document_number,
                 'date' => $creditNote->date,
+                'currency_id' => $creditNote->currencyType->id,
+                'currency_name' => $creditNote->currencyType->name,
+                'currency_symbol' => $creditNote->currencyType->commercial_symbol,
                 'saldo' => $creditNote->saldo
             ];
         })->toArray();

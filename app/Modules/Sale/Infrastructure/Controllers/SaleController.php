@@ -46,6 +46,7 @@ use App\Modules\SaleItemSerial\Application\UseCases\DeleteSaleItemSerialBySaleId
 use App\Modules\SaleItemSerial\Domain\Interfaces\SaleItemSerialRepositoryInterface;
 use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
 use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
+use App\Modules\TransactionLog\Application\UseCases\FindByDocumentUseCase;
 use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
@@ -495,6 +496,9 @@ class SaleController extends Controller
 
         $saleArticles = $this->saleArticleRepository->findBySaleId($sale->getId());
 
+        $transactionLogUseCase = new FindByDocumentUseCase($this->transactionLogRepository);
+        $transactionLog = $transactionLogUseCase->execute($sale->getSerie(), $sale->getDocumentNumber());
+
         // Generate QR code data (SUNAT format)
         $qrData = sprintf(
             "%s|%s|%s|%s|%s|%s|%s|%s|%s",
@@ -520,7 +524,8 @@ class SaleController extends Controller
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('sale', [
             'sale' => $sale,
             'saleArticles' => $saleArticles,
-            'qrCode' => $qrCode
+            'qrCode' => $qrCode,
+            'transactionLog' => $transactionLog
         ]);
 
         $documentTypeName = $sale->getDocumentType()->getDescription();

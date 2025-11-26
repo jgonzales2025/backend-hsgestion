@@ -19,18 +19,21 @@ class PurchaseOrder
     private ?string $due_date;
     private ?int $days;
     private CurrencyType $currencyType;
+    private float $parallel_rate;
     private ?string $contact_name;
     private ?string $contact_phone;
     private PaymentType $paymentType;
     private ?string $order_number_supplier;
     private ?string $observations;
     private Customer $supplier;
+    private int $percentage_igv;
+    private bool $is_igv_included;
     private ?string $status;
     private float $subtotal;
     private float $igv;
     private float $total;
 
-    public function __construct(int $id, int $company_id, Branch $branch, string $serie, ?string $correlative, string $date, ?string $delivery_date, ?string $due_date, ?int $days, CurrencyType $currencyType, ?string $contact_name, ?string $contact_phone, PaymentType $paymentType, ?string $order_number_supplier, ?string $observations, Customer $supplier, ?string $status, float $subtotal, float $igv, float $total)
+    public function __construct(int $id, int $company_id, Branch $branch, string $serie, ?string $correlative, string $date, ?string $delivery_date, ?string $due_date, ?int $days, CurrencyType $currencyType, float $parallel_rate, ?string $contact_name, ?string $contact_phone, PaymentType $paymentType, ?string $order_number_supplier, ?string $observations, Customer $supplier, int $percentage_igv, bool $is_igv_included, ?string $status, float $subtotal, float $igv, float $total)
     {
         $this->id = $id;
         $this->company_id = $company_id;
@@ -42,6 +45,7 @@ class PurchaseOrder
         $this->due_date = $due_date;
         $this->days = $days;
         $this->currencyType = $currencyType;
+        $this->parallel_rate = $parallel_rate;
         $this->contact_name = $contact_name;
         $this->contact_phone = $contact_phone;
         $this->paymentType = $paymentType;
@@ -49,6 +53,8 @@ class PurchaseOrder
         $this->observations = $observations;
         $this->supplier = $supplier;
         $this->status = $status;
+        $this->percentage_igv = $percentage_igv;
+        $this->is_igv_included = $is_igv_included;
         $this->subtotal = $subtotal;
         $this->igv = $igv;
         $this->total = $total;
@@ -64,6 +70,7 @@ class PurchaseOrder
     public function getDueDate(): ?string { return $this->due_date; }
     public function getDays(): ?int { return $this->days; }
     public function getCurrencyType(): CurrencyType { return $this->currencyType; }
+    public function getParallelRate(): float { return $this->parallel_rate; }
     public function getContactName(): ?string { return $this->contact_name; }
     public function getContactPhone(): ?string { return $this->contact_phone; }
     public function getPaymentType(): PaymentType { return $this->paymentType; }
@@ -71,6 +78,8 @@ class PurchaseOrder
     public function getObservations(): ?string { return $this->observations; }
     public function getSupplier(): Customer { return $this->supplier; }
     public function getStatus(): ?string { return $this->status; }
+    public function getPercentageIgv(): int { return $this->percentage_igv; }
+    public function getIsIgvIncluded(): bool { return $this->is_igv_included; }
     public function getSubtotal(): float { return $this->subtotal; }
     public function getIgv(): float { return $this->igv; }
     public function getTotal(): float { return $this->total; }

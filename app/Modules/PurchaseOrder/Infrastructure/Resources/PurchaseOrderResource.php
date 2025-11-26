@@ -29,7 +29,9 @@ class PurchaseOrderResource extends JsonResource
             'currency_type' => [
                 'id' => $this->resource->getCurrencyType()->getId(),
                 'name' => $this->resource->getCurrencyType()->getName(),
+                'commercial_symbol' => $this->resource->getCurrencyType()->getCommercialSymbol(),
             ],
+            'parallel_rate' => $this->resource->getParallelRate(),
             'payment_type' => [
                 'id' => $this->resource->getPaymentType()->getId(),
                 'name' => $this->resource->getPaymentType()->getName(),
@@ -49,6 +51,8 @@ class PurchaseOrderResource extends JsonResource
             ],
             'status' => $this->resource->getStatus(),
             'observations' => $this->resource->getObservations(),
+            'percentage_igv' => $this->resource->getPercentageIgv(),
+            'is_igv_included' => $this->resource->getIsIgvIncluded(),
             'subtotal' => $this->resource->getSubtotal() ?? null,
             'igv' => $this->resource->getIgv() ?? null,
             'total' => $this->resource->getTotal() ?? null,

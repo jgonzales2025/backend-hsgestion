@@ -119,3 +119,13 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
     }
 
 }
+
+
+
+
+
+
+
+
+
+

@@ -85,7 +85,7 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
     {
         $rows = EloquentEntryItemSerial::where('article_id', $articleId)
             ->where('branch_id', $branch_id)
-            ->when($updated === null, function ($query) {
+            ->when($updated === null || $updated === false, function ($query) {
                 return $query->where('status', 1);
             })
             ->when($serial, function ($query, $serial) {

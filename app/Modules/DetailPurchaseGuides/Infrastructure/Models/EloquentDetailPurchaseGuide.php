@@ -18,6 +18,8 @@ class EloquentDetailPurchaseGuide extends Model
         'descuento',
         'sub_total',
         'total',
+        'cantidad_update',
+        'process_status',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

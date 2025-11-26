@@ -7,6 +7,7 @@ use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\EntryGuideArticle\Domain\Interface\EntryGuideArticleRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\PurchaseOrder\Application\DTOs\PurchaseOrderDTO;
 use App\Modules\PurchaseOrder\Application\UseCases\CreatePurchaseOrderUseCase;
@@ -26,6 +27,7 @@ use App\Modules\PurchaseOrderArticle\Infrastructure\Resources\PurchaseOrderArtic
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class PurchaseOrderController extends Controller
 {
@@ -37,7 +39,8 @@ class PurchaseOrderController extends Controller
         private readonly CompanyRepositoryInterface $companyRepository,
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
-        private readonly PaymentTypeRepositoryInterface $paymentTypeRepository
+        private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
+         private readonly EntryGuideArticleRepositoryInterface $entryGuideArticleRepositoryInterface,
     ) {
     }
 
@@ -158,5 +161,56 @@ class PurchaseOrderController extends Controller
         ]);
 
         return $pdf->stream('orden_compra_' . $purchaseOrder->getCorrelative() . '.pdf');
+    }
+
+    
+      public function validateSameCustomer(Request $request): JsonResponse
+    {
+        $ids = $request->input('ids');
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'Debe enviar un arreglo de IDs válido'], 400);
+        }
+
+        $ids = array_map('intval', $ids);
+
+        $isValid = $this->purchaseOrderRepository->allBelongToSameCustomer($ids);
+
+        if (!$isValid) {
+            return response()->json(['message' => 'Todos los documentos deben pertenecer al mismo proveedor'], 422);
+        }
+
+        $entryGuides = $this->purchaseOrderRepository->findByIds($ids);
+
+        $customerHeader = null;
+        foreach ($entryGuides as $entryGuide) {
+            if ($customerHeader === null) {
+                $customerHeader = [
+                    'id' => $entryGuide->getSupplier()?->getId(),
+                   
+
+                ];
+            }
+            $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
+
+            foreach ($articles as $article) {
+                $key = $article->getArticle()->getId();
+                if (!isset($aggregated[$key])) {
+                    $aggregated[$key] = [
+                        'article_id' => $key,
+                        'description' => $article->getDescription(),
+                        'quantity' => $article->getQuantity(),
+                        'cod_fab' => $article->getArticle()->getCodFab(),
+                    ];
+                } else {
+                    $aggregated[$key]['quantity'] += $article->getQuantity();
+                }
+            }
+        }
+
+        return response()->json([
+            'customer' => $customerHeader,
+             'articles' => array_values($aggregated)
+        ], 200);
     }
 }

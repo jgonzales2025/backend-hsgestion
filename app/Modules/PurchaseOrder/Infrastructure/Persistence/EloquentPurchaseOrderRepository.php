@@ -188,4 +188,57 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             total: $purchaseOrderEloquent->total
         );
     }
+     public function findByIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        $eloquentAll = EloquentPurchaseOrder::all()
+            ->whereIn('id', $ids)
+            ;
+
+        if ($eloquentAll->isEmpty()) {
+            return [];
+        }
+
+        return $eloquentAll->map(function ($entryGuide) {
+            return new PurchaseOrder(
+             id: $entryGuide->id,
+            company_id: $entryGuide->company_id,
+            branch: $entryGuide->branch->toDomain($entryGuide->branch),
+            serie: $entryGuide->serie,
+            correlative: $entryGuide->correlative,
+            date: $entryGuide->date,
+            delivery_date: $entryGuide->delivery_date,
+            due_date: $entryGuide->due_date,
+            days: $entryGuide->days,
+            contact_name: $entryGuide->contact_name,
+            contact_phone: $entryGuide->contact_phone,
+            currencyType: $entryGuide->currencyType->toDomain($entryGuide->currencyType),
+            paymentType: $entryGuide->paymentType->toDomain($entryGuide->paymentType),
+            order_number_supplier: $entryGuide->order_number_supplier,
+            observations: $entryGuide->observations,
+            supplier: $entryGuide->supplier?->toDomain($entryGuide->supplier),
+            status: $entryGuide->status,
+            subtotal: $entryGuide->subtotal,
+            igv: $entryGuide->igv,
+            total: $entryGuide->total
+            );
+        })->toArray();
+    }
+
+    public function allBelongToSameCustomer(array $ids): bool
+    {
+        if (empty($ids)) {
+            return false;
+        }
+
+        $distinctCustomers = EloquentPurchaseOrder::whereIn('id', $ids)
+            ->select('supplier_id')
+            ->distinct()
+            ->pluck('supplier_id');
+
+        return $distinctCustomers->count() === 1;
+    }
 }

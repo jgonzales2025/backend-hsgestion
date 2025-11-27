@@ -20,7 +20,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'document_type',
             'supplier',
             'address_supplier',
-        ])->orderByDesc('id')
+        ])->orderByDesc('id')->where('document_type_id', '!=', 21)
           ->get();
 
         return $dispatchNotes->map(fn($dispatchNote) => $this->mapToDomain($dispatchNote))->toArray();

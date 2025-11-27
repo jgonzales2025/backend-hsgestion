@@ -228,7 +228,7 @@
                     <th style="width: 50%; text-align: left;">DESCRIPCIÓN</th>
                     <th style="width: 10%;">CANT</th>
                     <th style="width: 10%;">P. UNIT</th>
-                    <th style="width: 10%;">TOTAL</th>
+                    <th style="width: 10%;">TOTAL</th>z
                 </tr>
             </thead>
             <tbody>

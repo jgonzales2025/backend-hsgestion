@@ -244,10 +244,10 @@ class ControllerEntryGuide extends Controller
         return array_map(function ($data) use ($shooping, $createDocumentEntryGuideUseCase) {
             $documentEntryGuide = new DocumentEntryGuideDTO([
                 'entry_guide_id' => $shooping->getId(),
-                'guide_serie_supplier' => $data['guide_serie_supplier'],
-                'guide_correlative_supplier' => $data['guide_correlative_supplier'],
-                'invoice_serie_supplier' => $data['invoice_serie_supplier'],
-                'invoice_correlative_supplier' => $data['invoice_correlative_supplier'],
+                'guide_serie_supplier' => $data['guide_serie_supplier'] ?? '',
+                'guide_correlative_supplier' => $data['guide_correlative_supplier'] ?? '',
+                'invoice_serie_supplier' => $data['invoice_serie_supplier'] ?? '',
+                'invoice_correlative_supplier' => $data['invoice_correlative_supplier'] ?? '',
             ]);
 
             $result = $createDocumentEntryGuideUseCase->execute($documentEntryGuide);

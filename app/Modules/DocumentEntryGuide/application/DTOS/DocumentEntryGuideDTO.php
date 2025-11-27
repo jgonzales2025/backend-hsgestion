@@ -14,7 +14,7 @@ class DocumentEntryGuideDTO
         $this->entry_guide_id = $data['entry_guide_id'];
         $this->guide_serie_supplier = $data['guide_serie_supplier'];
         $this->guide_correlative_supplier = $data['guide_correlative_supplier'];
-        $this->invoice_serie_supplier = $data['invoice_serie_supplier'];
+        $this->invoice_serie_supplier = $data['invoice_serie_supplier'] ?? '';
         $this->invoice_correlative_supplier = $data['invoice_correlative_supplier'];
     }
 }

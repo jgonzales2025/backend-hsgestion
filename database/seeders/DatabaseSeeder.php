@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Database\Seeders\PettyCashMotiveSeeder;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -49,6 +50,7 @@ class DatabaseSeeder extends Seeder
             SerieSeeder::class,
              //DispatchArticle::class,
             NoteReasonSeeder::class,
+            PettyCashMotiveSeeder::class,
         ]);
     }
 }

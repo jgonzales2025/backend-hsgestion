@@ -14,6 +14,7 @@ use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
 use App\Modules\Purchases\Domain\Entities\Purchase;
 use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
+use App\Services\DocumentNumberGeneratorService;
 
 class CreatePurchaseUseCase
 {
@@ -23,6 +24,7 @@ class CreatePurchaseUseCase
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
+        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
 
     ) {}
 
@@ -30,13 +32,7 @@ class CreatePurchaseUseCase
     {
         $lastDocumentNumber = $this->purchaseRepository->getLastDocumentNumber($purchaseDTO->branch_id, $purchaseDTO->serie);
 
-        if ($lastDocumentNumber === null) {
-            $documentNumber = '00001';
-        } else {
-            $nextNumber = intval($lastDocumentNumber) + 1;
-            $documentNumber = str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
-        }
-        $purchaseDTO->correlative = $documentNumber;
+        $purchaseDTO->correlative = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
 
         $metodoPago =  new FindByIdPaymentMethodUseCase($this->paymentTypeRepository);
         $payment = $metodoPago->execute($purchaseDTO->methodpayment);
@@ -73,7 +69,8 @@ class CreatePurchaseUseCase
             total_desc: $purchaseDTO->total_desc,
             inafecto: $purchaseDTO->inafecto,
             igv: $purchaseDTO->igv,
-            total: $purchaseDTO->total
+            total: $purchaseDTO->total,
+            is_igv: $purchaseDTO->is_igv,
         );
         return $this->purchaseRepository->save($puchaseCreate);
     }

@@ -154,7 +154,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
         if (!$purchaseOrderEloquent) {
             return null;
         }
-        
+
         $purchaseOrderEloquent->update([
             'company_id' => $purchaseOrder->getCompanyId(),
             'branch_id' => $purchaseOrder->getBranch()->getId(),
@@ -179,7 +179,7 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             'total' => $purchaseOrder->getTotal()
         ]);
         $purchaseOrderEloquent->refresh();
-              
+
         return new PurchaseOrder(
             id: $purchaseOrderEloquent->id,
             company_id: $purchaseOrderEloquent->company_id,
@@ -205,5 +205,107 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             igv: $purchaseOrderEloquent->igv,
             total: $purchaseOrderEloquent->total
         );
+    }
+
+    public function findBySupplierId(int $supplierId): array
+    {
+        $purchaseOrders = EloquentPurchaseOrder::where('supplier_id', $supplierId)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        if ($purchaseOrders->isEmpty()) {
+            return [];
+        }
+
+        return $purchaseOrders->map(function ($purchaseOrder) {
+            return new PurchaseOrder(
+                id: $purchaseOrder->id,
+                company_id: $purchaseOrder->company_id,
+                branch: $purchaseOrder->branch->toDomain($purchaseOrder->branch),
+                serie: $purchaseOrder->serie,
+                correlative: $purchaseOrder->correlative,
+                date: $purchaseOrder->date,
+                delivery_date: $purchaseOrder->delivery_date,
+                due_date: $purchaseOrder->due_date,
+                days: $purchaseOrder->days,
+                contact_name: $purchaseOrder->contact_name,
+                contact_phone: $purchaseOrder->contact_phone,
+                currencyType: $purchaseOrder->currencyType->toDomain($purchaseOrder->currencyType),
+                parallel_rate: $purchaseOrder->parallel_rate,
+                paymentType: $purchaseOrder->paymentType->toDomain($purchaseOrder->paymentType),
+                order_number_supplier: $purchaseOrder->order_number_supplier,
+                observations: $purchaseOrder->observations,
+                supplier: $purchaseOrder->supplier?->toDomain($purchaseOrder->supplier),
+                status: $purchaseOrder->status,
+                percentage_igv: $purchaseOrder->percentage_igv,
+                is_igv_included: $purchaseOrder->is_igv_included,
+                subtotal: $purchaseOrder->subtotal,
+                igv: $purchaseOrder->igv,
+                total: $purchaseOrder->total
+            );
+        })->toArray();
+    }
+
+    public function findByIds(array $ids): array
+    {
+        if (empty($ids)) {
+            return [];
+        }
+
+        $purchaseOrders = EloquentPurchaseOrder::whereIn('id', $ids)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        if ($purchaseOrders->isEmpty()) {
+            return [];
+        }
+
+        return $purchaseOrders->map(function ($purchaseOrder) {
+            return new PurchaseOrder(
+                id: $purchaseOrder->id,
+                company_id: $purchaseOrder->company_id,
+                branch: $purchaseOrder->branch->toDomain($purchaseOrder->branch),
+                serie: $purchaseOrder->serie,
+                correlative: $purchaseOrder->correlative,
+                date: $purchaseOrder->date,
+                delivery_date: $purchaseOrder->delivery_date,
+                due_date: $purchaseOrder->due_date,
+                days: $purchaseOrder->days,
+                contact_name: $purchaseOrder->contact_name,
+                contact_phone: $purchaseOrder->contact_phone,
+                currencyType: $purchaseOrder->currencyType->toDomain($purchaseOrder->currencyType),
+                parallel_rate: $purchaseOrder->parallel_rate,
+                paymentType: $purchaseOrder->paymentType->toDomain($purchaseOrder->paymentType),
+                order_number_supplier: $purchaseOrder->order_number_supplier,
+                observations: $purchaseOrder->observations,
+                supplier: $purchaseOrder->supplier?->toDomain($purchaseOrder->supplier),
+                status: $purchaseOrder->status,
+                percentage_igv: $purchaseOrder->percentage_igv,
+                is_igv_included: $purchaseOrder->is_igv_included,
+                subtotal: $purchaseOrder->subtotal,
+                igv: $purchaseOrder->igv,
+                total: $purchaseOrder->total
+            );
+        })->toArray();
+    }
+
+    public function allBelongToSameCustomer(array $ids): bool
+    {
+        if (empty($ids)) {
+            return false;
+        }
+
+        $distinctCustomers = EloquentPurchaseOrder::whereIn('id', $ids)
+            ->whereNotNull('supplier_id')
+            ->select('supplier_id')
+            ->distinct()
+            ->pluck('supplier_id');
+
+        // If no records found with valid supplier_id, return false
+        if ($distinctCustomers->isEmpty()) {
+            return false;
+        }
+
+        return $distinctCustomers->count() === 1;
     }
 }

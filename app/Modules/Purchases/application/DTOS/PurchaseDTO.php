@@ -23,6 +23,7 @@ class PurchaseDTO{
     public  $inafecto;
     public  $igv;
     public  $total;
+    public bool $is_igv;
    
     public function __construct(array $array){
         $this->branch_id = $array['branch_id'];
@@ -45,6 +46,7 @@ class PurchaseDTO{
         $this->inafecto = $array['inafecto'];
         $this->igv = $array['igv'];
         $this->total = $array['total'];
+        $this->is_igv = $array['is_igv'];
     
     }
     

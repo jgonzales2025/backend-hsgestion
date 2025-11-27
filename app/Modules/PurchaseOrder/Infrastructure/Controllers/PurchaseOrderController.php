@@ -3,10 +3,12 @@
 namespace App\Modules\PurchaseOrder\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\EntryGuideArticle\Domain\Interface\EntryGuideArticleRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\PurchaseOrder\Application\DTOs\PurchaseOrderDTO;
@@ -32,6 +34,7 @@ use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 
 class PurchaseOrderController extends Controller
 {
@@ -44,11 +47,12 @@ class PurchaseOrderController extends Controller
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
+        private readonly EntryGuideArticleRepositoryInterface $entryGuideArticleRepositoryInterface,
         private readonly TransactionLogRepositoryInterface $transactionLogRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
-    ) {
-    }
+        private readonly ArticleRepositoryInterface $articleRepositoryInterface
+    ) {}
 
     public function index(): array
     {
@@ -144,6 +148,7 @@ class PurchaseOrderController extends Controller
                 'quantity' => $article['quantity'],
                 'purchase_price' => $article['purchase_price'],
                 'subtotal' => $article['subtotal'],
+                
             ]);
 
             return $createPurchaseOrderArticleUseCase->execute($purchaseOrderArticleDTO);
@@ -176,6 +181,79 @@ class PurchaseOrderController extends Controller
 
         return $pdf->stream('orden_compra_' . $purchaseOrder->getCorrelative() . '.pdf');
     }
+
+    /**
+     * Get purchase orders by IDs and aggregate articles
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getBySupplier(Request $request): JsonResponse
+    {
+        $ids = $request->input('ids');
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'Debe enviar un arreglo de IDs válido'], 400);
+        }
+
+        $ids = array_map('intval', $ids);
+
+        // Get all purchase orders by IDs
+        $purchaseOrders = $this->purchaseOrderRepository->findByIds($ids);
+
+        if (empty($purchaseOrders)) {
+            return response()->json([
+                'message' => 'No se encontraron órdenes de compra con los IDs proporcionados',
+                'ids' => $ids
+            ], 404);
+        }
+
+        // Validate all belong to same supplier
+        $isValid = $this->purchaseOrderRepository->allBelongToSameCustomer($ids);
+
+        if (!$isValid) {
+            return response()->json(['message' => 'Todos los documentos deben pertenecer al mismo proveedor'], 422);
+        }
+
+        // Get supplier info from first purchase order
+        $supplierInfo = [
+            'id' => $purchaseOrders[0]->getSupplier()?->getId(),
+            'name' => $purchaseOrders[0]->getSupplier()?->getName(),
+        ];
+
+        // Aggregate articles
+        $aggregated = [];
+        foreach ($purchaseOrders as $purchaseOrder) {
+            $articles = $this->purchaseOrderArticleRepository->findByPurchaseOrderId($purchaseOrder->getId());
+
+            foreach ($articles as $article) {
+                $articleEntity = $this->articleRepositoryInterface->findById($article->getArticleId());
+
+                if (!isset($aggregated[$articleEntity->getId()])) {
+                    // First time seeing this article
+                    $aggregated[$articleEntity->getId()] = [
+                        'article_id' => $articleEntity->getId(),
+                        'description' => $article->getDescription(),
+                        'quantity' => $article->getQuantity(),
+                        'weight' => $article->getWeight(),
+                        'purchase_price' => $article->getPurchasePrice(),
+                        'cod_fab' => $article->getCodFab(),
+                        'series_enabled' => $articleEntity->getSeriesEnabled()
+                    ];
+                } else {
+                    // Article already exists, sum the quantity
+                    $aggregated[$articleEntity->getId()]['quantity'] += $article->getQuantity();
+                }
+            }
+        }
+
+        return response()->json([
+            'supplier' => $supplierInfo,
+            'total_orders' => count($purchaseOrders),
+            'articles' => array_values($aggregated)
+        ], 200);
+    }
+
 
     private function logTransaction($request, $purchaseOrder): void
     {

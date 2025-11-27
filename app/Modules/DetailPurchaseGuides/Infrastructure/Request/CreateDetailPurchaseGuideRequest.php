@@ -19,6 +19,8 @@ class CreateDetailPurchaseGuideRequest extends FormRequest
             'sub_total'  => 'required',
             'numeric',
             'total' => 'required|float',
+            'cantidad_update' => 'nullable|float',
+            'process_status' => 'nullable|string',
         ];
     }
 }

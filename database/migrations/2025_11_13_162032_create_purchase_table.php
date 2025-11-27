@@ -33,6 +33,7 @@ return new class extends Migration
             $table->float('inafecto');
             $table->float('igv');
             $table->float('total');
+            $table->boolean('is_igv')->default(false);
             $table->timestamps();
         });
     }

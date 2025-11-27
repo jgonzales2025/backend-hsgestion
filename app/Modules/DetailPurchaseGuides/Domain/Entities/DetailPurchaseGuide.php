@@ -13,6 +13,8 @@ class DetailPurchaseGuide
     private float $descuento;
     private float $sub_total;
     private float $total;
+    private float $cantidad_update;
+    private string $process_status;
 
     public function __construct(
         ?int $id,
@@ -24,6 +26,8 @@ class DetailPurchaseGuide
         float $descuento,
         float $sub_total,
         float $total,
+        float $cantidad_update,
+        string $process_status,
     ) {
 
         $this->id = $id;
@@ -35,6 +39,8 @@ class DetailPurchaseGuide
         $this->descuento = $descuento;
         $this->sub_total = $sub_total;
         $this->total = $total;
+        $this->cantidad_update = $cantidad_update;
+        $this->process_status = $process_status;
     }
     public function getId(): int|null
     {
@@ -72,5 +78,23 @@ class DetailPurchaseGuide
     public function getTotal(): float
     {
         return $this->total;
+    }
+    public function getCantidadUpdate(): float
+    {
+        return $this->cantidad_update;
+    }
+    public function getProcessStatus(): string
+    {
+        return $this->process_status;
+    }
+
+    public function setCantidad(int $cantidad): void
+    {
+        $this->cantidad = $cantidad;
+    }
+
+    public function setCantidadUpdate(float $cantidad_update): void
+    {
+        $this->cantidad_update = $cantidad_update;
     }
 }

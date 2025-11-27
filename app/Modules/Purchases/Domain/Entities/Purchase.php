@@ -30,6 +30,7 @@ class Purchase
     private float $inafecto;
     private float $igv;
     private float $total;
+    private bool $is_igv;
 
     public function __construct(
         ?int $id,
@@ -52,7 +53,8 @@ class Purchase
         float $total_desc,
         float $inafecto,
         float $igv,
-        float $total
+        float $total,
+        bool $is_igv
     ) {
         $this->id = $id;
         $this->branch = $branch;
@@ -75,6 +77,7 @@ class Purchase
         $this->inafecto = $inafecto;
         $this->igv = $igv;
         $this->total = $total;
+        $this->is_igv = $is_igv;
     }
 
     public function getId(): int|null
@@ -160,6 +163,10 @@ class Purchase
     public function getTotal(): float
     {
         return $this->total;
+    }
+    public function getIsIgv(): bool
+    {
+        return $this->is_igv;
     }
 
 }

@@ -362,7 +362,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/purchase-orders/{id}', [PurchaseOrderController::class, 'show']);
     Route::put('/purchase-orders/{id}', [PurchaseOrderController::class, 'update']);
     Route::get('/purchase-orders/{id}/pdf', [PurchaseOrderController::class, 'generatePdf']);
-
+    Route::post('/purchase-orders-customer', [PurchaseOrderController::class, 'getBySupplier']);
     // Ruta para traer las series de un articulo
     Route::get('/entry-item-serial/{articleId}', [EntryItemSerialController::class, 'findSerialByArticleId']);
     //purchases
@@ -370,7 +370,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/purchases/{id}', [PurchaseController::class, 'show']);
     Route::post('/purchases', [PurchaseController::class, 'store']);
     Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
-
+    Route::put('/purchase-supplier/{id}', [PurchaseController::class, 'updateDetail']);
     // Ruta para traer los movimientos de transferencia de un articulo
     Route::get('/dispatch-serial-movements/{branchId}', [DispatchArticleSerialController::class, 'findAllMovements']);
 

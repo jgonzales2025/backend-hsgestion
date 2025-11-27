@@ -51,6 +51,9 @@ use App\Modules\DispatchNotes\Domain\Interfaces\TransferOrderRepositoryInterface
 use App\Modules\DispatchNotes\Infrastructure\Persistence\DomPdfGenerator;
 use App\Modules\DispatchNotes\Infrastructure\Persistence\EloquentDIspatchNoteRepository;
 use App\Modules\DispatchNotes\Infrastructure\Persistence\EloquentTransferOrderRepository;
+use App\Modules\DocumentEntryGuide\Domain\Interface\DocumentEntryGuideRepositoryInterface;
+use App\Modules\DocumentEntryGuide\Infrastructure\Models\EloquentDocumentEntryGuide;
+use App\Modules\DocumentEntryGuide\Infrastructure\Persistence\EloquentDocumentEntryGuideRepository;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\DocumentType\Infrastructure\Persistence\EloquentDocumentTypeRepository;
 use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
@@ -205,6 +208,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
         $this->app->bind(TransferOrderRepositoryInterface::class, EloquentTransferOrderRepository::class);
         $this->app->bind(AdvanceRepositoryInterface::class, EloquentAdvanceRepository::class);
+        $this->app->bind(DocumentEntryGuideRepositoryInterface::class, EloquentDocumentEntryGuideRepository::class);
     }
 
     /**

@@ -22,7 +22,8 @@ class EloquentAdvance extends Model
         'parallel_rate',
         'currency_type_id',
         'amount',
-        'saldo'
+        'saldo',
+        'status'
     ];
 
     protected $hidden = [

@@ -2,13 +2,15 @@
 
 namespace App\Modules\SaleArticle\Domain\Entities;
 
+use App\Modules\Articles\Domain\Entities\Article;
+
 class SaleArticle
 {
     private int $id;
     private int $sale_id;
     private ?string $sku;
     private ?int $state_modify_article;
-    private int $article_id;
+    private Article $article;
     private ?string $description;
     private int $quantity;
     private float $unit_price;
@@ -16,12 +18,12 @@ class SaleArticle
     private float $subtotal;
     private ?bool $series_enabled;
 
-    public function __construct(int $id, int $sale_id, ?string $sku, int $article_id, ?string $description, int $quantity, float $unit_price, float $public_price, float $subtotal, ?int $state_modify_article = null, ?bool $series_enabled = null)
+    public function __construct(int $id, int $sale_id, ?string $sku, Article $article, ?string $description, int $quantity, float $unit_price, float $public_price, float $subtotal, ?int $state_modify_article = null, ?bool $series_enabled = null)
     {
         $this->id = $id;
         $this->sale_id = $sale_id;
         $this->sku = $sku;
-        $this->article_id = $article_id;
+        $this->article = $article;
         $this->description = $description;
         $this->quantity = $quantity;
         $this->unit_price = $unit_price;
@@ -35,7 +37,7 @@ class SaleArticle
     public function getSaleId(): int { return $this->sale_id; }
     public function getSku(): ?string { return $this->sku; }
     public function getStateModifyArticle(): ?int { return $this->state_modify_article; }
-    public function getArticleId(): int { return $this->article_id; }
+    public function getArticle(): Article { return $this->article; }
     public function getDescription(): ?string { return $this->description; }
     public function getQuantity(): int { return $this->quantity; }
     public function getUnitPrice(): float { return $this->unit_price; }

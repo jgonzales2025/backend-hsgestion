@@ -24,6 +24,7 @@ class StoreBulkCollectionRequest extends FormRequest
             "operation_date" => "required|date",
             "operation_number" => "required|string",
             "advance_amount" => "nullable|numeric",
+            "advance_id" => "nullable|integer|exists:advances,id",
             'collections' => 'required|array|min:1',
             'collections.*.sale_id' => 'required|integer|exists:sales,id',
             'collections.*.sale_document_type_id' => 'required|integer|exists:document_types,id',

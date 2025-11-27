@@ -2,6 +2,7 @@
 
 namespace App\Modules\Collections\Infrastructure\Persistence;
 
+use App\Modules\Advance\Infrastructure\Models\EloquentAdvance;
 use App\Modules\Collections\Domain\Entities\BulkCollection;
 use App\Modules\Collections\Domain\Entities\Collection;
 use App\Modules\Collections\Domain\Interfaces\CollectionRepositoryInterface;
@@ -121,11 +122,18 @@ class EloquentCollectionRepository implements CollectionRepositoryInterface
                 'amount' => $item['amount'],
                 'bank_id' => $collection->getBankId(),
                 'operation_date' => $collection->getOperationDate(),
-                'operation_number' => $collection->getOperationNumber()
+                'operation_number' => $collection->getOperationNumber(),
+                'advance_id' => $collection->getAdvanceId()
             ]);
             $eloquentCollection->refresh();
 
+            // Siempre actualizar el saldo de la venta
             $this->updateSaleBalance($eloquentCollection);
+
+            // Si hay advance_id, también actualizar el saldo del anticipo
+            if ($collection->getAdvanceId() !== null) {
+                $this->updateAdvanceBalance($collection->getAdvanceId());
+            }
 
         }
     }
@@ -160,7 +168,7 @@ class EloquentCollectionRepository implements CollectionRepositoryInterface
 
     private function updateSaleBalance(EloquentCollection $collection): void
     {
-        DB::statement('CALL sp_actualiza_saldo_venta(?, ?, ?, ?)', [
+        DB::statement('CALL update_sale_balance(?, ?, ?, ?)', [
             $collection->company_id,
             $collection->sale_document_type_id,
             $collection->sale_serie,
@@ -182,11 +190,19 @@ class EloquentCollectionRepository implements CollectionRepositoryInterface
         }
     }
 
+    private function updateAdvanceBalance(int $advanceId): void
+    {
+        DB::statement('CALL update_advance_balance(?)', [$advanceId]);
+        $advance = EloquentAdvance::where('id', $advanceId)->first();
+        $advance->status = $advance->saldo == 0 ? 1 : 0;
+        $advance->save();
+    }
+
     private function updateCreditNotePaymentStatus(EloquentCollection $collection): void
     {
         // Ejecuta el SP para recalcular el saldo de la nota de crédito
         if ($collection->credit_document_type_id && $collection->credit_serie && $collection->credit_correlative) {
-            DB::statement('CALL sp_actualiza_saldo_venta(?, ?, ?, ?)', [
+            DB::statement('CALL update_sale_balance(?, ?, ?, ?)', [
                 $collection->company_id,
                 $collection->credit_document_type_id,
                 $collection->credit_serie,
@@ -207,7 +223,7 @@ class EloquentCollectionRepository implements CollectionRepositoryInterface
             $creditNote->amount_amortized = $creditNote->total - $creditNote->saldo;
             $creditNote->save();
         }
-    
+
         $creditNote = EloquentSale::where('company_id', $collection->company_id)
             ->where('document_type_id', $collection->credit_document_type_id)
             ->where('serie', $collection->credit_serie)

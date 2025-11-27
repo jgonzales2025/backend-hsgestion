@@ -25,6 +25,7 @@ class StoreBulkCollectionUseCase
             currency_type_id: $bulkCollectionDTO->currency_type_id,
             operation_date: $bulkCollectionDTO->operation_date,
             operation_number: $bulkCollectionDTO->operation_number,
+            advance_id: $bulkCollectionDTO->advance_id
         );
 
         $this->collectionRepository->saveBulkCollection($collection, $data);

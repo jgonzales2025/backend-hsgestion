@@ -13,7 +13,7 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
     {
         $eloquentSaleArticle = EloquentSaleArticle::create([
             'sale_id' => $saleArticle->getSaleId(),
-            'article_id' => $saleArticle->getArticleId(),
+            'article_id' => $saleArticle->getArticle()->getId(),
             'description' => $saleArticle->getDescription(),
             'quantity' => $saleArticle->getQuantity(),
             'unit_price' => $saleArticle->getUnitPrice(),
@@ -25,7 +25,7 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
             id: $eloquentSaleArticle->id,
             sale_id: $eloquentSaleArticle->sale_id,
             sku: $eloquentSaleArticle->article->cod_fab,
-            article_id: $eloquentSaleArticle->article_id,
+            article: $saleArticle->getArticle(),
             description: $eloquentSaleArticle->description,
             quantity: $eloquentSaleArticle->quantity,
             unit_price: $eloquentSaleArticle->unit_price,
@@ -43,7 +43,7 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
                 id: $eloquentSaleArticle->id,
                 sale_id: $eloquentSaleArticle->sale_id,
                 sku: $eloquentSaleArticle->article->cod_fab,
-                article_id: $eloquentSaleArticle->article_id,
+                article: $eloquentSaleArticle->article->toDomain($eloquentSaleArticle->article),
                 description: $eloquentSaleArticle->description,
                 quantity: $eloquentSaleArticle->quantity,
                 unit_price: $eloquentSaleArticle->unit_price,

@@ -13,6 +13,7 @@ class BulkCollectionDTO
     public int $currency_type_id;
     public string $operation_date;
     public string $operation_number;
+    public ?int $advance_id;
 
     public function __construct(array $data)
     {
@@ -25,5 +26,6 @@ class BulkCollectionDTO
         $this->currency_type_id = $data['currency_type_id'];
         $this->operation_date = $data['operation_date'];
         $this->operation_number = $data['operation_number'];
+        $this->advance_id = $data['advance_id'] ?? null;
     }
 }

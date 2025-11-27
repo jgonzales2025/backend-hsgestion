@@ -58,6 +58,16 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
         $dispatchNotess->update($this->mapToArray($dispatchNote));
         return $this->buildDomainDispatchNote($dispatchNotess, $dispatchNote);
     }
+
+    public function findByDocumentSale(string $serie, string $correlative): ?DispatchNote
+    {
+        $eloquentDispatch = EloquentDispatchNote::where('doc_referencia', $serie)->where('num_referencia', $correlative)->first();
+        if (!$eloquentDispatch) {
+            return null;
+        }
+
+        return $this->mapToDomain($eloquentDispatch);
+    }
     private function mapToDomain(EloquentDispatchNote $dispatchNote): DispatchNote
     {
         return new DispatchNote(

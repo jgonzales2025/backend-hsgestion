@@ -386,7 +386,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/purchases-pdf/{id}', [PurchaseController::class, 'downloadPdf']);
 
     // Advances - Anticipos
-    Route::get('/advances/{customerId}', [AdvanceController::class, 'show']);
+    Route::get('/advances/{customerId}', [AdvanceController::class, 'showAdvancesByCustomer']);
     Route::post('/advances', [AdvanceController::class, 'store']);
 });
 

@@ -29,26 +29,26 @@ class EloquentAdvanceRepository implements AdvanceRepositoryInterface
         return EloquentAdvance::orderBy('id', 'desc')->first()->correlative ?? null;
     }
 
-    public function findByCustomerId(int $customer_id): ?Advance
+    public function findByCustomerId(int $customer_id): ?array
     {
-        $eloquentAdvance = EloquentAdvance::where('customer_id', $customer_id)->first();
+        $eloquentAdvance = EloquentAdvance::where('customer_id', $customer_id)->where('status', 0)->get();
 
         if (!$eloquentAdvance) {
             return null;
         }
 
-        return new Advance(
-            id: $eloquentAdvance->id,
-            correlative: $eloquentAdvance->correlative,
-            customer: $eloquentAdvance->customer->toDomain($eloquentAdvance->customer),
-            payment_method: $eloquentAdvance->paymentMethod->toDomain($eloquentAdvance->paymentMethod),
-            bank: $eloquentAdvance->bank->toDomain($eloquentAdvance->bank),
-            operation_number: $eloquentAdvance->operation_number,
-            operation_date: $eloquentAdvance->operation_date,
-            parallel_rate: $eloquentAdvance->parallel_rate,
-            currency_type: $eloquentAdvance->currencyType->toDomain($eloquentAdvance->currencyType),
-            amount: $eloquentAdvance->amount,
-            saldo: $eloquentAdvance->saldo
-        );
+        return $eloquentAdvance->map(fn($advance) => new Advance(
+            id: $advance->id,
+            correlative: $advance->correlative,
+            customer: $advance->customer->toDomain($advance->customer),
+            payment_method: $advance->paymentMethod->toDomain($advance->paymentMethod),
+            bank: $advance->bank->toDomain($advance->bank),
+            operation_number: $advance->operation_number,
+            operation_date: $advance->operation_date,
+            parallel_rate: $advance->parallel_rate,
+            currency_type: $advance->currencyType->toDomain($advance->currencyType),
+            amount: $advance->amount,
+            saldo: $advance->saldo
+        ))->toArray();
     }
 }

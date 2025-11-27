@@ -14,7 +14,7 @@ class EloquentSaleItemSerialRepository implements SaleItemSerialRepositoryInterf
     {
         $eloquentSaleItemSerial = EloquentSaleItemSerial::create([
             'sale_id' => $saleItemSerial->getSale()->getId(),
-            'article_id' => $saleItemSerial->getArticle()->getArticleId(),
+            'article_id' => $saleItemSerial->getArticle()->getArticle()->getId(),
             'serial' => $saleItemSerial->getSerial(),
         ]);
 

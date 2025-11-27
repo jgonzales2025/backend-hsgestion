@@ -38,7 +38,7 @@ class AdvanceController extends Controller
         return response()->json(['message' => 'Anticipo creado exitosamente.'], 201);
     }
 
-    public function show($customerId): JsonResponse
+    public function showAdvancesByCustomer($customerId): array|JsonResponse
     {
         $advanceUseCase = new FindByCustomerIdUseCase($this->advanceRepository);
         $advance = $advanceUseCase->execute($customerId);
@@ -47,6 +47,6 @@ class AdvanceController extends Controller
             return response()->json(['message' => 'Este cliente no tiene anticipos.'], 404);
         }
 
-        return response()->json((new AdvanceResource($advance))->resolve());
+        return AdvanceResource::collection($advance)->resolve();
     }
 }

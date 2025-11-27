@@ -9,12 +9,12 @@ class CreatePurchaseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'branch_id' => 'required|integer',
+          'branch_id' => 'required|integer',
+            'supplier_id' => 'required|integer',
             'serie' => 'required|string',
             "entry_guide_id" => 'numeric',
             'exchange_type' => 'required|numeric',
             'methodpayment_id' => 'required|numeric|exists:payment_methods,id',
-            'supplier_id' => 'required|integer|exists:customers,id',
             'currency_id' => 'required|numeric',
             'date' => 'required|string',
             'date_ven' => 'required|string',
@@ -32,30 +32,27 @@ class CreatePurchaseRequest extends FormRequest
             'det_compras_guia_ingreso' => 'required|array',
             'det_compras_guia_ingreso.*.article_id' => 'required|integer|exists:articles,id',
             'det_compras_guia_ingreso.*.description' => 'required|string',
-            'det_compras_guia_ingreso.*.cantidad' => 'required|numeric',
+            'det_compras_guia_ingreso.*.cantidad' => 'nullable|numeric',
             'det_compras_guia_ingreso.*.precio_costo' => 'required|numeric',
             'det_compras_guia_ingreso.*.descuento' => 'required|numeric',
             'det_compras_guia_ingreso.*.sub_total' => 'required|numeric',
             'det_compras_guia_ingreso.*.total' => 'required|numeric',
+            'det_compras_guia_ingreso.*.cantidad_update' => 'required|numeric|',
             //descuento no puede ser mayor que el sub_total
-            'det_compras_guia_ingreso.*.descuento' => 'required|numeric|lte:det_compras_guia_ingreso.*.sub_total',
+            // 'det_compras_guia_ingreso.*.descuento' => 'required|numeric|lte:det_compras_guia_ingreso.*.sub_total',
+        
+            //  'det_compras_guia_ingreso.*.cantidad_update' => 'required|numeric|min:0|lte:det_compras_guia_ingreso.*.cantidad',
+          
+            'det_compras_guia_ingreso.*.process_status' => 'nullable|string',
             'entry_guide' => 'required|array',
             'entry_guide.*' => 'required|integer|exists:entry_guides,id',
             'is_igv' => 'required|boolean',
-            'det_compras_guia_ingreso.*.cantidad' => 'nullable|numeric|min:0',
-            'det_compras_guia_ingreso.*.cantidad_update' => 'nullable|numeric|min:0|lte:det_compras_guia_ingreso.*.cantidad',
-            'det_compras_guia_ingreso.*.process_status' => 'nullable|string',
-
         ];
     }
     public function messages(): array
     {
         return [
-            'det_compras_guia_ingreso.*.descuento.lte' => 'El descuento no puede ser mayor que el sub_total',
-            'supplier_id.exists' => 'El proveedor no existe',
-            'currency_id.exists' => 'La moneda no existe',
-            'det_compras_guia_ingreso.*.cantidad_update.lte' => 'La cantidad que deseas actualizar no puede ser mayor a la cantidad que ya se tienes',
-            //    'entry_guide.*entry_guide_id.exists' => 'La guía de ingreso no existe',
+              'det_compras_guia_ingreso.*.cantidad_update.required' => 'La cantidad actualizada es obligatoria',
         ];
     }
 }

@@ -13,7 +13,7 @@ class PurchaseOrderArticle
     private int $quantity;
     private float $purchase_price;
     private float $subtotal;
-    private int $saldo;
+    private ?int $saldo;
 
     public function __construct(
         int $id,

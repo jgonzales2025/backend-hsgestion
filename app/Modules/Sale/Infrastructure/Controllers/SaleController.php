@@ -9,6 +9,7 @@ use App\Modules\Collections\Infrastructure\Models\EloquentCollection;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\NoteReason\Domain\Interfaces\NoteReasonRepositoryInterface;
@@ -73,7 +74,8 @@ class SaleController extends Controller
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
         private readonly SaleItemSerialRepositoryInterface $saleItemSerialRepository,
         private readonly EntryItemSerialRepositoryInterface $entryItemSerialRepository,
-        private readonly ArticleRepositoryInterface $articleRepository
+        private readonly ArticleRepositoryInterface $articleRepository,
+        private readonly DispatchNotesRepositoryInterface $dispatchNoteRepository
     ) {
     }
 

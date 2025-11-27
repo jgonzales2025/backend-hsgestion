@@ -11,7 +11,7 @@ class FindByCustomerIdUseCase
     {
     }
 
-    public function execute(int $customer_id): ?Advance
+    public function execute(int $customer_id): ?array
     {
         return $this->advanceRepository->findByCustomerId($customer_id);
     }

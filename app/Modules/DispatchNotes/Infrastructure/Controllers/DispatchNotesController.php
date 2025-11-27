@@ -25,6 +25,7 @@ use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRep
 use App\Modules\DispatchNotes\application\DTOS\DispatchNoteDTO;
 use App\Modules\DispatchNotes\application\UseCases\CreateDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindAllDispatchNotesUseCase;
+use App\Modules\DispatchNotes\Application\UseCases\FindByDocumentSale;
 use App\Modules\DispatchNotes\Application\UseCases\FindByIdDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\GenerateDispatchNotePdfUseCase;
 use App\Modules\DispatchNotes\application\UseCases\UpdateDispatchNoteUseCase;
@@ -90,6 +91,15 @@ class DispatchNotesController extends Controller
     }
     public function store(RequestStore $store): JsonResponse
     {
+        $dispatchUseCase = new FindByDocumentSale($this->dispatchNoteRepository);
+        $dispatchNote = $dispatchUseCase->execute($store->validated()['doc_referencia'], $store->validated()['num_referencia']);
+
+        if ($dispatchNote) {
+            return response()->json([
+                'message' => 'Esta venta ya tiene una guía de remisión asignada.'
+            ], 400);
+        }
+
         $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
         $dispatchNoteUseCase = new CreateDispatchNoteUseCase(
             $this->dispatchNoteRepository,

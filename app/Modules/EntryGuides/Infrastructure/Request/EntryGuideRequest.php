@@ -32,6 +32,8 @@ class EntryGuideRequest extends FormRequest
             'entry_guide_articles.*.quantity' => 'required|numeric',
             'entry_guide_articles.*.serials' => 'nullable|array',
             'entry_guide_articles.*.serials.*' => 'required|string|distinct',
+            'document_entry_guide'=> 'required|array|min:1',
+  
 
         ];
     }

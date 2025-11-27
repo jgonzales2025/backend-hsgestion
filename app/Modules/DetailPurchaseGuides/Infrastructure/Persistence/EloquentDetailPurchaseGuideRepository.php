@@ -50,9 +50,31 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
             );
         })->toArray();
     }
+
+    public function findByDetailId(int $id): ?DetailPurchaseGuide
+    {
+        $eloquentDetailPurchaseGuide = EloquentDetailPurchaseGuide::find($id);
+        if (!$eloquentDetailPurchaseGuide) {
+            return null;
+        }
+
+        return new DetailPurchaseGuide(
+            id: $eloquentDetailPurchaseGuide->id,
+            article_id: $eloquentDetailPurchaseGuide->article_id,
+            purchase_id: $eloquentDetailPurchaseGuide->purchase_id,
+            description: $eloquentDetailPurchaseGuide->description,
+            cantidad: $eloquentDetailPurchaseGuide->cantidad,
+            precio_costo: $eloquentDetailPurchaseGuide->precio_costo,
+            descuento: $eloquentDetailPurchaseGuide->descuento,
+            sub_total: $eloquentDetailPurchaseGuide->sub_total,
+            total: $eloquentDetailPurchaseGuide->total,
+            cantidad_update: $eloquentDetailPurchaseGuide->cantidad_update,
+            process_status: $eloquentDetailPurchaseGuide->process_status,
+        );
+    }
     public function save(DetailPurchaseGuide $detailPurchaseGuide): ?DetailPurchaseGuide
     {
-        $eloquentDetailPurchaseGuide = EloquentDetailPurchaseGuide::create([
+        $data = [
             'article_id' => $detailPurchaseGuide->getArticleId(),
             'purchase_id' => $detailPurchaseGuide->getPurchaseId(),
             'description' => $detailPurchaseGuide->getDescription(),
@@ -63,7 +85,20 @@ class EloquentDetailPurchaseGuideRepository implements DetailPurchaseGuideReposi
             'total' => $detailPurchaseGuide->getTotal(),
             'cantidad_update' => $detailPurchaseGuide->getCantidadUpdate(),
             'process_status' => $detailPurchaseGuide->getProcessStatus(),
-        ]);
+        ];
+
+        if ($detailPurchaseGuide->getId()) {
+            // Update existing record
+            $eloquentDetailPurchaseGuide = EloquentDetailPurchaseGuide::find($detailPurchaseGuide->getId());
+            if (!$eloquentDetailPurchaseGuide) {
+                return null;
+            }
+            $eloquentDetailPurchaseGuide->update($data);
+        } else {
+            // Create new record
+            $eloquentDetailPurchaseGuide = EloquentDetailPurchaseGuide::create($data);
+        }
+
         return new DetailPurchaseGuide(
             id: $eloquentDetailPurchaseGuide->id,
             article_id: $eloquentDetailPurchaseGuide->article_id,

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->decimal('purchase_price', 8, 2);
             $table->decimal('subtotal', 8, 2);
+            $table->integer('saldo');
             $table->timestamps();
         });
     }

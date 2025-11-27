@@ -13,6 +13,7 @@ class PurchaseOrderArticle
     private int $quantity;
     private float $purchase_price;
     private float $subtotal;
+    private int $saldo;
 
     public function __construct(
         int $id,
@@ -24,6 +25,7 @@ class PurchaseOrderArticle
         float $purchase_price,
         float $subtotal,
         ?string $cod_fab = null,
+        int $saldo = null,
     ) {
         $this->id = $id;
         $this->purchase_order_id = $purchase_order_id;
@@ -34,6 +36,7 @@ class PurchaseOrderArticle
         $this->quantity = $quantity;
         $this->purchase_price = $purchase_price;
         $this->subtotal = $subtotal;
+        $this->saldo = $saldo;
     }
 
     public function getId(): int { return $this->id; }
@@ -45,4 +48,5 @@ class PurchaseOrderArticle
     public function getQuantity(): int { return $this->quantity; }
     public function getPurchasePrice(): float { return $this->purchase_price; }
     public function getSubTotal(): float { return $this->subtotal; }
+    public function getSaldo(): int { return $this->saldo; }
 }

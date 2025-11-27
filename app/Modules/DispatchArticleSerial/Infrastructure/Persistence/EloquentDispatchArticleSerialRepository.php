@@ -48,7 +48,7 @@ class EloquentDispatchArticleSerialRepository implements DispatchArticleSerialRe
         return $dispatchArticleSerials->map(function ($dispatchArticleSerial) {
             return new DispatchArticleSerial(
                 $dispatchArticleSerial->id,
-                $dispatchArticleSerial->dispatch_note_id,
+                $dispatchArticleSerial->dispatchNote?->toDomain($dispatchArticleSerial->dispatchNote),
                 $dispatchArticleSerial->article->toDomain($dispatchArticleSerial->article),
                 $dispatchArticleSerial->serial,
                 $dispatchArticleSerial->emission_reasons_id,

@@ -19,6 +19,7 @@ class PurchaseOrderArticleResource extends JsonResource
             'quantity' => $this->resource->getQuantity(),
             'purchase_price' => $this->resource->getPurchasePrice(),
             'subtotal' => $this->resource->getSubTotal(),
+            'saldo' => $this->resource->getSaldo()
         ];
     }
 }

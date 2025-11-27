@@ -31,23 +31,8 @@ class StoreTransferOrderRequest extends FormRequest
             'dispatch_articles.*.article_id' => 'required|integer|exists:articles,id',
             'dispatch_articles.*.name' => 'required|string',
             'dispatch_articles.*.quantity' => 'required|integer',
-            'dispatch_articles.*.serials' => [
-                'nullable',
-                'array',
-                function ($attribute, $value, $fail) {
-                    $existing = \Illuminate\Support\Facades\DB::table('dispatch_article_serials')
-                        ->whereIn('serial', $value)
-                        ->value('serial');
-
-                    if ($existing) {
-                        $fail("Hay seriales que ya están siendo usados.");
-                    }
-                },
-            ],
-            'dispatch_articles.*.serials.*' => [
-                'required',
-                'distinct',
-            ],
+            'dispatch_articles.*.serials' => ['nullable','array'],
+            'dispatch_articles.*.serials.*' => ['required','distinct'],
         ];
     }
 
@@ -104,7 +89,6 @@ class StoreTransferOrderRequest extends FormRequest
             'dispatch_articles.*.serials.array' => 'Los seriales deben ser un arreglo.',
             'dispatch_articles.*.serials.*.required' => 'El serial no puede estar vacío.',
             'dispatch_articles.*.serials.*.distinct' => 'Los seriales no pueden estar duplicados.',
-            'dispatch_articles.*.serials.*.unique' => 'El serial ya está siendo usado.',
         ];
     }
 }

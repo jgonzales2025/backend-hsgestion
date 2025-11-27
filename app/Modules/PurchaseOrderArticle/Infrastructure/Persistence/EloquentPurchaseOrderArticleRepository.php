@@ -18,7 +18,8 @@ class EloquentPurchaseOrderArticleRepository implements PurchaseOrderArticleRepo
             'weight' => $purchaseOrderArticle->getWeight(),
             'quantity' => $purchaseOrderArticle->getQuantity(),
             'purchase_price' => $purchaseOrderArticle->getPurchasePrice(),
-            'subtotal' => $purchaseOrderArticle->getSubTotal()
+            'subtotal' => $purchaseOrderArticle->getSubTotal(),
+            'saldo' => $purchaseOrderArticle->getQuantity()
         ]);
 
         return new PurchaseOrderArticle(
@@ -30,7 +31,8 @@ class EloquentPurchaseOrderArticleRepository implements PurchaseOrderArticleRepo
             quantity: $purchaseOrderArticleEloquent->quantity,
             purchase_price: $purchaseOrderArticleEloquent->purchase_price,
             subtotal: $purchaseOrderArticleEloquent->subtotal,
-            cod_fab: $purchaseOrderArticleEloquent->article->cod_fab
+            cod_fab: $purchaseOrderArticleEloquent->article->cod_fab,
+            saldo: $purchaseOrderArticleEloquent->saldo
         );
     }
 
@@ -48,7 +50,8 @@ class EloquentPurchaseOrderArticleRepository implements PurchaseOrderArticleRepo
                 quantity: $article->quantity,
                 purchase_price: $article->purchase_price,
                 subtotal: $article->subtotal,
-                cod_fab: $article->article->cod_fab
+                cod_fab: $article->article->cod_fab,
+                saldo: $article->saldo
             );
         })->toArray();
     }

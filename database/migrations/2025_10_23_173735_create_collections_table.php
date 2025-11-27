@@ -34,6 +34,7 @@ return new class extends Migration
             $table->string('credit_serie', 6)->nullable();
             $table->string('credit_correlative', 10)->nullable();
             $table->integer('status')->default(1);
+            $table->decimal('rounding', 4, 2)->default(0.00);
             $table->timestamps();
         });
     }

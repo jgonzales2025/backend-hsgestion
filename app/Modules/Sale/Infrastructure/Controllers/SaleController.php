@@ -89,7 +89,7 @@ class SaleController extends Controller
             $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
 
             $articlesWithSerials = array_map(function ($article) use ($serialsByArticle) {
-                $article->serials = $serialsByArticle[$article->getArticleId()] ?? [];
+                $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
                 return $article;
             }, $articles);
 
@@ -257,8 +257,10 @@ class SaleController extends Controller
         $serie = $request->query('serie');
         $correlative = $request->query('correlative');
 
+        $paddedCorrelative = str_pad($correlative, 8, '0', STR_PAD_LEFT);
+
         $saleUseCase = new FindByDocumentSaleUseCase($this->saleRepository);
-        $sale = $saleUseCase->execute($documentTypeId, $serie, $correlative);
+        $sale = $saleUseCase->execute($documentTypeId, $serie, $paddedCorrelative);
         if (!$sale) {
             return response()->json(['message' => 'Venta no encontrada'], 404);
         }

@@ -9,7 +9,7 @@ use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 class DispatchArticleSerial
 {
     private int $id;
-    private DispatchNote $dispatch_note;
+    private ?DispatchNote $dispatch_note;
     private Article $article;
     private string $serial;
     private ?int $emission_reasons_id;
@@ -19,7 +19,7 @@ class DispatchArticleSerial
 
     public function __construct(
         int $id,
-        DispatchNote $dispatch_note,
+        ?DispatchNote $dispatch_note,
         Article $article,
         string $serial,
         ?int $emission_reasons_id,
@@ -38,7 +38,7 @@ class DispatchArticleSerial
     }
 
     public function getId(): int { return $this->id; }
-    public function getDispatchNote(): DispatchNote { return $this->dispatch_note; }
+    public function getDispatchNote(): ?DispatchNote { return $this->dispatch_note; }
     public function getArticle(): Article { return $this->article; }
     public function getSerial(): string { return $this->serial; }
     public function getEmissionReasonsId(): ?int { return $this->emission_reasons_id; }

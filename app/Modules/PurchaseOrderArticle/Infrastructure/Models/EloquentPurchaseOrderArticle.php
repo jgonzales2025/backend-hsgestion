@@ -10,7 +10,7 @@ class EloquentPurchaseOrderArticle extends Model
 {
     protected $table = 'purchase_order_article';
 
-    protected $fillable = ['id', 'purchase_order_id', 'article_id', 'description', 'weight', 'quantity', 'purchase_price', 'subtotal'];
+    protected $fillable = ['id', 'purchase_order_id', 'article_id', 'description', 'weight', 'quantity', 'purchase_price', 'subtotal', 'saldo'];
 
     protected $hidden = ['created_at', 'updated_at'];
 

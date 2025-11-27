@@ -63,7 +63,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     public function findAllArticle(?string $description, ?int $branchId): array
     {
         $companyId = request()->get('company_id');
-        $articles = EloquentArticle::where('company_type_id', $companyId)
+        $articles = EloquentArticle::where('company_type_id', $companyId)->where('status_Esp', false)
             ->when($description, function ($query, $name) use ($branchId) {
                 return $query->where(function ($mainGroup) use ($name, $branchId) {
                     // Grupo 1: Búsqueda por Nombre/Código/Referencia (Validar con visibleArticles)

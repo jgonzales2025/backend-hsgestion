@@ -43,10 +43,8 @@ class DomPdfGenerator implements PdfGeneratorInterface
                     return [];
                 }
             })();
-            \Log::info('Dispatch Data: ', ['dispatch' => $dispatchNote]);
-            \Log::info('Dispatch Articles Data: ', ['dispatchArticles' => $dispatchArticles]);
             // Cargar la vista Blade con los datos de la guía y los artículos
-            $pdf = Pdf::loadView('invoice', [
+            $pdf = Pdf::loadView('dispatch_note', [
                 'dispatchNote' => $dispatchNote,
                 'dispatchArticles' => $dispatchArticles,
             ]);
@@ -59,7 +57,6 @@ class DomPdfGenerator implements PdfGeneratorInterface
             Storage::disk('public')->put($path, $pdf->output());
 
             return $path;
-
         } catch (\Throwable $e) {
             \Log::error('Error generando PDF: ' . $e->getMessage(), [
                 'dispatch_note_id' => $dispatchNote->getId(),

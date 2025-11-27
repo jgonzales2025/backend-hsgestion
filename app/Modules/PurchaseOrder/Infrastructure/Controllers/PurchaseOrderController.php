@@ -148,6 +148,7 @@ class PurchaseOrderController extends Controller
                 'quantity' => $article['quantity'],
                 'purchase_price' => $article['purchase_price'],
                 'subtotal' => $article['subtotal'],
+                
             ]);
 
             return $createPurchaseOrderArticleUseCase->execute($purchaseOrderArticleDTO);

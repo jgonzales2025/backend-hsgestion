@@ -101,8 +101,13 @@ class PurchaseController extends Controller
             $this->documentNumberGeneratorService,
         );
         $purchase = $cretaePurchaseUseCase->execute($purchaseDTO);
+       
+          $existingDetails = $this->detailPurchaseGuideRepository->findById($purchase->getId());
 
-        $det_compras_guia_ingreso = $this->createDetComprasGuiaIngreso($purchase, $request->validated()['det_compras_guia_ingreso']);
+        $this->detailPurchaseGuideRepository->deletedBy($purchase->getId());
+
+              $det_compras_guia_ingreso = $this->updateDetailCompra($purchase, $request->validated()['det_compras_guia_ingreso'], $existingDetails);
+     
 
         $shopping_income_guide = $this->updateShopping($purchase,  $request->validated()['entry_guide']);
 
@@ -112,7 +117,8 @@ class PurchaseController extends Controller
             array_merge(
                 (new PurchaseResource($purchase))->resolve(),
                 [
-                    'purchaseGuide' => DetailPurchaseGuideResource::collection($det_compras_guia_ingreso)->resolve(),
+                    'det_compras_guia_ingreso' => DetailPurchaseGuideResource::collection($det_compras_guia_ingreso)->resolve(),
+                   //purchaseGuide
                     'entry_guide' => $entryGuideIds,
                 ]
             ),
@@ -255,7 +261,7 @@ class PurchaseController extends Controller
                 'sub_total' => $purchase['sub_total'],
                 'total' => $purchase['total'],
                 'cantidad_update' => $cantidadUpdate,
-                'process_status' => $purchase['process_status'],
+                'process_status' => $nuevaCantidad == 0 ? 'Facturado' : 'En proceso',
             ]);
 
             $createDetail = $createDetail->execute($detailDto);

@@ -13,8 +13,8 @@
             font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 10px;
             color: #333;
-            margin-top: 2.5cm;
-            margin-bottom: 1.5cm;
+            margin-top: 3cm;
+            margin-bottom: 2cm;
             margin-left: 1.5cm;
             margin-right: 1.5cm;
         }
@@ -24,9 +24,9 @@
             top: 0cm;
             left: 0cm;
             right: 0cm;
-            height: 2.5cm;
+            height: 3cm;
             background-color: #fff;
-            padding-top: 0.3cm;
+            padding-top: 0.5cm;
             padding-left: 1.5cm;
             padding-right: 1.5cm;
         }
@@ -36,67 +36,71 @@
             bottom: 0cm;
             left: 0cm;
             right: 0cm;
-            height: 1.5cm;
+            height: 2cm;
             background-color: #fff;
             text-align: center;
-            line-height: 1.5cm;
-            font-size: 9px;
-            border-top: 1px solid #ddd;
+            padding-top: 10px;
         }
 
         .logo {
+            max-width: 150px;
+            max-height: 60px;
+        }
+
+        .footer-logo {
             max-width: 120px;
-            max-height: 50px;
         }
 
         .company-info {
             text-align: left;
             font-size: 9px;
+            margin-top: 5px;
         }
 
         .company-name {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
             color: #000;
         }
 
         .company-address {
-            font-size: 8px;
+            font-size: 9px;
             color: #555;
         }
 
         .ruc-box {
-            border: 2px solid #000;
+            border: 1px solid #000;
+            border-radius: 8px;
             text-align: center;
-            padding: 8px;
+            padding: 10px;
         }
 
         .ruc-number {
-            font-size: 11px;
+            font-size: 14px;
             font-weight: bold;
         }
 
         .doc-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
-            margin: 3px 0;
+            margin: 5px 0;
             background-color: #333;
             color: #fff;
-            padding: 3px;
+            padding: 5px;
         }
 
         .doc-number {
-            font-size: 12px;
+            font-size: 14px;
             font-weight: bold;
         }
 
         .section-title {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: bold;
-            background-color: #eee;
-            padding: 4px;
-            margin-top: 8px;
-            margin-bottom: 3px;
+            background-color: #f0f0f0;
+            padding: 5px;
+            margin-top: 10px;
+            margin-bottom: 5px;
             border-bottom: 1px solid #ccc;
             color: #000;
         }
@@ -108,9 +112,9 @@
         }
 
         .info-table td {
-            padding: 3px;
+            padding: 4px;
             vertical-align: top;
-            font-size: 9px;
+            font-size: 10px;
         }
 
         .label {
@@ -119,26 +123,24 @@
         }
 
         .products-table th {
-            background-color: #333;
-            color: #fff;
-            padding: 5px;
-            font-size: 9px;
+            background-color: #f0f0f0;
+            color: #000;
+            padding: 6px;
+            font-size: 10px;
             text-align: center;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
         }
 
         .products-table td {
-            border-bottom: 1px solid #ddd;
-            padding: 5px;
-            font-size: 9px;
+            padding: 6px;
+            font-size: 10px;
             vertical-align: middle;
+            border-bottom: 1px solid #eee;
         }
 
-        .products-table tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-
-        .page-number:before {
-            content: "Página " counter(page);
+        .totals-table td {
+            padding: 5px;
         }
     </style>
 </head>
@@ -147,14 +149,14 @@
     <header>
         <table style="width: 100%;">
             <tr>
-                <td style="width: 55%; vertical-align: top;">
-                    {{-- Descomentar cuando tengas el logo: <img src="{{ public_path('storage/logo/hsperu_logo.png') }}" class="logo" alt="Logo"> --}}
-                    <div class="company-info" style="margin-top: 3px;">
+                <td style="width: 60%; vertical-align: top;">
+                    <img src="{{ resource_path('img/loogohsperu.jpg') }}" class="logo" alt="HS Peru">
+                    <div class="company-info">
                         <div class="company-name">GRUPO COMPUTEL S.A.C.</div>
                         <div class="company-address">AV. GARCILAZO DE LA VEGA NRO. 1348 TDA 1A-178-179 LIMA - LIMA - LIMA</div>
                     </div>
                 </td>
-                <td style="width: 45%; vertical-align: top;">
+                <td style="width: 40%; vertical-align: top;">
                     <div class="ruc-box">
                         <div class="ruc-number">R.U.C. {{ $dispatchNote['company']['ruc'] ?? '20537005514' }}</div>
                         <div class="doc-title">FACTURA ELECTRÓNICA</div>
@@ -166,46 +168,50 @@
     </header>
 
     <footer>
-        <div class="page-number"></div>
+        <img src="{{ resource_path('img/loogohsperu.jpg') }}" class="footer-logo" alt="HS Peru">
+        <div style="font-size: 10px; color: #003366; font-weight: bold;">SOLUCIONES INFORMÁTICAS</div>
     </footer>
 
     <div class="content">
         <!-- Customer Information -->
-        <table class="info-table">
-            <tr>
-                <td style="width: 15%;"><span class="label">R.U.C.:</span></td>
-                <td style="width: 35%;">20100073723</td>
-                <td style="width: 20%;"><span class="label">RAZÓN SOCIAL:</span></td>
-                <td style="width: 30%;">CORPORACION PERUANA DE PRODUCTOS QUIMICOS S.A.</td>
-            </tr>
-            <tr>
-                <td><span class="label">DIRECCIÓN:</span></td>
-                <td colspan="3">JR. LOS CLAVELES NRO. 265</td>
-            </tr>
-            <tr>
-                <td><span class="label">USUARIO:</span></td>
-                <td>Admin Admin</td>
-                <td><span class="label">FECHA DE IMPRESIÓN:</span></td>
-                <td>{{ now()->format('Y-m-d H:i:s') }}</td>
-            </tr>
-        </table>
+        <div style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 5px 0; margin-bottom: 10px;">
+            <table class="info-table">
+                <tr>
+                    <td style="width: 15%;"><span class="label">R.U.C.:</span></td>
+                    <td style="width: 35%;">{{ $dispatchNote['customer']['ruc'] ?? '20100073723' }}</td>
+                    <td style="width: 15%;"><span class="label">RAZÓN SOCIAL:</span></td>
+                    <td style="width: 35%;">{{ $dispatchNote['customer']['name'] ?? 'CORPORACION PERUANA DE PRODUCTOS QUIMICOS S.A.' }}</td>
+                </tr>
+                <tr>
+                    <td><span class="label">DIRECCIÓN:</span></td>
+                    <td colspan="3">{{ $dispatchNote['customer']['address'] ?? 'JR. LOS CLAVELES NRO. 265' }}</td>
+                </tr>
+                <tr>
+                    <td><span class="label">USUARIO:</span></td>
+                    <td>Admin Admin</td>
+                    <td style="text-align: right;"><span class="label">FECHA DE IMPRESIÓN:</span> {{ now()->format('Y-m-d H:i:s') }}</td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
 
         <!-- Sale Details -->
         <div class="section-title">DETALLES DE LA VENTA</div>
         <table class="info-table">
             <tr>
-                <td style="width: 20%;"><span class="label">FECHA EMISIÓN:</span></td>
-                <td style="width: 30%;">{{ $dispatchNote['date'] ?? '2025-11-25' }}</td>
-                <td style="width: 20%;"><span class="label">FECHA VENCIMIENTO:</span></td>
-                <td style="width: 30%;">{{ $dispatchNote['date_referencia'] ?? '2025-12-25' }}</td>
-                <td style="width: 20%;"><span class="label">TIPO DE CAMBIO:</span></td>
-                <td style="width: 30%;">3.75</td>
+                <td style="width: 15%;"><span class="label">FECHA EMISIÓN:</span></td>
+                <td style="width: 25%;">{{ $dispatchNote['date'] ?? '2025-11-25' }}</td>
+                <td style="width: 15%;"><span class="label">FECHA VENCIMIENTO:</span></td>
+                <td style="width: 25%;">{{ $dispatchNote['date_referencia'] ?? '2025-12-25' }}</td>
+                <td style="width: 10%;"><span class="label">TIPO DE CAMBIO:</span></td>
+                <td style="width: 10%;">3.75</td>
             </tr>
             <tr>
                 <td><span class="label">FORMA PAGO:</span></td>
                 <td>CONTADO</td>
                 <td><span class="label">MONEDA:</span></td>
                 <td>DOLARES</td>
+                <td colspan="2"></td>
             </tr>
             <tr>
                 <td><span class="label">SUCURSAL:</span></td>
@@ -214,12 +220,12 @@
         </table>
 
         <!-- Articles -->
-        <table class="products-table" style="margin-top: 10px;">
+        <table class="products-table" style="margin-top: 15px;">
             <thead>
                 <tr>
-                    <th style="width: 10%;">ITEM</th>
+                    <th style="width: 5%;">ITEM</th>
                     <th style="width: 15%;">CÓDIGO</th>
-                    <th style="width: 45%;">DESCRIPCIÓN</th>
+                    <th style="width: 50%; text-align: left;">DESCRIPCIÓN</th>
                     <th style="width: 10%;">CANT</th>
                     <th style="width: 10%;">P. UNIT</th>
                     <th style="width: 10%;">TOTAL</th>
@@ -240,7 +246,7 @@
                 <tr>
                     <td style="text-align:center;">{{ $item++ }}</td>
                     <td style="text-align:center;">{{ $article['cod_fab'] ?? '' }}</td>
-                    <td style="text-align:left; padding-left: 5px;">{{ $article['name'] ?? '' }}</td>
+                    <td>{{ $article['name'] ?? '' }}</td>
                     <td style="text-align:center;">{{ $quantity }}</td>
                     <td style="text-align:right;">{{ number_format($price, 2) }}</td>
                     <td style="text-align:right;">{{ number_format($total, 2) }}</td>
@@ -250,20 +256,20 @@
         </table>
 
         <!-- Totals -->
-        <div style="width: 100%; margin-top: 10px;">
-            <div style="float: right; width: 45%;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 9px;">
-                    <tr style="background-color: #eee;">
-                        <td style="text-align: right; padding: 4px; border: 1px solid #ddd;"><strong>GRAVADO:</strong></td>
-                        <td style="text-align: right; padding: 4px; border: 1px solid #ddd;">$ {{ number_format($subtotal, 2) }}</td>
+        <div style="width: 100%; margin-top: 20px;">
+            <div style="float: right; width: 40%;">
+                <table class="totals-table">
+                    <tr>
+                        <td style="text-align: right; font-weight: bold;">GRAVADO:</td>
+                        <td style="text-align: right; border: 1px solid #ccc; background-color: #f9f9f9;">$ {{ number_format($subtotal, 2) }}</td>
                     </tr>
-                    <tr style="background-color: #eee;">
-                        <td style="text-align: right; padding: 4px; border: 1px solid #ddd;"><strong>I.G.V.:</strong></td>
-                        <td style="text-align: right; padding: 4px; border: 1px solid #ddd;">$ {{ number_format($subtotal * 0.18, 2) }}</td>
+                    <tr>
+                        <td style="text-align: right; font-weight: bold;">I.G.V.:</td>
+                        <td style="text-align: right; border: 1px solid #ccc; background-color: #f9f9f9;">$ {{ number_format($subtotal * 0.18, 2) }}</td>
                     </tr>
-                    <tr style="font-weight: bold; font-size: 10px; background-color: #ddd;">
-                        <td style="text-align: right; padding: 4px; border: 1px solid #000;">TOTAL:</td>
-                        <td style="text-align: right; padding: 4px; border: 1px solid #000;">$ {{ number_format($subtotal * 1.18, 2) }}</td>
+                    <tr>
+                        <td style="text-align: right; font-weight: bold;">TOTAL:</td>
+                        <td style="text-align: right; border: 1px solid #000; font-weight: bold;">$ {{ number_format($subtotal * 1.18, 2) }}</td>
                     </tr>
                 </table>
             </div>

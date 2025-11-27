@@ -5,13 +5,10 @@ namespace App\Modules\DispatchNotes\Infrastructure\Persistence;
 use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
 use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
 use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
-
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\PdfGeneratorInterface;
-use App\Modules\DispatchNotes\Infrastructure\Resource\DispatchNoteResource;
 use App\Modules\DispatchNotes\Infrastructure\Resource\ExcelNoteResource;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 
 class DomPdfGenerator implements PdfGeneratorInterface
@@ -27,38 +24,24 @@ class DomPdfGenerator implements PdfGeneratorInterface
 
                     return DispatchArticleResource::collection($articles)->resolve();
                 } catch (\Throwable $e) {
-                    \Log::error("Error obteniendo artículos: " . $e->getMessage());
+                    Log::error("Error obteniendo artículos: " . $e->getMessage());
                     return [];
                 }
             })();
-            $dispatchNote = (function () use ($dispatchNote) {
-                try {
-                    $note = app(DispatchNotesRepositoryInterface::class)
-                        ->findById($dispatchNote->getId());
 
-                    // Si es una sola entidad, se usa 'make' en vez de 'collection'
-                    return (new ExcelNoteResource($note));
-                } catch (\Throwable $e) {
-                    \Log::error("Error obteniendo guia de remision: " . $e->getMessage());
-                    return [];
-                }
-            })();
+            // Transformar la entidad a array usando el recurso
+            $dispatchNoteData = (new ExcelNoteResource($dispatchNote))->resolve();
+
             // Cargar la vista Blade con los datos de la guía y los artículos
             $pdf = Pdf::loadView('dispatch_note', [
-                'dispatchNote' => $dispatchNote,
+                'dispatchNote' => $dispatchNoteData,
                 'dispatchArticles' => $dispatchArticles,
             ]);
 
-            // Generar el nombre y la ruta del PDF
-            $filename = 'dispatch_note_' . $dispatchNote->getId() . '.pdf';
-            $path = 'pdf/' . $filename;
-
-            // Guardar el PDF en storage/app/public/pdf/
-            Storage::disk('public')->put($path, $pdf->output());
-
-            return $path;
+            // Retornar el contenido del PDF directamente
+            return $pdf->output();
         } catch (\Throwable $e) {
-            \Log::error('Error generando PDF: ' . $e->getMessage(), [
+            Log::error('Error generando PDF: ' . $e->getMessage(), [
                 'dispatch_note_id' => $dispatchNote->getId(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -67,15 +50,13 @@ class DomPdfGenerator implements PdfGeneratorInterface
         }
     }
 
-
     public function exists(string $path): bool
     {
-        return Storage::disk('public')->exists($path);
+        return false; // No usamos almacenamiento
     }
 
     public function getUrl(string $path): string
     {
-
-        return asset('storage/' . $path);
+        return ''; // No usamos URLs
     }
 }

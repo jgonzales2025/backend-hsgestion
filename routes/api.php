@@ -387,6 +387,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Advances - Anticipos
     Route::get('/advances/{customerId}', [AdvanceController::class, 'show']);
+    Route::post('/advances', [AdvanceController::class, 'store']);
 });
 
 Route::middleware('auth:api')->group(function () {

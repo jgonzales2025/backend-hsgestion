@@ -3,6 +3,7 @@
 namespace App\Modules\Sale\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Collections\Infrastructure\Models\EloquentCollection;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
@@ -72,6 +73,7 @@ class SaleController extends Controller
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
         private readonly SaleItemSerialRepositoryInterface $saleItemSerialRepository,
         private readonly EntryItemSerialRepositoryInterface $entryItemSerialRepository,
+        private readonly ArticleRepositoryInterface $articleRepository
     ) {
     }
 
@@ -119,20 +121,22 @@ class SaleController extends Controller
 
     public function storeCreditNote(StoreSaleCreditNoteRequest $request): JsonResponse
     {
-        $saleCreditNoteDTO = new SaleCreditNoteDTO($request->validated());
-        $saleCreditNoteUseCase = new CreateSaleCreditNoteUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->noteReasonRepository, $this->documentNumberGeneratorService);
-        $saleCreditNote = $saleCreditNoteUseCase->execute($saleCreditNoteDTO);
+        return DB::transaction(function () use ($request) {
+            $saleCreditNoteDTO = new SaleCreditNoteDTO($request->validated());
+            $saleCreditNoteUseCase = new CreateSaleCreditNoteUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->noteReasonRepository, $this->documentNumberGeneratorService);
+            $saleCreditNote = $saleCreditNoteUseCase->execute($saleCreditNoteDTO);
 
-        $saleArticles = $this->createSaleArticles($saleCreditNote, $request->validated()['sale_articles']);
-        $this->logTransaction($request, $saleCreditNote);
+            $saleArticles = $this->createSaleArticles($saleCreditNote, $request->validated()['sale_articles']);
+            $this->logTransaction($request, $saleCreditNote);
 
-        return response()->json(
-            [
-                'sale' => (new SaleCreditNoteResource($saleCreditNote))->resolve(),
-                'articles' => SaleArticleResource::collection($saleArticles)->resolve()
-            ],
-            201
-        );
+            return response()->json(
+                [
+                    'sale' => (new SaleCreditNoteResource($saleCreditNote))->resolve(),
+                    'articles' => SaleArticleResource::collection($saleArticles)->resolve()
+                ],
+                201
+            );
+        });
     }
 
     public function show($id): JsonResponse
@@ -180,67 +184,71 @@ class SaleController extends Controller
 
     public function update(UpdateSaleRequest $request, $id): JsonResponse
     {
-        $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
-        $sale = $saleUseCase->execute($id);
+        return DB::transaction(function () use ($request, $id) {
+            $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
+            $sale = $saleUseCase->execute($id);
 
-        if (!$sale) {
-            return response()->json(['message' => 'Venta no encontrada'], 404);
-        }
+            if (!$sale) {
+                return response()->json(['message' => 'Venta no encontrada'], 404);
+            }
 
-        if ($sale->getIsLocked() == 1) {
-            return response()->json(['message' => 'La venta no se puede actualizar por cierre de mes'], 200);
-        }
+            if ($sale->getIsLocked() == 1) {
+                return response()->json(['message' => 'La venta no se puede actualizar por cierre de mes'], 200);
+            }
 
-        $saleDTO = new SaleDTO($request->validated());
-        $saleUseCase = new UpdateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository);
-        $saleUpdated = $saleUseCase->execute($saleDTO, $sale);
+            $saleDTO = new SaleDTO($request->validated());
+            $saleUseCase = new UpdateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository);
+            $saleUpdated = $saleUseCase->execute($saleDTO, $sale);
 
-        $this->saleArticleRepository->deleteBySaleId($saleUpdated->getId());
+            $this->saleArticleRepository->deleteBySaleId($saleUpdated->getId());
 
-        $deleteSaleItemSerialBySaleIdUseCase = new DeleteSaleItemSerialBySaleIdUseCase($this->saleItemSerialRepository);
-        $deleteSaleItemSerialBySaleIdUseCase->execute($saleUpdated->getId());
+            $deleteSaleItemSerialBySaleIdUseCase = new DeleteSaleItemSerialBySaleIdUseCase($this->saleItemSerialRepository);
+            $deleteSaleItemSerialBySaleIdUseCase->execute($saleUpdated->getId());
 
-        $saleArticles = $this->updateSaleArticles($saleUpdated, $request->validated()['sale_articles']);
-        $this->logTransaction($request, $saleUpdated);
+            $saleArticles = $this->updateSaleArticles($saleUpdated, $request->validated()['sale_articles']);
+            $this->logTransaction($request, $saleUpdated);
 
-        return response()->json(
-            [
-                'sale' => (new SaleResource($saleUpdated))->resolve(),
-                'articles' => SaleArticleResource::collection($saleArticles)->resolve()
-            ],
-            200
-        );
+            return response()->json(
+                [
+                    'sale' => (new SaleResource($saleUpdated))->resolve(),
+                    'articles' => SaleArticleResource::collection($saleArticles)->resolve()
+                ],
+                200
+            );
+        });
     }
 
     public function updateCreditNote(UpdateSaleCreditNoteRequest $request, $id): JsonResponse
     {
-        $creditNoteUseCase = new FindCreditNoteByIdUseCase($this->saleRepository);
-        $saleCreditNote = $creditNoteUseCase->execute($id);
+        return DB::transaction(function () use ($request, $id) {
+            $creditNoteUseCase = new FindCreditNoteByIdUseCase($this->saleRepository);
+            $saleCreditNote = $creditNoteUseCase->execute($id);
 
-        if (!$saleCreditNote) {
-            return response()->json(['message' => 'Nota de crédito no encontrada'], 404);
-        }
+            if (!$saleCreditNote) {
+                return response()->json(['message' => 'Nota de crédito no encontrada'], 404);
+            }
 
-        if ($saleCreditNote->getIsLocked() == 1) {
-            return response()->json(['message' => 'La nota de crédito no se puede actualizar por cierre de mes'], 200);
-        }
+            if ($saleCreditNote->getIsLocked() == 1) {
+                return response()->json(['message' => 'La nota de crédito no se puede actualizar por cierre de mes'], 200);
+            }
 
-        $saleCreditNoteDTO = new SaleCreditNoteDTO($request->validated());
-        $saleCreditNoteUseCase = new UpdateCreditNoteUseCase($this->saleRepository, $this->companyRepository, $this->userRepository, $this->noteReasonRepository);
-        $saleCreditNoteUpdated = $saleCreditNoteUseCase->execute($saleCreditNoteDTO, $id);
+            $saleCreditNoteDTO = new SaleCreditNoteDTO($request->validated());
+            $saleCreditNoteUseCase = new UpdateCreditNoteUseCase($this->saleRepository, $this->companyRepository, $this->userRepository, $this->noteReasonRepository);
+            $saleCreditNoteUpdated = $saleCreditNoteUseCase->execute($saleCreditNoteDTO, $id);
 
-        $this->saleArticleRepository->deleteBySaleId($saleCreditNoteUpdated->getId());
+            $this->saleArticleRepository->deleteBySaleId($saleCreditNoteUpdated->getId());
 
-        $saleArticles = $this->createSaleArticles($saleCreditNoteUpdated, $request->validated()['sale_articles']);
-        $this->logTransaction($request, $saleCreditNoteUpdated);
+            $saleArticles = $this->createSaleArticles($saleCreditNoteUpdated, $request->validated()['sale_articles']);
+            $this->logTransaction($request, $saleCreditNoteUpdated);
 
-        return response()->json(
-            [
-                'sale' => (new SaleCreditNoteResource($saleCreditNoteUpdated))->resolve(),
-                'articles' => SaleArticleCreditNoteResource::collection($saleArticles)->resolve()
-            ],
-            200
-        );
+            return response()->json(
+                [
+                    'sale' => (new SaleCreditNoteResource($saleCreditNoteUpdated))->resolve(),
+                    'articles' => SaleArticleCreditNoteResource::collection($saleArticles)->resolve()
+                ],
+                200
+            );
+        });
     }
 
     public function showDocumentSale(Request $request): JsonResponse
@@ -302,7 +310,7 @@ class SaleController extends Controller
 
     private function createSaleArticles($sale, array $articlesData): array
     {
-        $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository);
+        $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository, $this->articleRepository);
 
         return array_map(function ($article) use ($sale, $createSaleArticleUseCase) {
             $saleArticleDTO = new SaleArticleDTO([
@@ -342,7 +350,7 @@ class SaleController extends Controller
 
     private function updateSaleArticles($sale, array $articlesData): array
     {
-        $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository);
+        $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository, $this->articleRepository);
 
         return array_map(function ($article) use ($sale, $createSaleArticleUseCase) {
             $saleArticleDTO = new SaleArticleDTO([

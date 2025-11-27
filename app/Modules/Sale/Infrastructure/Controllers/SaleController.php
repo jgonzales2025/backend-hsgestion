@@ -258,7 +258,7 @@ class SaleController extends Controller
         $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
         $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
         $articles = array_map(function ($article) use ($serialsByArticle) {
-            $article->serials = $serialsByArticle[$article->getArticleId()] ?? [];
+            $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
             return $article;
         }, $articles);
 

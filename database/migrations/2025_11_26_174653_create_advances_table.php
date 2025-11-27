@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('currency_type_id')->constrained('currency_types')->cascadeOnDelete();
             $table->decimal('amount', 10, 2);
             $table->decimal('saldo', 10, 2);
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

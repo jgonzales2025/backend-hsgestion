@@ -14,6 +14,7 @@ class BulkCollection
     private int $currency_type_id;
     private string $operation_date;
     private string $operation_number;
+    private ?int $advance_id;
 
     public function __construct(
         int $id,
@@ -25,7 +26,8 @@ class BulkCollection
         int $bank_id,
         int $currency_type_id,
         string $operation_date,
-        string $operation_number
+        string $operation_number,
+        ?int $advance_id = null
     ) {
         $this->id = $id;
         $this->company_id = $company_id;
@@ -37,6 +39,7 @@ class BulkCollection
         $this->currency_type_id = $currency_type_id;
         $this->operation_date = $operation_date;
         $this->operation_number = $operation_number;
+        $this->advance_id = $advance_id;
     }
 
     public function getId(): int { return $this->id; }
@@ -49,4 +52,5 @@ class BulkCollection
     public function getCurrencyTypeId(): int { return $this->currency_type_id; }
     public function getOperationDate(): string { return $this->operation_date; }
     public function getOperationNumber(): string { return $this->operation_number; }
+    public function getAdvanceId(): ?int { return $this->advance_id; }
 }

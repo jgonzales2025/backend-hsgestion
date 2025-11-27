@@ -35,6 +35,7 @@ return new class extends Migration
             $table->string('credit_correlative', 10)->nullable();
             $table->integer('status')->default(1);
             $table->decimal('rounding', 4, 2)->default(0.00);
+            $table->foreignId('advance_id')->constrained('advances')->onDelete('cascade');
             $table->timestamps();
         });
     }

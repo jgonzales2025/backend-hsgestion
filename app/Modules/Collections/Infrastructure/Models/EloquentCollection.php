@@ -32,7 +32,8 @@ class EloquentCollection extends Model
         'status',
         'credit_document_type_id',
         'credit_serie',
-        'credit_correlative'
+        'credit_correlative',
+        'advance_id'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

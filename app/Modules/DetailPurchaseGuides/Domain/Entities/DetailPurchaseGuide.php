@@ -87,4 +87,14 @@ class DetailPurchaseGuide
     {
         return $this->process_status;
     }
+
+    public function setCantidad(int $cantidad): void
+    {
+        $this->cantidad = $cantidad;
+    }
+
+    public function setCantidadUpdate(float $cantidad_update): void
+    {
+        $this->cantidad_update = $cantidad_update;
+    }
 }

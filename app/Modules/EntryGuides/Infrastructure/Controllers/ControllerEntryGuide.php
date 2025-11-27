@@ -7,6 +7,10 @@ use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\DocumentEntryGuide\application\DTOS\DocumentEntryGuideDTO;
+use App\Modules\DocumentEntryGuide\application\UseCases\CreateDocumentEntryGuide;
+use App\Modules\DocumentEntryGuide\Domain\Interface\DocumentEntryGuideRepositoryInterface;
+use App\Modules\DocumentEntryGuide\Infrastructure\Resource\DocumentEntryGuideResource;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\EntryGuideArticle\Application\DTOS\EntryGuideArticleDTO;
 use App\Modules\EntryGuideArticle\Application\UseCases\CreateEntryGuideArticle;
@@ -53,6 +57,7 @@ class ControllerEntryGuide extends Controller
         private readonly TransactionLogRepositoryInterface   $transactionLogRepositoryInterface,
         private readonly UserRepositoryInterface             $userRepository,
         private readonly DocumentTypeRepositoryInterface     $documentTypeRepository,
+        private readonly DocumentEntryGuideRepositoryInterface $documentEntryGuideRepositoryInterface,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -148,11 +153,12 @@ class ControllerEntryGuide extends Controller
         $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
         $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
-
+        $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
         $this->logTransaction($request, $entryGuide);
 
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
+        $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
 
         return response()->json($response, 201);
     }
@@ -231,6 +237,24 @@ class ControllerEntryGuide extends Controller
             return $guideArticle;
         }, $articlesData);
     }
+    private function updateDocumentEntryGuide($shooping, array $data): array
+    {
+        $createDocumentEntryGuideUseCase = new CreateDocumentEntryGuide($this->documentEntryGuideRepositoryInterface);
+
+        return array_map(function ($data) use ($shooping, $createDocumentEntryGuideUseCase) {
+            $documentEntryGuide = new DocumentEntryGuideDTO([
+                'entry_guide_id' => $shooping->getId(),
+                'guide_serie_supplier' => $data['guide_serie_supplier'],
+                'guide_correlative_supplier' => $data['guide_correlative_supplier'],
+                'invoice_serie_supplier' => $data['invoice_serie_supplier'],
+                'invoice_correlative_supplier' => $data['invoice_correlative_supplier'],
+            ]);
+
+            $result = $createDocumentEntryGuideUseCase->execute($documentEntryGuide);
+            return $result;
+        }, $data);
+    }
+
 
     private function logTransaction($request, $entryGuide): void
     {
@@ -301,6 +325,7 @@ class ControllerEntryGuide extends Controller
                         'description' => $article->getDescription(),
                         'quantity' => $article->getQuantity(),
                         'cod_fab' => $article->getArticle()->getCodFab(),
+
                     ];
                 } else {
                     $aggregated[$key]['quantity'] += $article->getQuantity();

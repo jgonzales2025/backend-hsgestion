@@ -11,7 +11,7 @@ interface PurchaseOrderRepositoryInterface
     public function getLastDocumentNumber(string $serie): ?string;
     public function findById(int $id): ?PurchaseOrder;
     public function update(PurchaseOrder $purchaseOrder): ?PurchaseOrder;
+    public function findBySupplierId(int $supplierId): array;
     public function findByIds(array $ids): array;
     public function allBelongToSameCustomer(array $ids): bool;
-   
 }

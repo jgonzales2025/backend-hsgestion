@@ -3,6 +3,7 @@
 namespace App\Modules\PurchaseOrder\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
@@ -46,12 +47,12 @@ class PurchaseOrderController extends Controller
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
-         private readonly EntryGuideArticleRepositoryInterface $entryGuideArticleRepositoryInterface,
+        private readonly EntryGuideArticleRepositoryInterface $entryGuideArticleRepositoryInterface,
         private readonly TransactionLogRepositoryInterface $transactionLogRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
-    ) {
-    }
+        private readonly ArticleRepositoryInterface $articleRepositoryInterface
+    ) {}
 
     public function index(): array
     {
@@ -180,8 +181,13 @@ class PurchaseOrderController extends Controller
         return $pdf->stream('orden_compra_' . $purchaseOrder->getCorrelative() . '.pdf');
     }
 
-    
-      public function validateSameCustomer(Request $request): JsonResponse
+    /**
+     * Get purchase orders by IDs and aggregate articles
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getBySupplier(Request $request): JsonResponse
     {
         $ids = $request->input('ids');
 
@@ -191,44 +197,63 @@ class PurchaseOrderController extends Controller
 
         $ids = array_map('intval', $ids);
 
+        // Get all purchase orders by IDs
+        $purchaseOrders = $this->purchaseOrderRepository->findByIds($ids);
+
+        if (empty($purchaseOrders)) {
+            return response()->json([
+                'message' => 'No se encontraron órdenes de compra con los IDs proporcionados',
+                'ids' => $ids
+            ], 404);
+        }
+
+        // Validate all belong to same supplier
         $isValid = $this->purchaseOrderRepository->allBelongToSameCustomer($ids);
 
         if (!$isValid) {
             return response()->json(['message' => 'Todos los documentos deben pertenecer al mismo proveedor'], 422);
         }
 
-        $entryGuides = $this->purchaseOrderRepository->findByIds($ids);
+        // Get supplier info from first purchase order
+        $supplierInfo = [
+            'id' => $purchaseOrders[0]->getSupplier()?->getId(),
+            'name' => $purchaseOrders[0]->getSupplier()?->getName(),
+        ];
 
-        $customerHeader = null;
-        foreach ($entryGuides as $entryGuide) {
-            if ($customerHeader === null) {
-                $customerHeader = [
-                    'id' => $entryGuide->getSupplier()?->getId(),
-                   
-
-                ];
-            }
-            $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
+        // Aggregate articles
+        $aggregated = [];
+        foreach ($purchaseOrders as $purchaseOrder) {
+            $articles = $this->purchaseOrderArticleRepository->findByPurchaseOrderId($purchaseOrder->getId());
 
             foreach ($articles as $article) {
-                $key = $article->getArticle()->getId();
-                if (!isset($aggregated[$key])) {
-                    $aggregated[$key] = [
-                        'article_id' => $key,
+                $articleEntity = $this->articleRepositoryInterface->findById($article->getArticleId());
+
+                if (!isset($aggregated[$articleEntity->getId()])) {
+                    // First time seeing this article
+                    $aggregated[$articleEntity->getId()] = [
+                        'article_id' => $articleEntity->getId(),
                         'description' => $article->getDescription(),
                         'quantity' => $article->getQuantity(),
-                        'cod_fab' => $article->getArticle()->getCodFab(),
+                        'weight' => $article->getWeight(),
+                        'purchase_price' => $article->getPurchasePrice(),
+                        'cod_fab' => $article->getCodFab(),
+                        'series_enabled' => $articleEntity->getSeriesEnabled()
                     ];
                 } else {
-                    $aggregated[$key]['quantity'] += $article->getQuantity();
+                    // Article already exists, sum the quantity
+                    $aggregated[$articleEntity->getId()]['quantity'] += $article->getQuantity();
                 }
             }
         }
 
         return response()->json([
-            'customer' => $customerHeader,
-             'articles' => array_values($aggregated)
+            'supplier' => $supplierInfo,
+            'total_orders' => count($purchaseOrders),
+            'articles' => array_values($aggregated)
         ], 200);
+    }
+
+
     private function logTransaction($request, $purchaseOrder): void
     {
         $transactionLogs = new CreateTransactionLogUseCase(

@@ -121,6 +121,7 @@ class PurchaseController extends Controller
     }
     public function update(UpdatePurchaseRequest $request, int $id): JsonResponse
     {
+
         $purchaseDTO = new PurchaseDTO($request->validated());
         $updatePurchaseUseCase = new UpdatePurchaseUseCase(
             $this->purchaseRepository,
@@ -131,8 +132,9 @@ class PurchaseController extends Controller
         );
         $purchase = $updatePurchaseUseCase->execute($purchaseDTO, $id);
 
-        $existingDetails = $this->detailPurchaseGuideRepository->findById(12);
-        dd($existingDetails);
+        // Get existing details BEFORE deleting to preserve original cantidad
+        $existingDetails = $this->detailPurchaseGuideRepository->findById($purchase->getId());
+
         $this->detailPurchaseGuideRepository->deletedBy($purchase->getId());
 
         $this->shoppingIncomeGuideRepository->deletedBy($purchase->getId());
@@ -176,7 +178,7 @@ class PurchaseController extends Controller
                 'purchase_id' => $purchase->getId(),
                 'article_id' => $item['article_id'],
                 'description' => $item['description'],
-                'cantidad' => $item['cantidad'] - $item['cantidad_update'],
+                'cantidad' => $item['cantidad'],
                 'precio_costo' => $item['precio_costo'],
                 'descuento' => $item['descuento'],
                 'sub_total' => $item['sub_total'],
@@ -218,37 +220,41 @@ class PurchaseController extends Controller
             return $result;
         }, $data);
     }
-    private function updateDetailCompra($detail, array $data, $existingDetails = []): array
+    private function updateDetailCompra($detail, array $data, array $existingDetails = []): array
     {
         $createDetail = new CreateDetailPurchaseGuideUseCase($this->detailPurchaseGuideRepository);
 
         return array_map(function ($purchase) use ($detail, $createDetail, $existingDetails) {
-            
-            $cantidad = $purchase['cantidad'] ?? 0;
-         
-            // Find existing detail for this article
-            $existingDetail = null;
-            foreach ($existingDetails as $item) {
-                if ($item->getArticleId() == $purchase['article_id']) {
-                    $existingDetail = $item;
+
+            // Find the original cantidad for this article from existing details
+            $cantidadOriginal = $purchase['cantidad'] ?? 0;
+
+            foreach ($existingDetails as $existingDetail) {
+                if ($existingDetail->getArticleId() == $purchase['article_id']) {
+                    $cantidadOriginal = $existingDetail->getCantidad();
                     break;
                 }
             }
 
-            if ($existingDetail) {
-                $cantidad = $existingDetail->getCantidad() - ($purchase['cantidad_update'] ?? 0);
+            // Calculate new cantidad: original - cantidad_update
+            $cantidadUpdate = $purchase['cantidad_update'] ?? 0;
+            $nuevaCantidad = $cantidadOriginal - $cantidadUpdate;
+
+            // Ensure cantidad doesn't go negative
+            if ($nuevaCantidad < 0) {
+                $nuevaCantidad = 0;
             }
-      
+
             $detailDto = new DetailPurchaseGuideDTO([
                 'purchase_id' => $detail->getId(),
                 'article_id' => $purchase['article_id'],
                 'description' => $purchase['description'],
-                'cantidad' => $cantidad,
+                'cantidad' => $nuevaCantidad,  // Use calculated cantidad
                 'precio_costo' => $purchase['precio_costo'],
                 'descuento' => $purchase['descuento'],
                 'sub_total' => $purchase['sub_total'],
                 'total' => $purchase['total'],
-                'cantidad_update' => $purchase['cantidad_update'],
+                'cantidad_update' => $cantidadUpdate,
                 'process_status' => $purchase['process_status'],
             ]);
 
@@ -275,5 +281,69 @@ class PurchaseController extends Controller
             ],
             200
         );
+    }
+
+    /**
+     * Update a purchase detail by decrementing cantidad based on cantidad_update
+     *
+     * @param int $id - The detail purchase guide ID
+     * @return JsonResponse
+     */
+    public function updateDetail(int $id): JsonResponse
+    {
+        // Validate request
+        $validated = request()->validate([
+            'cantidad_update' => 'required|numeric|min:0',
+        ], [
+            'cantidad_update.required' => 'La cantidad a actualizar es requerida',
+            'cantidad_update.numeric' => 'La cantidad a actualizar debe ser un número',
+            'cantidad_update.min' => 'La cantidad a actualizar debe ser mayor o igual a 0',
+        ]);
+
+        $cantidadUpdate = $validated['cantidad_update'];
+
+        // Find detail by ID
+        $detail = $this->detailPurchaseGuideRepository->findByDetailId($id);
+
+        if (!$detail) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Detalle de compra no encontrado'
+            ], 404);
+        }
+
+        // Validate that cantidad_update does not exceed cantidad
+        if ($cantidadUpdate > $detail->getCantidad()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'La cantidad a actualizar no puede ser mayor que la cantidad disponible',
+                'cantidad_disponible' => $detail->getCantidad(),
+                'cantidad_solicitada' => $cantidadUpdate
+            ], 422);
+        }
+
+        // Calculate new cantidad
+        $nuevaCantidad = $detail->getCantidad() - $cantidadUpdate;
+
+        // Update entity
+        $detail->setCantidad($nuevaCantidad);
+        $detail->setCantidadUpdate($cantidadUpdate);
+
+        // Save to database
+        $updatedDetail = $this->detailPurchaseGuideRepository->save($detail);
+
+        if (!$updatedDetail) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al actualizar el detalle de compra'
+            ], 500);
+        }
+
+        // Return success response
+        return response()->json([
+            'success' => true,
+            'message' => 'Detalle de compra actualizado exitosamente',
+            'data' => (new DetailPurchaseGuideResource($updatedDetail))->resolve()
+        ], 200);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\DetailPurchaseGuides\Infrastructure\Resource;
 
+use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,6 +22,7 @@ class DetailPurchaseGuideResource extends JsonResource
             'total' => $this->resource->getTotal(),
             'cantidad_update' => $this->resource->getCantidadUpdate(),
             'process_status' => $this->resource->getProcessStatus(),
+            // 'SKU' => EloquentArticle::find($this->resource->getArticleId())->getCodFab(),
         ];
     }
 }

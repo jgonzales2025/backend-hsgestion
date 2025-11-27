@@ -82,7 +82,7 @@ class PurchaseController extends Controller
             array_merge(
                 (new PurchaseResource($purchase))->resolve(),
                 [
-                    'purchaseGuide' => DetailPurchaseGuideResource::collection($guide)->resolve(),
+                    'det_compras_guia_ingreso' => DetailPurchaseGuideResource::collection($guide)->resolve(),
                     'entry_guide' => $entryGuideIds,
                 ]
             ),
@@ -155,7 +155,7 @@ class PurchaseController extends Controller
             array_merge(
                 (new PurchaseResource($purchase))->resolve(),
                 [
-                    'purchaseGuide' => DetailPurchaseGuideResource::collection($detailcompras)->resolve(),
+                    'det_compras_guia_ingreso' => DetailPurchaseGuideResource::collection($detailcompras)->resolve(),
                     'entry_guide' => $entryGuideIds,
                 ]
             ),
@@ -184,7 +184,6 @@ class PurchaseController extends Controller
                 'purchase_id' => $purchase->getId(),
                 'article_id' => $item['article_id'],
                 'description' => $item['description'],
-                'cantidad' => $item['cantidad'],
                 'precio_costo' => $item['precio_costo'],
                 'descuento' => $item['descuento'],
                 'sub_total' => $item['sub_total'],
@@ -253,7 +252,7 @@ class PurchaseController extends Controller
 
             $detailDto = new DetailPurchaseGuideDTO([
                 'purchase_id' => $detail->getId(),
-                'article_id' => $purchase['article_id'],
+                'article_id' => $purchase['article_id'],-
                 'description' => $purchase['description'],
                 'cantidad' => $nuevaCantidad,  // Use calculated cantidad
                 'precio_costo' => $purchase['precio_costo'],

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Modules\Advance\Domain\Interfaces\AdvanceRepositoryInterface;
+use App\Modules\Advance\Infrastructure\Persistence\EloquentAdvanceRepository;
 use App\Modules\Articles\Domain\Interfaces\ArticleExporterInterface;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Persistence\ArticlesExport;
@@ -202,6 +204,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DetailPurchaseGuideRepositoryInterface::class, EloquentDetailPurchaseGuideRepository::class);
         $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
         $this->app->bind(TransferOrderRepositoryInterface::class, EloquentTransferOrderRepository::class);
+        $this->app->bind(AdvanceRepositoryInterface::class, EloquentAdvanceRepository::class);
     }
 
     /**

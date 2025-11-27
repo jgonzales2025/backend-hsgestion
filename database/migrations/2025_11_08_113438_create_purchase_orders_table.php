@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('company_id')->constrained('companies')->onDelete('cascade');
             $table->foreignId('branch_id')->constrained('branches')->onDelete('cascade');
             $table->string('serie',5);
-            $table->string('correlative',8)->unique();
+            $table->string('correlative',8);
             $table->date('date');
             $table->date('delivery_date')->nullable();
             $table->date('due_date')->nullable();

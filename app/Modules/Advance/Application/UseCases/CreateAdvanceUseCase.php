@@ -26,7 +26,7 @@ class CreateAdvanceUseCase
         private DocumentNumberGeneratorService $documentNumberGeneratorService
         ) {}
 
-    public function execute(AdvanceDTO $advance_dto): Advance
+    public function execute(AdvanceDTO $advance_dto): void
     {
         $lastDocumentNumber = $this->advanceRepository->getLastDocumentNumber();
         $correlative = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
@@ -44,7 +44,7 @@ class CreateAdvanceUseCase
         $currencyType = $currencyTypeUseCase->execute($advance_dto->currency_type_id);
 
         $advance = new Advance(
-            id: $advance_dto->id,
+            id: 0,
             correlative: $correlative,
             customer: $customer,
             payment_method: $paymentMethod,
@@ -56,6 +56,6 @@ class CreateAdvanceUseCase
             amount: $advance_dto->amount
         );
 
-        return $this->advanceRepository->save($advance);
+        $this->advanceRepository->save($advance);
     }
 }

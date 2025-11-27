@@ -2,6 +2,7 @@
 
 namespace App\Modules\Bank\Infrastructure\Models;
 
+use App\Modules\Bank\Domain\Entities\Bank;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
@@ -37,5 +38,19 @@ class EloquentBank extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(EloquentCompany::class, 'company_id');
+    }
+
+    public function toDomain(EloquentBank $eloquentBank): Bank
+    {
+        return new Bank(
+            $eloquentBank->id,
+            $eloquentBank->name,
+            $eloquentBank->account_number,
+            $eloquentBank->currencyType->toDomain($eloquentBank->currencyType),
+            $eloquentBank->user->toDomain($eloquentBank->user),
+            $eloquentBank->created_at,
+            $eloquentBank->company->toDomain($eloquentBank->company),
+            $eloquentBank->status
+        );
     }
 }

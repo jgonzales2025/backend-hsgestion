@@ -28,4 +28,27 @@ class EloquentAdvanceRepository implements AdvanceRepositoryInterface
     {
         return EloquentAdvance::orderBy('id', 'desc')->first()->correlative ?? null;
     }
+
+    public function findByCustomerId(int $customer_id): ?Advance
+    {
+        $eloquentAdvance = EloquentAdvance::where('customer_id', $customer_id)->first();
+
+        if (!$eloquentAdvance) {
+            return null;
+        }
+
+        return new Advance(
+            id: $eloquentAdvance->id,
+            correlative: $eloquentAdvance->correlative,
+            customer: $eloquentAdvance->customer->toDomain($eloquentAdvance->customer),
+            payment_method: $eloquentAdvance->paymentMethod->toDomain($eloquentAdvance->paymentMethod),
+            bank: $eloquentAdvance->bank->toDomain($eloquentAdvance->bank),
+            operation_number: $eloquentAdvance->operation_number,
+            operation_date: $eloquentAdvance->operation_date,
+            parallel_rate: $eloquentAdvance->parallel_rate,
+            currency_type: $eloquentAdvance->currencyType->toDomain($eloquentAdvance->currencyType),
+            amount: $eloquentAdvance->amount,
+            saldo: $eloquentAdvance->saldo
+        );
+    }
 }

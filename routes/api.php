@@ -4,6 +4,7 @@
 use App\Http\Controllers\MenuController;
 use App\Modules\Articles\Infrastructure\Controllers\ArticleController;
 use App\Http\Controllers\RoleController;
+use App\Modules\Advance\Infrastructure\Controllers\AdvanceController;
 use App\Modules\Auth\Infrastructure\Controllers\AuthController;
 use App\Modules\Bank\Infrastructure\Controllers\BankController;
 use App\Modules\Branch\Infrastructure\Controllers\BranchController;
@@ -383,6 +384,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/purchases/{id}', [PurchaseController::class, 'show']);
     Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
     Route::get('/purchases-pdf/{id}', [PurchaseController::class, 'downloadPdf']);
+
+    // Advances - Anticipos
+    Route::get('/advances/{customerId}', [AdvanceController::class, 'show']);
 });
 
 Route::middleware('auth:api')->group(function () {

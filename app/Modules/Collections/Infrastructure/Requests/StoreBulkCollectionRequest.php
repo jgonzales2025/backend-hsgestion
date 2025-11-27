@@ -23,6 +23,7 @@ class StoreBulkCollectionRequest extends FormRequest
             "currency_type_id" => "required|integer|exists:currency_types,id",
             "operation_date" => "required|date",
             "operation_number" => "required|string",
+            "advance_amount" => "nullable|numeric",
             'collections' => 'required|array|min:1',
             'collections.*.sale_id' => 'required|integer|exists:sales,id',
             'collections.*.sale_document_type_id' => 'required|integer|exists:document_types,id',

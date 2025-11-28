@@ -461,7 +461,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
     {
         $sale = $sale->fresh();
         Log::info('sale', $sale->toArray());
-        DB::statement('CALL sp_actualiza_saldo_venta(?, ?, ?, ?)', [
+        DB::statement('CALL update_sale_balance(?, ?, ?, ?)', [
             $sale->company_id,
             $sale->document_type_id,
             $sale->serie,

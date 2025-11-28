@@ -27,7 +27,7 @@ return new class extends Migration
             $table->foreignId('digital_wallet_id')->nullable()->constrained('digital_wallets')->onDelete('cascade');
             $table->foreignId('bank_id')->nullable()->constrained('banks')->onDelete('cascade');
             $table->date('operation_date')->nullable();
-            $table->string('operation_number', 20)->nullable();
+            $table->string('operation_number', 50)->nullable();
             $table->string('lote_number', 30)->nullable();
             $table->string('for_digits', 4)->nullable();
             $table->integer('credit_document_type_id')->nullable();

@@ -22,7 +22,7 @@ class EntryGuideRequest extends FormRequest
             'serie' => 'required|string',
             'date' => 'string',
             'customer_id' => 'required|integer|exists:customers,id',
-            'observations' => 'string',
+            'observations' => 'nullable|string',
             'ingress_reason_id' => 'required|integer|exists:ingress_reasons,id',
             'reference_po_serie' => 'string',
             'reference_po_correlative' => 'string',

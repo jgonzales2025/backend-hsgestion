@@ -11,6 +11,7 @@ use App\Modules\PettyCashReceipt\Application\DTOS\PettyCashReceiptDTO;
 use App\Modules\PettyCashReceipt\Application\UseCases\CreatePettyCashReceiptUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\FindAllPettyCashReceiptUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\FindByIdPettyCashReceiptUseCase;
+use App\Modules\PettyCashReceipt\application\UseCases\SelectProcedureUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\UpdatePettyCashReceiptStatusUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\UpdatePettyCashReceiptUseCase;
 use App\Modules\PettyCashReceipt\Domain\Interface\PettyCashReceiptRepositoryInterface;
@@ -93,5 +94,46 @@ class PettyCashReceiptController extends Controller
         $updatePettyCashReceiptUseCase->execute($pettyId, $status);
 
         return response()->json(["message" => "estado actualizado"], 200);
+    }
+
+    public function selectProcedure(Request $request): JsonResponse
+    {
+        $companyId = request()->get('company_id');
+
+        $validated = $request->validate([
+
+            'fecha' => 'required|date',
+            'fechaU' => 'required|date',
+            'nrocliente' => 'required|integer',
+            'pcodsuc' => 'required|integer',
+            'ptippag' => 'required|integer',
+            'pcodban' => 'required|integer',
+            'pnroope' => 'required|integer',
+            'ptipdoc' => 'required|integer',
+            'pserie' => 'nullable|string',
+            'pcorrelativo' => 'required|integer',
+        ]);
+
+        $validated['cia'] = $companyId;
+
+        $selectProcedureUseCase = new SelectProcedureUseCase(
+            $this->pettyCashReceiptRepository
+        );
+
+        $data = $selectProcedureUseCase->execute(
+            $validated['cia'],
+            $validated['fecha'],
+            $validated['fechaU'],
+            $validated['nrocliente'],
+            $validated['pcodsuc'],
+            $validated['ptippag'],
+            $validated['pcodban'],
+            $validated['pnroope'],
+            $validated['ptipdoc'],
+            $validated['pserie'] ?? '',
+            $validated['pcorrelativo']
+        );
+
+        return response()->json($data);
     }
 }

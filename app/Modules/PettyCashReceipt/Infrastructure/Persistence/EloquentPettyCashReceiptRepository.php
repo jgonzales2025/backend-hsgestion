@@ -6,7 +6,7 @@ use App\Modules\PettyCashReceipt\Domain\Entities\PettyCashReceipt;
 use App\Modules\PettyCashReceipt\Domain\Interface\PettyCashReceiptRepositoryInterface;
 use App\Modules\PettyCashReceipt\Infrastructure\Models\EloquentPettyCashReceipt;
 use Eloquent;
-
+use Illuminate\Support\Facades\DB;
 
 class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryInterface
 {
@@ -149,4 +149,37 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
     {
         EloquentPettyCashReceipt::where('id', $pettyCashReceipt)->update(['status' => $status]);
     }
+    public function selectProcedure(
+    $cia,
+    $fecha,
+    $fechaU,
+    $nrocliente,
+    $pcodsuc,
+    $ptippag,
+    $pcodban,
+    $pnroope,
+    $ptipdoc,
+    $pserie,
+    $pcorrelativo
+):array {
+  
+    $resultado = DB::select('CALL sp_parte_diario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
+        $cia,          
+        $fecha,       
+        $fechaU,      
+        $nrocliente,    
+        $pcodsuc,
+        $ptippag,
+        $pcodban,
+        $pnroope,
+        $ptipdoc,
+        $pserie,
+        $pcorrelativo
+    ]);
+
+   
+    return $resultado;
+ 
+}
+
 }

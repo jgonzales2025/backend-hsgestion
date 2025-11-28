@@ -76,14 +76,17 @@ class ControllerEntryGuide extends Controller
         foreach ($entryGuides as $entryGuide) {
             $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
             $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
+            $documentEntryGuide = $this->documentEntryGuideRepositoryInterface->findById($entryGuide->getId());
 
-            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle) {
+            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle,$documentEntryGuide) {
                 $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
+                $article->document_entry_guide = $documentEntryGuide;
                 return $article;
             }, $articles);
 
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
+            $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
             $result[] = $response;
         }
 
@@ -128,13 +131,17 @@ class ControllerEntryGuide extends Controller
 
         $entryArticles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
         $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
-        $entryArticles = array_map(function ($article) use ($serialsByArticle) {
+        $documentEntryGuide = $this->documentEntryGuideRepositoryInterface->findById($entryGuide->getId());
+        
+        $entryArticles = array_map(function ($article) use ($serialsByArticle,$documentEntryGuide) {
             $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
+            $article->document_entry_guide = $documentEntryGuide;
             return $article;
         }, $entryArticles);
 
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryArticles)->resolve();
+        $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
 
         return response()->json($response, 200);
     }

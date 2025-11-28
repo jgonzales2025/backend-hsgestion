@@ -475,5 +475,4 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         $sale->save();
     }
 
-
 }

@@ -8,9 +8,8 @@ use App\Modules\DispatchNotes\Infrastructure\Models\EloquentDispatchNote;
 
 class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
 {
-    public function findAll(): array
+    public function findAll(?string $description, ?int $status): array
     {
-
         $dispatchNotes = EloquentDispatchNote::with([
             'company',
             'branch',
@@ -21,7 +20,27 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'supplier',
             'address_supplier',
         ])->orderByDesc('id')->where('document_type_id', '!=', 21)
-          ->get();
+            ->when($description, function ($query) use ($description) {
+                return $query->where('correlativo', 'like', '%' . $description . '%')
+                    ->orWhere('license_plate', 'like', '%' . $description . '%')
+                    ->orWhereHas('emission_reason', function ($query) use ($description) {
+                        $query->where('description', 'like', '%' . $description . '%');
+                    })
+                    ->orWhereHas('transport', function ($query) use ($description) {
+                        $query->where('company_name', 'like', '%' . $description . '%');
+                    })
+                    ->orWhereHas('conductor', function ($query) use ($description) {
+                        $query->where('name', 'like', '%' . $description . '%');
+                    });
+            })
+            ->when($status !== null, function ($query) use ($status) {
+                return $query->where('status', $status);
+            })
+            ->get();
+
+        if ($dispatchNotes->isEmpty()) {
+            return [];
+        }
 
         return $dispatchNotes->map(fn($dispatchNote) => $this->mapToDomain($dispatchNote))->toArray();
     }
@@ -100,9 +119,9 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             created_at: $dispatchNote->created_at ? $dispatchNote->created_at->format('Y-m-d H:i:s') : null
         );
     }
-   private function buildDomainDispatchNote(EloquentDispatchNote $eloquentDispatchNote,DispatchNote $dispatchNote): DispatchNote
+    private function buildDomainDispatchNote(EloquentDispatchNote $eloquentDispatchNote, DispatchNote $dispatchNote): DispatchNote
     {
-       return new DispatchNote(
+        return new DispatchNote(
             id: $eloquentDispatchNote->id,
             company: $dispatchNote->getCompany(),
             branch: $dispatchNote->getBranch(),
@@ -130,10 +149,12 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             supplier: $dispatchNote->getSupplier(),
             address_supplier: $dispatchNote->getAddressSupplier(),
             created_at: $eloquentDispatchNote->created_at ? $eloquentDispatchNote->created_at->format('Y-m-d H:i:s') : null
-       );
+        );
     }
-    private function mapToArray(DispatchNote $dispatchNote){
-            return ['cia_id' => $dispatchNote->getCompany() ? $dispatchNote->getCompany()->getId() : null,
+    private function mapToArray(DispatchNote $dispatchNote)
+    {
+        return [
+            'cia_id' => $dispatchNote->getCompany() ? $dispatchNote->getCompany()->getId() : null,
             'branch_id' => $dispatchNote->getBranch() ? $dispatchNote->getBranch()->getId() : null,
             'document_type_id' => 9,
             'serie' => $dispatchNote->getSerie(),
@@ -159,14 +180,14 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'customer_id' => $dispatchNote->getCustomerId(),
             'supplier_id' => $dispatchNote->getSupplier()?->getId() ?? null,
             'address_supplier_id' => $dispatchNote->getAddressSupplier()?->getId() ?? null
-    ];
+        ];
     }
-    public function updateStatus(int $dispatchNote,int $status): void
+    public function updateStatus(int $dispatchNote, int $status): void
     {
-     EloquentDispatchNote::where('id', $dispatchNote)->update(['status' => $status]);
-    
+        EloquentDispatchNote::where('id', $dispatchNote)->update(['status' => $status]);
+
     }
 
-    
+
 
 }

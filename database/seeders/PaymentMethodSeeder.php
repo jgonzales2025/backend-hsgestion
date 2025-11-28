@@ -25,7 +25,7 @@ class PaymentMethodSeeder extends Seeder
                 'st_visible' => 1
             ],
             [
-                'description' => 'TRANSFERENCIA BANCARIA',
+                'description' => 'DEPÓSITO BANCARIO',
                 'status' => 1,
                 'st_visible' => 1
             ],

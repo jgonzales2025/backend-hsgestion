@@ -72,11 +72,15 @@ class DispatchNotesController extends Controller
     ) {
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
 
+        $description = $request->query('description');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
+
+
         $dispatchNoteUseCase = new FindAllDispatchNotesUseCase($this->dispatchNoteRepository);
-        $dispatchNotes = $dispatchNoteUseCase->execute();
+        $dispatchNotes = $dispatchNoteUseCase->execute($description, $status);
 
         $result = [];
         foreach ($dispatchNotes as $articlesNote) {
@@ -114,7 +118,7 @@ class DispatchNotesController extends Controller
         );
 
 
-      
+
         $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO);
 
         $status = $dispatchNotes->getEmissionReason()->getId() == 1 ? 0 : 2;

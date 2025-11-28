@@ -3,6 +3,8 @@
 namespace App\Modules\Collections\Infrastructure\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class StoreCollectionRequest extends FormRequest
 {
@@ -79,5 +81,41 @@ class StoreCollectionRequest extends FormRequest
             'for_digits.string' => 'Los dígitos para deben ser una cadena de texto.',
             'for_digits.max' => 'Los dígitos para no pueden exceder :max caracteres.',
         ];
+    }
+
+    protected function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $operationNumber = $this->input('operation_number');
+            $bankId = $this->input('bank_id');
+            $operationDate = $this->input('operation_date');
+            $paymentMethodId = $this->input('payment_method_id');
+
+            // Solo validar si el método de pago es 3 (transferencia bancaria) y todos los campos necesarios están presentes
+            if ($paymentMethodId == 3 && $operationNumber && $bankId && $operationDate) {
+                try {
+                    $date = Carbon::parse($operationDate);
+                    $year = $date->year;
+                    $month = $date->month;
+
+                    // Verificar si ya existe el mismo operation_number para el mismo banco en el mismo mes
+                    $exists = DB::table('collections')
+                        ->where('operation_number', $operationNumber)
+                        ->where('bank_id', $bankId)
+                        ->whereYear('operation_date', $year)
+                        ->whereMonth('operation_date', $month)
+                        ->exists();
+
+                    if ($exists) {
+                        $validator->errors()->add(
+                            'operation_number',
+                            'El número de operación ya existe para este banco en el mes seleccionado.'
+                        );
+                    }
+                } catch (\Exception $e) {
+                    // Si hay error al parsear la fecha, Laravel ya lo manejará con la validación 'date'
+                }
+            }
+        });
     }
 }

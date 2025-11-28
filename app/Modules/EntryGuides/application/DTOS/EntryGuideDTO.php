@@ -22,7 +22,7 @@ class EntryGuideDTO
         $this->correlative = $array['correlative'] ?? null;
         $this->date = $array['date'];
         $this->customer_id = $array['customer_id'];
-        $this->observations = $array['observations'];
+        $this->observations = $array['observations'] ?? '';
         $this->ingress_reason_id = $array['ingress_reason_id'];
         $this->reference_po_serie = $array['reference_po_serie'] ?? null;
         $this->reference_po_correlative = $array['reference_po_correlative'] ?? null;

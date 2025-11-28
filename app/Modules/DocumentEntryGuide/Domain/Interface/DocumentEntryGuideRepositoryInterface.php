@@ -7,6 +7,6 @@ interface DocumentEntryGuideRepositoryInterface
 {
     public function create(DocumentEntryGuide $documentEntryGuide);
 
-    public function findById(int $id): ?DocumentEntryGuide;
+    public function findById(int $id): array;
     public function findAll(): array;
 }

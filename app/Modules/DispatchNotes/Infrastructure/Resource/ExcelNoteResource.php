@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Modules\DispatchNotes\Infrastructure\Resource;
+
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -21,7 +22,7 @@ class ExcelNoteResource extends JsonResource
             'branch' => [
                 'id' => $this->resource->getBranch()->getId(),
                 'status' => ($this->resource->getBranch()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
-                 'direccion' => $this->resource->getBranch()->getAddress(),
+                'direccion' => $this->resource->getBranch()->getAddress(),
             ],
             'emission_reason' => [
                 'id' => $this->resource->getEmissionReason()->getId(),
@@ -64,9 +65,9 @@ class ExcelNoteResource extends JsonResource
             'transfer_type' => $this->resource->getTransferType(),
             'vehicle_type' => $this->resource->getVehicleType(),
             'document_type' => [
-                'id' => $this->resource->getDocumentType()->getId(),
-                'status' => ($this->resource->getDocumentType()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
-                'description' => $this->resource->getDocumentType()->getDescription(),
+                'id' => $this->resource->getReferenceDocumentType()?->getId(),
+                'status' => ($this->resource->getReferenceDocumentType()?->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+                'description' => $this->resource->getReferenceDocumentType()?->getDescription(),
             ],
             'destination_branch_client_id' => (function () {
                 $code = EloquentCustomer::where('id', $this->resource->getdestination_branch_client())->first();
@@ -75,7 +76,7 @@ class ExcelNoteResource extends JsonResource
                     return [];
                 }
 
-                return (object) [
+                return [
                     'id' => $code->id,
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
                     'name' => $code->address[0]['address'],
@@ -92,11 +93,12 @@ class ExcelNoteResource extends JsonResource
                     return [];
                 }
 
-                return (object) [
+                return [
                     'id' => $code->id,
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
                     'name' => $code->name,
-
+                    'ruc' => $code->document_number ?? '',
+                    'address' => $code->address[0]['address'] ?? '',
                 ];
             })(),
             'created_at' => $this->resource->getCreatedFecha(),

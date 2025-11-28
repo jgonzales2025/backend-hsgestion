@@ -32,10 +32,26 @@ class DomPdfGenerator implements PdfGeneratorInterface
             // Transformar la entidad a array usando el recurso
             $dispatchNoteData = (new ExcelNoteResource($dispatchNote))->resolve();
 
+            // Generar QR code con información de la guía
+            $qrData = sprintf(
+                "%s|%s|%s-%s|%s|%s",
+                $dispatchNoteData['company']['ruc'] ?? '',
+                $dispatchNoteData['customer']['ruc'] ?? '',
+                $dispatchNoteData['serie'] ?? '',
+                str_pad($dispatchNoteData['correlativo'] ?? '', 8, '0', STR_PAD_LEFT),
+                $dispatchNoteData['date'] ?? '',
+                number_format(array_sum(array_column($dispatchArticles, 'subtotal_weight')), 2)
+            );
+
+            // Generar QR code usando QR Server API
+            $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($qrData);
+            $qrCode = base64_encode(file_get_contents($qrCodeUrl));
+
             // Cargar la vista Blade con los datos de la guía y los artículos
             $pdf = Pdf::loadView('dispatch_note', [
                 'dispatchNote' => $dispatchNoteData,
                 'dispatchArticles' => $dispatchArticles,
+                'qrCode' => $qrCode,
             ]);
 
             // Retornar el contenido del PDF directamente

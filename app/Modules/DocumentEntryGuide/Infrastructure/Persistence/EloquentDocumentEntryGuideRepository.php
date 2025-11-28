@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\DocumentEntryGuide\Infrastructure\Persistence;
 
 use App\Modules\DocumentEntryGuide\Domain\Entities\DocumentEntryGuide;
@@ -18,41 +19,43 @@ class EloquentDocumentEntryGuideRepository implements DocumentEntryGuideReposito
         ]);
 
         return new DocumentEntryGuide(
-            id:$eloquentCreate->id,
-            entry_guide_id:$eloquentCreate->entry_guide_id,
-            guide_serie_supplier:$eloquentCreate->guide_serie_supplier,
-            guide_correlative_supplier:$eloquentCreate->guide_correlative_supplier,
-            invoice_serie_supplier:$eloquentCreate->invoice_serie_supplier,
-            invoice_correlative_supplier:$eloquentCreate->invoice_correlative_supplier,
+            id: $eloquentCreate->id,
+            entry_guide_id: $eloquentCreate->entry_guide_id,
+            guide_serie_supplier: $eloquentCreate->guide_serie_supplier,
+            guide_correlative_supplier: $eloquentCreate->guide_correlative_supplier,
+            invoice_serie_supplier: $eloquentCreate->invoice_serie_supplier,
+            invoice_correlative_supplier: $eloquentCreate->invoice_correlative_supplier,
         );
     }
 
-    public function findById($id): ?DocumentEntryGuide
+    public function findById($id): array
     {
-       $eloquentEntryGuide = EloquentDocumentEntryGuide::find($id);
+        $eloquentEntryGuide = EloquentDocumentEntryGuide::where('entry_guide_id', $id)->get();
 
-       return new DocumentEntryGuide(
-         id:$eloquentEntryGuide->id,
-         entry_guide_id:$eloquentEntryGuide->entry_guide_id,
-         guide_serie_supplier:$eloquentEntryGuide->guide_serie_supplier,
-         guide_correlative_supplier:$eloquentEntryGuide->guide_correlative_supplier,
-         invoice_serie_supplier:$eloquentEntryGuide->invoice_serie_supplier,
-         invoice_correlative_supplier:$eloquentEntryGuide->invoice_correlative_supplier,
-       );
+        return $eloquentEntryGuide->map(function ($eloquentEntryGuide) {
+            return new DocumentEntryGuide(
+                id: $eloquentEntryGuide->id,
+                entry_guide_id: $eloquentEntryGuide->entry_guide_id,
+                guide_serie_supplier: $eloquentEntryGuide->guide_serie_supplier,
+                guide_correlative_supplier: $eloquentEntryGuide->guide_correlative_supplier,
+                invoice_serie_supplier: $eloquentEntryGuide->invoice_serie_supplier,
+                invoice_correlative_supplier: $eloquentEntryGuide->invoice_correlative_supplier,
+            );
+        })->toArray();
     }
 
-    public function findAll():array
+    public function findAll(): array
     {
         $eloquentEntryGuides = EloquentDocumentEntryGuide::all();
 
         return $eloquentEntryGuides->map(function ($eloquentEntryGuide) {
             return new DocumentEntryGuide(
-                id:$eloquentEntryGuide->id,
-                entry_guide_id:$eloquentEntryGuide->entry_guide_id,
-                guide_serie_supplier:$eloquentEntryGuide->guide_serie_supplier,
-                guide_correlative_supplier:$eloquentEntryGuide->guide_correlative_supplier,
-                invoice_serie_supplier:$eloquentEntryGuide->invoice_serie_supplier,
-                invoice_correlative_supplier:$eloquentEntryGuide->invoice_correlative_supplier,
+                id: $eloquentEntryGuide->id,
+                entry_guide_id: $eloquentEntryGuide->entry_guide_id,
+                guide_serie_supplier: $eloquentEntryGuide->guide_serie_supplier,
+                guide_correlative_supplier: $eloquentEntryGuide->guide_correlative_supplier,
+                invoice_serie_supplier: $eloquentEntryGuide->invoice_serie_supplier,
+                invoice_correlative_supplier: $eloquentEntryGuide->invoice_correlative_supplier,
             );
         })->toArray();
     }

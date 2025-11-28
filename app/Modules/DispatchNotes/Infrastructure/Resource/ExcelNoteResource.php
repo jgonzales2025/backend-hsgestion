@@ -97,7 +97,8 @@ class ExcelNoteResource extends JsonResource
                     'id' => $code->id,
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
                     'name' => $code->name,
-
+                    'ruc' => $code->document_number ?? '',
+                    'address' => $code->address[0]['address'] ?? '',
                 ];
             })(),
             'created_at' => $this->resource->getCreatedFecha(),

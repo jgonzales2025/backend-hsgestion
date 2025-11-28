@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Factura Electrónica</title>
+
     <style>
         @page {
             margin: 0cm 0cm;
@@ -142,6 +143,11 @@
         .totals-table td {
             padding: 5px;
         }
+
+        .codigoQr {
+            border: 1px solid #000;
+
+        }
     </style>
 </head>
 
@@ -168,8 +174,20 @@
     </header>
 
     <footer>
-        <img src="{{ resource_path('img/loogohsperu.jpg') }}" class="footer-logo" alt="HS Peru">
-        <div style="font-size: 10px; color: #003366; font-weight: bold;">SOLUCIONES INFORMÁTICAS</div>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="width: 70%; text-align: center; vertical-align: middle; padding: 10px;">
+                    <img src="{{ resource_path('img/loogohsperu.jpg') }}" class="footer-logo" alt="HS Peru">
+                    <div style="font-size: 10px; color: #003366; font-weight: bold; margin-top: 5px;">SOLUCIONES INFORMÁTICAS</div>
+                </td>
+                <td style="width: 30%; text-align: center; vertical-align: middle; padding: 10px; border-left: 1px solid #ddd;">
+                    @if(isset($qrCode))
+                    <div style="font-size: 9px; font-weight: bold; margin-bottom: 5px;">CÓDIGO QR</div>
+                    <img src="data:image/png;base64,{{ $qrCode }}" style="width: 100px; height: 100px;" alt="QR Code">
+                    @endif
+                </td>
+            </tr>
+        </table>
     </footer>
 
     <div class="content">

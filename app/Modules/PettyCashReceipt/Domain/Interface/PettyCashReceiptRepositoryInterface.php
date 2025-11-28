@@ -12,4 +12,17 @@ interface PettyCashReceiptRepositoryInterface
     public function update(PettyCashReceipt $pettyCashReceipt): ?PettyCashReceipt;
     public function getLastDocumentNumber(string $serie): ?string;
       public function updateStatus(int $pettyCashReceipt,int $status): void;
+      public function selectProcedure(
+        $cia,
+        $fecha,
+        $fechaU,
+        $nrocliente,
+        $pcodsuc,
+        $ptippag,
+        $pcodban,
+        $pnroope,
+        $ptipdoc,
+        $pserie,
+        $pcorrelativo
+    ) : array;
 }

@@ -102,28 +102,28 @@ class PettyCashReceiptController extends Controller
 
         $validated = $request->validate([
 
-            'fecha' => 'required|date',
-            'fechaU' => 'required|date',
-            'nrocliente' => 'required|integer',
+            'fecha' => 'nullable|date',
+            'fechaU' => 'nullable|date',
+            'nrocliente' => 'nullable|integer',
             'pcodsuc' => 'required|integer',
-            'ptippag' => 'required|integer',
-            'pcodban' => 'required|integer',
-            'pnroope' => 'required|integer',
-            'ptipdoc' => 'required|integer',
+            'ptippag' => 'nullable|integer',
+            'pcodban' => 'nullable|integer',
+            'pnroope' => 'nullable|string',
+            'ptipdoc' => 'nullable|integer',
             'pserie' => 'nullable|string',
-            'pcorrelativo' => 'required|integer',
+            'pcorrelativo' => 'nullable|string',
         ]);
 
         $validated['cia'] = $companyId;
-
+      
         $selectProcedureUseCase = new SelectProcedureUseCase(
             $this->pettyCashReceiptRepository
         );
 
         $data = $selectProcedureUseCase->execute(
             $validated['cia'],
-            $validated['fecha'],
-            $validated['fechaU'],
+            $validated['fecha'] ?? '',
+            $validated['fechaU'] ?? '',
             $validated['nrocliente'],
             $validated['pcodsuc'],
             $validated['ptippag'],
@@ -131,7 +131,7 @@ class PettyCashReceiptController extends Controller
             $validated['pnroope'],
             $validated['ptipdoc'],
             $validated['pserie'] ?? '',
-            $validated['pcorrelativo']
+            $validated['pcorrelativo'] ?? ''
         );
 
         return response()->json($data);

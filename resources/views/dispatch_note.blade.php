@@ -15,7 +15,7 @@
             font-size: 10px;
             color: #333;
             margin-top: 3cm;
-            margin-bottom: 2cm;
+            margin-bottom: 2.3cm;
             margin-left: 1.5cm;
             margin-right: 1.5cm;
         }
@@ -25,9 +25,9 @@
             top: 0cm;
             left: 0cm;
             right: 0cm;
-            height: 3cm;
+            height: 2.5cm;
             background-color: #fff;
-            padding-top: 0.5cm;
+            padding-top: 0.3cm;
             padding-left: 1.5cm;
             padding-right: 1.5cm;
         }
@@ -37,10 +37,10 @@
             bottom: 0cm;
             left: 0cm;
             right: 0cm;
-            height: 2cm;
+            height: 2.2cm;
             background-color: #fff;
             text-align: center;
-            padding-top: 10px;
+            padding: 5px 10px;
         }
 
         .logo {
@@ -174,25 +174,18 @@
     </header>
 
     <footer>
-        <table style="width: 100%; border-collapse: collapse;">
-            <tr>
-                <td style="width: 70%; text-align: center; vertical-align: middle; padding: 10px;">
-                    <img src="{{ resource_path('img/loogohsperu.jpg') }}" class="footer-logo" alt="HS Peru">
-                    <div style="font-size: 10px; color: #003366; font-weight: bold; margin-top: 5px;">SOLUCIONES INFORMÁTICAS</div>
-                </td>
-                <td style="width: 30%; text-align: center; vertical-align: middle; padding: 10px; border-left: 1px solid #ddd;">
-                    @if(isset($qrCode))
-                    <div style="font-size: 9px; font-weight: bold; margin-bottom: 5px;">CÓDIGO QR</div>
-                    <img src="data:image/png;base64,{{ $qrCode }}" style="width: 100px; height: 100px;" alt="QR Code">
-                    @endif
-                </td>
-            </tr>
-        </table>
+        <div style="position: relative; width: 100%; height: 100%;">
+            @if(isset($qrCode))
+            <div style="position: absolute; bottom: 5px; right: 10px;">
+                <img src="data:image/png;base64,{{ $qrCode }}" style="width: 80px; height: 80px;" alt="QR Code">
+            </div>
+            @endif
+        </div>
     </footer>
 
     <div class="content">
         <!-- Customer Information -->
-        <div style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 5px 0; margin-bottom: 10px;">
+        <div style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 5px 0; margin-bottom: 15px;">
             <table class="info-table">
                 <tr>
                     <td style="width: 15%;"><span class="label">R.U.C.:</span></td>

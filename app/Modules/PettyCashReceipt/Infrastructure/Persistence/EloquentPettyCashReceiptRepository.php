@@ -149,7 +149,7 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
     {
         EloquentPettyCashReceipt::where('id', $pettyCashReceipt)->update(['status' => $status]);
     }
-    public function selectProcedure(
+public function selectProcedure(
     $cia,
     $fecha,
     $fechaU,
@@ -161,25 +161,27 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
     $ptipdoc,
     $pserie,
     $pcorrelativo
-):array {
-  
-    $resultado = DB::select('CALL sp_parte_diario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', [
-        $cia,          
-        $fecha,       
-        $fechaU,      
-        $nrocliente,    
-        $pcodsuc,
-        $ptippag,
-        $pcodban,
-        $pnroope,
-        $ptipdoc,
-        $pserie,
-        $pcorrelativo
-    ]);
+): array {
 
-   
+    $resultado = DB::select(
+        'CALL sp_parte_diario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [
+            (int) $cia,
+            $fecha,
+            $fechaU,
+            (int) $nrocliente,
+            (int) $pcodsuc,
+            (int) $ptippag,
+            (int) $pcodban,
+            $pnroope ?? '',
+            (int) $ptipdoc,
+            $pserie ?? '',
+            $pcorrelativo ?? ''
+        ]
+    );
+
     return $resultado;
- 
 }
+
 
 }

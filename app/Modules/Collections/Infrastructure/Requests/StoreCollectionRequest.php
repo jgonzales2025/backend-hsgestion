@@ -30,7 +30,7 @@ class StoreCollectionRequest extends FormRequest
             'digital_wallet_id' => 'nullable|integer|exists:digital_wallets,id',
             'bank_id' => 'nullable|integer|exists:banks,id',
             'operation_date' => 'nullable|date',
-            'operation_number' => 'nullable|string|max:20',
+            'operation_number' => 'nullable|string|max:50',
             'lote_number' => 'nullable|string|max:20',
             'for_digits' => 'nullable|string|max:4',
         ];

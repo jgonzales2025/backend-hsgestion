@@ -21,6 +21,7 @@ return new class extends Migration
             $table->boolean('st_collections')->default(true);
             $table->boolean('st_invoices')->default(false);
             $table->boolean('st_transfers')->default(false);
+            $table->boolean('st_petty_cash')->default(false);
             $table->integer('status')->default(1);
             $table->timestamps();
         });

@@ -36,13 +36,7 @@ class EntryGuideRequest extends FormRequest
 
             'document_entry_guide'=> 'required|array|min:1',
             'document_entry_guide.*.guide_serie_supplier' => 'nullable|string',
-            'document_entry_guide.*.guide_correlative_supplier' => 'nullable|string',
-            'document_entry_guide.*.invoice_serie_supplier' => 'nullable|string',
-            'document_entry_guide.*.invoice_correlative_supplier' => 'nullable|string',
-
-
-  
-
+            'document_entry_guide.*.guide_correlative_supplier' => 'nullable|string'
         ];
     }
 

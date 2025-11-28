@@ -96,7 +96,7 @@ class RequestStore extends FormRequest
                 if ($existingSerials) {
                     $validator->errors()->add(
                         'dispatch_articles',
-                        'Hay series que ya están siendo usadas en el sistema.'
+                        'Esta venta ya tiene una guía de remisión asignada.'
                     );
                 }
             }

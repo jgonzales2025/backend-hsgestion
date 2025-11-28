@@ -23,6 +23,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => true,
                 'st_invoices' => false, 
                 'st_transfers' => false,
+                'st_petty_cash' => true,
                 'status' => 1
             ],
             [
@@ -34,6 +35,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false, 
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -45,6 +47,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => true,
                 'st_invoices' => false, 
                 'st_transfers' => false,
+                'st_petty_cash' => true,
                 'status' => 1
             ],
             [
@@ -56,6 +59,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false, 
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -67,6 +71,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false, 
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -78,6 +83,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false, 
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -89,6 +95,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false, 
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -100,6 +107,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false, 
                 'st_transfers' => false,
+                'st_petty_cash' => true,
                 'status' => 1
             ],
             [
@@ -111,6 +119,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false, 
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -122,6 +131,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false, 
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -133,6 +143,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false, 
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -144,6 +155,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false, 
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -155,6 +167,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false, 
                 'st_transfers' => true,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -166,6 +179,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false,
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -177,6 +191,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false,
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -188,6 +203,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => true,
                 'st_invoices' => false,
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -199,6 +215,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => true,
                 'st_invoices' => false,
                 'st_transfers' => false,
+                'st_petty_cash' => true,
                 'status' => 1
             ],
             [
@@ -210,6 +227,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => true,
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -221,6 +239,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => true,
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -232,6 +251,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false,
                 'st_transfers' => false,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -243,6 +263,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false,
                 'st_transfers' => true,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
             [
@@ -254,6 +275,7 @@ class DocumentTypeSeeder extends Seeder
                 'st_collections' => false,
                 'st_invoices' => false,
                 'st_transfers' => true,
+                'st_petty_cash' => false,
                 'status' => 1
             ],
         ];

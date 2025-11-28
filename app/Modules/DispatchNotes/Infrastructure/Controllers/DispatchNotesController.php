@@ -71,11 +71,15 @@ class DispatchNotesController extends Controller
         private readonly ArticleRepositoryInterface $articleRepository
     ) {}
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
 
+        $description = $request->query('description');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
+
+
         $dispatchNoteUseCase = new FindAllDispatchNotesUseCase($this->dispatchNoteRepository);
-        $dispatchNotes = $dispatchNoteUseCase->execute();
+        $dispatchNotes = $dispatchNoteUseCase->execute($description, $status);
 
         $result = [];
         foreach ($dispatchNotes as $articlesNote) {

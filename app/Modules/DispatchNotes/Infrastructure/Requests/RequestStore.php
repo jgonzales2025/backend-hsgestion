@@ -3,9 +3,10 @@
 namespace App\Modules\DispatchNotes\Infrastructure\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\DB;
 
 class RequestStore extends FormRequest
-{ 
+{
     public function authorize(): bool
     {
         return true;
@@ -15,7 +16,7 @@ class RequestStore extends FormRequest
         $payload = auth('api')->payload();
         $companyId = $payload->get('company_id');
 
-        $this->merge([ 
+        $this->merge([
             'cia_id' => $companyId,
         ]);
     }
@@ -36,7 +37,7 @@ class RequestStore extends FormRequest
             'num_referencia' => ['nullable', 'string', 'max:50'],
             'date_referencia' => ['nullable', 'date'],
             'cod_conductor' => ['nullable', 'integer', 'exists:drivers,id'],
-            'license_plate' =>'string',
+            'license_plate' => 'string',
             'total_weight' => ['required', 'numeric'],
             'transfer_type' => ['required', 'string', 'max:50'],
             'vehicle_type' => ['required', 'boolean'],
@@ -55,7 +56,7 @@ class RequestStore extends FormRequest
             'supplier_id' => 'nullable|integer|exists:customers,id',
             'address_supplier_id' => 'nullable|integer|exists:customers,id'
         ];
-    } 
+    }
     public function messages(): array
     {
         return [
@@ -64,7 +65,7 @@ class RequestStore extends FormRequest
             'serie.required' => 'Debe indicar la serie del documento.',
             'date.required' => 'Debe ingresar una fecha.',
             'total_weight.required' => 'Debe ingresar el peso total.',
-            'customer_id.exists' =>'Selecciona un cliente' ,
+            'customer_id.exists' => 'Selecciona un cliente',
             // 'destination_branch_client_id.exists' =>'la direccion seleccionada no existe en el sistema',
             // 'address_supplier_id.exists' => 'El cliente seleccionado no existe',
             // 'supplier_id.exists' => 'El cliente seleccionado no existe',
@@ -72,4 +73,34 @@ class RequestStore extends FormRequest
             // 'destination_branch_id.exists'=>'la destanacion de la sucursal no existe en el sistema',
         ];
     }
+
+    protected function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $dispatchArticles = $this->input('dispatch_articles', []);
+            $allSerials = [];
+
+            // Recopilar todos los serials de todos los artículos
+            foreach ($dispatchArticles as $article) {
+                if (isset($article['serials']) && is_array($article['serials'])) {
+                    $allSerials = array_merge($allSerials, $article['serials']);
+                }
+            }
+
+            // Si hay serials, verificar si alguno ya existe en la base de datos
+            if (!empty($allSerials)) {
+                $existingSerials = DB::table('dispatch_article_serials')
+                    ->whereIn('serial', $allSerials)
+                    ->exists();
+
+                if ($existingSerials) {
+                    $validator->errors()->add(
+                        'dispatch_articles',
+                        'Hay series que ya están siendo usadas en el sistema.'
+                    );
+                }
+            }
+        });
+    }
+
 }

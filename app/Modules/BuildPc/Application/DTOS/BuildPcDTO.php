@@ -6,7 +6,7 @@ class BuildPcDTO
 {
     public string $name;
     public string $description;
-    public string $total_price;
+    public float $total_price;
     public int $user_id;
     public bool $status;
     public array $details;

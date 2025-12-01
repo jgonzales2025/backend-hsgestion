@@ -7,7 +7,7 @@ class BuildPc
     private ?int $id;
     private string $name;
     private string $description;
-    private string $total_price;
+    private float $total_price;
     private int $user_id;
     private bool $status;
  
@@ -16,7 +16,7 @@ class BuildPc
         ?int $id,
         string $name,
         string $description,
-        string $total_price,
+        float $total_price,
         int $user_id,
         bool $status,
     ) {
@@ -43,7 +43,7 @@ class BuildPc
         return $this->description;
     }
 
-    public function getTotalPrice(): string
+    public function getTotalPrice(): float
     {
         return $this->total_price;
     }

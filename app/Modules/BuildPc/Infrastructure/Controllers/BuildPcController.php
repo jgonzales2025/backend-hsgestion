@@ -47,12 +47,23 @@ class BuildPcController
 
     public function store(CreateBuildPcRequest $request): JsonResponse
     {
-        $buildPcDTO = new BuildPcDTO($request->validated());
+        $data = $request->validated();
+
+        // Calcular total
+        $totalPrice = 0;
+        foreach ($data['details'] as $detail) {
+            $totalPrice += $detail['quantity'] * $detail['price'];
+        }
+ 
+        $data['total_price'] = $totalPrice;
+
+        // Crear PC
+        $buildPcDTO = new BuildPcDTO($data);
         $buildPcUseCase = new CreateBuildPcUseCase($this->buildPcRepository);
         $buildPc = $buildPcUseCase->execute($buildPcDTO);
 
-        // Create details
-        $details = $this->createDetails($buildPc, $request->validated()['details']);
+        // Crear detalles
+        $details = $this->createDetails($buildPc, $data['details']);
 
         return response()->json(
             array_merge(
@@ -64,6 +75,7 @@ class BuildPcController
             201
         );
     }
+
 
     public function show(int $id): JsonResponse
     {
@@ -122,7 +134,7 @@ class BuildPcController
                 'article_id' => $item['article_id'],
                 'quantity' => $item['quantity'],
                 'price' => $item['price'],
-                'subtotal' => $item['subtotal'],
+                'subtotal' => $item['quantity'] * $item['price'],
             ]);
 
             return $createDetailUseCase->execute($detailDTO);

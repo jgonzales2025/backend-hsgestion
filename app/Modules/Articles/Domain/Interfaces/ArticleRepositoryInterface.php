@@ -8,11 +8,11 @@ use App\Modules\Articles\Domain\Entities\ArticleNotasDebito;
 interface ArticleRepositoryInterface
 {
   public function save(Article $article): ?Article;
-  public function findAllArticle(?string $name, ?int $branchId): array;
+  public function findAllArticle(?string $name, ?int $branchId, ?int $brand_id, ?int $category_id, ?int $status);
   public function findAllArticleNotesDebito(?string $name): array;
   public function findById(int $id): ?Article;
   public function update(Article $article): ?Article;
-  public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId): array;
+  public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId);
   public function cretaArticleNotasDebito(ArticleNotasDebito $articleNotasDebitoDTO): ?ArticleNotasDebito;
   public function updateNotesDebito(ArticleNotasDebito $article): ?ArticleNotasDebito;
   public function findByIdNotesDebito(int $id): ?ArticleNotasDebito;

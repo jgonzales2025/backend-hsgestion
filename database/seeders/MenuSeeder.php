@@ -1129,6 +1129,28 @@ class MenuSeeder extends Seeder
             'type' => 'item',
         ]);
 
+        Menu::create([
+            'name' => 'mantenimiento_anticipo',
+            'label' => 'Anticipos',
+            'route' => '/mantenimiento/anticipo',
+            'permission' => 'mantenimiento.anticipo',
+            'parent_id' => $mantenimiento->id,
+            'order' => 14,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
+        Menu::create([
+            'name' => 'mantenimiento_arma_tu_pc',
+            'label' => 'Arma tu PC',
+            'route' => '/mantenimiento/arma-tu-pc',
+            'permission' => 'mantenimiento.arma_tu_pc',
+            'parent_id' => $mantenimiento->id,
+            'order' => 15,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
         // ===== ACTUALIZACIONES =====
         $actualizacion = Menu::create([
             'name' => 'actualizaciones',

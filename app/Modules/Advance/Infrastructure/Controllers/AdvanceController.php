@@ -5,6 +5,7 @@ namespace App\Modules\Advance\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Advance\Application\DTOs\AdvanceDTO;
 use App\Modules\Advance\Application\UseCases\CreateAdvanceUseCase;
+use App\Modules\Advance\Application\UseCases\FindAllAdvancesUseCase;
 use App\Modules\Advance\Application\UseCases\FindByCustomerIdUseCase;
 use App\Modules\Advance\Domain\Interfaces\AdvanceRepositoryInterface;
 use App\Modules\Advance\Infrastructure\Requests\StoreAdvanceRequest;
@@ -14,6 +15,7 @@ use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AdvanceController extends Controller
@@ -46,6 +48,17 @@ class AdvanceController extends Controller
         if (!$advance) {
             return response()->json(['message' => 'Este cliente no tiene anticipos.'], 404);
         }
+
+        return AdvanceResource::collection($advance)->resolve();
+    }
+
+    public function index(Request $request): array
+    {
+        $description = $request->query('description');
+        $company_id = request()->get('company_id');
+
+        $advanceUseCase = new FindAllAdvancesUseCase($this->advanceRepository);
+        $advance = $advanceUseCase->execute($description, $company_id);
 
         return AdvanceResource::collection($advance)->resolve();
     }

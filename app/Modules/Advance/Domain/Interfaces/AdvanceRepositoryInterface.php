@@ -9,4 +9,5 @@ interface AdvanceRepositoryInterface
     public function save(Advance $advance): void;
     public function getLastDocumentNumber(): ?string;
     public function findByCustomerId(int $customer_id): ?array;
+    public function findAll(?string $description, int $company_id): ?array;
 }

@@ -60,7 +60,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticle(?string $description, ?int $branchId): array
+    public function findAllArticle(?string $description, ?int $branchId, ?int $brand_id, ?int $category_id, ?int $status)
     {
         $companyId = request()->get('company_id');
         $articles = EloquentArticle::where('company_type_id', $companyId)->where('status_Esp', false)
@@ -82,34 +82,36 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                                 $v->where('status', 1);
                             });
                         }
-                    })
-                        // Grupo 2: Búsqueda por Serie (Validar con entryItemSerials y visibleArticles)
-                        ->orWhere(function ($subQ) use ($name, $branchId) {
-                        if ($branchId) {
-                            $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
-                                $s->where('serial', $name)
-                                    ->where('branch_id', $branchId);
-                            });
-                            // Validar también que sea visible en la sucursal
-                            $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
-                                $v->where('branch_id', $branchId)
-                                    ->where('status', 1);
-                            });
-                        }
                     });
                 });
             })
-            // Si NO hay descripción, mantener el filtro original (solo lo que tiene stock/series en la sucursal)
-            ->when(!$description && $branchId, function ($query) use ($branchId) {
-                return $query->whereHas('entryItemSerials', function ($q) use ($branchId) {
-                    $q->where('branch_id', $branchId);
+            ->when($branchId, function ($query, $branch) {
+                return $query->whereHas('visibleArticles', function ($v) use ($branch) {
+                    $v->where('branch_id', $branch);
+                    $v->where('status', 1);
                 });
             })
-            ->orderByDesc('created_at')
-            ->get();
+            // Filtro por marca
+            ->when($brand_id, function ($query, $brand) {
+                return $query->where('brand_id', $brand);
+            })
+            // Filtro por categoría
+            ->when($category_id, function ($query, $category) {
+                return $query->where('category_id', $category);
+            })
+            // Filtro por estado
+            ->when($status !== null, function ($query) use ($status) {
+                return $query->where('status', $status);
+            })
+            ->orderBy('description')
+            ->paginate(10);
 
-        // Mapear al dominio (puedes mantener tu método mapToDomain o hacerlo directo)
-        return $articles->map(fn(EloquentArticle $article) => $this->mapToDomain($article))->toArray();
+        // Transform the items in the paginator
+        $articles->getCollection()->transform(function ($article) {
+            return $this->mapToDomain($article);
+        });
+
+        return $articles;
     }
 
 
@@ -209,7 +211,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId): array
+    public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId)
     {
         $companyId = request()->get('company_id');
         $exchangeRate = EloquentExchangeRate::select('parallel_rate')->where('date', $date)->first();
@@ -259,9 +261,10 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 });
             })
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(10);
 
-        return $articles->map(function ($article) use ($exchangeRate) {
+        // Transform the items in the paginator
+        $articles->getCollection()->transform(function ($article) use ($exchangeRate) {
             // Función para convertir precios
             $convertToUsd = function ($price) use ($exchangeRate) {
                 if (!$exchangeRate || $exchangeRate->parallel_rate == 0)
@@ -337,7 +340,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 state_modify_article: $article->state_modify_article,
 
             );
-        })->toArray();
+        });
+
+        return $articles;
     }
 
     public function findAllExcel(?string $description): Collection

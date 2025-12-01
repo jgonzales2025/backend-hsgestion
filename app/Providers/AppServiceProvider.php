@@ -42,6 +42,8 @@ use App\Modules\CustomerPortfolio\Domain\Interfaces\CustomerPortfolioRepositoryI
 use App\Modules\CustomerPortfolio\Infrastructure\Persistence\EloquentCustomerPortfolioRepository;
 use App\Modules\CustomerType\Domain\Interfaces\CustomerTypeRepositoryInterface;
 use App\Modules\CustomerType\Infrastructure\Persistence\EloquentCustomerTypeRepository;
+use App\Modules\Dashboard\Domain\Interfaces\DashboardRepositoryInterface;
+use App\Modules\Dashboard\Infrastructure\Persistence\EloquentDashboardRepository;
 use App\Modules\DetailPcCompatible\Domain\Interface\DetailPcCompatibleRepositoryInterface;
 use App\Modules\DetailPcCompatible\Infrastructure\Persistence\EloquentDetailPcCompatibleRepository;
 use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
@@ -216,6 +218,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransferOrderRepositoryInterface::class, EloquentTransferOrderRepository::class);
         $this->app->bind(AdvanceRepositoryInterface::class, EloquentAdvanceRepository::class);
         $this->app->bind(DocumentEntryGuideRepositoryInterface::class, EloquentDocumentEntryGuideRepository::class);
+        $this->app->bind(DashboardRepositoryInterface::class, EloquentDashboardRepository::class);
         $this->app->bind(BuildPcRepositoryInterface::class, EloquentBuildPcRepository::class);
         $this->app->bind(BuildDetailPcRepositoryInterface::class, EloquentBuildDetaiPcRepository::class);
         $this->app->bind(DetailPcCompatibleRepositoryInterface::class, EloquentDetailPcCompatibleRepository::class);

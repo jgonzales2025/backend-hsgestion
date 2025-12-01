@@ -279,7 +279,8 @@ class ArticleController extends Controller
     $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);
     $articles = $articlesUseCase->execute($validatedData['date'], $description, $articleId, $branchId);
 
-    if (empty($articles)) {
+    // Check if the result is empty (when paginated, check if items are empty)
+    if (is_object($articles) && method_exists($articles, 'isEmpty') && $articles->isEmpty()) {
       $entrySerialUseCase = new FindBySerialUseCase($this->entryItemSerialRepository);
       $entrySerial = $entrySerialUseCase->execute($description);
 
@@ -311,9 +312,23 @@ class ArticleController extends Controller
     }
 
     if ($articleId) {
-      return response()->json((new ArticleForSalesResource($articles[0]))->resolve());
+      // When searching by specific article ID, return single item
+      $firstItem = $articles->items()[0] ?? null;
+      if ($firstItem) {
+        return response()->json((new ArticleForSalesResource($firstItem))->resolve());
+      }
+      return response()->json(['message' => 'Artículo no encontrado'], 404);
     } else {
-      return ArticleForSalesResource::collection($articles)->resolve();
+      // Return paginated response
+      return new JsonResponse([
+        'data' => ArticleForSalesResource::collection($articles->items())->resolve(),
+        'current_page' => $articles->currentPage(),
+        'per_page' => $articles->perPage(),
+        'total' => $articles->total(),
+        'last_page' => $articles->lastPage(),
+        'next_page_url' => $articles->nextPageUrl(),
+        'prev_page_url' => $articles->previousPageUrl(),
+      ]);
     }
 
   }

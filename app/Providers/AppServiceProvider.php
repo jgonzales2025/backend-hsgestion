@@ -37,6 +37,8 @@ use App\Modules\CustomerPortfolio\Domain\Interfaces\CustomerPortfolioRepositoryI
 use App\Modules\CustomerPortfolio\Infrastructure\Persistence\EloquentCustomerPortfolioRepository;
 use App\Modules\CustomerType\Domain\Interfaces\CustomerTypeRepositoryInterface;
 use App\Modules\CustomerType\Infrastructure\Persistence\EloquentCustomerTypeRepository;
+use App\Modules\Dashboard\Domain\Interfaces\DashboardRepositoryInterface;
+use App\Modules\Dashboard\Infrastructure\Persistence\EloquentDashboardRepository;
 use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
 use App\Modules\DetailPurchaseGuides\Infrastructure\Persistence\EloquentDetailPurchaseGuideRepository;
 use App\Modules\DigitalWallet\Domain\Interfaces\DigitalWalletRepositoryInterface;
@@ -209,6 +211,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransferOrderRepositoryInterface::class, EloquentTransferOrderRepository::class);
         $this->app->bind(AdvanceRepositoryInterface::class, EloquentAdvanceRepository::class);
         $this->app->bind(DocumentEntryGuideRepositoryInterface::class, EloquentDocumentEntryGuideRepository::class);
+        $this->app->bind(DashboardRepositoryInterface::class, EloquentDashboardRepository::class);
     }
 
     /**

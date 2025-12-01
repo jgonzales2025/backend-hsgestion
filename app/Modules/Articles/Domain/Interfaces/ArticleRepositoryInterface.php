@@ -12,7 +12,7 @@ interface ArticleRepositoryInterface
   public function findAllArticleNotesDebito(?string $name): array;
   public function findById(int $id): ?Article;
   public function update(Article $article): ?Article;
-  public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId): array;
+  public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId);
   public function cretaArticleNotasDebito(ArticleNotasDebito $articleNotasDebitoDTO): ?ArticleNotasDebito;
   public function updateNotesDebito(ArticleNotasDebito $article): ?ArticleNotasDebito;
   public function findByIdNotesDebito(int $id): ?ArticleNotasDebito;

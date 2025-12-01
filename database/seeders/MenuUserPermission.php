@@ -123,6 +123,8 @@ class MenuUserPermission extends Seeder
             ['menu_id' => 107, 'user_id' => 1, 'role_id' => 1],
             ['menu_id' => 108, 'user_id' => 1, 'role_id' => 1],
             ['menu_id' => 109, 'user_id' => 1, 'role_id' => 1],
+            ['menu_id' => 110, 'user_id' => 1, 'role_id' => 1],
+            ['menu_id' => 111, 'user_id' => 1, 'role_id' => 1],
         ];
 
         DB::table('user_menu_permissions')->insert($menuUserPermissions);

@@ -209,7 +209,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId): array
+    public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId)
     {
         $companyId = request()->get('company_id');
         $exchangeRate = EloquentExchangeRate::select('parallel_rate')->where('date', $date)->first();
@@ -259,9 +259,10 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 });
             })
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(10);
 
-        return $articles->map(function ($article) use ($exchangeRate) {
+        // Transform the items in the paginator
+        $articles->getCollection()->transform(function ($article) use ($exchangeRate) {
             // Función para convertir precios
             $convertToUsd = function ($price) use ($exchangeRate) {
                 if (!$exchangeRate || $exchangeRate->parallel_rate == 0)
@@ -337,7 +338,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 state_modify_article: $article->state_modify_article,
 
             );
-        })->toArray();
+        });
+
+        return $articles;
     }
 
     public function findAllExcel(?string $description): Collection

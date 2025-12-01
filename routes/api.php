@@ -48,6 +48,7 @@ use App\Modules\DocumentType\Infrastructure\Controllers\DocumentTypeController;
 use App\Modules\LoginAttempt\Infrastructure\Controllers\LoginAttemptController;
 use App\Modules\Sale\Infrastructure\Controllers\SaleController;
 use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
+use App\Modules\Dashboard\Infrastructure\Controller\DashboardController;
 use App\Modules\DispatchArticleSerial\Infrastructure\Controllers\DispatchArticleSerialController;
 use App\Modules\DispatchNotes\Infrastructure\Controllers\TransferOrderController;
 use App\Modules\EntryItemSerial\Infrastructure\Controllers\EntryItemSerialController;
@@ -387,8 +388,15 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/purchases-pdf/{id}', [PurchaseController::class, 'downloadPdf']);
 
     // Advances - Anticipos
+    Route::get('/advances', [AdvanceController::class, 'index']);
     Route::get('/advances/{customerId}', [AdvanceController::class, 'showAdvancesByCustomer']);
     Route::post('/advances', [AdvanceController::class, 'store']);
+
+    // Dashboard
+    Route::get('/dashboard/countProductsSoldByCategory', [DashboardController::class, 'countProductsSoldByCategory']);
+    Route::get('/dashboard/topTenSellingProducts', [DashboardController::class, 'topTenSellingProducts']);
+    Route::get('/dashboard/getSalesPurchasesAndUtility', [DashboardController::class, 'getSalesPurchasesAndUtility']);
+    Route::get('/dashboard/getTopTenCustomers', [DashboardController::class, 'getTopTenCustomers']);
 });
 
 Route::middleware('auth:api')->group(function () {

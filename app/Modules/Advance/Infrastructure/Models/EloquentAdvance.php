@@ -13,6 +13,7 @@ class EloquentAdvance extends Model
     protected $table = 'advances';
 
     protected $fillable = [
+        'company_id',
         'correlative',
         'customer_id',
         'payment_method_id',

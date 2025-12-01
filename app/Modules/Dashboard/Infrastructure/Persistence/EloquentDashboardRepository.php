@@ -41,11 +41,13 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
 
     public function getSalesPurchasesAndUtility(int $company_id, string $start_date, string $end_date): array
     {
+        // Obtener ventas agrupadas por mes
         $salesData = EloquentSale::query()
             ->where('company_id', $company_id)
             ->where('status', 1)
             ->whereBetween('date', [$start_date, $end_date])
             ->select(
+                DB::raw('DATE_FORMAT(date, "%Y-%m") as month'),
                 DB::raw('SUM(CASE 
                     WHEN currency_type_id = 1 THEN total 
                     WHEN currency_type_id = 2 THEN total * parallel_rate 
@@ -57,13 +59,17 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
                     ELSE 0 
                 END) as total_sales_in_dollars')
             )
-            ->first();
+            ->groupBy('month')
+            ->get()
+            ->keyBy('month');
 
+        // Obtener compras agrupadas por mes
         $purchasesData = EloquentPurchase::query()
             ->join('branches', 'purchase.branch_id', '=', 'branches.id')
             ->where('branches.cia_id', $company_id)
             ->whereBetween('purchase.date', [$start_date, $end_date])
             ->select(
+                DB::raw('DATE_FORMAT(purchase.date, "%Y-%m") as month'),
                 DB::raw('SUM(CASE 
                     WHEN purchase.currency = 1 THEN purchase.total 
                     WHEN purchase.currency = 2 THEN purchase.total * purchase.exchange_type 
@@ -75,24 +81,34 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
                     ELSE 0 
                 END) as total_purchases_in_dollars')
             )
-            ->first();
+            ->groupBy('month')
+            ->get()
+            ->keyBy('month');
 
-        $totalSalesSoles = $salesData->total_sales_in_soles ?? 0;
-        $totalSalesDollars = $salesData->total_sales_in_dollars ?? 0;
+        // Combinar datos por mes
+        $months = $salesData->keys()->merge($purchasesData->keys())->unique()->sort()->values();
 
-        $totalPurchasesSoles = $purchasesData->total_purchases_in_soles ?? 0;
-        $totalPurchasesDollars = $purchasesData->total_purchases_in_dollars ?? 0;
+        $monthlyData = [];
+        foreach ($months as $month) {
+            $salesSoles = $salesData->get($month)->total_sales_in_soles ?? 0;
+            $salesDollars = $salesData->get($month)->total_sales_in_dollars ?? 0;
+            $purchasesSoles = $purchasesData->get($month)->total_purchases_in_soles ?? 0;
+            $purchasesDollars = $purchasesData->get($month)->total_purchases_in_dollars ?? 0;
 
-        return [
-            'total_sales_pen' => round($totalSalesSoles, 2),
-            'total_purchases_pen' => round($totalPurchasesSoles, 2),
-            'utility_pen' => round($totalSalesSoles - $totalPurchasesSoles, 2),
-            'cost_pen' => 0,
-            'total_sales_usd' => round($totalSalesDollars, 2),
-            'total_purchases_usd' => round($totalPurchasesDollars, 2),
-            'utility_usd' => round($totalSalesDollars - $totalPurchasesDollars, 2),
-            'cost_usd' => 0
-        ];
+            $monthlyData[] = [
+                'month' => $month,
+                'total_sales_pen' => round($salesSoles, 2),
+                'total_purchases_pen' => round($purchasesSoles, 2),
+                'utility_pen' => round($salesSoles - $purchasesSoles, 2),
+                'cost_pen' => 0,
+                'total_sales_usd' => round($salesDollars, 2),
+                'total_purchases_usd' => round($purchasesDollars, 2),
+                'utility_usd' => round($salesDollars - $purchasesDollars, 2),
+                'cost_usd' => 0
+            ];
+        }
+
+        return $monthlyData;
     }
 
     public function getTopCustomers(int $company_id): array

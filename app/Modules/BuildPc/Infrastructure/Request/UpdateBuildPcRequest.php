@@ -10,6 +10,13 @@ class UpdateBuildPcRequest extends FormRequest
     {
         return true;
     }
+    protected function prepareForValidation(): void
+    {
+
+        $this->merge([
+            'user_id' => auth('api')->id(),
+        ]);
+    }
 
     public function rules()
     {

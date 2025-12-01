@@ -9,6 +9,7 @@ use App\Modules\Auth\Infrastructure\Controllers\AuthController;
 use App\Modules\Bank\Infrastructure\Controllers\BankController;
 use App\Modules\Branch\Infrastructure\Controllers\BranchController;
 use App\Modules\Brand\Infrastructure\Controllers\BrandController;
+use App\Modules\BuildPc\Infrastructure\Controllers\BuildPcController;
 use App\Modules\Category\Infrastructure\Controllers\CategoryController;
 use App\Modules\Company\Infrastructure\Controllers\CompanyController;
 use App\Modules\CurrencyType\Infrastructure\Controllers\CurrencyTypeController;
@@ -48,6 +49,7 @@ use App\Modules\DocumentType\Infrastructure\Controllers\DocumentTypeController;
 use App\Modules\LoginAttempt\Infrastructure\Controllers\LoginAttemptController;
 use App\Modules\Sale\Infrastructure\Controllers\SaleController;
 use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
+use App\Modules\DetailPcCompatible\Infrastructure\Controllers\DetailPcCompatibleController;
 use App\Modules\DispatchArticleSerial\Infrastructure\Controllers\DispatchArticleSerialController;
 use App\Modules\DispatchNotes\Infrastructure\Controllers\TransferOrderController;
 use App\Modules\EntryItemSerial\Infrastructure\Controllers\EntryItemSerialController;
@@ -349,12 +351,26 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'show']);
     Route::put('/pettyCashReceiptstatus/{id}', [PettyCashReceiptController::class, 'updateStatus']);
     Route::post('/pettyCashReceipt/select-procedure', [PettyCashReceiptController::class, 'selectProcedure']);
+    Route::post('/pettyCashReceipt/export-excel', [PettyCashReceiptController::class, 'exportExcel']);
     //PettyCashReceiptMotive
     Route::get('/pettyCashMotive', [PettyCashMotiveController::class, 'index']);
     Route::post('/pettyCashMotive', [PettyCashMotiveController::class, 'store']);
     Route::put('/pettyCashMotive/{id}', [PettyCashMotiveController::class, 'update']);
     Route::get('/pettyCashMotive/{id}', [PettyCashMotiveController::class, 'show']);
 
+    //detailPcCompatible
+    Route::get('/detailPcCompatible', [DetailPcCompatibleController::class, 'index']);
+    Route::post('/detailPcCompatible', [DetailPcCompatibleController::class, 'store']);
+    Route::post('/detailPcCompatible/article/{articleId}', [DetailPcCompatibleController::class, 'storeByArticle']);
+    Route::put('/detailPcCompatible/{id}', [DetailPcCompatibleController::class, 'update']);
+    Route::get('/detailPcCompatible/{id}', [DetailPcCompatibleController::class, 'show']);
+
+
+    // build pc
+    Route::get('/build-pc', [BuildPcController::class, 'index']);
+    Route::post('/build-pc', [BuildPcController::class, 'store']);
+    Route::get('/build-pc/{id}', [BuildPcController::class, 'show']);
+    Route::put('/build-pc/{id}', [BuildPcController::class, 'update']);
 
 
     // Ruta para las ordenes de compra

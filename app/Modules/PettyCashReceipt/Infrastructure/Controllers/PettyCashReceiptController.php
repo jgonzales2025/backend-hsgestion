@@ -9,6 +9,7 @@ use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PettyCashMotive\Domain\Interface\PettyCashMotiveInterfaceRepository;
 use App\Modules\PettyCashReceipt\Application\DTOS\PettyCashReceiptDTO;
 use App\Modules\PettyCashReceipt\Application\UseCases\CreatePettyCashReceiptUseCase;
+use App\Modules\PettyCashReceipt\Application\UseCases\ExportPettyCashToExcelUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\FindAllPettyCashReceiptUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\FindByIdPettyCashReceiptUseCase;
 use App\Modules\PettyCashReceipt\application\UseCases\SelectProcedureUseCase;
@@ -18,9 +19,11 @@ use App\Modules\PettyCashReceipt\Domain\Interface\PettyCashReceiptRepositoryInte
 use App\Modules\PettyCashReceipt\Infrastructure\Request\CreatePettyCashReceiptRequest;
 use App\Modules\PettyCashReceipt\Infrastructure\Request\UpdatePettyCashReceiptRequest;
 use App\Modules\PettyCashReceipt\Infrastructure\Resource\PettyCashReceiptResource;
+use App\Modules\PettyCashReceipt\Infrastructure\Exports\PettyCashProcedureExport;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class PettyCashReceiptController extends Controller
 {
@@ -115,7 +118,7 @@ class PettyCashReceiptController extends Controller
         ]);
 
         $validated['cia'] = $companyId;
-      
+
         $selectProcedureUseCase = new SelectProcedureUseCase(
             $this->pettyCashReceiptRepository
         );
@@ -135,5 +138,49 @@ class PettyCashReceiptController extends Controller
         );
 
         return response()->json($data);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $companyId = request()->get('company_id');
+
+        $validated = $request->validate([
+            'fecha' => 'nullable|date',
+            'fechaU' => 'nullable|date',
+            'nrocliente' => 'nullable|integer',
+            'pcodsuc' => 'required|integer',
+            'ptippag' => 'nullable|integer',
+            'pcodban' => 'nullable|integer',
+            'pnroope' => 'nullable|string',
+            'ptipdoc' => 'nullable|integer',
+            'pserie' => 'nullable|string',
+            'pcorrelativo' => 'nullable|string',
+        ]);
+
+        $validated['cia'] = $companyId;
+
+        // Obtener datos del procedimiento almacenado
+        $selectProcedureUseCase = new SelectProcedureUseCase(
+            $this->pettyCashReceiptRepository
+        );
+
+        $data = $selectProcedureUseCase->execute(
+            $validated['cia'],
+            $validated['fecha'] ?? '',
+            $validated['fechaU'] ?? '',
+            $validated['nrocliente'],
+            $validated['pcodsuc'],
+            $validated['ptippag'],
+            $validated['pcodban'],
+            $validated['pnroope'],
+            $validated['ptipdoc'],
+            $validated['pserie'] ?? '',
+            $validated['pcorrelativo'] ?? ''
+        );
+
+        // Stream directo XLSX para evitar cualquier mezcla de salida y asegurar binario correcto
+        $fileName = 'parte_caja_' . now()->format('Y-m-d_His') . '.xlsx';
+        $export = new \App\Modules\PettyCashReceipt\Infrastructure\Persistence\PettyCashProcedureExport($data);
+        return Excel::download($export, $fileName, \Maatwebsite\Excel\Excel::XLSX);
     }
 }

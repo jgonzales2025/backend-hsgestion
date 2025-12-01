@@ -15,6 +15,11 @@ use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Branch\Infrastructure\Persistence\EloquentBranchRepository;
 use App\Modules\Brand\Domain\Interfaces\BrandRepositoryInterface;
 use App\Modules\Brand\Infrastructure\Persistence\EloquentBrandRepository;
+use App\Modules\BuildDetailPc\Domain\Interface\BuildDetailPcRepositoryInterface;
+use App\Modules\BuildDetailPc\Infrastructure\Persistence\EloquentBuildDetaiPcRepository;
+use App\Modules\BuildPc\Domain\Interface\BuildPcRepositoryInterface;
+use App\Modules\BuildPc\Infrastructure\Persistence\EloquentBuildDetailPcRepository;
+use App\Modules\BuildPc\Infrastructure\Persistence\EloquentBuildPcRepository;
 use App\Modules\Category\Domain\Interfaces\CategoryRepositoryInterface;
 use App\Modules\Category\Infrastructure\Persistence\EloquentCategoryRepository;
 use App\Modules\Collections\Domain\Interfaces\CollectionRepositoryInterface;
@@ -37,6 +42,8 @@ use App\Modules\CustomerPortfolio\Domain\Interfaces\CustomerPortfolioRepositoryI
 use App\Modules\CustomerPortfolio\Infrastructure\Persistence\EloquentCustomerPortfolioRepository;
 use App\Modules\CustomerType\Domain\Interfaces\CustomerTypeRepositoryInterface;
 use App\Modules\CustomerType\Infrastructure\Persistence\EloquentCustomerTypeRepository;
+use App\Modules\DetailPcCompatible\Domain\Interface\DetailPcCompatibleRepositoryInterface;
+use App\Modules\DetailPcCompatible\Infrastructure\Persistence\EloquentDetailPcCompatibleRepository;
 use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
 use App\Modules\DetailPurchaseGuides\Infrastructure\Persistence\EloquentDetailPurchaseGuideRepository;
 use App\Modules\DigitalWallet\Domain\Interfaces\DigitalWalletRepositoryInterface;
@@ -209,6 +216,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(TransferOrderRepositoryInterface::class, EloquentTransferOrderRepository::class);
         $this->app->bind(AdvanceRepositoryInterface::class, EloquentAdvanceRepository::class);
         $this->app->bind(DocumentEntryGuideRepositoryInterface::class, EloquentDocumentEntryGuideRepository::class);
+        $this->app->bind(BuildPcRepositoryInterface::class, EloquentBuildPcRepository::class);
+        $this->app->bind(BuildDetailPcRepositoryInterface::class, EloquentBuildDetaiPcRepository::class);
+        $this->app->bind(DetailPcCompatibleRepositoryInterface::class, EloquentDetailPcCompatibleRepository::class);
     }
 
     /**

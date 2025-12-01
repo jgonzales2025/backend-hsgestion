@@ -25,8 +25,11 @@ class DomPdfEntryGuideGenerator implements EntryGuidePDF
         $articles = $this->entryGuideArticleRepository->findById($entryGuide->getId());
 
         $pdf = Pdf::loadView('entry_guide', [
-            'entryGuide' => (new EntryGuideResource($entryGuide))->resolve(),
-            'articles' => EntryGuideArticleResource::collection($articles)->resolve(),
+            'entryGuide' => $entryGuide,
+            'company' => $entryGuide->getCompany(),
+            'branch' => $entryGuide->getBranch(),
+            'customer' => $entryGuide->getCustomer(),
+            'articles' => $articles,
         ]);
 
         $filename = 'entry_guide_' . $entryGuide->getId() . '.pdf';
@@ -37,4 +40,3 @@ class DomPdfEntryGuideGenerator implements EntryGuidePDF
         return $path;
     }
 }
-

@@ -69,8 +69,7 @@ class DispatchNotesController extends Controller
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly DispatchArticleSerialRepositoryInterface $dispatchArticleSerialRepository,
         private readonly ArticleRepositoryInterface $articleRepository
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -172,6 +171,22 @@ class DispatchNotesController extends Controller
             201
         );
     }
+    public function generate(int $id)
+    {
+        try {
+            $pdfContent = $this->generatePdfUseCase->execute((int) $id);
+
+            $filename = 'factura_electronica_' . $id . '.pdf';
+
+            return response()->streamDownload(function () use ($pdfContent) {
+                echo $pdfContent;
+            }, $filename, [
+                'Content-Type' => 'application/pdf',
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
     public function show($id): JsonResponse
     {
 
@@ -246,23 +261,6 @@ class DispatchNotesController extends Controller
         );
     }
 
-
-    public function generate(int $id): JsonResponse
-    {
-        try {
-            $pdfUrl = $this->generatePdfUseCase->execute($id);
-
-            return response()->json([
-                'success' => true,
-                'pdf_url' => $pdfUrl
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], 200);
-        }
-    }
     public function traerProovedores()
     {
         // Obtener company_id del usuario logeado
@@ -276,8 +274,7 @@ class DispatchNotesController extends Controller
             ->where('id', '!=', $loggedCompanyId)
             ->get();
 
-        $adres = EloquentCustomerAddress::
-            where('id', '!=', $loggedCompanyId)
+        $adres = EloquentCustomerAddress::where('id', '!=', $loggedCompanyId)
             ->get();
 
         return response()->json([
@@ -285,7 +282,6 @@ class DispatchNotesController extends Controller
             'addresses' => $adres,
 
         ]);
-
     }
     private function createDispatchArticles($sale, array $articlesData): array
     {
@@ -346,5 +342,4 @@ class DispatchNotesController extends Controller
 
         $transactionLogs->execute($transactionDTO);
     }
-
 }

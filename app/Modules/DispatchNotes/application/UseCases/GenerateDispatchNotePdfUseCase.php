@@ -15,20 +15,12 @@ class GenerateDispatchNotePdfUseCase
     public function execute(int $id): string
     {
         $dispatchNote = $this->repository->findById($id);
-        
+
         if (!$dispatchNote) {
             throw new \Exception('Guía de remisión no encontrada');
         }
-        
-        // Generar nombre del archivo
-        $filename = 'dispatch_note_' . $dispatchNote->getId() . '.pdf';
-        $path = 'pdf/' . $filename;
-        
-        // Verificar si ya existe el PDF
-        if (!$this->pdfGenerator->exists($path)) {
-            $path = $this->pdfGenerator->generate($dispatchNote);
-        }
-        
-        return $this->pdfGenerator->getUrl($path);
+
+        // Generar y retornar el contenido del PDF directamente
+        return $this->pdfGenerator->generate($dispatchNote);
     }
 }

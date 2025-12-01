@@ -22,7 +22,7 @@ class EntryGuideRequest extends FormRequest
             'serie' => 'required|string',
             'date' => 'string',
             'customer_id' => 'required|integer|exists:customers,id',
-            'observations' => 'string',
+            'observations' => 'nullable|string',
             'ingress_reason_id' => 'required|integer|exists:ingress_reasons,id',
             'reference_po_serie' => 'string',
             'reference_po_correlative' => 'string',
@@ -32,6 +32,8 @@ class EntryGuideRequest extends FormRequest
             'entry_guide_articles.*.quantity' => 'required|numeric',
             'entry_guide_articles.*.serials' => 'nullable|array',
             'entry_guide_articles.*.serials.*' => 'required|string|distinct',
+
+
             'document_entry_guide'=> 'required|array|min:1',
             'document_entry_guide.*.guide_serie_supplier' => 'nullable|string',
             'document_entry_guide.*.guide_correlative_supplier' => 'nullable|string'

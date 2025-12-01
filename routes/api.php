@@ -342,14 +342,14 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/entry-guides', [ControllerEntryGuide::class, 'store']);
     Route::put('/entry-guides/{id}', [ControllerEntryGuide::class, 'update']);
     Route::post('/purchases/consolidate-guides', [ControllerEntryGuide::class, 'validateSameCustomer']);
-    Route::post('/downloadPdf/{id}', [ControllerEntryGuide::class, 'downloadPdf']);
+    Route::get('/entry-guide-pdf/{id}', [ControllerEntryGuide::class, 'downloadPdf']);
     //PettyCashReceipt
     Route::get('/pettyCashReceipt', [PettyCashReceiptController::class, 'index']);
     Route::post('/pettyCashReceipt', [PettyCashReceiptController::class, 'store']);
     Route::put('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'update']);
     Route::get('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'show']);
     Route::put('/pettyCashReceiptstatus/{id}', [PettyCashReceiptController::class, 'updateStatus']);
-
+    Route::post('/pettyCashReceipt/select-procedure', [PettyCashReceiptController::class, 'selectProcedure']);
     //PettyCashReceiptMotive
     Route::get('/pettyCashMotive', [PettyCashMotiveController::class, 'index']);
     Route::post('/pettyCashMotive', [PettyCashMotiveController::class, 'store']);

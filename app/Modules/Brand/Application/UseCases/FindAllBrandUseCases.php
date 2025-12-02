@@ -13,8 +13,8 @@ class FindAllBrandUseCases
         $this->brandRepository = $brandRepository;
     }
 
-    public function execute()
+    public function execute(?string $name, ?int $status)
     {
-        return $this->brandRepository->findAll();
+        return $this->brandRepository->findAll($name, $status);
     }
 }

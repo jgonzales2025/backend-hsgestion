@@ -48,6 +48,8 @@ use App\Modules\DetailPcCompatible\Domain\Interface\DetailPcCompatibleRepository
 use App\Modules\DetailPcCompatible\Infrastructure\Persistence\EloquentDetailPcCompatibleRepository;
 use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
 use App\Modules\DetailPurchaseGuides\Infrastructure\Persistence\EloquentDetailPurchaseGuideRepository;
+use App\Modules\Detraction\Domain\Interface\DetractionRepositoryInterface;
+use App\Modules\Detraction\Infrastructure\Persistence\EloquentDetractionRepository;
 use App\Modules\DigitalWallet\Domain\Interfaces\DigitalWalletRepositoryInterface;
 use App\Modules\DigitalWallet\Infrastructure\Persistence\EloquentDigitalWalletRepository;
 use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
@@ -99,6 +101,8 @@ use App\Modules\PaymentType\Infrastructure\Persistence\EloquentPaymentTypeReposi
 use App\Modules\PercentageIGV\Domain\Interfaces\PercentageIGVRepositoryInterface;
 use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRepository;
 use App\Modules\EntryGuideArticle\Domain\Interface\EntryGuideArticleRepositoryInterface;
+use App\Modules\Installment\Domain\Interface\InstallmentRepositoryInterface;
+use App\Modules\Installment\Infrastructure\Persistence\EloquentInstallmentRepository;
 use App\Modules\PettyCashMotive\Domain\Interface\PettyCashMotiveInterfaceRepository;
 use App\Modules\PettyCashMotive\Infrastructure\Persistence\EloquentPettyCashMotiveRepository;
 use App\Modules\PettyCashReceipt\Domain\Interface\PettyCashReceiptRepositoryInterface;
@@ -145,6 +149,8 @@ use App\Modules\UserAssignment\Domain\Interfaces\UserAssignmentRepositoryInterfa
 use App\Modules\UserAssignment\Infrastructure\Persistence\EloquentUserAssignmentRepository;
 use App\Modules\VisibleArticles\Domain\Interfaces\VisibleArticleRepositoryInterface;
 use App\Modules\VisibleArticles\Infrastructure\Persistence\EloquentVisibleArticleRepository;
+use App\Modules\Withholding\Domain\Interface\WithholdingRepositoryInterface;
+use App\Modules\Withholding\Infrastructure\Persistence\EloquentWithholdingRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -223,6 +229,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AdvanceRepositoryInterface::class, EloquentAdvanceRepository::class);
         $this->app->bind(DocumentEntryGuideRepositoryInterface::class, EloquentDocumentEntryGuideRepository::class);
         $this->app->bind(DashboardRepositoryInterface::class, EloquentDashboardRepository::class);
+        $this->app->bind(InstallmentRepositoryInterface::class, EloquentInstallmentRepository::class);
+        $this->app->bind(WithholdingRepositoryInterface::class, EloquentWithholdingRepository::class);
+        $this->app->bind(DetractionRepositoryInterface::class, EloquentDetractionRepository::class);
         $this->app->bind(BuildPcRepositoryInterface::class, EloquentBuildPcRepository::class);
         $this->app->bind(BuildDetailPcRepositoryInterface::class, EloquentBuildDetaiPcRepository::class);
         $this->app->bind(DetailPcCompatibleRepositoryInterface::class, EloquentDetailPcCompatibleRepository::class);

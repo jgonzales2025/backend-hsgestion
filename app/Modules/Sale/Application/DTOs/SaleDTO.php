@@ -31,6 +31,14 @@ class SaleDTO
     public ?string $correlative_prof;
     public ?string $purchase_order;
     public ?int $user_authorized_id;
+    public ?int $coddetrac;
+    public ?float $pordetrac;
+    public ?float $impdetracs;
+    public ?float $impdetracd;
+    public ?float $stretencion;
+    public ?float $porretencion;
+    public ?float $impretens;
+    public ?float $impretend;
 
     public function __construct(array $data)
     {
@@ -61,5 +69,13 @@ class SaleDTO
         $this->correlative_prof = $data['correlative_prof'] ?? null;
         $this->purchase_order = $data['purchase_order'] ?? null;
         $this->user_authorized_id = $data['user_authorized_id'] ?? null;
+        $this->coddetrac = $data['coddetrac'] ?? null;
+        $this->pordetrac = $data['pordetrac'] ?? null;
+        $this->impdetracs = $data['impdetracs'] ?? null;
+        $this->impdetracd = $data['impdetracd'] ?? null;
+        $this->stretencion = $data['stretencion'] ?? null;
+        $this->porretencion = $data['porretencion'] ?? null;
+        $this->impretens = $data['impretens'] ?? null;
+        $this->impretend = $data['impretend'] ?? null;
     }
 }

@@ -21,11 +21,24 @@ readonly class BrandController
 {
     public function __construct(private readonly BrandRepositoryInterface $brandRepository){}
 
-    public function index(): array
+    public function index(Request $request): array|JsonResponse
     {
+        $name = $request->query('name');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
+
         $brandUseCase = new FindAllBrandUseCases($this->brandRepository);
-        $brands = $brandUseCase->execute();
-        return BrandResource::collection($brands)->resolve();
+        $brands = $brandUseCase->execute($name, $status);
+        return new JsonResponse([
+            'data' => BrandResource::collection($brands)->resolve(),
+            'current_page' => $brands->currentPage(),
+            'per_page' => $brands->perPage(),
+            'total' => $brands->total(),
+            'last_page' => $brands->lastPage(),
+            'next_page_url' => $brands->nextPageUrl(),
+            'prev_page_url' => $brands->previousPageUrl(),
+            'first_page_url' => $brands->url(1),
+            'last_page_url' => $brands->url($brands->lastPage()),
+        ]);
     }
 
     public function store(StoreBrandRequest $request)

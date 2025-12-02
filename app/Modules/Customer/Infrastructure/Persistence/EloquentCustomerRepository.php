@@ -167,7 +167,8 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             'company_name' => $customer->getCompanyName(),
             'name' => $customer->getName(),
             'lastname' => $customer->getLastname(),
-            'second_lastname' => $customer->getSecondLastname()
+            'second_lastname' => $customer->getSecondLastname(),
+            'is_withholding_applicable' => $customer->isWithholdingApplicable()
         ]);
         $eloquentCustomer->refresh();
 

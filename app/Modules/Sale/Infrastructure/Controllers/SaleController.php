@@ -12,6 +12,11 @@ use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
+use App\Modules\Installment\Application\DTOs\InstallmentDTO;
+use App\Modules\Installment\Application\UseCases\CreateInstallmentUseCase;
+use App\Modules\Installment\Application\UseCases\DeleteInstallmentUseCase;
+use App\Modules\Installment\Application\UseCases\FindInstallmentBySaleIdUseCase;
+use App\Modules\Installment\Domain\Interface\InstallmentRepositoryInterface;
 use App\Modules\NoteReason\Domain\Interfaces\NoteReasonRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\PurchaseItemSerials\Application\UseCases\FindBySerialUseCase;
@@ -75,7 +80,8 @@ class SaleController extends Controller
         private readonly SaleItemSerialRepositoryInterface $saleItemSerialRepository,
         private readonly EntryItemSerialRepositoryInterface $entryItemSerialRepository,
         private readonly ArticleRepositoryInterface $articleRepository,
-        private readonly DispatchNotesRepositoryInterface $dispatchNoteRepository
+        private readonly DispatchNotesRepositoryInterface $dispatchNoteRepository,
+        private readonly InstallmentRepositoryInterface $installmentRepository
     ) {
     }
 
@@ -110,6 +116,19 @@ class SaleController extends Controller
             $saleDTO = new SaleDTO($request->validated());
             $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->documentNumberGeneratorService);
             $sale = $saleUseCase->execute($saleDTO);
+
+            if (!empty($request->validated()['installments'])) {
+                foreach ($request->validated()['installments'] as $installmentData) {
+                    $installmentDTO = new InstallmentDTO([
+                        'sale_id' => $sale->getId(),
+                        'installment_number' => $installmentData['installment_number'],
+                        'amount' => $installmentData['amount'],
+                        'due_date' => $installmentData['due_date'],
+                    ]);
+                    $installmentUseCase = new CreateInstallmentUseCase($this->installmentRepository);
+                    $installmentUseCase->execute($installmentDTO);
+                }
+            }
 
             $saleArticles = $this->createSaleArticles($sale, $request->validated()['sale_articles']);
             $this->logTransaction($request, $sale);
@@ -150,6 +169,9 @@ class SaleController extends Controller
             return response()->json(['message' => 'Venta no encontrada'], 404);
         }
 
+        $installmentsUseCase = new FindInstallmentBySaleIdUseCase($this->installmentRepository);
+        $installments = $installmentsUseCase->execute($sale->getId());
+
         $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
         $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
         $articles = array_map(function ($article) use ($serialsByArticle) {
@@ -157,9 +179,12 @@ class SaleController extends Controller
             return $article;
         }, $articles);
 
+        $saleResource = new SaleResource($sale);
+        $saleResource->installments = $installments;
+
         return response()->json(
             [
-                'sale' => (new SaleResource($sale))->resolve(),
+                'sale' => $saleResource->resolve(),
                 'articles' => SaleArticleResource::collection($articles)->resolve(),
             ]
         );
@@ -201,6 +226,27 @@ class SaleController extends Controller
             $saleDTO = new SaleDTO($request->validated());
             $saleUseCase = new UpdateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository);
             $saleUpdated = $saleUseCase->execute($saleDTO, $sale);
+
+            $installmentUseCase = new FindInstallmentBySaleIdUseCase($this->installmentRepository);
+            $installments = $installmentUseCase->execute($saleUpdated->getId());
+
+            if ($installments) {
+                $deleteInstallmentUseCase = new DeleteInstallmentUseCase($this->installmentRepository);
+                $deleteInstallmentUseCase->execute($saleUpdated->getId());
+
+                if (!empty($request->validated()['installments'])) {
+                    foreach ($request->validated()['installments'] as $installmentData) {
+                        $installmentDTO = new InstallmentDTO([
+                            'sale_id' => $sale->getId(),
+                            'installment_number' => $installmentData['installment_number'],
+                            'amount' => $installmentData['amount'],
+                            'due_date' => $installmentData['due_date'],
+                        ]);
+                        $installmentUseCase = new CreateInstallmentUseCase($this->installmentRepository);
+                        $installmentUseCase->execute($installmentDTO);
+                    }
+                }
+            }
 
             $this->saleArticleRepository->deleteBySaleId($saleUpdated->getId());
 

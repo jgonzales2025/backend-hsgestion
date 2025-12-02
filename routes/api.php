@@ -51,6 +51,7 @@ use App\Modules\Sale\Infrastructure\Controllers\SaleController;
 use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
 use App\Modules\Dashboard\Infrastructure\Controller\DashboardController;
 use App\Modules\DetailPcCompatible\Infrastructure\Controllers\DetailPcCompatibleController;
+use App\Modules\Detraction\Infrastructure\Controller\DetractionController;
 use App\Modules\DispatchArticleSerial\Infrastructure\Controllers\DispatchArticleSerialController;
 use App\Modules\DispatchNotes\Infrastructure\Controllers\TransferOrderController;
 use App\Modules\EntryItemSerial\Infrastructure\Controllers\EntryItemSerialController;
@@ -59,6 +60,7 @@ use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentControll
 use App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController;
 use App\Modules\NoteReason\Infrastructure\Controllers\NoteReasonController;
 use App\Modules\ScVoucher\Infrastructure\Controllers\ScVoucherController;
+use App\Modules\Withholding\Infrastructure\Controller\WithholdingController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -419,6 +421,12 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/dashboard/topTenSellingProducts', [DashboardController::class, 'topTenSellingProducts']);
     Route::get('/dashboard/getSalesPurchasesAndUtility', [DashboardController::class, 'getSalesPurchasesAndUtility']);
     Route::get('/dashboard/getTopTenCustomers', [DashboardController::class, 'getTopTenCustomers']);
+
+    // Withholding
+    Route::get('/withholdings/{date}', [WithholdingController::class, 'findByDate']);
+
+    // Detractions
+    Route::get('/detractions', [DetractionController::class, 'index']);
 });
 
 Route::middleware('auth:api')->group(function () {

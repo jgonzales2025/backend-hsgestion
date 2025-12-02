@@ -44,10 +44,21 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
         return null;
     }
 
-    public function findAll(): array
+    public function findAll(?string $search, ?int $is_active)
     {
-        $buildPcs = EloquentBuildPc::all();
-        return $buildPcs->map(function ($buildPc) {
+        $buildPcs = EloquentBuildPc::orderByDesc('created_at')
+            ->when($search, function ($query) use ($search) {
+                return $query->where('description', 'like', "%{$search}%")
+                    ->orWhere('name', 'like', "%{$search}%");
+            })
+            ->when(isset($is_active), function ($query) use ($is_active) {
+                return $query->where('status', $is_active);
+            })
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
+        // Transform the items in the paginator
+        $buildPcs->getCollection()->transform(function ($buildPc) {
             return new BuildPc(
                 id: $buildPc->id,
                 name: $buildPc->name,
@@ -56,7 +67,9 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
                 user_id: $buildPc->user_id,
                 status: $buildPc->status,
             );
-        })->toArray();
+        });
+
+        return $buildPcs;
     }
     public function update(BuildPc $data): ?BuildPc
     {

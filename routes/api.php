@@ -58,6 +58,7 @@ use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
 use App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController;
 use App\Modules\NoteReason\Infrastructure\Controllers\NoteReasonController;
+use App\Modules\ScVoucher\Infrastructure\Controllers\ScVoucherController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -365,7 +366,12 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/detailPcCompatible/article/{articleId}', [DetailPcCompatibleController::class, 'storeByArticle']);
     Route::put('/detailPcCompatible/{id}', [DetailPcCompatibleController::class, 'update']);
     Route::get('/detailPcCompatible/{id}', [DetailPcCompatibleController::class, 'show']);
-
+   
+   //SCvaucher
+   Route::get('/sc-voucher', [ScVoucherController::class, 'index']);
+   Route::post('/sc-voucher', [ScVoucherController::class, 'store']);
+   Route::get('/sc-voucher/{id}', [ScVoucherController::class, 'show']);
+   Route::put('/sc-voucher/{id}', [ScVoucherController::class, 'update']);
 
     // build pc
     Route::get('/build-pc', [BuildPcController::class, 'index']);

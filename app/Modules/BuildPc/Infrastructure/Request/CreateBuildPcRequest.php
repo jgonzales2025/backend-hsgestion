@@ -25,7 +25,7 @@ class CreateBuildPcRequest extends FormRequest
             'description' => 'required|string',
             // 'total_price' => 'required|numeric',
             'user_id' => 'required|numeric',
-            'status' => 'required|boolean',
+            'status' => 'nullable|boolean',
             'details' => 'required|array|min:1',
             'details.*.article_id' => 'required|integer|exists:articles,id',
             'details.*.quantity' => 'required|integer|min:1',

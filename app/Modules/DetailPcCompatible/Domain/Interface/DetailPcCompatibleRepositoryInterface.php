@@ -8,6 +8,7 @@ interface DetailPcCompatibleRepositoryInterface
 {
     public function findAll():array;
     public function findById(int $id):?DetailPcCompatible;
+    public function findAllArticles(int $id):array;
     public function create(DetailPcCompatible $data):?DetailPcCompatible;
     public function update(DetailPcCompatible $data):?DetailPcCompatible;
 }

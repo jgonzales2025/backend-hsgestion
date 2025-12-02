@@ -32,8 +32,8 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
             'currency_type' => $pettyCashReceipt->getCurrencyType()->getId(),
             'amount' => $pettyCashReceipt->getAmount(),
             'observation' => $pettyCashReceipt->getObservation(),
-            'status' => $pettyCashReceipt->getStatus(), 
-            'branch_id' => $pettyCashReceipt->getBranch()->getId() 
+            'status' => $pettyCashReceipt->getStatus(),
+            'branch_id' => $pettyCashReceipt->getBranch()->getId()
         ]);
 
         return new PettyCashReceipt(
@@ -51,8 +51,8 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
             status: $eloquentPettyCashReceipt->status,
             branch: $eloquentPettyCashReceipt->branch?->toDomain($eloquentPettyCashReceipt->branch)
         );
-    } 
-    public function findAll(?string $filter): array
+    }
+    public function findAll(?string $filter)
     {
         $eloquentPettyCashReceipts = EloquentPettyCashReceipt::with(['reasonCode', 'documentType', 'branch', 'currency'])
             ->when(
@@ -64,12 +64,10 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
                 })
             )
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(10);
 
-        if (!$eloquentPettyCashReceipts) {
-            return [];
-        }
-        return $eloquentPettyCashReceipts->map(function ($eloquentPettyCashReceipt) {
+        // Transform the items in the paginator
+        $eloquentPettyCashReceipts->getCollection()->transform(function ($eloquentPettyCashReceipt) {
             return new PettyCashReceipt(
                 id: $eloquentPettyCashReceipt->id,
                 company_id: $eloquentPettyCashReceipt->company_id,
@@ -82,10 +80,12 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
                 currency: $eloquentPettyCashReceipt->currency?->toDomain($eloquentPettyCashReceipt->currency),
                 amount: $eloquentPettyCashReceipt->amount,
                 observation: $eloquentPettyCashReceipt->observation,
-                status: $eloquentPettyCashReceipt->status, 
+                status: $eloquentPettyCashReceipt->status,
                 branch: $eloquentPettyCashReceipt->branch->toDomain($eloquentPettyCashReceipt->branch)
             );
-        })->toArray();
+        });
+
+        return $eloquentPettyCashReceipts;
     }
     public function findById(int $id): ?PettyCashReceipt
     {
@@ -119,14 +119,14 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
         $eloquentPettyCashReceipt->update([
             'company_id' => $pettyCashReceipt->getCompany(),
             'document_type' => $pettyCashReceipt->getDocumentType()->getId(),
-            'series' => $pettyCashReceipt->getSeries(), 
+            'series' => $pettyCashReceipt->getSeries(),
             'date' => $pettyCashReceipt->getDate(),
             'delivered_to' => $pettyCashReceipt->getDeliveredTo(),
             'reason_code' => $pettyCashReceipt->getReasonCode()->getId(),
             'currency_type' => $pettyCashReceipt->getCurrencyType()->getId(),
             'amount' => $pettyCashReceipt->getAmount(),
             'observation' => $pettyCashReceipt->getObservation(),
-            'status' => $pettyCashReceipt->getStatus(), 
+            'status' => $pettyCashReceipt->getStatus(),
         ]);
 
         return new PettyCashReceipt(
@@ -137,11 +137,11 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
             correlative: $eloquentPettyCashReceipt->correlative,
             date: $eloquentPettyCashReceipt->date,
             delivered_to: $eloquentPettyCashReceipt->delivered_to,
-             reason_code: $eloquentPettyCashReceipt->reasonCode?->toDomain($eloquentPettyCashReceipt->reasonCode),
+            reason_code: $eloquentPettyCashReceipt->reasonCode?->toDomain($eloquentPettyCashReceipt->reasonCode),
             currency: $eloquentPettyCashReceipt->currency?->toDomain($eloquentPettyCashReceipt->currency),
             amount: $eloquentPettyCashReceipt->amount,
             observation: $eloquentPettyCashReceipt->observation,
-            status: $eloquentPettyCashReceipt->status, 
+            status: $eloquentPettyCashReceipt->status,
             branch: $eloquentPettyCashReceipt->branch->toDomain($eloquentPettyCashReceipt->branch)
         );
     }
@@ -149,39 +149,37 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
     {
         EloquentPettyCashReceipt::where('id', $pettyCashReceipt)->update(['status' => $status]);
     }
-public function selectProcedure(
-    $cia,
-    $fecha,
-    $fechaU,
-    $nrocliente,
-    $pcodsuc,
-    $ptippag,
-    $pcodban,
-    $pnroope,
-    $ptipdoc,
-    $pserie,
-    $pcorrelativo
-): array {
+    public function selectProcedure(
+        $cia,
+        $fecha,
+        $fechaU,
+        $nrocliente,
+        $pcodsuc,
+        $ptippag,
+        $pcodban,
+        $pnroope,
+        $ptipdoc,
+        $pserie,
+        $pcorrelativo
+    ): array {
 
-    $resultado = DB::select(
-        'CALL sp_parte_diario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [
-            (int) $cia,
-            $fecha,
-            $fechaU,
-            (int) $nrocliente,
-            (int) $pcodsuc,
-            (int) $ptippag,
-            (int) $pcodban,
-            $pnroope ?? '',
-            (int) $ptipdoc,
-            $pserie ?? '',
-            $pcorrelativo ?? ''
-        ]
-    );
+        $resultado = DB::select(
+            'CALL sp_parte_diario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                (int) $cia,
+                $fecha,
+                $fechaU,
+                (int) $nrocliente,
+                (int) $pcodsuc,
+                (int) $ptippag,
+                (int) $pcodban,
+                $pnroope ?? '',
+                (int) $ptipdoc,
+                $pserie ?? '',
+                $pcorrelativo ?? ''
+            ]
+        );
 
-    return $resultado;
-}
-
-
+        return $resultado;
+    }
 }

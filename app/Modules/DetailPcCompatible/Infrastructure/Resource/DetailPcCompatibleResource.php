@@ -14,19 +14,9 @@ class DetailPcCompatibleResource extends JsonResource
             ->find($this->resource->getId());
 
         return [
-            'id' => $this->resource->getId(),
-            'article_major_id' => $this->resource->getArticleMajorId(),
-            'article_major' => $detail && $detail->articleMajor ? [
-                'id' => $detail->articleMajor->id,
-                'cod_fab' => $detail->articleMajor->cod_fab,
-                'description' => $detail->articleMajor->description,
-            ] : null,
-            'article_accesory_id' => $this->resource->getArticleAccesoryId(),
-            'article_accessory' => $detail && $detail->articleAccessory ? [
-                'id' => $detail->articleAccessory->id,
-                'cod_fab' => $detail->articleAccessory->cod_fab,
-                'description' => $detail->articleAccessory->description,
-            ] : null,
+            'id' => $detail && $detail->articleAccessory ? $detail->articleAccessory->id : null,
+            'cod_fab' => $detail && $detail->articleAccessory ? $detail->articleAccessory->cod_fab : null,
+            'description' => $detail && $detail->articleAccessory ? $detail->articleAccessory->description : null,
             'status' => $this->resource->getStatus(),
         ];
     }

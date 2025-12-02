@@ -13,7 +13,7 @@ class StoreReferenceCodeRequest extends FormRequest
     {
         return [
             'ref_code' => 'string|max:20',
-            'status' => 'boolean',
+            'status' => 'nullable|boolean',
         ];
     }
 }

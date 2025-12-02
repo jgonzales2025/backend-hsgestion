@@ -72,7 +72,22 @@ class StoreArticleRequest extends FormRequest
         return [
             // Campos obligatorios
             'cod_fab' => 'nullable|string|max:20',
-            'description' => 'nullable|string|max:50',
+            'description' => 'nullable|string|max:255
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            ',
             'weight' => 'nullable|numeric|min:0',
             'with_deduction' => 'nullable|boolean',
             'series_enabled' => 'nullable|boolean',

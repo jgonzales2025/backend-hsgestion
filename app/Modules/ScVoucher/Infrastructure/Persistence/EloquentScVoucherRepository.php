@@ -36,7 +36,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
             usradi: $eloquentScVoucher->usradi,
             fecadi: $eloquentScVoucher->fecadi,
             usrmod: $eloquentScVoucher->usrmod,
-            fecmod: $eloquentScVoucher->fecmod,
+
         );
     }
 
@@ -67,7 +67,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
                 usradi: $eloquentScVoucher->usradi,
                 fecadi: $eloquentScVoucher->fecadi,
                 usrmod: $eloquentScVoucher->usrmod,
-                fecmod: $eloquentScVoucher->fecmod,
+
             );
         });
 
@@ -95,7 +95,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
             'usradi' => $scVoucher->getUsradi(),
             'fecadi' => $scVoucher->getFecadi(),
             'usrmod' => $scVoucher->getUsrmod(),
-            'fecmod' => $scVoucher->getFecmod(),
+
         ]);
 
         return new ScVoucher(
@@ -118,7 +118,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
             usradi: $eloquentScVoucher->usradi,
             fecadi: $eloquentScVoucher->fecadi,
             usrmod: $eloquentScVoucher->usrmod,
-            fecmod: $eloquentScVoucher->fecmod,
+
         );
     }
 
@@ -149,7 +149,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
             'usradi' => $scVoucher->getUsradi(),
             'fecadi' => $scVoucher->getFecadi(),
             'usrmod' => $scVoucher->getUsrmod(),
-            'fecmod' => $scVoucher->getFecmod(),
+
         ]);
 
         return new ScVoucher(
@@ -172,7 +172,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
             usradi: $eloquentScVoucher->usradi,
             fecadi: $eloquentScVoucher->fecadi,
             usrmod: $eloquentScVoucher->usrmod,
-            fecmod: $eloquentScVoucher->fecmod,
+
         );
     }
 }

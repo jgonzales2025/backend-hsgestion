@@ -23,7 +23,6 @@ class ScVoucher
     private int $usradi;
     private string $fecadi;
     private int $usrmod;
-    private string $fecmod;
 
     public function __construct(
         ?int $id,
@@ -45,7 +44,6 @@ class ScVoucher
         int $usradi,
         string $fecadi,
         int $usrmod,
-        string $fecmod,
     ) {
         $this->id = $id;
         $this->cia = $cia;
@@ -66,7 +64,6 @@ class ScVoucher
         $this->usradi = $usradi;
         $this->fecadi = $fecadi;
         $this->usrmod = $usrmod;
-        $this->fecmod = $fecmod;
     }
     public function getId(): ?int
     {
@@ -143,9 +140,5 @@ class ScVoucher
     public function getUsrmod(): int
     {
         return $this->usrmod;
-    }
-    public function getFecmod(): string
-    {
-        return $this->fecmod;
     }
 }

@@ -35,7 +35,7 @@ class BuildPcController
 
         $result = [];
 
-        // Iterate over paginated items
+        // Iterate over paginated   items
         foreach ($buildPcs->items() as $buildPc) {
             $details = $this->buildDetailPcRepository->findByBuildPcId($buildPc->getId());
 

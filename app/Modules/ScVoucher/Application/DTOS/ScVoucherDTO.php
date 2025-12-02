@@ -22,7 +22,6 @@ class ScVoucherDTO
     public int $usradi;
     public string $fecadi;
     public int $usrmod;
-    public string $fecmod;
 
     public function __construct(array $data)
     {
@@ -44,6 +43,5 @@ class ScVoucherDTO
         $this->usradi = $data['usradi'];
         $this->fecadi = $data['fecadi'];
         $this->usrmod = $data['usrmod'];
-        $this->fecmod = $data['fecmod'];
     }
 }

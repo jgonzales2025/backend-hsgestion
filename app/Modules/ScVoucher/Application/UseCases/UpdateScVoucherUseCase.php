@@ -34,7 +34,6 @@ class UpdateScVoucherUseCase
             usradi: $scVoucherDTO->usradi,
             fecadi: $scVoucherDTO->fecadi,
             usrmod: $scVoucherDTO->usrmod,
-            fecmod: $scVoucherDTO->fecmod,
         );
 
         return $this->scVoucherRepository->update($scVoucher);

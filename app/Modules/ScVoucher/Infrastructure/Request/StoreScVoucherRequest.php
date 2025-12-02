@@ -10,11 +10,18 @@ class StoreScVoucherRequest extends FormRequest
     {
         return true;
     }
+    public function prepareForValidation()
+    {
+        $companyId = request()->get('company_id');
+        $this->merge([
+            'cia' => $companyId,
+        ]);
+    }
 
     public function rules(): array
     {
         return [
-            'cia' => 'required|integer',
+            'cia' => 'nullable|integer',
             'anopr' => 'required|integer',
             'correlativo' => 'required|integer',
             'fecha' => 'required|date',
@@ -32,7 +39,14 @@ class StoreScVoucherRequest extends FormRequest
             'usradi' => 'required|integer',
             'fecadi' => 'required|date',
             'usrmod' => 'required|integer',
-            'fecmod' => 'required|date',
+            'detail_sc_voucher' => 'required|array',
+            'detail_sc_voucher.*.codcon' => 'required|integer',
+            'detail_sc_voucher.*.numdoc' => 'required|string',
+            'detail_sc_voucher.*.glosa' => 'required|string',
+            'detail_sc_voucher.*.impsol' => 'required|numeric',
+            'detail_sc_voucher.*.impdol' => 'required|numeric',
+
+
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\BuildDetailPc\Infrastructure\Models;
 
+use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\BuildPc\Infrastructure\Models\EloquentBuildPc;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,5 +26,10 @@ class EloquentBuildDetailPc extends Model
     public function buildPc(): BelongsTo
     {
         return $this->belongsTo(EloquentBuildPc::class, 'build_pc_id', 'id');
+    }
+
+    public function article(): BelongsTo
+    {
+        return $this->belongsTo(EloquentArticle::class, 'article_id', 'id');
     }
 }

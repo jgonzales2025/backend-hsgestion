@@ -23,21 +23,27 @@ class EloquentBrandRepository implements BrandRepositoryInterface
         );
     }
 
-    public function findAll(): array
+    public function findAll(?string $name, ?int $status)
     {
-        $brands = EloquentBrand::all()->sortByDesc('created_at');
+        $brands = EloquentBrand::query()
+            ->when($name, function ($query) use ($name) {
+                return $query->where('name', 'like', "%{$name}%");
+            })
+            ->when($status !== null, function ($query) use ($status) {
+                return $query->where('status', $status);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-        if ($brands->isEmpty()) {
-            return [];
-        }
-
-        return $brands->map(function ($brand) {
+        $brands->getCollection()->transform(function ($brand) {
             return new Brand(
                 id: $brand->id,
                 name: $brand->name,
                 status: $brand->status,
             );
-        })->toArray();
+        });
+
+        return $brands;
     }
 
     public function findById(int $id): ?Brand

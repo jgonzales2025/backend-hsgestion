@@ -42,6 +42,14 @@ class Sale
     private ?string $correlative_prof;
     private ?string $purchase_order;
     private ?User $user_authorized;
+    private ?int $coddetrac;
+    private ?float $pordetrac;
+    private ?float $impdetracs;
+    private ?float $impdetracd;
+    private ?float $stretencion;
+    private ?float $porretencion;
+    private ?float $impretens;
+    private ?float $impretend;
 
     public function __construct(
         int $id,
@@ -72,6 +80,14 @@ class Sale
         ?string $correlative_prof,
         ?string $purchase_order,
         ?User $user_authorized,
+        ?int $coddetrac,
+        ?float $pordetrac,
+        ?float $impdetracs,
+        ?float $impdetracd,
+        ?float $stretencion,
+        ?float $porretencion,
+        ?float $impretens,
+        ?float $impretend,
         ?int $status = null,
     ){
         $this->id = $id;
@@ -103,6 +119,14 @@ class Sale
         $this->correlative_prof = $correlative_prof;
         $this->purchase_order = $purchase_order;
         $this->user_authorized = $user_authorized;
+        $this->coddetrac = $coddetrac;
+        $this->pordetrac = $pordetrac;
+        $this->impdetracs = $impdetracs;
+        $this->impdetracd = $impdetracd;
+        $this->stretencion = $stretencion;
+        $this->porretencion = $porretencion;
+        $this->impretens = $impretens;
+        $this->impretend = $impretend;
     }
 
     public function getId(): int { return $this->id; }
@@ -134,4 +158,12 @@ class Sale
     public function getCorrelativeProf(): string|null { return $this->correlative_prof; }
     public function getPurchaseOrder(): string|null { return $this->purchase_order; }
     public function getUserAuthorized(): ?User { return $this->user_authorized; }
+    public function getCoddetrac(): ?int { return $this->coddetrac; }
+    public function getPordetrac(): ?float { return $this->pordetrac; }
+    public function getImpdetracs(): ?float { return $this->impdetracs; }
+    public function getImpdetracd(): ?float { return $this->impdetracd; }
+    public function getStretencion(): ?float { return $this->stretencion; }
+    public function getPorretencion(): ?float { return $this->porretencion; }
+    public function getImpretens(): ?float { return $this->impretens; }
+    public function getImpretend(): ?float { return $this->impretend; }
 }

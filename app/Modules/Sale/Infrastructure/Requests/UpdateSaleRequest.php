@@ -36,6 +36,20 @@ class UpdateSaleRequest extends FormRequest
             'purchase_order' => 'nullable|string|max:10',
             'user_authorized_id' => 'nullable|integer|exists:users,id',
 
+            'installments' => 'nullable|array',
+            'installments.*.installment_number' => 'required_if:payment_type_id,2|integer|min:1',
+            'installments.*.amount' => 'required_if:payment_type_id,2|numeric|min:0',
+            'installments.*.due_date' => 'required_if:payment_type_id,2|date',
+
+            'coddetrac' => 'nullable|integer',
+            'pordetrac' => 'nullable|numeric',
+            'impdetracs' => 'nullable|numeric',
+            'impdetracd' => 'nullable|numeric',
+            'stretencion' => 'nullable|numeric',
+            'porretencion' => 'nullable|numeric',
+            'impretens' => 'nullable|numeric',
+            'impretend' => 'nullable|numeric',
+            
             'sale_articles' => 'required|array|min:1',
             'sale_articles.*.article_id' => 'required|integer|exists:articles,id',
             'sale_articles.*.description' => 'required|string',

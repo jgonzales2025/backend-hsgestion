@@ -27,8 +27,7 @@ class ScVoucherResource extends JsonResource
             'status' => $this->getStatus(),
             'usradi' => $this->getUsradi(),
             'fecadi' => $this->getFecadi(),
-            'usrmod' => $this->getUsrmod(),
-            'fecmod' => $this->getFecmod(),
+            'usrmod' => $this->getUsrmod(),  
         ];
     }
 }

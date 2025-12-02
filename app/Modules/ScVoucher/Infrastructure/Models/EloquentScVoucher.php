@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class EloquentScVoucher extends Model
 {
-    protected $table = 'supplier_payment_registration';
+    protected $table = 'sc_voucher';
 
     protected $fillable = [
         'id',
@@ -28,7 +28,6 @@ class EloquentScVoucher extends Model
         'usradi',
         'fecadi',
         'usrmod',
-        'fecmod',
     ];
     protected $hidden = ['updated_at', 'created_at'];
 }

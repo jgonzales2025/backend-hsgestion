@@ -10,7 +10,7 @@ class EloquentBuildDetaiPcRepository implements BuildDetailPcRepositoryInterface
 {
     public function findAll(): array
     {
-        $buildDetailPc =  EloquentBuildDetailPc::all();
+        $buildDetailPc =  EloquentBuildDetailPc::with('article')->get();
 
         return $buildDetailPc->map(function ($buildDetailPc) {
             return new BuildDetailPc(
@@ -19,26 +19,32 @@ class EloquentBuildDetaiPcRepository implements BuildDetailPcRepositoryInterface
                 article_id: $buildDetailPc->article_id,
                 quantity: $buildDetailPc->quantity,
                 price: $buildDetailPc->price,
-                subtotal: $buildDetailPc->subtotal
+                subtotal: $buildDetailPc->subtotal,
+                cod_fab: $buildDetailPc->article->cod_fab ?? null,
+                description: $buildDetailPc->article->description ?? null
             );
         })->toArray();
     }
     public function findById(int $id): ?BuildDetailPc
     {
-        $buildDetailPc = EloquentBuildDetailPc::find($id);
+        $buildDetailPc = EloquentBuildDetailPc::with('article')->find($id);
+        if (!$buildDetailPc) return null;
+
         return new BuildDetailPc(
             id: $buildDetailPc->id,
             build_pc_id: $buildDetailPc->build_pc_id,
             article_id: $buildDetailPc->article_id,
             quantity: $buildDetailPc->quantity,
             price: $buildDetailPc->price,
-            subtotal: $buildDetailPc->subtotal
+            subtotal: $buildDetailPc->subtotal,
+            cod_fab: $buildDetailPc->article->cod_fab ?? null,
+            description: $buildDetailPc->article->description ?? null
         );
     }
 
     public function findByBuildPcId(int $buildPcId): array
     {
-        $details = EloquentBuildDetailPc::where('build_pc_id', $buildPcId)->get();
+        $details = EloquentBuildDetailPc::with('article')->where('build_pc_id', $buildPcId)->get();
 
         return $details->map(function ($detail) {
             return new BuildDetailPc(
@@ -47,7 +53,9 @@ class EloquentBuildDetaiPcRepository implements BuildDetailPcRepositoryInterface
                 article_id: $detail->article_id,
                 quantity: $detail->quantity,
                 price: $detail->price,
-                subtotal: $detail->subtotal
+                subtotal: $detail->subtotal,
+                cod_fab: $detail->article->cod_fab ?? null,
+                description: $detail->article->description ?? null
             );
         })->toArray();
     }
@@ -61,13 +69,18 @@ class EloquentBuildDetaiPcRepository implements BuildDetailPcRepositoryInterface
             'price' => $data->getPrice(),
             'subtotal' => $data->getSubtotal(),
         ]);
+        // Reload to get relationship
+        $buildDetailPc->load('article');
+
         return new BuildDetailPc(
             id: $buildDetailPc->id,
             build_pc_id: $buildDetailPc->build_pc_id,
             article_id: $buildDetailPc->article_id,
             quantity: $buildDetailPc->quantity,
             price: $buildDetailPc->price,
-            subtotal: $buildDetailPc->subtotal
+            subtotal: $buildDetailPc->subtotal,
+            cod_fab: $buildDetailPc->article->cod_fab ?? null,
+            description: $buildDetailPc->article->description ?? null
         );
     }
 
@@ -80,13 +93,17 @@ class EloquentBuildDetaiPcRepository implements BuildDetailPcRepositoryInterface
             'price' => $data->getPrice(),
             'subtotal' => $data->getSubtotal(),
         ]);
+        $buildDetailPc = EloquentBuildDetailPc::with('article')->find($data->getId());
+
         return new BuildDetailPc(
             id: $buildDetailPc->id,
             build_pc_id: $buildDetailPc->build_pc_id,
             article_id: $buildDetailPc->article_id,
             quantity: $buildDetailPc->quantity,
             price: $buildDetailPc->price,
-            subtotal: $buildDetailPc->subtotal
+            subtotal: $buildDetailPc->subtotal,
+            cod_fab: $buildDetailPc->article->cod_fab ?? null,
+            description: $buildDetailPc->article->description ?? null
         );
     }
 

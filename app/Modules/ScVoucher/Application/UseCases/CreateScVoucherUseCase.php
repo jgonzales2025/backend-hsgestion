@@ -34,7 +34,6 @@ class CreateScVoucherUseCase
             usradi: $scVoucherDTO->usradi,
             fecadi: $scVoucherDTO->fecadi,
             usrmod: $scVoucherDTO->usrmod,
-            fecmod: $scVoucherDTO->fecmod,
         );
 
         return $this->scVoucherRepository->create($scVoucher);

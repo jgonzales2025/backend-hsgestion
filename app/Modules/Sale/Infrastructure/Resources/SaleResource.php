@@ -7,6 +7,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class SaleResource extends JsonResource
 {
+    public $installments = null;
+
     public function toArray(Request $request): array
     {
         $customer = $this->resource->getCustomer();
@@ -62,8 +64,9 @@ class SaleResource extends JsonResource
             'currency_type' => [
                 'id' => $this->resource->getCurrencyType()->getId(),
                 'name' => $this->resource->getCurrencyType()->getName(),
-                'reference'=>($this->resource->getCurrencyType()->getName()) == "SOLES" ? "S/" : "$",
+                'reference' => ($this->resource->getCurrencyType()->getName()) == "SOLES" ? "S/" : "$",
             ],
+            'installments' => $this->installments,
             'subtotal' => $isNegative ? -$this->resource->getSubtotal() : $this->resource->getSubtotal(),
             'igv' => $isNegative ? -$this->resource->getIgv() : $this->resource->getIgv(),
             'total' => $isNegative ? -$this->resource->getTotal() : $this->resource->getTotal(),
@@ -79,7 +82,15 @@ class SaleResource extends JsonResource
             'user_authorized' => $this->resource->getUserAuthorized() ? [
                 'id' => $this->resource->getUserAuthorized()->getId(),
                 'username' => $this->resource->getUserAuthorized()->getUsername(),
-            ] : null
+            ] : null,
+            'coddetrac' => $this->resource->getCoddetrac() ?? null,
+            'pordetrac' => $this->resource->getPordetrac() ?? null,
+            'impdetracs' => $this->resource->getImpdetracs() ?? null,
+            'impdetracd' => $this->resource->getImpdetracd() ?? null,
+            'stretencion' => $this->resource->getStretencion() ?? null,
+            'porretencion' => $this->resource->getPorretencion() ?? null,
+            'impretens' => $this->resource->getImpretens() ?? null,
+            'impretend' => $this->resource->getImpretend() ?? null
         ];
     }
 }

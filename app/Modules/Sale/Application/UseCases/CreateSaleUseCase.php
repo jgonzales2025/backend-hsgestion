@@ -97,7 +97,15 @@ readonly class CreateSaleUseCase
             serie_prof: $saleDTO->serie_prof,
             correlative_prof: $saleDTO->correlative_prof,
             purchase_order: $saleDTO->purchase_order,
-            user_authorized: $userAuthorized
+            user_authorized: $userAuthorized,
+            coddetrac: $saleDTO->coddetrac,
+            pordetrac: $saleDTO->pordetrac,
+            impdetracs: $saleDTO->impdetracs,
+            impdetracd: $saleDTO->impdetracd,
+            stretencion: $saleDTO->stretencion,
+            porretencion: $saleDTO->porretencion,
+            impretens: $saleDTO->impretens,
+            impretend: $saleDTO->impretend
         );
 
         return $this->saleRepository->save($sale);

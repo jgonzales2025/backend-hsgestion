@@ -288,6 +288,7 @@ class CustomerController extends Controller
             'name' => $data['data']['first_name'] ?? null,
             'lastname' => $data['data']['first_last_name'] ?? null,
             'second_lastname' => $data['data']['second_last_name'] ?? null,
+            'is_withholding_applicable' => $data['data']['es_agente_retencion'] ?? null,
         ]);
 
         $customerUseCase = new CreateCustomerSunatApiUseCase($this->customerRepository);

@@ -48,7 +48,15 @@ class EloquentSale extends Model
         'reference_document_type_id',
         'reference_serie',
         'reference_correlative',
-        'note_reason_id'
+        'note_reason_id',
+        'coddetrac',
+        'pordetrac',
+        'impdetracs',
+        'impdetracd',
+        'stretencion',
+        'porretencion',
+        'impretens',
+        'impretend'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

@@ -276,7 +276,15 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'reference_serie' => $sale->getSerieProf(),
             'reference_correlative' => $sale->getCorrelativeProf(),
             'purchase_order' => $sale->getPurchaseOrder(),
-            'user_authorized_id' => $sale->getUserAuthorized()?->getId()
+            'user_authorized_id' => $sale->getUserAuthorized()?->getId(),
+            'coddetrac' => $sale->getCoddetrac(),
+            'pordetrac' => $sale->getPordetrac(),
+            'impdetracs' => $sale->getImpdetracs(),
+            'impdetracd' => $sale->getImpdetracd(),
+            'stretencion' => $sale->getStretencion(),
+            'porretencion' => $sale->getPorretencion(),
+            'impretens' => $sale->getImpretens(),
+            'impretend' => $sale->getImpretend()
         ];
     }
 
@@ -386,7 +394,15 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             serie_prof: $eloquentSale->reference_serie,
             correlative_prof: $eloquentSale->reference_correlative,
             purchase_order: $eloquentSale->purchase_order,
-            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized)
+            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized),
+            coddetrac: $eloquentSale->coddetrac,
+            pordetrac: $eloquentSale->pordetrac,
+            impdetracs: $eloquentSale->impdetracs,
+            impdetracd: $eloquentSale->impdetracd,
+            stretencion: $eloquentSale->stretencion,
+            porretencion: $eloquentSale->porretencion,
+            impretens: $eloquentSale->impretens,
+            impretend: $eloquentSale->impretend
         );
     }
 
@@ -421,7 +437,15 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             serie_prof: $eloquentSale->series_prof,
             correlative_prof: $eloquentSale->correlative_prof,
             purchase_order: $eloquentSale->purchase_order,
-            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized)
+            user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized),
+            coddetrac: $eloquentSale->coddetrac,
+            pordetrac: $eloquentSale->pordetrac,
+            impdetracs: $eloquentSale->impdetracs,
+            impdetracd: $eloquentSale->impdetracd,
+            stretencion: $eloquentSale->stretencion,
+            porretencion: $eloquentSale->porretencion,
+            impretens: $eloquentSale->impretens,
+            impretend: $eloquentSale->impretend
         );
     }
 

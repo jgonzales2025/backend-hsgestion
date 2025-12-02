@@ -13,7 +13,7 @@ return new class extends Migration
             $table->id();
 
             $table->string('cod_fab', 100)->nullable();
-            $table->string('description')->nullable();
+            $table->string('description',100)->nullable();
             $table->float('weight')->default(0);
             $table->boolean('with_deduction')->default(false);
             $table->boolean('series_enabled')->default(false);
@@ -51,6 +51,8 @@ return new class extends Migration
             $table->string('filt_NameEsp')->nullable();
             $table->boolean('status_Esp')->default(false);
 
+            $table->boolean('is_combo')->default(false);
+            
             $table->timestamp('date_at')->useCurrent();
             $table->timestamps();
         });

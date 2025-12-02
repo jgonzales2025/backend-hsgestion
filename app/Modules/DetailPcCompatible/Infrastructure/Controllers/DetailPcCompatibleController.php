@@ -135,4 +135,12 @@ class DetailPcCompatibleController extends Controller
             200
         );
     }
+     public function showByArticle(int $id): JsonResponse
+    {
+       $findAllArticles = $this->detailPcCompatibleRepositoryInterface->findAllArticles($id);
+       return response()->json(
+           DetailPcCompatibleResource::collection($findAllArticles)->resolve(),
+           200
+       );
+    }
 }

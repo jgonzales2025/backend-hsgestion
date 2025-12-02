@@ -14,6 +14,6 @@ class ReferenceCodeDTO
         $this->id = $data['id'] ?? 0;
         $this->ref_code = $data['ref_code'] ;
         $this->article_id = $data['article_id'] ?? 0;
-        $this->status = $data['status'];
+        $this->status = $data['status'] ?? 1;
     }
 }

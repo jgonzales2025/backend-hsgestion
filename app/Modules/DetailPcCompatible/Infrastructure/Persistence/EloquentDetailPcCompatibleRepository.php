@@ -77,4 +77,17 @@ class EloquentDetailPcCompatibleRepository implements DetailPcCompatibleReposito
             status: $detail->status
         );
     }
+
+    public function findAllArticles(int $id): array
+    {
+        $detailPcCompatibles = EloquentDetailPcCompatible::with(['articleMajor', 'articleAccessory'])->where('article_major_id', $id)->get();
+        return $detailPcCompatibles->map(function ($detail) {
+            return new DetailPcCompatible(
+                id: $detail->id,
+                article_major_id: $detail->article_major_id,
+                article_accesory_id: $detail->article_accesory_id,
+                status: $detail->status
+            );
+        })->toArray();
+    }
 }

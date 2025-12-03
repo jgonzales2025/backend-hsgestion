@@ -47,6 +47,9 @@ class CreatePurchaseRequest extends FormRequest
             'entry_guide' => 'required|array',
             'entry_guide.*' => 'required|integer|exists:entry_guides,id',
             'is_igv' => 'required|boolean',
+            'type_document_id' => 'required|integer',
+            'reference_serie' => 'required|string',
+            'reference_correlative' => 'required|string',
         ];
     }
     public function messages(): array

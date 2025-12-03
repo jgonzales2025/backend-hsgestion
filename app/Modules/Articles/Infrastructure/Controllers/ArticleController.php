@@ -35,7 +35,7 @@ use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Modules\Articles\Application\UseCases\UpdateStatusArticleUseCase; 
+use App\Modules\Articles\Application\UseCases\UpdateStatusArticleUseCase;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\VisibleArticles\application\UseCases\FindStatusByArticleId;
 use App\Modules\VisibleArticles\Domain\Interfaces\VisibleArticleRepositoryInterface;
@@ -77,7 +77,7 @@ class ArticleController extends Controller
           'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]
       )->deleteFileAfterSend(true);
-    } catch (\Exception $e) { 
+    } catch (\Exception $e) {
 
       return response()->json([
         'error' => $e->getMessage()
@@ -136,7 +136,7 @@ class ArticleController extends Controller
       ),
       200
     );
-  } 
+  }
   public function indexNotesDebito(Request $request): array
   {
     $description = $request->query("description");
@@ -161,7 +161,7 @@ class ArticleController extends Controller
       (new ArticleNotesDebitoResource($article))->resolve(),
       200
     );
-  } 
+  }
   public function update(UpdateArticleRequest $request, int $id): JsonResponse
   {
     $data = $request->validated();
@@ -316,7 +316,7 @@ class ArticleController extends Controller
           'branch_id' => $branch->getId(),
           "location" => $branch->getName()
         ]);
-      } 
+      }
     }
 
     if ($articleId) {
@@ -338,7 +338,7 @@ class ArticleController extends Controller
         'prev_page_url' => $articles->previousPageUrl(),
       ]);
     }
-  } 
+  }
 
   public function storeNotesDebito(StoreArticleNotasDebito $request): JsonResponse
   {
@@ -377,4 +377,14 @@ class ArticleController extends Controller
 
     return response()->json(['message' => 'Estado actualizado correctamente'], 200);
   }
-} 
+  public function getIsCombo(Request $request): JsonResponse
+  {
+    $name = $request->query("name");
+
+    $findbyidCombo = $this->articleRepository->findAllCombos($name);
+    return response()->json(
+      ArticleResource::collection($findbyidCombo)->resolve(),
+      200
+    );
+  }
+}

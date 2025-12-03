@@ -18,4 +18,5 @@ interface ArticleRepositoryInterface
   public function findByIdNotesDebito(int $id): ?ArticleNotasDebito;
   public function requiredSerial(int $articleId): bool;
   public function updateStatus(int $articleId, int $status): void;
+  public function findAllCombos(?string $name): array;
 }

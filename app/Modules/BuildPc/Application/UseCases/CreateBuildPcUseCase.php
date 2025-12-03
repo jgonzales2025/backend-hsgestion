@@ -12,8 +12,7 @@ class CreateBuildPcUseCase
 {
     public function __construct(
         private readonly BuildPcRepositoryInterface $buildPcRepository,
-        private readonly ArticleRepositoryInterface $articleRepository
-    ) {}
+   ) {}
     public function execute(BuildPcDTO $data): ?BuildPc
     {
 
@@ -25,6 +24,8 @@ class CreateBuildPcUseCase
             total_price: $data->total_price,
             user_id: $data->user_id,
             status: $data->status,
+            quantity: $data->quantity,
+            article_ensamb_id: $data->article_ensamb_id,
         );
 
         return $this->buildPcRepository->create($buildPc);

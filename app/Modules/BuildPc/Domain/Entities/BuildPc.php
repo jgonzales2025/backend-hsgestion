@@ -10,6 +10,8 @@ class BuildPc
     private float $total_price;
     private int $user_id;
     private bool $status;
+    private ?int $quantity;
+    private ?int $article_ensamb_id;
 
 
 
@@ -20,6 +22,8 @@ class BuildPc
         float $total_price,
         int $user_id,
         bool $status,
+        ?int $quantity,
+        ?int $article_ensamb_id,
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -27,6 +31,8 @@ class BuildPc
         $this->total_price = $total_price;
         $this->user_id = $user_id;
         $this->status = $status;
+        $this->quantity = $quantity;
+        $this->article_ensamb_id = $article_ensamb_id;
     }
 
     public function getId(): int|null
@@ -57,5 +63,14 @@ class BuildPc
     public function getStatus(): bool
     {
         return $this->status;
+    }
+
+    public function getQuantity(): int|null
+    {
+        return $this->quantity;
+    }
+    public function getArticleEnsambId(): int|null
+    {
+        return $this->article_ensamb_id;
     }
 }

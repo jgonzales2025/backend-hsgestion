@@ -62,6 +62,9 @@ class UpdatePurchaseUseCase{
             igv: $purchaseDTO->igv,
             total: $purchaseDTO->total,
             is_igv: $purchaseDTO->is_igv,
+            type_document_id: $purchaseDTO->type_document_id,
+            reference_serie: $purchaseDTO->reference_serie,
+            reference_correlative: $purchaseDTO->reference_correlative,
         );
         return $this->purchaseRepository->update($updatePurchase);
     }

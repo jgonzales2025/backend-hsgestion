@@ -38,10 +38,13 @@ class PettyCashReceiptController extends Controller
     ) {}
     public function index(Request $request): JsonResponse
     {
-        $filter = $request->query('filter');
+        $filter = $request->query('search');
+        $is_active = $request->query('is_active');
+
+        $currency_type = $request->query('document_type');
 
         $pettyCashReceiptsUseCase = new FindAllPettyCashReceiptUseCase($this->pettyCashReceiptRepository);
-        $pettyCashReceipts = $pettyCashReceiptsUseCase->execute($filter);
+        $pettyCashReceipts = $pettyCashReceiptsUseCase->execute($filter, $currency_type, $is_active);
 
         // Return paginated response with navigation URLs
         return new JsonResponse([

@@ -24,6 +24,9 @@ class PurchaseDTO{
     public  $igv;
     public  $total;
     public bool $is_igv;
+    public int $type_document_id;
+    public string $reference_serie;
+    public string $reference_correlative;
    
     public function __construct(array $array){
         $this->branch_id = $array['branch_id'];
@@ -47,6 +50,9 @@ class PurchaseDTO{
         $this->igv = $array['igv'];
         $this->total = $array['total'];
         $this->is_igv = $array['is_igv'];
+        $this->type_document_id = $array['type_document_id'];
+        $this->reference_serie = $array['reference_serie'];
+        $this->reference_correlative = $array['reference_correlative'];
     
     }
     

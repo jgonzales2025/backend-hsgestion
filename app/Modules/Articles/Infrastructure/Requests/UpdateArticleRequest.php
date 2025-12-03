@@ -35,7 +35,7 @@ class UpdateArticleRequest extends FormRequest
             'distributor_price' => isset($this->distributor_price) ? (float) $this->distributor_price : 0,
             'authorized_price' => isset($this->authorized_price) ? (float) $this->authorized_price : 0,
           'state_modify_article' => isset($this->state_modify_article) ? (int) $this->state_modify_article : 0,
-
+          'is_combo' => isset($this->is_combo) ? (int) $this->is_combo : 0,
         ]);
     }
 
@@ -93,6 +93,7 @@ class UpdateArticleRequest extends FormRequest
             'distributor_price_percent' => 'nullable|numeric|min:0',
             'authorized_price_percent' => 'nullable|numeric|min:0',
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
+            'is_combo' => 'nullable|boolean',
         ];
     }
 

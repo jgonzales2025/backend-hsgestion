@@ -26,10 +26,14 @@ class CreateBuildPcRequest extends FormRequest
             // 'total_price' => 'required|numeric',
             'user_id' => 'required|numeric',
             'status' => 'nullable|boolean',
+            'quantity' => 'required|integer|min:1',
             'details' => 'required|array|min:1',
             'details.*.article_id' => 'required|integer|exists:articles,id',
             'details.*.quantity' => 'required|integer|min:1',
             'details.*.price' => 'required|numeric|min:0',
+            'article_ensamb_id' => 'nullable|integer',
+
+
             // 'details.*.subtotal' => 'required|numeric|min:0',
         ];
     }

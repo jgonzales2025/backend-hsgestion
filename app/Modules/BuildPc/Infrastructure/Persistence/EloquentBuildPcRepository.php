@@ -17,6 +17,8 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             'total_price' => $data->getTotalPrice(),
             'user_id' => $data->getUserId(),
             'status' => $data->getStatus(),
+            'quantity' => $data->getQuantity(),
+            'article_ensamb_id' => $data->getArticleEnsambId(),
         ]);
         return new BuildPc(
             id: $buildPc->id,
@@ -25,6 +27,8 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             total_price: $buildPc->total_price,
             user_id: $buildPc->user_id,
             status: $buildPc->status,
+            quantity: $buildPc->quantity,
+            article_ensamb_id: $buildPc->article_ensamb_id,
         );
     }
 
@@ -39,6 +43,8 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
                 total_price: $buildPc->total_price,
                 user_id: $buildPc->user_id,
                 status: $buildPc->status,
+                quantity: $buildPc->quantity,
+                article_ensamb_id: $buildPc->article_ensamb_id,
             );
         }
         return null;
@@ -46,18 +52,20 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
 
     public function findAll(?string $search, ?int $is_active)
     {
-        $buildPcs = EloquentBuildPc::orderByDesc('created_at')
+        $buildPcs = EloquentBuildPc::query()
             ->when($search, function ($query) use ($search) {
-                return $query->where('description', 'like', "%{$search}%")
-                    ->orWhere('name', 'like', "%{$search}%");
+                $query->where(function ($q) use ($search) {
+                    $q->where('description', 'like', "%{$search}%")
+                        ->orWhere('name', 'like', "%{$search}%");
+                });
             })
-            ->when(isset($is_active), function ($query) use ($is_active) {
-                return $query->where('status', $is_active);
+            ->when(!is_null($is_active), function ($query) use ($is_active) {
+                $query->where('status', $is_active);
             })
             ->orderByDesc('created_at')
             ->paginate(10);
 
-        // Transform the items in the paginator
+        // Transformar la colección de resultados
         $buildPcs->getCollection()->transform(function ($buildPc) {
             return new BuildPc(
                 id: $buildPc->id,
@@ -66,11 +74,14 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
                 total_price: $buildPc->total_price,
                 user_id: $buildPc->user_id,
                 status: $buildPc->status,
+                quantity: $buildPc->quantity,
+                article_ensamb_id: $buildPc->article_ensamb_id,
             );
         });
 
         return $buildPcs;
     }
+
     public function update(BuildPc $data): ?BuildPc
     {
         $buildPc = EloquentBuildPc::find($data->getId());
@@ -83,6 +94,8 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             'total_price' => $data->getTotalPrice(),
             'user_id' => $data->getUserId(),
             'status' => $data->getStatus(),
+            'quantity' => $data->getQuantity(),
+            'article_ensamb_id' => $data->getArticleEnsambId(),
         ]);
         return new BuildPc(
             id: $buildPc->id,
@@ -91,6 +104,8 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             total_price: $buildPc->total_price,
             user_id: $buildPc->user_id,
             status: $buildPc->status,
+            quantity: $buildPc->quantity,
+            article_ensamb_id: $buildPc->article_ensamb_id,
         );
     }
 }

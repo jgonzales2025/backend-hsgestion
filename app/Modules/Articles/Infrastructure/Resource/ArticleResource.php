@@ -70,6 +70,7 @@ class ArticleResource extends JsonResource
                 : '',
             'is_visible' => ($this->resource->getstateModifyArticle()) === true ? 'Activo' : 'Inactivo',
             'state_modify_article' => $this->resource->getstateModifyArticle(),
+            'is_combo' => $this->resource->getIsCombo() ,
 
         ];
 

@@ -9,24 +9,27 @@ use App\Modules\Driver\Infrastructure\Models\EloquentDriver;
 class EloquentDriverRepository implements DriverRepositoryInterface
 {
 
-    public function findAllDrivers(?string $description): array
+    public function findAllDrivers(?string $description, ?int $status)
     {
         $drivers = EloquentDriver::with('customerDocumentType')
             ->when($description, function ($query, $description) {
                 return $query->where('name', 'like', "%{$description}%")
                     ->orWhere('pat_surname', 'like', "%{$description}%")
                     ->orWhere('mat_surname', 'like', "%{$description}%")
-                    ->orWhere('doc_number', 'like', "%{$description}%");
+                    ->orWhere('doc_number', 'like', "%{$description}%")
+                    ->orWhere('license', 'like', "%{$description}%");
+            })
+            ->when($status !== null, function ($query, $status) {
+                return $query->where('status', $status);
             })
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->paginate(10);
 
         if ($drivers->isEmpty()) {
-            return [];
+            return null;
         }
 
-        return $drivers->map(function ($driver) {
-            return new Driver(
+        $drivers->getCollection()->transform(fn($driver) => new Driver(
                 id: $driver->id,
                 customer_document_type_id: $driver->customer_document_type_id,
                 doc_number: $driver->doc_number,
@@ -36,9 +39,9 @@ class EloquentDriverRepository implements DriverRepositoryInterface
                 status: $driver->status,
                 license: $driver->license,
                 document_type_name: $driver->customerDocumentType?->abbreviation
-            );
-        })->toArray();
+            ));
 
+        return $drivers;
     }
 
     public function save(Driver $driver): ?Driver

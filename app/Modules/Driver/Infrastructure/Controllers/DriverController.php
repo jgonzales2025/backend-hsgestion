@@ -27,13 +27,30 @@ class DriverController extends Controller
         $this->driverRepository = new EloquentDriverRepository();
     }
 
-    public function index(Request $request): array
+    public function index(Request $request): JsonResponse
     {
         $description = $request->query('description');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
         $branchUseCase = new FindAllDriversUseCases($this->driverRepository);
-        $drivers = $branchUseCase->execute($description);
+        $drivers = $branchUseCase->execute($description, $status);
 
-        return DriverResource::collection($drivers)->resolve();
+        if (!$drivers) {
+            return response()->json([
+                'message' => 'No se encontraron conductores'
+            ], 404);
+        }
+
+        return new JsonResponse([
+            'data' => DriverResource::collection($drivers)->resolve(),
+            'current_page' => $drivers->currentPage(),
+            'per_page' => $drivers->perPage(),
+            'total' => $drivers->total(),
+            'last_page' => $drivers->lastPage(),
+            'next_page_url' => $drivers->nextPageUrl(),
+            'prev_page_url' => $drivers->previousPageUrl(),
+            'first_page_url' => $drivers->url(1),
+            'last_page_url' => $drivers->url($drivers->lastPage()),
+        ]);
     }
 
     public function store(StoreDriverRequest $request): JsonResponse

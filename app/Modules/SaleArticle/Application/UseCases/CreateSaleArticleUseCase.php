@@ -15,7 +15,7 @@ readonly class CreateSaleArticleUseCase
         private readonly ArticleRepositoryInterface $articleRepository
     ){}
 
-    public function execute(SaleArticleDTO $saleArticleDTO): ?SaleArticle
+    public function execute(SaleArticleDTO $saleArticleDTO, float $subtotal_costo_neto): ?SaleArticle
     {
         $articleUseCase = new FindByIdArticleUseCase($this->articleRepository);
         $article = $articleUseCase->execute($saleArticleDTO->article_id);
@@ -29,9 +29,11 @@ readonly class CreateSaleArticleUseCase
             quantity: $saleArticleDTO->quantity,
             unit_price: $saleArticleDTO->unit_price,
             public_price: $saleArticleDTO->public_price,
-            subtotal: $saleArticleDTO->subtotal
+            subtotal: $saleArticleDTO->subtotal,
+            purchase_price: $saleArticleDTO->purchase_price,
+            costo_neto: $saleArticleDTO->costo_neto
         );
 
-        return $this->saleArticleRepository->save($saleArticle);
+        return $this->saleArticleRepository->save($saleArticle, $subtotal_costo_neto);
     }
 }

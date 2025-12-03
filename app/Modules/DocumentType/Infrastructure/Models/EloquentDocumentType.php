@@ -9,7 +9,7 @@ class EloquentDocumentType extends Model
 {
     protected $table = 'document_types';
 
-    protected $fillable = ['cod_sunat', 'description', 'abbreviation', 'st_sales', 'st_purchases', 'st_collections', 'st_invoices', 'status'];
+    protected $fillable = ['cod_sunat', 'description', 'abbreviation', 'st_sales', 'st_purchases', 'st_collections', 'st_invoices', 'st_document_sales', 'status'];
 
     protected $hidden = ['created_at', 'updated_at'];
 

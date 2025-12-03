@@ -60,6 +60,7 @@ class StoreSaleRequest extends FormRequest
             'sale_articles.*.unit_price' => 'required|numeric|min:0',
             'sale_articles.*.public_price' => 'required|numeric|min:0',
             'sale_articles.*.subtotal' => 'required|numeric|min:0',
+            'sale_articles.*.purchase_price' => 'required|numeric|min:0',
             'sale_articles.*.serials' => 'nullable|array',
             'sale_articles.*.serials.*' => 'string|distinct',
         ];

@@ -83,6 +83,7 @@ class RolePermissionSeeder extends Seeder
             'reportes.consulta_dni_reniec',
             'reportes.registro_compras',
             'reportes.reporte_series',
+            'reportes.reporte_estado_cuenta_cliente',
 
             // GARANTÍAS
             'garantias.recepcion_entrega_productos',
@@ -271,6 +272,7 @@ class RolePermissionSeeder extends Seeder
             ['role_id' => $admin->id, 'menu_id' => 109],
             ['role_id' => $admin->id, 'menu_id' => 110],
             ['role_id' => $admin->id, 'menu_id' => 111],
+            ['role_id' => $admin->id, 'menu_id' => 112]
         ]);
 
         // Gerente

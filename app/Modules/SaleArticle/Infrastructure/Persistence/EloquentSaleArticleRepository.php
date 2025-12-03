@@ -2,6 +2,7 @@
 
 namespace App\Modules\SaleArticle\Infrastructure\Persistence;
 
+use App\Modules\Sale\Infrastructure\Models\EloquentSale;
 use App\Modules\SaleArticle\Domain\Entities\SaleArticle;
 use App\Modules\SaleArticle\Domain\Interfaces\SaleArticleRepositoryInterface;
 use App\Modules\SaleArticle\Infrastructure\Models\EloquentSaleArticle;
@@ -9,7 +10,7 @@ use App\Modules\SaleArticle\Infrastructure\Models\EloquentSaleArticle;
 class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
 {
 
-    public function save(SaleArticle $saleArticle): ?SaleArticle
+    public function save(SaleArticle $saleArticle, float $subtotal_costo_neto): ?SaleArticle
     {
         $eloquentSaleArticle = EloquentSaleArticle::create([
             'sale_id' => $saleArticle->getSaleId(),
@@ -19,6 +20,12 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
             'unit_price' => $saleArticle->getUnitPrice(),
             'public_price' => $saleArticle->getPublicPrice(),
             'subtotal' => $saleArticle->getSubtotal(),
+            'purchase_price' => $saleArticle->getPurchasePrice(),
+            'costo_neto' => $saleArticle->getCostoNeto()
+        ]);
+
+        EloquentSale::where('id', $saleArticle->getSaleId())->update([
+            'total_costo_neto' => $subtotal_costo_neto
         ]);
 
         return new SaleArticle(
@@ -31,6 +38,8 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
             unit_price: $eloquentSaleArticle->unit_price,
             public_price: $eloquentSaleArticle->public_price,
             subtotal: $eloquentSaleArticle->subtotal,
+            purchase_price: $eloquentSaleArticle->purchase_price,
+            costo_neto: $eloquentSaleArticle->costo_neto
         );
     }
 
@@ -50,7 +59,9 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
                 public_price: $eloquentSaleArticle->public_price,
                 subtotal: $eloquentSaleArticle->subtotal,
                 state_modify_article: $eloquentSaleArticle->article->state_modify_article,
-                series_enabled: $eloquentSaleArticle->article->series_enabled
+                series_enabled: $eloquentSaleArticle->article->series_enabled,
+                purchase_price: $eloquentSaleArticle->purchase_price,
+                costo_neto: $eloquentSaleArticle->costo_neto
             );
         })->toArray();
     }

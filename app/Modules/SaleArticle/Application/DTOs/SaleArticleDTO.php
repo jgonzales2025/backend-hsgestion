@@ -11,6 +11,8 @@ class SaleArticleDTO
     public $unit_price;
     public $public_price;
     public $subtotal;
+    public $purchase_price;
+    public $costo_neto;
 
     public function __construct(array $data)
     {
@@ -21,5 +23,7 @@ class SaleArticleDTO
         $this->unit_price = $data['unit_price'];
         $this->public_price = $data['public_price'];
         $this->subtotal = $data['subtotal'];
+        $this->purchase_price = $data['purchase_price'];
+        $this->costo_neto = $data['costo_neto'];
     }
 }

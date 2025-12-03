@@ -18,7 +18,9 @@ class EloquentSaleArticle extends Model
         'quantity',
         'unit_price',
         'public_price',
-        'subtotal'
+        'subtotal',
+        'purchase_price',
+        'costo_neto'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

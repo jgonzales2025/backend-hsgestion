@@ -132,6 +132,8 @@ use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Serie\Infrastructure\Persistence\EloquentSerieRepository;
 use App\Modules\ShoppingIncomeGuide\Domain\Interface\ShoppingIncomeGuideRepositoryInterface;
 use App\Modules\ShoppingIncomeGuide\Infrastructure\Persistence\EloquentShoppingIncomeGuideRepository;
+use App\Modules\Statistics\Domain\Interfaces\StatisticsRepositoryInterface;
+use App\Modules\Statistics\Infrastructure\Persistence\EloquentStatisticsRepository;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\SubCategory\Infrastructure\Persistence\EloquentSubCategoryRepository;
 use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
@@ -239,6 +241,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BuildPcRepositoryInterface::class, EloquentBuildPcRepository::class);
         $this->app->bind(BuildDetailPcRepositoryInterface::class, EloquentBuildDetaiPcRepository::class);
         $this->app->bind(DetailPcCompatibleRepositoryInterface::class, EloquentDetailPcCompatibleRepository::class);
+        $this->app->bind(StatisticsRepositoryInterface::class, EloquentStatisticsRepository::class);
         $this->app->bind(ReferenceCodeRepositoryInterface::class, EloquentReferenceCodeRepository::class);
         $this->app->bind(ScVoucherRepositoryInterface::class, EloquentScVoucherRepository::class);
         $this->app->bind(ScVoucherdetRepositoryInterface::class, EloquentScVoucherdetRepository::class);

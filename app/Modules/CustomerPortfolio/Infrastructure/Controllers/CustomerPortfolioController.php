@@ -20,6 +20,8 @@ use App\Modules\CustomerPortfolio\Infrastructure\Resources\CustomerPortfolioReso
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Modules\User\Infrastructure\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
 use function PHPUnit\Framework\isArray;
 
 class CustomerPortfolioController extends Controller
@@ -30,12 +32,24 @@ class CustomerPortfolioController extends Controller
         private readonly UserRepositoryInterface $userRepository,
     ){}
 
-    public function index(): array
+    public function index(Request $request): JsonResponse
     {
-        $customerPortfoliosUseCase = new FindAllCustomerPortfoliosUseCase($this->customerPortfolioRepository);
-        $customerPortfolios = $customerPortfoliosUseCase->execute();
+        $description = $request->query('description');
 
-        return CustomerPortfolioResource::collection($customerPortfolios)->resolve();
+        $customerPortfoliosUseCase = new FindAllCustomerPortfoliosUseCase($this->customerPortfolioRepository);
+        $customerPortfolios = $customerPortfoliosUseCase->execute($description);
+
+        return new JsonResponse([
+            'data' => CustomerPortfolioResource::collection($customerPortfolios)->resolve(),
+            'current_page' => $customerPortfolios->currentPage(),
+            'per_page' => $customerPortfolios->perPage(),
+            'total' => $customerPortfolios->total(),
+            'last_page' => $customerPortfolios->lastPage(),
+            'next_page_url' => $customerPortfolios->nextPageUrl(),
+            'prev_page_url' => $customerPortfolios->previousPageUrl(),
+            'first_page_url' => $customerPortfolios->url(1),
+            'last_page_url' => $customerPortfolios->url($customerPortfolios->lastPage()),
+        ]);
     }
 
     public function store(StoreCustomerPortfolioRequest $request): array

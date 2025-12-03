@@ -12,9 +12,18 @@ use App\Modules\User\Infrastructure\Model\EloquentUser;
 class EloquentCustomerPortfolioRepository implements CustomerPortfolioRepositoryInterface
 {
 
-    public function findAll(): array
+    public function findAll(?string $description)
     {
-        $query = EloquentCustomerPortfolio::with('customer', 'user');
+        $query = EloquentCustomerPortfolio::with('customer', 'user')
+        ->when($description, fn($query) => $query->whereHas('customer', fn($query) => $query->where('name', 'like', "%{$description}%")))
+            ->orWhereHas('customer', fn($query) => $query->where('document_number', 'like', "%{$description}%"))
+            ->orWhereHas('customer', fn($query) => $query->where('company_name', 'like', "%{$description}%"))
+            ->orWhereHas('customer', fn($query) => $query->where('lastname', 'like', "%{$description}%"))
+            ->orWhereHas('customer', fn($query) => $query->where('second_lastname', 'like', "%{$description}%"))
+            ->orWhereHas('user', fn($query) => $query->where('username', 'like', "%{$description}%"))
+            ->orWhereHas('user', fn($query) => $query->where('firstname', 'like', "%{$description}%"))
+            ->orWhereHas('user', fn($query) => $query->where('lastname', 'like', "%{$description}%"))
+        ->orderBy('created_at', 'desc');
 
         // Obtener el usuario autenticado y su rol desde el request
         $userId = request()->get('user_id');
@@ -25,17 +34,17 @@ class EloquentCustomerPortfolioRepository implements CustomerPortfolioRepository
             $query->where('user_id', $userId);
         }
 
-        $eloquentCustomerPortfolios = $query->get();
+        $eloquentCustomerPortfolios = $query->paginate(10);
 
-        return $eloquentCustomerPortfolios->map(function ($customerPortfolio) {
-            return new CustomerPortfolio(
+        $eloquentCustomerPortfolios->getCollection()->transform(fn($customerPortfolio) => new CustomerPortfolio(
                 id: $customerPortfolio->id,
                 customer: $customerPortfolio->customer->toDomain($customerPortfolio->customer),
                 user: $customerPortfolio->user->toDomain($customerPortfolio->user),
                 created_at: $customerPortfolio->created_at,
                 updated_at: $customerPortfolio->updated_at
-            );
-        })->toArray();
+            ));
+
+        return $eloquentCustomerPortfolios;
     }
 
     public function save(CustomerPortfolio $customerPortfolio): CustomerPortfolio

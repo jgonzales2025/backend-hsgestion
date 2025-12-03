@@ -31,7 +31,7 @@ class Purchase
     private float $igv;
     private float $total;
     private bool $is_igv;
-    private int $type_document_id;
+    private ?int $type_document_id;
     private string $reference_serie;
     private string $reference_correlative;
 
@@ -58,7 +58,7 @@ class Purchase
         float $igv,
         float $total,
         bool $is_igv,
-        int $type_document_id,
+        ?int $type_document_id,
         string $reference_serie,
         string $reference_correlative,
     ) {
@@ -177,7 +177,7 @@ class Purchase
     {
         return $this->is_igv;
     }
-    public function getTypeDocumentId(): int
+    public function getTypeDocumentId(): int|null
     {
         return $this->type_document_id;
     }

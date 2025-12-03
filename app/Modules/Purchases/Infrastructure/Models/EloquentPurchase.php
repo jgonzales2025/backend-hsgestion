@@ -33,7 +33,7 @@ class EloquentPurchase extends Model{
         'igv',
         'total',
         'is_igv',
-        'type_document_id',
+        'document_type_id',
         'reference_serie',
         'reference_correlative',
     ];

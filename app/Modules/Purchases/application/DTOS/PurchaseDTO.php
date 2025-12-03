@@ -50,7 +50,7 @@ class PurchaseDTO{
         $this->igv = $array['igv'];
         $this->total = $array['total'];
         $this->is_igv = $array['is_igv'];
-        $this->type_document_id = $array['type_document_id'];
+        $this->type_document_id = $array['reference_document_type_id'];
         $this->reference_serie = $array['reference_serie'];
         $this->reference_correlative = $array['reference_correlative'];
     

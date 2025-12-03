@@ -6,7 +6,7 @@ use App\Modules\Category\Domain\Entities\Category;
 
 interface CategoryRepositoryInterface
 {
-    public function findAll(): array;
+    public function findAll(?string $descripton, ?int $status);
 
     public function save(Category $category): ?Category;
 

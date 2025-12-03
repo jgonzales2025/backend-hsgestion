@@ -13,8 +13,8 @@ class FindAllCategoriesUseCase
         $this->categoryRepository = $categoryRepository;
     }
 
-    public function execute(): array
+    public function execute(?string $description, ?int $status)
     {
-        return $this->categoryRepository->findAll();
+        return $this->categoryRepository->findAll($description, $status);
     }
 }

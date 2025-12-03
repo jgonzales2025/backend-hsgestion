@@ -20,12 +20,24 @@ class CategoryController extends Controller
 {
     public function __construct(private readonly CategoryRepositoryInterface $categoryRepository){}
 
-    public function index(): array
+    public function index(Request $request): JsonResponse
     {
+        $descripton = $request->query('description');
+        $status = $request->query('status');
         $categoriesUseCases = new FindAllCategoriesUseCase($this->categoryRepository);
-        $categories = $categoriesUseCases->execute();
+        $categories = $categoriesUseCases->execute($descripton, $status);
 
-        return CategoryResource::collection($categories)->resolve();
+        return new JsonResponse([
+            'data' => CategoryResource::collection($categories)->resolve(),
+            'current_page' => $categories->currentPage(),
+            'per_page' => $categories->perPage(),
+            'total' => $categories->total(),
+            'last_page' => $categories->lastPage(),
+            'next_page_url' => $categories->nextPageUrl(),
+            'prev_page_url' => $categories->previousPageUrl(),
+            'first_page_url' => $categories->url(1),
+            'last_page_url' => $categories->url($categories->lastPage()),
+        ]);
     }
 
     public function store(StoreCategoryRequest $request): JsonResponse

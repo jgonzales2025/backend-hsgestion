@@ -250,15 +250,20 @@ class PurchaseController extends Controller
                 $nuevaCantidad = 0;
             }
 
+            $precio = isset($purchase['precio_costo']) ? (float) $purchase['precio_costo'] : 0.0;
+            $descuento = isset($purchase['descuento']) ? (float) $purchase['descuento'] : 0.0;
+            $subTotal = isset($purchase['sub_total']) ? (float) $purchase['sub_total'] : ($precio * (int) $nuevaCantidad);
+            $total = isset($purchase['total']) ? (float) $purchase['total'] : ($subTotal - $descuento);
+
             $detailDto = new DetailPurchaseGuideDTO([
                 'purchase_id' => $detail->getId(),
-                'article_id' => $purchase['article_id'],-
+                'article_id' => $purchase['article_id'],
                 'description' => $purchase['description'],
-                'cantidad' => $nuevaCantidad,  // Use calculated cantidad
-                'precio_costo' => $purchase['precio_costo'],
-                'descuento' => $purchase['descuento'],
-                'sub_total' => $purchase['sub_total'],
-                'total' => $purchase['total'],
+                'cantidad' => $nuevaCantidad,
+                'precio_costo' => $precio,
+                'descuento' => $descuento,
+                'sub_total' => $subTotal,
+                'total' => $total,
                 'cantidad_update' => $cantidadUpdate,
                 'process_status' => $nuevaCantidad == 0 ? 'Facturado' : 'En proceso',
             ]);

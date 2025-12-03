@@ -9,15 +9,18 @@ use App\Modules\MeasurementUnit\Infrastructure\Models\EloquentMeasurementUnit;
 class EloquentMeasurementUnitRepository implements MeasurementUnitRepositoryInterface
 {
 
-    public function findAll(): array
+    public function findAll(?string $description, ?int $status)
     {
-        $measurementUnits = EloquentMeasurementUnit::all()->sortByDesc('created_at');
+        $measurementUnits = EloquentMeasurementUnit::query()
+        ->when($description, fn($query) => $query->where('name', 'like', "%{$description}%"))
+            ->orWhere('abbreviation', 'like', "%{$description}%")
+        ->when($status !== null, fn($query) => $query->where('status', $status))
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
 
-        if ($measurementUnits->isEmpty()) {
-            return [];
-        }
+        $measurementUnits->getCollection()->transform(fn($measurementUnit) => $this->mapToEntity($measurementUnit));
 
-        return $measurementUnits->map(fn ($eloquentMeasurementUnit) => $this->mapToEntity($eloquentMeasurementUnit))->toArray();
+        return $measurementUnits;
     }
 
     public function save(MeasurementUnit $measurementUnit): MeasurementUnit

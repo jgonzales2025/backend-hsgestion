@@ -6,7 +6,7 @@ use App\Modules\MeasurementUnit\Domain\Entities\MeasurementUnit;
 
 interface MeasurementUnitRepositoryInterface
 {
-    public function findAll(): array;
+    public function findAll(?string $description, ?int $status);
 
     public function save(MeasurementUnit $measurementUnit): MeasurementUnit;
 

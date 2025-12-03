@@ -116,12 +116,18 @@ use App\Modules\Purchases\Infrastructure\Persistence\EloquentPurchaseRepository;
 use App\Modules\Purchases\Domain\Interface\GeneratepdfRepositoryInterface;
 use App\Modules\Purchases\Infrastructure\Persistence\DompdfAdapter;
 use App\Modules\RecordType\Domain\Interfaces\RecordTypeRepositoryInterface;
+use App\Modules\ReferenceCode\Domain\Interfaces\ReferenceCodeRepositoryInterface;
+use App\Modules\ReferenceCode\Infrastructure\Persistence\EloquentReferenceCodeRepository;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Persistence\EloquentSaleRepository;
 use App\Modules\SaleArticle\Domain\Interfaces\SaleArticleRepositoryInterface;
 use App\Modules\SaleArticle\Infrastructure\Persistence\EloquentSaleArticleRepository;
 use App\Modules\SaleItemSerial\Domain\Interfaces\SaleItemSerialRepositoryInterface;
 use App\Modules\SaleItemSerial\Infrastructure\Persistence\EloquentSaleItemSerialRepository;
+use App\Modules\ScVoucher\Domain\Interface\ScVoucherRepositoryInterface;
+use App\Modules\ScVoucher\Infrastructure\Persistence\EloquentScVoucherRepository;
+use App\Modules\ScVoucherdet\Domain\Interface\ScVoucherdetRepositoryInterface;
+use App\Modules\ScVoucherdet\Infrastructure\Persistence\EloquentScVoucherdetRepository;
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Serie\Infrastructure\Persistence\EloquentSerieRepository;
 use App\Modules\ShoppingIncomeGuide\Domain\Interface\ShoppingIncomeGuideRepositoryInterface;
@@ -149,6 +155,8 @@ use App\Modules\VisibleArticles\Domain\Interfaces\VisibleArticleRepositoryInterf
 use App\Modules\VisibleArticles\Infrastructure\Persistence\EloquentVisibleArticleRepository;
 use App\Modules\Withholding\Domain\Interface\WithholdingRepositoryInterface;
 use App\Modules\Withholding\Infrastructure\Persistence\EloquentWithholdingRepository;
+use App\Modules\PaymentMethodsSunat\Domain\Interface\PaymentMethodSunatRepositoryInterface;
+use App\Modules\PaymentMethodsSunat\Infrastructure\Persistence\EloquentPaymentMethodSunatRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -234,6 +242,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BuildDetailPcRepositoryInterface::class, EloquentBuildDetaiPcRepository::class);
         $this->app->bind(DetailPcCompatibleRepositoryInterface::class, EloquentDetailPcCompatibleRepository::class);
         $this->app->bind(StatisticsRepositoryInterface::class, EloquentStatisticsRepository::class);
+        $this->app->bind(ReferenceCodeRepositoryInterface::class, EloquentReferenceCodeRepository::class);
+        $this->app->bind(ScVoucherRepositoryInterface::class, EloquentScVoucherRepository::class);
+        $this->app->bind(ScVoucherdetRepositoryInterface::class, EloquentScVoucherdetRepository::class);
+        $this->app->bind(PaymentMethodSunatRepositoryInterface::class, EloquentPaymentMethodSunatRepository::class);
     }
 
     /**

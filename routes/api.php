@@ -59,8 +59,12 @@ use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
 use App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController;
 use App\Modules\NoteReason\Infrastructure\Controllers\NoteReasonController;
+use App\Modules\PaymentMethodsSunat\Infrastructure\Controllers\PaymentMethoddSunatController;
+use App\Modules\ScVoucher\Infrastructure\Controllers\ScVoucherController;
+use App\Modules\ScVoucherdet\Infrastructure\Controllers\ScVoucherdetController;
 use App\Modules\Withholding\Infrastructure\Controller\WithholdingController;
 use App\Modules\Statistics\Infrastructure\Controllers\StatisticsController;
+use App\Modules\PaymentMethodsSunat\Infrastructure\Controllers\PaymentMethodSunatController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -367,9 +371,27 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/detailPcCompatible', [DetailPcCompatibleController::class, 'index']);
     Route::post('/detailPcCompatible', [DetailPcCompatibleController::class, 'store']);
     Route::post('/detailPcCompatible/article/{articleId}', [DetailPcCompatibleController::class, 'storeByArticle']);
+    Route::get('/detailPcCompatible/article/{articleId}', [DetailPcCompatibleController::class, 'showByArticle']);
     Route::put('/detailPcCompatible/{id}', [DetailPcCompatibleController::class, 'update']);
     Route::get('/detailPcCompatible/{id}', [DetailPcCompatibleController::class, 'show']);
+    //paymentMethodSunat
+    Route::get('/paymentMethodSunat', [PaymentMethoddSunatController::class, 'index']);
+    Route::post('/paymentMethodSunat', [PaymentMethoddSunatController::class, 'store']);
+    Route::put('/paymentMethodSunat/{id}', [PaymentMethoddSunatController::class, 'update']);
+    Route::get('/paymentMethodSunat/{id}', [PaymentMethoddSunatController::class, 'show']);
 
+
+    //SCvaucher
+    Route::get('/sc-voucher', [ScVoucherController::class, 'index']);
+    Route::post('/sc-voucher', [ScVoucherController::class, 'store']);
+    Route::get('/sc-voucher/{id}', [ScVoucherController::class, 'show']);
+    Route::put('/sc-voucher/{id}', [ScVoucherController::class, 'update']);
+    //scvoucherdetalle
+
+    Route::get('/sc-voucherdetalle', [ScVoucherdetController::class, 'index']);
+    Route::post('/sc-voucherdetalle', [ScVoucherdetController::class, 'store']);
+    Route::get('/sc-voucherdetalle/{id}', [ScVoucherdetController::class, 'show']);
+    Route::put('/sc-voucherdetalle/{id}', [ScVoucherdetController::class, 'update']);
 
     // build pc
     Route::get('/build-pc', [BuildPcController::class, 'index']);

@@ -36,14 +36,25 @@ class PettyCashReceiptController extends Controller
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly PettyCashMotiveInterfaceRepository $pettyCashMotiveRepository
     ) {}
-    public function index(Request $request): array
+    public function index(Request $request): JsonResponse
     {
         $filter = $request->query('filter');
 
         $pettyCashReceiptsUseCase = new FindAllPettyCashReceiptUseCase($this->pettyCashReceiptRepository);
         $pettyCashReceipts = $pettyCashReceiptsUseCase->execute($filter);
 
-        return PettyCashReceiptResource::collection($pettyCashReceipts)->resolve();
+        // Return paginated response with navigation URLs
+        return new JsonResponse([
+            'data' => PettyCashReceiptResource::collection($pettyCashReceipts->items())->resolve(),
+            'current_page' => $pettyCashReceipts->currentPage(),
+            'per_page' => $pettyCashReceipts->perPage(),
+            'total' => $pettyCashReceipts->total(),
+            'last_page' => $pettyCashReceipts->lastPage(),
+            'next_page_url' => $pettyCashReceipts->nextPageUrl(),
+            'prev_page_url' => $pettyCashReceipts->previousPageUrl(),
+            'first_page_url' => $pettyCashReceipts->url(1),
+            'last_page_url' => $pettyCashReceipts->url($pettyCashReceipts->lastPage()),
+        ]);
     }
     public function show(int $id): JsonResponse
     {

@@ -2,6 +2,7 @@
 
 namespace App\Modules\BuildDetailPc\Infrastructure\Resource;
 
+use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class BuildDetailPcResource extends JsonResource
@@ -15,6 +16,8 @@ class BuildDetailPcResource extends JsonResource
             'quantity' => $this->resource->getQuantity(),
             'price' => $this->resource->getPrice(),
             'subtotal' => $this->resource->getSubtotal(),
+            'cod_fab' => $this->resource->getCodFab(),
+            'description' => $this->resource->getDescription(),
         ];
     }
 }

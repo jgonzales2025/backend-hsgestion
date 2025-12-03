@@ -64,7 +64,7 @@ class UpdateArticleRequest extends FormRequest
         return [
             // Campos obligatorios
             'cod_fab' => 'required|string|max:20',
-            'description' => 'required|string|max:50',
+            'description' => 'required|string|max:255',
             'weight' => 'nullable|numeric|min:0',
             'with_deduction' => 'required|boolean',
             'series_enabled' => 'required|boolean',

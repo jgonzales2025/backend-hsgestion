@@ -10,7 +10,8 @@ class BuildPc
     private float $total_price;
     private int $user_id;
     private bool $status;
- 
+
+
 
     public function __construct(
         ?int $id,
@@ -27,7 +28,7 @@ class BuildPc
         $this->user_id = $user_id;
         $this->status = $status;
     }
-    
+
     public function getId(): int|null
     {
         return $this->id;

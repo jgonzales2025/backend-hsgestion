@@ -27,12 +27,25 @@ class SubCategoryController extends Controller
         $this->subCategoryRepository = $subCategoryRepository;
     }
 
-    public function index(): array
+    public function index(Request $request): JsonResponse
     {
+        $description = $request->query('description');
+        $category_id = $request->query('category_id');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
         $subCategoriesUseCases = new FindAllSubCategoriesUseCase($this->subCategoryRepository);
-        $subCategories = $subCategoriesUseCases->execute();
+        $subCategories = $subCategoriesUseCases->execute($description, $category_id, $status);
 
-        return SubCategoryResource::collection($subCategories)->resolve();
+        return new JsonResponse([
+            'data' => SubCategoryResource::collection($subCategories)->resolve(),
+            'current_page' => $subCategories->currentPage(),
+            'per_page' => $subCategories->perPage(),
+            'total' => $subCategories->total(),
+            'last_page' => $subCategories->lastPage(),
+            'next_page_url' => $subCategories->nextPageUrl(),
+            'prev_page_url' => $subCategories->previousPageUrl(),
+            'first_page_url' => $subCategories->url(1),
+            'last_page_url' => $subCategories->url($subCategories->lastPage()),
+        ]);
     }
 
     public function store(StoreSubCategoryRequest $request): JsonResponse

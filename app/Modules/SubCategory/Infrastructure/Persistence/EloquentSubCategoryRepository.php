@@ -9,19 +9,24 @@ use App\Modules\SubCategory\Infrastructure\Models\EloquentSubCategory;
 class EloquentSubCategoryRepository implements SubCategoryRepositoryInterface
 {
 
-    public function findAll(): array
+    public function findAll(?string $description, ?int $category_id, ?int $status)
     {
-        $subCategories = EloquentSubCategory::with('category')->orderBy('created_at', 'desc')->get();
+        $subCategories = EloquentSubCategory::with('category')
+        ->when($description, fn($query) => $query->where('name', 'like', "%{$description}%")
+            ->orWhereHas('category', fn($query) => $query->where('name', 'like', "%{$description}%")))
+        ->when($category_id !== null, fn($query) => $query->where('category_id', $category_id))
+        ->when($status !== null, fn($query) => $query->where('status', $status))
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
 
-        return $subCategories->map(function ($subCategory) {
-            return new SubCategory(
+        $subCategories->getCollection()->transform(fn($subCategory) => new SubCategory(
                 id: $subCategory->id,
                 name: $subCategory->name,
                 category_id: $subCategory->category_id,
                 category_name: $subCategory->category->name,
                 status: $subCategory->status
-            );
-        })->toArray();
+            ));
+        return $subCategories;
     }
 
     public function save(SubCategory $subCategory): SubCategory

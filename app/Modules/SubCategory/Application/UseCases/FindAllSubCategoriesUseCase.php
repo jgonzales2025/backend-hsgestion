@@ -10,8 +10,8 @@ class FindAllSubCategoriesUseCase
     { 
     }
 
-    public function execute(): array
+    public function execute(?string $description, ?int $category_id, ?int $status)
     {
-        return $this->subCategoryRepository->findAll();
+        return $this->subCategoryRepository->findAll($description, $category_id, $status);
     }
 }

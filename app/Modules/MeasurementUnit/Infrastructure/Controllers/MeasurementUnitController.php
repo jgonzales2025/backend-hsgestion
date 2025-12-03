@@ -26,12 +26,25 @@ class MeasurementUnitController extends Controller
         $this->measurementUnitRepository = $measurementUnitRepository;
     }
 
-    public function index(): array
+    public function index(Request $request): JsonResponse
     {
-        $measurementUnitUseCase = new FindAllMeasurementUnitUseCase($this->measurementUnitRepository);
-        $measurementUnits = $measurementUnitUseCase->execute();
+        $description = $request->query('description');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
 
-        return MeasurementUnitResource::collection($measurementUnits)->resolve();
+        $measurementUnitUseCase = new FindAllMeasurementUnitUseCase($this->measurementUnitRepository);
+        $measurementUnits = $measurementUnitUseCase->execute($description, $status);
+
+        return new JsonResponse([
+            'data' => MeasurementUnitResource::collection($measurementUnits)->resolve(),
+            'current_page' => $measurementUnits->currentPage(),
+            'per_page' => $measurementUnits->perPage(),
+            'total' => $measurementUnits->total(),
+            'last_page' => $measurementUnits->lastPage(),
+            'next_page_url' => $measurementUnits->nextPageUrl(),
+            'prev_page_url' => $measurementUnits->previousPageUrl(),
+            'first_page_url' => $measurementUnits->url(1),
+            'last_page_url' => $measurementUnits->url($measurementUnits->lastPage()),
+        ]);
     }
 
     public function store(StoreMeasurementUnitRequest $request): JsonResponse

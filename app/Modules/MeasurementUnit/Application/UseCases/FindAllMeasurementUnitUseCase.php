@@ -13,8 +13,8 @@ class FindAllMeasurementUnitUseCase
         $this->measurementUnitRepository = $measurementUnitRepository;
     }
 
-    public function execute(): array
+    public function execute(?string $description, ?int $status)
     {
-        return $this->measurementUnitRepository->findAll();
+        return $this->measurementUnitRepository->findAll($description, $status);
     }
 }

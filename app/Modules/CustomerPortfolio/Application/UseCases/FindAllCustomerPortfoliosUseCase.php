@@ -8,8 +8,8 @@ readonly class FindAllCustomerPortfoliosUseCase
 {
     public function __construct(private readonly CustomerPortfolioRepositoryInterface $customerPortfolioRepository) {}
 
-    public function execute(): array
+    public function execute(?string $description)
     {
-        return $this->customerPortfolioRepository->findAll();
+        return $this->customerPortfolioRepository->findAll($description);
     }
 }

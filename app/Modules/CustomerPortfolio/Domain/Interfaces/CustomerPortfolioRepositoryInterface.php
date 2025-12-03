@@ -7,7 +7,7 @@ use App\Modules\User\Domain\Entities\User;
 
 interface CustomerPortfolioRepositoryInterface
 {
-    public function findAll(): array;
+    public function findAll(?string $description);
 
     public function save(CustomerPortfolio $customerPortfolio): CustomerPortfolio;
 

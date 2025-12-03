@@ -73,6 +73,9 @@ class DetailPcCompatibleController extends Controller
         $accessoryIds = $validated['article_accesory_id'];
         $status = $validated['status'] ?? true;
 
+        // IMPORTANTE: Eliminar todos los registros existentes para este article_major_id
+        $this->detailPcCompatibleRepositoryInterface->deleteByArticleMajorId($articleId);
+
         $createdDetails = [];
         $useCase = new CreateDetailPcCompatibleUseCase($this->detailPcCompatibleRepositoryInterface);
 
@@ -135,12 +138,12 @@ class DetailPcCompatibleController extends Controller
             200
         );
     }
-     public function showByArticle(int $id): JsonResponse
+    public function showByArticle(int $id): JsonResponse
     {
-       $findAllArticles = $this->detailPcCompatibleRepositoryInterface->findAllArticles($id);
-       return response()->json(
-           DetailPcCompatibleResource::collection($findAllArticles)->resolve(),
-           200
-       );
+        $findAllArticles = $this->detailPcCompatibleRepositoryInterface->findAllArticles($id);
+        return response()->json(
+            DetailPcCompatibleResource::collection($findAllArticles)->resolve(),
+            200
+        );
     }
 }

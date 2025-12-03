@@ -20,6 +20,8 @@ class UpdateBuildPcUseCase
           total_price:$data->total_price,
           user_id:$data->user_id,
           status:$data->status,
+          quantity:$data->quantity,
+          article_ensamb_id:$data->article_ensamb_id,
       );
 
       return $this->buildPcRepository->update($buildPc);   

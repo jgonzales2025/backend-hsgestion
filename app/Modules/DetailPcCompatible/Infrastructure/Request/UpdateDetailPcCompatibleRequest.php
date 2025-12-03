@@ -14,9 +14,9 @@ class UpdateDetailPcCompatibleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'article_major_id' => 'required',
-            'article_accesory_id' => 'required',
-            'status' => 'required',
+            'article_major_id' => 'nullable|integer',
+            'article_accesory_id' => 'nullable|integer',
+            'status' => 'nullable|boolean',
         ];
     }
 }

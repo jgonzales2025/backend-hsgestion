@@ -268,7 +268,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('articles-status/{id}', [ArticleController::class, 'updateStatus']);
     Route::get('articles-notas/{id}', [ArticleController::class, 'showNotesDebito']);
     Route::get('articles-required-serial/{id}', [ArticleController::class, 'requiredSerial']);
-
+    Route::get('/articles-is-combo', [ArticleController::class, 'getIsCombo']);
     // Customer portfolios - Cartera de clientes
     Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index']);
     Route::get('/customer-portfolios-user/{id}', [CustomerPortfolioController::class, 'showUserByCustomer']);

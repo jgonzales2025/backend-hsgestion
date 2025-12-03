@@ -45,6 +45,8 @@ class UpdatePurchaseOrderRequest extends FormRequest
             'articles.*.quantity' => 'required|integer|min:1',
             'articles.*.purchase_price' => 'required|numeric|min:0',
             'articles.*.subtotal' => 'required|numeric|min:0',
+            'det_entry_guide_purchase_order' => 'required|array|min:1',
+            'det_entry_guide_purchase_order.*.entry_guide_id' => 'required|integer',
         ];
     }
 

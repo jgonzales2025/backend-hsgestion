@@ -240,18 +240,18 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                     })
                         // Grupo 2: Búsqueda por Serie (Validar con entryItemSerials y visibleArticles)
                         ->orWhere(function ($subQ) use ($name, $branchId) {
-                        if ($branchId) {
-                            $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
-                                $s->where('serial', $name)
-                                    ->where('branch_id', $branchId);
-                            });
-                            // Validar también que sea visible en la sucursal
-                            $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
-                                $v->where('branch_id', $branchId)
-                                    ->where('status', 1);
-                            });
-                        }
-                    });
+                            if ($branchId) {
+                                $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
+                                    $s->where('serial', $name)
+                                        ->where('branch_id', $branchId);
+                                });
+                                // Validar también que sea visible en la sucursal
+                                $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
+                                    $v->where('branch_id', $branchId)
+                                        ->where('status', 1);
+                                });
+                            }
+                        });
                 });
             })
             // Si NO hay descripción, mantener el filtro original (solo lo que tiene stock/series en la sucursal)
@@ -339,6 +339,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 image_url: $article->image_url,
                 state_modify_article: $article->state_modify_article,
 
+
             );
         });
 
@@ -383,6 +384,21 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         EloquentArticle::where('id', $articleId)->update(['status' => $status]);
     }
 
+    public function findAllCombos(?string $name): array
+    {
+        $articles = EloquentArticle::where('is_combo', true)
+            ->when($name, function ($query, $name) {
+                return $query->where(function ($q) use ($name) {
+                    $q->where('description', 'like', "%{$name}%")
+                        ->orWhere('cod_fab', 'like', "%{$name}%");
+                });
+            })
+            ->get();
+
+        return $articles->map(fn($article) => $this->mapToDomain($article))->all();
+    }
+
+
     private function mapToArray(Article $article): array
     {
         return [
@@ -415,7 +431,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'image_url' => $article->getImageURL(),
             'state_modify_article' => $article->getstateModifyArticle(),
             'filtNameEsp' => $article->getFiltNameEsp(),
-            'statusEsp' => $article->getStatusEsp()
+            'statusEsp' => $article->getStatusEsp(),
+            'is_combo' => $article->getIsCombo(),
         ];
     }
     private function buildDomainSale(EloquentArticle $Eloquentarticle, Article $article): Article
@@ -452,7 +469,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             image_url: $Eloquentarticle->image_url,
             state_modify_article: $Eloquentarticle->state_modify_article,
             filtNameEsp: $Eloquentarticle->filtNameEsp,
-            statusEsp: $Eloquentarticle->statusEsp
+            statusEsp: $Eloquentarticle->statusEsp,
+            is_combo: $Eloquentarticle->is_combo,
         );
     }
     private function mapToDomain(EloquentArticle $article): Article
@@ -490,6 +508,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             state_modify_article: $article->state_modify_article,
             filtNameEsp: $article->filtNameEsp,
             statusEsp: $article->statusEsp,
+            is_combo: $article->is_combo,
         );
     }
 }

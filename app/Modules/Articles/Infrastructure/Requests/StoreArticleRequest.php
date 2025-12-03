@@ -72,22 +72,7 @@ class StoreArticleRequest extends FormRequest
         return [
             // Campos obligatorios
             'cod_fab' => 'nullable|string|max:20',
-            'description' => 'nullable|string|max:255
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            ',
+            'description' => 'nullable|string|max:255',
             'weight' => 'nullable|numeric|min:0',
             'with_deduction' => 'nullable|boolean',
             'series_enabled' => 'nullable|boolean',
@@ -117,6 +102,7 @@ class StoreArticleRequest extends FormRequest
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
             'filtNameEsp' => 'nullable|string|max:100',
             'statusEsp' => 'nullable|boolean',
+            'is_combo' => 'nullable|boolean',
         ];
     }
 }

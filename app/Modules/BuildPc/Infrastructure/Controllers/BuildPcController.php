@@ -29,6 +29,7 @@ class BuildPcController
     {
         $search = $request->query('search');
         $is_active = $request->query('is_active');
+    
 
         $buildPcUseCase = new FindAllBuildPcUseCase($this->buildPcRepository);
         $buildPcs = $buildPcUseCase->execute($search, $is_active);
@@ -75,6 +76,7 @@ class BuildPcController
 
         // Crear PC
         $buildPcDTO = new BuildPcDTO($data);
+
         $buildPcUseCase = new CreateBuildPcUseCase($this->buildPcRepository);
         $buildPc = $buildPcUseCase->execute($buildPcDTO);
 

@@ -9,15 +9,17 @@ use App\Modules\Category\Infrastructure\Models\EloquentCategory;
 class EloquentCategoryRepository implements CategoryRepositoryInterface
 {
 
-    public function findAll(): array
+    public function findAll(?string $description, ?int $status)
     {
-        $categories = EloquentCategory::all()->where('st_concept', 0)->sortByDesc('created_at');
+        $categories = EloquentCategory::query()
+        ->where('st_concept', 0)
+        ->when($description, fn($query) => $query->where('name', 'like', "%{$description}%"))
+        ->when($status !== null, fn($query) => $query->where('status', $status))
+        ->orderBy('created_at', 'desc')
+        ->paginate(10);
 
-        if ($categories->isEmpty()) {
-            return [];
-        }
-
-        return $categories->map(fn ($eloquentCategory) => $this->mapToEntity($eloquentCategory))->toArray();
+        $categories->getCollection()->transform(fn($eloquentCategory) => $this->mapToEntity($eloquentCategory));
+        return $categories;
     }
 
     public function save(Category $category): Category

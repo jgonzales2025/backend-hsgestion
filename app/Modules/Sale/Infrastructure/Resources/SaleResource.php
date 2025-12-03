@@ -90,7 +90,8 @@ class SaleResource extends JsonResource
             'stretencion' => $this->resource->getStretencion() ?? null,
             'porretencion' => $this->resource->getPorretencion() ?? null,
             'impretens' => $this->resource->getImpretens() ?? null,
-            'impretend' => $this->resource->getImpretend() ?? null
+            'impretend' => $this->resource->getImpretend() ?? null,
+            'total_costo_neto' => $this->resource->getTotalCostoNeto() ?? null,
         ];
     }
 }

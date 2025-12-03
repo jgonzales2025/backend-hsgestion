@@ -15,4 +15,6 @@ interface DocumentTypeRepositoryInterface
     public function findAllForInvoices(): array;
 
     public function findAllForPettyCash(): array;
+
+    public function findAllForDocumentSales(): array;
 }

@@ -60,6 +60,7 @@ use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentControll
 use App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController;
 use App\Modules\NoteReason\Infrastructure\Controllers\NoteReasonController;
 use App\Modules\Withholding\Infrastructure\Controller\WithholdingController;
+use App\Modules\Statistics\Infrastructure\Controllers\StatisticsController;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -220,6 +221,7 @@ Route::get('document-types', [DocumentTypeController::class, 'index']);
 Route::get('document-types/sales', [DocumentTypeController::class, 'indexSales']);
 Route::get('document-types/invoices', [DocumentTypeController::class, 'indexInvoices']);
 Route::get('document-types/petty-cash', [DocumentTypeController::class, 'indexPettyCash']);
+Route::get('document-types/document-sales', [DocumentTypeController::class, 'indexDocumentSales']);
 
 // Banks - Bancos
 Route::get('banks', [BankController::class, 'index']);
@@ -287,7 +289,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Ruta para ventas
 
     Route::get('/sales-proformas', [SaleController::class, 'indexProformas']);
-    Route::get('/sales-by-customer', [SaleController::class, 'findAllSalesByCustomerId']);
+    Route::get('/sales-by-customer', [SaleController::class, 'findAllPendingSalesByCustomerId']);
     Route::get('/sales/by-document', [SaleController::class, 'showDocumentSale']);
     Route::get('/sales/by-document-debit', [SaleController::class, 'findSaleByDocumentForDebitNote']);
     Route::get('/sales/get-updated-quantities', [SaleController::class, 'getUpdatedQuantities']);
@@ -300,7 +302,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/sales/{id}', [SaleController::class, 'update']);
     Route::put('/sales-credit-notes/{id}', [SaleController::class, 'updateCreditNote']);
     Route::get('/sales/{id}/pdf', [SaleController::class, 'generatePdf']);
-
+    Route::get('/documents-by-customer', [SaleController::class, 'findAllDocumentsByCustomerId']);
 
     // Ruta para cobranzas
     Route::get('/collections', [CollectionController::class, 'index']);
@@ -421,8 +423,11 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Detractions
     Route::get('/detractions', [DetractionController::class, 'index']);
-});
 
+    // Statistics - Estadísticas
+    
+});
+Route::get('/statistics/customer-consumed-items', [StatisticsController::class, 'getCustomerConsumedItems']);
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);

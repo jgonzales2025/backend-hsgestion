@@ -56,7 +56,8 @@ class EloquentSale extends Model
         'stretencion',
         'porretencion',
         'impretens',
-        'impretend'
+        'impretend',
+        'total_costo_neto'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

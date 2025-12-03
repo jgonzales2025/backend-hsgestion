@@ -661,6 +661,17 @@ class MenuSeeder extends Seeder
             'type' => 'item',
         ]);
 
+        Menu::create([
+            'name' => 'reportes_estado_cuenta_cliente',
+            'label' => 'Estado de Cuenta por Cliente',
+            'route' => '/reportes/estado-cuenta-cliente',
+            'permission' => 'reportes.reporte_estado_cuenta_cliente',
+            'parent_id' => $reporte->id,
+            'order' => 27,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
         // ===== GARANTÍAS =====
         $garantia = Menu::create([
             'name' => 'garantias',

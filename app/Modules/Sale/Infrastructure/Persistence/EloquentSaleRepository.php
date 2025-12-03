@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sale\Infrastructure\Persistence;
 
+use App\Modules\Advance\Infrastructure\Models\EloquentAdvance;
 use App\Modules\Sale\Domain\Entities\Sale;
 use App\Modules\Sale\Domain\Entities\SaleCreditNote;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
@@ -239,7 +240,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         return $this->mapToDomainCreditNote($creditNote);
     }
 
-    public function findAllSalesByCustomerId(int $customerId): ?array
+    public function findAllPendingSalesByCustomerId(int $customerId): ?array
     {
         $sales = EloquentSale::all()->where('customer_id', $customerId)->whereIn('document_type_id', [1, 3])->where('payment_status', 0)->sortByDesc('created_at');
 
@@ -248,6 +249,88 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         }
 
         return $sales->map(fn($sale) => $this->mapToDomain($sale))->toArray();
+    }
+
+    /**
+     * Este endpoint es para buscar todos los documentos de venta por cliente
+     * @param int $customerId
+     * @param mixed $payment_status
+     * @param mixed $user_sale_id
+     * @param mixed $start_date
+     * @param mixed $end_date
+     * @param mixed $document_type_id
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     */
+    public function findAllDocumentsByCustomerId(int $customerId, ?int $payment_status, ?int $user_sale_id, ?string $start_date, ?string $end_date, ?int $document_type_id)
+    {
+        // Query base para documentos paginados
+        $query = EloquentSale::query()
+            ->where('customer_id', $customerId)
+            ->whereIn('document_type_id', [1, 3, 7, 8])
+            ->when($payment_status !== null, fn($query) => $query->where('payment_status', $payment_status))
+            ->when($user_sale_id !== null, fn($query) => $query->whereHas('userSale', fn($query) => $query->where('id', $user_sale_id)))
+            ->when($start_date !== null, fn($query) => $query->where('date', '>=', $start_date))
+            ->when($end_date !== null, fn($query) => $query->where('date', '<=', $end_date))
+            ->when($document_type_id !== null, fn($query) => $query->where('document_type_id', $document_type_id))
+            ->orderBy('created_at', 'desc');
+
+        // Obtener documentos paginados
+        $paginatedSales = $query->paginate(10);
+
+        // Transformar la colección a entidades de dominio
+        $paginatedSales->getCollection()->transform(function ($sale) {
+            return $this->mapToDomain($sale);
+        });
+
+        // Calcular totales por moneda (sobre TODOS los documentos, no solo la página actual)
+        $totalsQuery = EloquentSale::query()
+            ->where('customer_id', $customerId)
+            ->whereIn('document_type_id', [1, 3, 7, 8])
+            ->when($payment_status !== null, fn($query) => $query->where('payment_status', $payment_status))
+            ->when($user_sale_id !== null, fn($query) => $query->whereHas('userSale', fn($query) => $query->where('id', $user_sale_id)))
+            ->when($document_type_id !== null, fn($query) => $query->where('document_type_id', $document_type_id))
+            ->when($start_date !== null, fn($query) => $query->where('date', '>=', $start_date))
+            ->when($end_date !== null, fn($query) => $query->where('date', '<=', $end_date))
+            ->selectRaw('
+                currency_type_id,
+                SUM(total) as total_sales,
+                SUM(amount_amortized) as total_paid,
+                SUM(saldo) as total_balance
+            ')
+            ->groupBy('currency_type_id')
+            ->get();
+
+        // Inicializar totales
+        $totals = [
+            'soles' => [
+                'total_sales' => 0.00,
+                'total_paid' => 0.00,
+                'total_balance' => 0.00
+            ],
+            'dolares' => [
+                'total_sales' => 0.00,
+                'total_paid' => 0.00,
+                'total_balance' => 0.00
+            ]
+        ];
+
+        // Asignar totales según el tipo de moneda
+        foreach ($totalsQuery as $total) {
+            if ($total->currency_type_id == 1) { // Soles
+                $totals['soles']['total_sales'] = (float) $total->total_sales;
+                $totals['soles']['total_paid'] = (float) $total->total_paid;
+                $totals['soles']['total_balance'] = (float) $total->total_balance;
+            } elseif ($total->currency_type_id == 2) { // Dólares
+                $totals['dolares']['total_sales'] = (float) $total->total_sales;
+                $totals['dolares']['total_paid'] = (float) $total->total_paid;
+                $totals['dolares']['total_balance'] = (float) $total->total_balance;
+            }
+        }
+
+        // Agregar totales al objeto paginado
+        $paginatedSales->totals = $totals;
+
+        return $paginatedSales;
     }
 
     private function mapToArray(Sale $sale): array
@@ -402,7 +485,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             stretencion: $eloquentSale->stretencion,
             porretencion: $eloquentSale->porretencion,
             impretens: $eloquentSale->impretens,
-            impretend: $eloquentSale->impretend
+            impretend: $eloquentSale->impretend,
+            total_costo_neto: $eloquentSale->total_costo_neto
         );
     }
 

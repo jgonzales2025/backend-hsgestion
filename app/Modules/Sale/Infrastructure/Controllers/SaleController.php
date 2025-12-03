@@ -24,7 +24,9 @@ use App\Modules\Sale\Application\DTOs\SaleCreditNoteDTO;
 use App\Modules\Sale\Application\DTOs\SaleDTO;
 use App\Modules\Sale\Application\UseCases\CreateSaleCreditNoteUseCase;
 use App\Modules\Sale\Application\UseCases\CreateSaleUseCase;
+use App\Modules\Sale\Application\UseCases\FindAllDocumentsByCustomerIdUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllNoteCreditsByCustomerUseCase;
+use App\Modules\Sale\Application\UseCases\FindAllPendingSalesByCustomerIdUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllProformasUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllSalesByCustomerIdUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllSalesUseCase;
@@ -131,6 +133,9 @@ class SaleController extends Controller
             }
 
             $saleArticles = $this->createSaleArticles($sale, $request->validated()['sale_articles']);
+
+            $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
+            $sale = $saleUseCase->execute($sale->getId());
             $this->logTransaction($request, $sale);
 
             return response()->json([
@@ -343,14 +348,14 @@ class SaleController extends Controller
         ]);
     }
 
-    public function findAllSalesByCustomerId(Request $request): JsonResponse
+    public function findAllPendingSalesByCustomerId(Request $request): JsonResponse
     {
         $customerId = $request->query('customer_id');
 
-        $saleUseCase = new FindAllSalesByCustomerIdUseCase($this->saleRepository);
+        $saleUseCase = new FindAllPendingSalesByCustomerIdUseCase($this->saleRepository);
         $sales = $saleUseCase->execute($customerId);
         if (!$sales) {
-            return response()->json(['message' => 'Este cliente no tiene ventas registradas.'], 200);
+            return response()->json(['message' => 'Este cliente no tiene ventas pendientes.'], 200);
         }
 
         return response()->json([
@@ -358,11 +363,37 @@ class SaleController extends Controller
         ]);
     }
 
+    public function findAllDocumentsByCustomerId(Request $request): JsonResponse
+    {
+        $customerId = $request->query('customer_id');
+        $payment_status = $request->query('payment_status') !== null ? (int) $request->query('payment_status') : null;
+        $user_sale_id = $request->query('user_sale_id');
+        $start_date = $request->query('start_date');
+        $end_date = $request->query('end_date');
+        $document_type_id = $request->query('document_type_id');
+
+        $saleUseCase = new FindAllDocumentsByCustomerIdUseCase($this->saleRepository);
+        $paginatedSales = $saleUseCase->execute($customerId, $payment_status, $user_sale_id, $start_date, $end_date, $document_type_id);
+
+        return response()->json([
+            'totals' => $paginatedSales->totals,
+            'data' => SaleResource::collection($paginatedSales)->resolve(),
+            'current_page' => $paginatedSales->currentPage(),
+            'per_page' => $paginatedSales->perPage(),
+            'total' => $paginatedSales->total(),
+            'last_page' => $paginatedSales->lastPage(),
+            'next_page_url' => $paginatedSales->nextPageUrl(),
+            'prev_page_url' => $paginatedSales->previousPageUrl(),
+            'first_page_url' => $paginatedSales->url(1),
+            'last_page_url' => $paginatedSales->url($paginatedSales->lastPage())
+        ]);
+    }
+
     private function createSaleArticles($sale, array $articlesData): array
     {
         $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository, $this->articleRepository);
-
-        return array_map(function ($article) use ($sale, $createSaleArticleUseCase) {
+        $subtotal_costo_neto = 0;
+        return array_map(function ($article) use ($sale, $createSaleArticleUseCase, &$subtotal_costo_neto) {
             $saleArticleDTO = new SaleArticleDTO([
                 'sale_id' => $sale->getId(),
                 'article_id' => $article['article_id'],
@@ -371,9 +402,11 @@ class SaleController extends Controller
                 'unit_price' => $article['unit_price'],
                 'public_price' => $article['public_price'],
                 'subtotal' => $article['subtotal'],
+                'purchase_price' => $article['purchase_price'],
+                'costo_neto' => $article['purchase_price'] * $article['quantity']
             ]);
-
-            $saleArticle = $createSaleArticleUseCase->execute($saleArticleDTO);
+            $subtotal_costo_neto += $saleArticleDTO->costo_neto;
+            $saleArticle = $createSaleArticleUseCase->execute($saleArticleDTO, $subtotal_costo_neto);
 
             // Array para almacenar los seriales
             $serials = [];
@@ -401,8 +434,9 @@ class SaleController extends Controller
     private function updateSaleArticles($sale, array $articlesData): array
     {
         $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository, $this->articleRepository);
+        $subtotal_costo_neto = 0;
 
-        return array_map(function ($article) use ($sale, $createSaleArticleUseCase) {
+        return array_map(function ($article) use ($sale, $createSaleArticleUseCase, $subtotal_costo_neto) {
             $saleArticleDTO = new SaleArticleDTO([
                 'sale_id' => $sale->getId(),
                 'article_id' => $article['article_id'],
@@ -411,9 +445,12 @@ class SaleController extends Controller
                 'unit_price' => $article['unit_price'],
                 'public_price' => $article['public_price'],
                 'subtotal' => $article['subtotal'],
+                'purchase_price' => $article['purchase_price'],
+                'costo_neto' => $article['purchase_price'] * $article['quantity']
             ]);
+            $subtotal_costo_neto += $saleArticleDTO->costo_neto;
 
-            $saleArticle = $createSaleArticleUseCase->execute($saleArticleDTO);
+            $saleArticle = $createSaleArticleUseCase->execute($saleArticleDTO, $subtotal_costo_neto);
 
             // Array para almacenar los seriales
             $serials = [];

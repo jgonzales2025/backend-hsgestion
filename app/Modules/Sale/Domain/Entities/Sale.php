@@ -50,6 +50,7 @@ class Sale
     private ?float $porretencion;
     private ?float $impretens;
     private ?float $impretend;
+    private ?float $total_costo_neto;
 
     public function __construct(
         int $id,
@@ -89,6 +90,7 @@ class Sale
         ?float $impretens,
         ?float $impretend,
         ?int $status = null,
+        ?float $total_costo_neto = null,
     ){
         $this->id = $id;
         $this->company = $company;
@@ -127,6 +129,7 @@ class Sale
         $this->porretencion = $porretencion;
         $this->impretens = $impretens;
         $this->impretend = $impretend;
+        $this->total_costo_neto = $total_costo_neto;
     }
 
     public function getId(): int { return $this->id; }
@@ -166,4 +169,5 @@ class Sale
     public function getPorretencion(): ?float { return $this->porretencion; }
     public function getImpretens(): ?float { return $this->impretens; }
     public function getImpretend(): ?float { return $this->impretend; }
+    public function getTotalCostoNeto(): ?float { return $this->total_costo_neto; }
 }

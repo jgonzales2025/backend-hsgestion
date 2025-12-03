@@ -12,22 +12,14 @@ class EloquentDriverRepository implements DriverRepositoryInterface
     public function findAllDrivers(?string $description, ?int $status)
     {
         $drivers = EloquentDriver::with('customerDocumentType')
-            ->when($description, function ($query, $description) {
-                return $query->where('name', 'like', "%{$description}%")
+            ->when($description, fn($query) => $query->where('name', 'like', "%{$description}%")
                     ->orWhere('pat_surname', 'like', "%{$description}%")
                     ->orWhere('mat_surname', 'like', "%{$description}%")
                     ->orWhere('doc_number', 'like', "%{$description}%")
-                    ->orWhere('license', 'like', "%{$description}%");
-            })
-            ->when($status !== null, function ($query, $status) {
-                return $query->where('status', $status);
-            })
+                    ->orWhere('license', 'like', "%{$description}%"))
+            ->when($status !== null, fn($query) => $query->where('status', $status))
             ->orderBy('created_at', 'desc')
             ->paginate(10);
-
-        if ($drivers->isEmpty()) {
-            return null;
-        }
 
         $drivers->getCollection()->transform(fn($driver) => new Driver(
                 id: $driver->id,

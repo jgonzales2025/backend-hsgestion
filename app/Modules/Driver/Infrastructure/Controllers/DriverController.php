@@ -34,12 +34,6 @@ class DriverController extends Controller
         $branchUseCase = new FindAllDriversUseCases($this->driverRepository);
         $drivers = $branchUseCase->execute($description, $status);
 
-        if (!$drivers) {
-            return response()->json([
-                'message' => 'No se encontraron conductores'
-            ], 404);
-        }
-
         return new JsonResponse([
             'data' => DriverResource::collection($drivers)->resolve(),
             'current_page' => $drivers->currentPage(),

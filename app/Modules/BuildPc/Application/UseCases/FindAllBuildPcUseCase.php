@@ -8,8 +8,8 @@ class FindAllBuildPcUseCase
     public function __construct(
         private BuildPcRepositoryInterface $buildPcRepository
     ) {}
-    public function execute()
+    public function execute(?string $search, ?int $is_active)
     {
-        return $this->buildPcRepository->findAll();
+        return $this->buildPcRepository->findAll($search, $is_active);
     }
 }

@@ -35,12 +35,15 @@ use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Modules\Articles\Application\UseCases\UpdateStatusArticleUseCase;
-use App\Modules\EntryItemSerial\Application\UseCases\FindBranchBySerial;
+use App\Modules\Articles\Application\UseCases\UpdateStatusArticleUseCase; 
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\VisibleArticles\application\UseCases\FindStatusByArticleId;
 use App\Modules\VisibleArticles\Domain\Interfaces\VisibleArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\DetailPcCompatible\Domain\Interface\DetailPcCompatibleRepositoryInterface;
+use App\Modules\DetailPcCompatible\Infrastructure\Resource\DetailPcCompatibleResource;
+use App\Modules\ReferenceCode\Domain\Interfaces\ReferenceCodeRepositoryInterface;
+use App\Modules\ReferenceCode\Infrastructure\Resources\ReferenceCodeResource;
 
 class ArticleController extends Controller
 {
@@ -58,9 +61,10 @@ class ArticleController extends Controller
     private ExportArticlesToExcelUseCase $exportUseCase,
     private EntryItemSerialRepositoryInterface $entryItemSerialRepository,
     private VisibleArticleRepositoryInterface $visibleArticleRepository,
-    private BranchRepositoryInterface $branchRepository
-  ) {
-  }
+    private BranchRepositoryInterface $branchRepository,
+    private ReferenceCodeRepositoryInterface $referenceCodeRepository,
+    private DetailPcCompatibleRepositoryInterface $detailPcCompatibleRepository
+  ) {}
   public function export()
   {
     try {
@@ -73,8 +77,7 @@ class ArticleController extends Controller
           'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]
       )->deleteFileAfterSend(true);
-
-    } catch (\Exception $e) {
+    } catch (\Exception $e) { 
 
       return response()->json([
         'error' => $e->getMessage()
@@ -116,13 +119,24 @@ class ArticleController extends Controller
     if (!$article) {
       return response()->json(["message" => "no se encontraron articulo"]);
     }
+    $referenceCode = $this->referenceCodeRepository->findById($article->getId());
+    $detailPcCompatible = $this->detailPcCompatibleRepository->findAllArticles($article->getId());
+
+    if (!$referenceCode) {
+      $referenceCode = [];
+    }
 
     return response()->json(
-      (new ArticleResource($article))->resolve(),
+      array_merge(
+        (new ArticleResource($article))->resolve(),
+        [
+          'reference_code' => ReferenceCodeResource::collection($referenceCode)->resolve(),
+          'detail_pc_compatible' => DetailPcCompatibleResource::collection($detailPcCompatible)->resolve(),
+        ]
+      ),
       200
     );
-
-  }
+  } 
   public function indexNotesDebito(Request $request): array
   {
     $description = $request->query("description");
@@ -147,8 +161,7 @@ class ArticleController extends Controller
       (new ArticleNotesDebitoResource($article))->resolve(),
       200
     );
-
-  }
+  } 
   public function update(UpdateArticleRequest $request, int $id): JsonResponse
   {
     $data = $request->validated();
@@ -303,8 +316,7 @@ class ArticleController extends Controller
           'branch_id' => $branch->getId(),
           "location" => $branch->getName()
         ]);
-      }
-
+      } 
     }
 
     if ($articleId) {
@@ -326,8 +338,7 @@ class ArticleController extends Controller
         'prev_page_url' => $articles->previousPageUrl(),
       ]);
     }
-
-  }
+  } 
 
   public function storeNotesDebito(StoreArticleNotasDebito $request): JsonResponse
   {
@@ -366,5 +377,4 @@ class ArticleController extends Controller
 
     return response()->json(['message' => 'Estado actualizado correctamente'], 200);
   }
-
-}
+} 

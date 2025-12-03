@@ -20,7 +20,7 @@ class UpdateReferenceCodeRequest extends FormRequest
         return [
             'ref_code' => 'string|max:20',
             // 'article_id' => 'required|exists:articles,id',
-            'status' => 'boolean',
+            'status' => 'nullable|boolean',
         ];
     }
 }

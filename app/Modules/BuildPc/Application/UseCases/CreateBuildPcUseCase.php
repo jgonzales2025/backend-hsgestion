@@ -2,6 +2,8 @@
 
 namespace App\Modules\BuildPc\Application\UseCases;
 
+use App\Modules\Articles\Application\UseCases\FindByIdArticleUseCase;
+use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\BuildPc\Application\DTOS\BuildPcDTO;
 use App\Modules\BuildPc\Domain\Entities\BuildPc;
 use App\Modules\BuildPc\Domain\Interface\BuildPcRepositoryInterface;
@@ -9,10 +11,13 @@ use App\Modules\BuildPc\Domain\Interface\BuildPcRepositoryInterface;
 class CreateBuildPcUseCase
 {
     public function __construct(
-        private readonly BuildPcRepositoryInterface $buildPcRepository
+        private readonly BuildPcRepositoryInterface $buildPcRepository,
+        private readonly ArticleRepositoryInterface $articleRepository
     ) {}
     public function execute(BuildPcDTO $data): ?BuildPc
     {
+
+
         $buildPc = new BuildPc(
             id: 0,
             name: $data->name,

@@ -33,6 +33,9 @@ class EloquentPurchase extends Model{
         'igv',
         'total',
         'is_igv',
+        'document_type_id',
+        'reference_serie',
+        'reference_correlative',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

@@ -12,7 +12,6 @@ class BuildPc
     private bool $status;
 
 
-
     public function __construct(
         ?int $id,
         string $name,
@@ -20,6 +19,7 @@ class BuildPc
         float $total_price,
         int $user_id,
         bool $status,
+
     ) {
         $this->id = $id;
         $this->name = $name;
@@ -57,5 +57,5 @@ class BuildPc
     public function getStatus(): bool
     {
         return $this->status;
-    }
+    } 
 }

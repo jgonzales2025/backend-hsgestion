@@ -48,6 +48,8 @@ use App\Modules\DetailPcCompatible\Domain\Interface\DetailPcCompatibleRepository
 use App\Modules\DetailPcCompatible\Infrastructure\Persistence\EloquentDetailPcCompatibleRepository;
 use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
 use App\Modules\DetailPurchaseGuides\Infrastructure\Persistence\EloquentDetailPurchaseGuideRepository;
+use App\Modules\DetEntryguidePurchaseOrder\Domain\Interface\DetEntryguidePurchaseOrderRepositoryInterface;
+use App\Modules\DetEntryguidePurchaseOrder\Infrastrucutre\Persistence\EloquentDetEntryguidePurchaseOrderRepository;
 use App\Modules\Detraction\Domain\Interface\DetractionRepositoryInterface;
 use App\Modules\Detraction\Infrastructure\Persistence\EloquentDetractionRepository;
 use App\Modules\DigitalWallet\Domain\Interfaces\DigitalWalletRepositoryInterface;
@@ -246,6 +248,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ScVoucherRepositoryInterface::class, EloquentScVoucherRepository::class);
         $this->app->bind(ScVoucherdetRepositoryInterface::class, EloquentScVoucherdetRepository::class);
         $this->app->bind(PaymentMethodSunatRepositoryInterface::class, EloquentPaymentMethodSunatRepository::class);
+        $this->app->bind(DetEntryguidePurchaseOrderRepositoryInterface::class, EloquentDetEntryguidePurchaseOrderRepository::class);
     }
 
     /**

@@ -6,7 +6,7 @@ use App\Modules\PettyCashReceipt\Domain\Entities\PettyCashReceipt;
 
 interface PettyCashReceiptRepositoryInterface
 {
-  public function findAll(?string $filter);
+  public function findAll(?string $filter, ?int $currency_type, ?int $is_active);
   public function findById(int $id): ?PettyCashReceipt;
   public function save(PettyCashReceipt $pettyCashReceipt): ?PettyCashReceipt;
   public function update(PettyCashReceipt $pettyCashReceipt): ?PettyCashReceipt;

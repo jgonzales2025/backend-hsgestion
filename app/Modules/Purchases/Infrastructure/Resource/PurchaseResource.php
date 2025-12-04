@@ -44,6 +44,9 @@ class PurchaseResource extends JsonResource
             'igv' => $this->resource->getIgv(),
             'total' => $this->resource->getTotal(),
             'is_igv' => $this->resource->getIsIgv(),
+            'reference_document_type' =>$this->resource->getTypeDocumentId(),
+            'reference_serie' => $this->resource->getReferenceSerie(),
+            'reference_correlative' => $this->resource->getReferenceCorrelative(),
         ];
     }
 }

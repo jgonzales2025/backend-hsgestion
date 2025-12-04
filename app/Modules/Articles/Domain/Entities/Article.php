@@ -33,6 +33,7 @@ class Article
     private ?int $status;
     private ?User $user;
     private bool $venta;
+    private ?bool $is_combo;
 
     // Relaciones opcionales
     private ?Brand $brand;
@@ -46,6 +47,7 @@ class Article
     private ?int $state_modify_article;
     private ?string $filtNameEsp;
     private ?bool $statusEsp;
+
 
 
     public function __construct(
@@ -81,6 +83,7 @@ class Article
         ?string $filtNameEsp,
         ?bool $statusEsp,
         ?int $status = 1,
+        ?bool $is_combo = false,
 
 
     ) {
@@ -118,6 +121,7 @@ class Article
         $this->state_modify_article = $state_modify_article;
         $this->filtNameEsp = $filtNameEsp;
         $this->statusEsp = $statusEsp;
+        $this->is_combo = $is_combo;
     }
 
     public function calculatePrecioIGV(): float
@@ -255,5 +259,9 @@ class Article
     public function getStatusEsp(): bool|null
     {
         return $this->statusEsp;
+    }
+    public function getIsCombo(): bool|null
+    {
+        return $this->is_combo;
     }
 }

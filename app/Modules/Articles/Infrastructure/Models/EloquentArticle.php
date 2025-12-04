@@ -51,7 +51,8 @@ class EloquentArticle extends Model
         'image_url',
         'filt_NameEsp',
         'status_Esp',
-        'state_modify_article'
+        'state_modify_article',
+        'is_combo'
     ];
     protected $hidden = ['created_at', 'updated_at'];
 

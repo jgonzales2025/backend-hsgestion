@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\Articles\Application\DTOs;
 
 use Illuminate\Http\UploadedFile;
@@ -36,6 +37,7 @@ class ArticleDTO
 
     public string $filtNameEsp;
     public bool $statusEsp;
+    public bool $is_combo;
 
 
 
@@ -71,7 +73,6 @@ class ArticleDTO
         $this->state_modify_article = $data['state_modify_article'] ?? 0;
         $this->filtNameEsp = $data['filtNameEsp'] ?? '';
         $this->statusEsp = isset($data['statusEsp']) ? filter_var($data['statusEsp'], FILTER_VALIDATE_BOOLEAN) : false;
-
-
-    }
+        $this->is_combo = isset($data['is_combo']) ? filter_var($data['is_combo'], FILTER_VALIDATE_BOOLEAN) : false;
+ }
 }

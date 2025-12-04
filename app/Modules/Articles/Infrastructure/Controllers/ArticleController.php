@@ -35,13 +35,17 @@ use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Modules\Articles\Application\UseCases\UpdateStatusArticleUseCase; 
+use App\Modules\Articles\Application\UseCases\UpdateStatusArticleUseCase;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\VisibleArticles\application\UseCases\FindStatusByArticleId;
 use App\Modules\VisibleArticles\Domain\Interfaces\VisibleArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\DetailPcCompatible\application\DTOS\DetailPcCompatibleDTO;
+use App\Modules\DetailPcCompatible\application\UseCases\CreateDetailPcCompatibleUseCase;
 use App\Modules\DetailPcCompatible\Domain\Interface\DetailPcCompatibleRepositoryInterface;
 use App\Modules\DetailPcCompatible\Infrastructure\Resource\DetailPcCompatibleResource;
+use App\Modules\ReferenceCode\Application\DTOs\ReferenceCodeDTO;
+use App\Modules\ReferenceCode\Application\UseCase\CreateReferenceCodeUseCase;
 use App\Modules\ReferenceCode\Domain\Interfaces\ReferenceCodeRepositoryInterface;
 use App\Modules\ReferenceCode\Infrastructure\Resources\ReferenceCodeResource;
 
@@ -77,7 +81,7 @@ class ArticleController extends Controller
           'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]
       )->deleteFileAfterSend(true);
-    } catch (\Exception $e) { 
+    } catch (\Exception $e) {
 
       return response()->json([
         'error' => $e->getMessage()
@@ -171,7 +175,7 @@ class ArticleController extends Controller
       (new ArticleNotesDebitoResource($article))->resolve(),
       200
     );
-  } 
+  }
   public function update(UpdateArticleRequest $request, int $id): JsonResponse
   {
     $data = $request->validated();
@@ -217,8 +221,17 @@ class ArticleController extends Controller
 
     $result = $articleUseCase->execute($id, $articleDTO);
 
+    $createreferenceCode = $this->createReferenceCode($result->getId(), $data['reference_code']);
+    $createDetailPcCompatible = $this->createDetailPcCompatible($result, $data['detail_pc_compatible']);
+
     return response()->json(
-      (new ArticleResource($result))->resolve(),
+      array_merge(
+        (new ArticleResource($result))->resolve(),
+        [
+          'reference_code' => ReferenceCodeResource::collection($createreferenceCode)->resolve(),
+          'detail_pc_compatible' => DetailPcCompatibleResource::collection($createDetailPcCompatible)->resolve()
+        ]
+      ),
       200
     );
   }
@@ -263,12 +276,13 @@ class ArticleController extends Controller
       $data['image_url'] = null;
     }
 
+
     //  Crear DTO y ejecutar caso de uso
     $articleDTO = new ArticleDTO($data);
     $articleUseCase = new CreateArticleUseCase(
       $this->categoryRepository,
       $this->articleRepository,
-      $this->measurementUnitRepository,
+      $this->measurementUnitRepository, 
       $this->brandRepository,
       $this->userRepository,
       $this->currencyTypeRepository,
@@ -277,8 +291,7 @@ class ArticleController extends Controller
     );
 
     $article = $articleUseCase->execute($articleDTO);
-
-
+ 
     return response()->json(
       (new ArticleResource($article))->resolve(),
       201
@@ -326,7 +339,7 @@ class ArticleController extends Controller
           'branch_id' => $branch->getId(),
           "location" => $branch->getName()
         ]);
-      } 
+      }
     }
 
     if ($articleId) {
@@ -348,7 +361,7 @@ class ArticleController extends Controller
         'prev_page_url' => $articles->previousPageUrl(),
       ]);
     }
-  } 
+  }
 
   public function storeNotesDebito(StoreArticleNotasDebito $request): JsonResponse
   {
@@ -387,4 +400,51 @@ class ArticleController extends Controller
 
     return response()->json(['message' => 'Estado actualizado correctamente'], 200);
   }
-} 
+  public function getIsCombo(Request $request): JsonResponse
+  {
+    $name = $request->query("name");
+
+    $findbyidCombo = $this->articleRepository->findAllCombos($name);
+    return response()->json(
+      ArticleResource::collection($findbyidCombo)->resolve(),
+      200
+    );
+  }
+
+  private function createReferenceCode($articleId, $referenceCode)
+  {
+    $referenceCodeUseCase = new CreateReferenceCodeUseCase($this->referenceCodeRepository);
+    $data = [];
+
+    foreach ($referenceCode as $code) {
+
+      $referenceCodeDTO = new ReferenceCodeDTO([
+        'ref_code' => $code,
+      ]);
+
+      // Agregar cada resultado al array
+      $data[] = $referenceCodeUseCase->execute($articleId, $referenceCodeDTO);
+    }
+
+    return $data;
+  }
+
+  private function createDetailPcCompatible($articleId, $detailPcCompatible)
+  {
+    $createDetailPcCompatibleUseCase = new CreateDetailPcCompatibleUseCase($this->detailPcCompatibleRepository);
+    $data = [];
+
+    foreach ($detailPcCompatible as $pc) {
+
+      $detailPcCompatibleDTO = new DetailPcCompatibleDTO([
+        'article_major_id' => $articleId->getId(),
+        'article_accesory_id' => $pc,
+      ]);
+
+      // Agregar cada resultado al array
+      $data[] = $createDetailPcCompatibleUseCase->execute($detailPcCompatibleDTO);
+    }
+
+    return $data;
+  }
+}

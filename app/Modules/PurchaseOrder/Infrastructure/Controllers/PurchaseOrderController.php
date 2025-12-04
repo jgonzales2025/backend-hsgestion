@@ -8,6 +8,10 @@ use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\DetEntryguidePurchaseorder\application\DTOS\DetEntryguidePurchaseorderDTO;
+use App\Modules\DetEntryguidePurchaseOrder\application\UseCases\CreateDetEntryguidePurchaseOrderUseCase;
+use App\Modules\DetEntryguidePurchaseOrder\Domain\Interface\DetEntryguidePurchaseOrderRepositoryInterface;
+use App\Modules\DetEntryguidePurchaseOrder\Infrastrucutre\Resource\DetEntryguidePurchaseOrderResource;
 use App\Modules\EntryGuideArticle\Domain\Interface\EntryGuideArticleRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
@@ -51,7 +55,8 @@ class PurchaseOrderController extends Controller
         private readonly TransactionLogRepositoryInterface $transactionLogRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
-        private readonly ArticleRepositoryInterface $articleRepositoryInterface
+        private readonly ArticleRepositoryInterface $articleRepositoryInterface,
+        private readonly DetEntryguidePurchaseOrderRepositoryInterface $detEntryguidePurchaseOrderRepository
     ) {}
 
     public function index(): array
@@ -84,9 +89,12 @@ class PurchaseOrderController extends Controller
             $purchaseOrder = $purchaseOrderUseCase->execute($purchaseOrderDTO);
 
             $purchaseOrderArticles = $this->createPurchaseOrderArticles($purchaseOrder, $request->validated()['articles']);
-
+            $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($purchaseOrder, $request->validated()['det_entry_guide_purchase_order']);
+           
             $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
             $response['articles'] = PurchaseOrderArticleResource::collection($purchaseOrderArticles)->resolve();
+            $response['det_entry_guide_purchase_order'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
+
             $this->logTransaction($request, $purchaseOrder);
 
             return response()->json($response, 201);
@@ -148,7 +156,7 @@ class PurchaseOrderController extends Controller
                 'quantity' => $article['quantity'],
                 'purchase_price' => $article['purchase_price'],
                 'subtotal' => $article['subtotal'],
-                
+
             ]);
 
             return $createPurchaseOrderArticleUseCase->execute($purchaseOrderArticleDTO);
@@ -255,7 +263,7 @@ class PurchaseOrderController extends Controller
     }
 
 
-    private function logTransaction($request, $purchaseOrder): void
+    private function logTransaction($request, $purchaseOrder)
     {
         $transactionLogs = new CreateTransactionLogUseCase(
             $this->transactionLogRepository,
@@ -280,5 +288,19 @@ class PurchaseOrderController extends Controller
         ]);
 
         $transactionLogs->execute($transactionDTO);
+    }
+
+    private function createDetEntryguidePurchaseOrder($purchaseOrderId, array $entryGuideIds): array
+    {
+        $createDetEntryguidePurchaseOrderUseCase = new CreateDetEntryguidePurchaseOrderUseCase($this->detEntryguidePurchaseOrderRepository);
+        $createdDetails = [];
+        foreach ($entryGuideIds as $entryGuideId) {
+            $detEntryguidePurchaseOrderDTO = new DetEntryguidePurchaseorderDTO([
+                'purchase_order_id' => $purchaseOrderId->getId(),
+                'entry_guide_id' => $entryGuideId,
+            ]);
+            $createdDetails[] = $createDetEntryguidePurchaseOrderUseCase->execute($detEntryguidePurchaseOrderDTO);
+        }
+        return $createdDetails;
     }
 }

@@ -47,6 +47,9 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 igv: $purchase->igv,
                 total: $purchase->total,
                 is_igv: $purchase->is_igv,
+                type_document_id: $purchase->document_type_id,
+                reference_serie: $purchase->reference_serie,
+                reference_correlative: $purchase->reference_correlative,
 
             );
         })->toArray();
@@ -81,6 +84,9 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             igv: $eloquentpurchase->igv,
             total: $eloquentpurchase->total,
             is_igv: $eloquentpurchase->is_igv,
+            type_document_id: $eloquentpurchase->document_type_id,
+            reference_serie: $eloquentpurchase->reference_serie,
+            reference_correlative: $eloquentpurchase->reference_correlative,
         );
     }
     public function save(Purchase $purchase): ?Purchase
@@ -107,6 +113,9 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'igv' => $purchase->getIgv(),
             'total' => $purchase->getTotal(),
             'is_igv' => $purchase->getIsIgv(),
+            'document_type_id' => $purchase->getTypeDocumentId(),
+            'reference_serie' => $purchase->getReferenceSerie(),
+            'reference_correlative' => $purchase->getReferenceCorrelative(),
         ]);
         return new Purchase(
             id: $eloquentpurchase->id,
@@ -131,6 +140,9 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             igv: $eloquentpurchase->igv,
             total: $eloquentpurchase->total,
             is_igv: $eloquentpurchase->is_igv,
+            type_document_id: $eloquentpurchase->document_type_id  ,
+            reference_serie: $eloquentpurchase->reference_serie,
+            reference_correlative: $eloquentpurchase->reference_correlative,
         );
     }
     public function update(Purchase $purchase): ?Purchase
@@ -162,6 +174,9 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'igv' => $purchase->getIgv(),
             'total' => $purchase->getTotal(),
             'is_igv' => $purchase->getIsIgv(),
+            'document_type_id' => $purchase->getTypeDocumentId(),
+            'reference_serie' => $purchase->getReferenceSerie(),
+            'reference_correlative' => $purchase->getReferenceCorrelative(),
         ]);
         return new Purchase(
             id: $purchaseUpdtate->id,
@@ -186,6 +201,9 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             igv: $purchaseUpdtate->igv,
             total: $purchaseUpdtate->total,
             is_igv: $purchaseUpdtate->is_igv,
+            type_document_id: $purchaseUpdtate->document_type_id,
+            reference_serie: $purchaseUpdtate->reference_serie,
+            reference_correlative: $purchaseUpdtate->reference_correlative,
         );
     }
 }

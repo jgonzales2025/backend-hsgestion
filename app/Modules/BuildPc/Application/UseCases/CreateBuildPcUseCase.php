@@ -12,8 +12,7 @@ class CreateBuildPcUseCase
 {
     public function __construct(
         private readonly BuildPcRepositoryInterface $buildPcRepository,
-        private readonly ArticleRepositoryInterface $articleRepository
-    ) {}
+   ) {}
     public function execute(BuildPcDTO $data): ?BuildPc
     {
 

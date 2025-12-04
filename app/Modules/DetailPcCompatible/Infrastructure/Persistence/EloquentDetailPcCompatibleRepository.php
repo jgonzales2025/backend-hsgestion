@@ -90,4 +90,9 @@ class EloquentDetailPcCompatibleRepository implements DetailPcCompatibleReposito
             );
         })->toArray();
     }
+
+    public function deleteByArticleMajorId(int $articleMajorId): bool
+    {
+        return EloquentDetailPcCompatible::where('article_major_id', $articleMajorId)->delete() !== false;
+    }
 }

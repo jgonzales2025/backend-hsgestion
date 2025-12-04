@@ -31,6 +31,9 @@ class Purchase
     private float $igv;
     private float $total;
     private bool $is_igv;
+    private ?int $type_document_id;
+    private string $reference_serie;
+    private string $reference_correlative;
 
     public function __construct(
         ?int $id,
@@ -54,7 +57,10 @@ class Purchase
         float $inafecto,
         float $igv,
         float $total,
-        bool $is_igv
+        bool $is_igv,
+        ?int $type_document_id,
+        string $reference_serie,
+        string $reference_correlative,
     ) {
         $this->id = $id;
         $this->branch = $branch;
@@ -78,6 +84,9 @@ class Purchase
         $this->igv = $igv;
         $this->total = $total;
         $this->is_igv = $is_igv;
+        $this->type_document_id = $type_document_id;
+        $this->reference_serie = $reference_serie;
+        $this->reference_correlative = $reference_correlative;
     }
 
     public function getId(): int|null
@@ -167,6 +176,18 @@ class Purchase
     public function getIsIgv(): bool
     {
         return $this->is_igv;
+    }
+    public function getTypeDocumentId(): int|null
+    {
+        return $this->type_document_id;
+    }
+    public function getReferenceSerie(): string
+    {
+        return $this->reference_serie;
+    }
+    public function getReferenceCorrelative(): string
+    {
+        return $this->reference_correlative;
     }
 
 }

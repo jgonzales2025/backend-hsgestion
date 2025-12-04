@@ -23,6 +23,7 @@ use App\Modules\PettyCashReceipt\Infrastructure\Exports\PettyCashProcedureExport
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PettyCashReceiptController extends Controller
@@ -38,10 +39,13 @@ class PettyCashReceiptController extends Controller
     ) {}
     public function index(Request $request): JsonResponse
     {
-        $filter = $request->query('filter');
+        $filter = $request->query('search');
+        $is_active = $request->query('is_active');
+
+        $currency_type = $request->query('document_type');
 
         $pettyCashReceiptsUseCase = new FindAllPettyCashReceiptUseCase($this->pettyCashReceiptRepository);
-        $pettyCashReceipts = $pettyCashReceiptsUseCase->execute($filter);
+        $pettyCashReceipts = $pettyCashReceiptsUseCase->execute($filter, $currency_type, $is_active);
 
         // Return paginated response with navigation URLs
         return new JsonResponse([
@@ -110,6 +114,22 @@ class PettyCashReceiptController extends Controller
         return response()->json(["message" => "estado actualizado"], 200);
     }
 
+    private function paginateStoredProcedure(array $items, $perPage = 10): LengthAwarePaginator
+    {
+        $page = request()->get('page', 1);
+        $items = collect($items);
+
+        $pagedItems = $items->slice(($page - 1) * $perPage, $perPage)->values();
+
+        return  new LengthAwarePaginator(
+            $pagedItems,
+            $items->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+    }
+
     public function selectProcedure(Request $request): JsonResponse
     {
         $companyId = request()->get('company_id');
@@ -148,7 +168,17 @@ class PettyCashReceiptController extends Controller
             $validated['pcorrelativo'] ?? ''
         );
 
-        return response()->json($data);
+        $datos = $this->paginateStoredProcedure($data, 10);
+
+        return response()->json([
+            'data'           => $datos->items(),
+            'current_page'   => $datos->currentPage(),
+            'per_page'       => $datos->perPage(),
+            'total'          => $datos->total(),
+            'last_page'      => $datos->lastPage(),
+            'next_page_url'  => $datos->nextPageUrl(),
+            'prev_page_url'  => $datos->previousPageUrl(),
+        ]);
     }
 
     public function exportExcel(Request $request)

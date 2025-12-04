@@ -16,7 +16,7 @@ class CreateReferenceCodeUseCase
     {
 
         $referenceCodes = new ReferenceCode(
-            id: $referenceCodeDTO->id,
+            id:0,
             ref_code: $referenceCodeDTO->ref_code,
             article_id: $id,
             status: $referenceCodeDTO->status

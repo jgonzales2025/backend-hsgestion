@@ -47,12 +47,16 @@ class CreatePurchaseRequest extends FormRequest
             'entry_guide' => 'required|array',
             'entry_guide.*' => 'required|integer|exists:entry_guides,id',
             'is_igv' => 'required|boolean',
+            'reference_document_type_id' => 'required|integer|exists:payment_methods,id',
+            'reference_serie' => 'required|string',
+            'reference_correlative' => 'required|string',
         ];
     }
     public function messages(): array
     {
         return [
               'det_compras_guia_ingreso.*.cantidad_update.required' => 'La cantidad actualizada es obligatoria',
-        ];
+              'type_document_id.required' => 'El tipo de documento es obligatorio',
+            ];
     }
 }

@@ -16,8 +16,6 @@ return new class extends Migration
             $table->foreignId('build_pc_id')->constrained('build_pc_tabla')->cascadeOnDelete();
             $table->foreignId('article_id')->constrained('articles')->cascadeOnDelete();
             $table->integer('quantity');
-            $table->float('price');
-            $table->float('subtotal');
             $table->boolean('status')->default(true);
             $table->timestamps();
         });

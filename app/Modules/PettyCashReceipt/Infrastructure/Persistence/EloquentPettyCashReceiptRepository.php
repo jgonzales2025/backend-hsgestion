@@ -6,6 +6,7 @@ use App\Modules\PettyCashReceipt\Domain\Entities\PettyCashReceipt;
 use App\Modules\PettyCashReceipt\Domain\Interface\PettyCashReceiptRepositoryInterface;
 use App\Modules\PettyCashReceipt\Infrastructure\Models\EloquentPettyCashReceipt;
 use Eloquent;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryInterface
@@ -52,7 +53,7 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
             branch: $eloquentPettyCashReceipt->branch?->toDomain($eloquentPettyCashReceipt->branch)
         );
     }
-    public function findAll(?string $filter)
+    public function findAll(?string $filter, ?int $currency_type, ?int $is_active)
     {
         $eloquentPettyCashReceipts = EloquentPettyCashReceipt::with(['reasonCode', 'documentType', 'branch', 'currency'])
             ->when(
@@ -60,9 +61,15 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
                 fn($q) =>
                 $q->where(function ($q2) use ($filter) {
                     $q2->where('date', 'like', "%{$filter}%")
-                        ->orWhere('correlative', 'like', "%{$filter}%");
+                        ->orWhere('series', 'like', "%{$filter}%");
                 })
             )
+            ->when(isset($currency_type), function ($query) use ($currency_type) {
+                return $query->where('document_type', $currency_type);
+            })
+            ->when(isset($is_active), function ($query) use ($is_active) {
+                return $query->where('status', $is_active);
+            })
             ->orderBy('id', 'desc')
             ->paginate(10);
 

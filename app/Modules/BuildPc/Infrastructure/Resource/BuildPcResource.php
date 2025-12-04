@@ -16,8 +16,6 @@ class BuildPcResource extends JsonResource
             'total_price' => $this->resource->getTotalPrice(),
             'user_id' => $this->resource->getUserId(),
             'status' => $this->resource->getStatus(),
-            'quantity' => $this->resource->getQuantity(),
-            'article_ensamb_id' => $this->resource->getArticleEnsambId(),
 
         ];
     }

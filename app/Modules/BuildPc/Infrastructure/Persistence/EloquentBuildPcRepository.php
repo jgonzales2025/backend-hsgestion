@@ -17,8 +17,6 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             'total_price' => $data->getTotalPrice(),
             'user_id' => $data->getUserId(),
             'status' => $data->getStatus(),
-            'quantity' => $data->getQuantity(),
-            'article_ensamb_id' => $data->getArticleEnsambId(),
         ]);
         return new BuildPc(
             id: $buildPc->id,
@@ -27,8 +25,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             total_price: $buildPc->total_price,
             user_id: $buildPc->user_id,
             status: $buildPc->status,
-            quantity: $buildPc->quantity,
-            article_ensamb_id: $buildPc->article_ensamb_id,
+
         );
     }
 
@@ -43,8 +40,6 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
                 total_price: $buildPc->total_price,
                 user_id: $buildPc->user_id,
                 status: $buildPc->status,
-                quantity: $buildPc->quantity,
-                article_ensamb_id: $buildPc->article_ensamb_id,
             );
         }
         return null;
@@ -74,8 +69,6 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
                 total_price: $buildPc->total_price,
                 user_id: $buildPc->user_id,
                 status: $buildPc->status,
-                quantity: $buildPc->quantity,
-                article_ensamb_id: $buildPc->article_ensamb_id,
             );
         });
 
@@ -94,8 +87,6 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             'total_price' => $data->getTotalPrice(),
             'user_id' => $data->getUserId(),
             'status' => $data->getStatus(),
-            'quantity' => $data->getQuantity(),
-            'article_ensamb_id' => $data->getArticleEnsambId(),
         ]);
         return new BuildPc(
             id: $buildPc->id,
@@ -104,8 +95,6 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             total_price: $buildPc->total_price,
             user_id: $buildPc->user_id,
             status: $buildPc->status,
-            quantity: $buildPc->quantity,
-            article_ensamb_id: $buildPc->article_ensamb_id,
         );
     }
 }

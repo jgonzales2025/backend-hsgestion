@@ -218,7 +218,7 @@ class PurchaseController extends Controller
         return array_map(function ($entryGuideId) use ($shooping, $createShooping) {
             $shoopingDTO = new ShoppingIncomeGuideDTO([
                 'purchase_id' => $shooping->getId(),
-                'entry_guide_id' => (int) $entryGuideId,
+                'entry_guide_id' => (int) $entryGuideId,    
             ]);
 
             $result = $createShooping->execute($shoopingDTO);

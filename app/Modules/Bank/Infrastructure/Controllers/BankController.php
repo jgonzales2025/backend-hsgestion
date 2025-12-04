@@ -32,10 +32,9 @@ class BankController extends Controller
     {
         $description = $request->query('description');
         $status = $request->query('status') !== null ? (int) $request->query('status') : null;
-        $company_id = $request->query('company_id');
         $currency_type_id = $request->query('currency_type_id');
         $bankUseCase = new FindAllBanksUseCase($this->bankRepository);
-        $banks = $bankUseCase->execute($description, $status, $company_id, $currency_type_id);
+        $banks = $bankUseCase->execute($description, $status, $currency_type_id);
 
         return new JsonResponse([
             'data' => BankResource::collection($banks)->resolve(),

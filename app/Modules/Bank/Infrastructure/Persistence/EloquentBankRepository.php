@@ -10,7 +10,7 @@ use App\Modules\Bank\Infrastructure\Models\EloquentBank;
 class EloquentBankRepository implements BankRepositoryInterface
 {
 
-    public function findAll(?string $description, ?int $status, ?int $company_id, ?int $currency_type_id)
+    public function findAll(?string $description, ?int $status, ?int $currency_type_id)
     {
         $payload = auth('api')->payload();
         $companyId = $payload->get('company_id');
@@ -20,7 +20,6 @@ class EloquentBankRepository implements BankRepositoryInterface
             ->when($description, fn($query) => $query->where('name', 'like', "%{$description}%")
                 ->orWhere('account_number', 'like', "%{$description}%"))
             ->when($status !== null, fn($query) => $query->where('status', $status))
-            ->when($company_id, fn($query) => $query->where('company_id', $company_id))
             ->when($currency_type_id, fn($query) => $query->where('currency_type_id', $currency_type_id))
             ->paginate(10);
 

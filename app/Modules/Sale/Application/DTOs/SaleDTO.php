@@ -71,11 +71,11 @@ class SaleDTO
         $this->user_authorized_id = $data['user_authorized_id'] ?? null;
         $this->coddetrac = $data['coddetrac'] ?? null;
         $this->pordetrac = $data['pordetrac'] ?? null;
-        $this->impdetracs = $data['impdetracs'] ?? null;
-        $this->impdetracd = $data['impdetracd'] ?? null;
+        $this->impdetracs = ($data['currency_type_id'] === 1 ? round($data['total'] * ($data['pordetrac'] / 100), 2) : round($data['total'] * ($data['pordetrac'] / 100) * $data['parallel_rate'], 2)) ?? null;
+        $this->impdetracd = ($data['currency_type_id'] === 2 ? round($data['total'] * ($data['pordetrac'] / 100), 2) : round($data['total'] * ($data['pordetrac'] / 100) / $data['parallel_rate'], 2)) ?? null;
         $this->stretencion = $data['stretencion'] ?? null;
         $this->porretencion = $data['porretencion'] ?? null;
-        $this->impretens = $data['impretens'] ?? null;
-        $this->impretend = $data['impretend'] ?? null;
+        $this->impretens = ($data['currency_type_id'] === 1 ? round($data['total'] * ($data['porretencion'] / 100), 2) : round(($data['total'] * ($data['porretencion'] / 100)) * $data['parallel_rate'], 2)) ?? null;
+        $this->impretend = ($data['currency_type_id'] === 2 ? round($data['total'] * ($data['porretencion'] / 100), 2) : round($data['total'] * ($data['porretencion'] / 100) / $data['parallel_rate'], 2)) ?? null;
     }
 }

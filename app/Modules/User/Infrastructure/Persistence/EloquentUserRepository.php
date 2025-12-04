@@ -113,8 +113,8 @@ class EloquentUserRepository implements UserRepositoryInterface
             ->orWhere('lastname', 'like', "%{$description}%")
             ->orWhereHas('roles', fn($query) => $query->where('name', 'like', "%{$description}%")))
         ->when($roleId, fn($query) => $query->whereHas('roles', fn($query) => $query->where('id', $roleId)))
-        ->when($statusLogin, fn($query) => $query->where('st_login', $statusLogin))
-        ->when($status, fn($query) => $query->where('status', $status))
+        ->when($statusLogin !== null, fn($query) => $query->where('st_login', $statusLogin))
+        ->when($status !== null, fn($query) => $query->where('status', $status))
         ->orderBy('created_at', 'desc')->paginate(10);
 
         $users->getCollection()->transform(function ($user) {

@@ -40,8 +40,12 @@ use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterf
 use App\Modules\VisibleArticles\application\UseCases\FindStatusByArticleId;
 use App\Modules\VisibleArticles\Domain\Interfaces\VisibleArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\DetailPcCompatible\application\DTOS\DetailPcCompatibleDTO;
+use App\Modules\DetailPcCompatible\application\UseCases\CreateDetailPcCompatibleUseCase;
 use App\Modules\DetailPcCompatible\Domain\Interface\DetailPcCompatibleRepositoryInterface;
 use App\Modules\DetailPcCompatible\Infrastructure\Resource\DetailPcCompatibleResource;
+use App\Modules\ReferenceCode\Application\DTOs\ReferenceCodeDTO;
+use App\Modules\ReferenceCode\Application\UseCase\CreateReferenceCodeUseCase;
 use App\Modules\ReferenceCode\Domain\Interfaces\ReferenceCodeRepositoryInterface;
 use App\Modules\ReferenceCode\Infrastructure\Resources\ReferenceCodeResource;
 
@@ -207,8 +211,17 @@ class ArticleController extends Controller
 
     $result = $articleUseCase->execute($id, $articleDTO);
 
+    $createreferenceCode = $this->createReferenceCode($result->getId(), $data['reference_code']);
+    $createDetailPcCompatible = $this->createDetailPcCompatible($result, $data['detail_pc_compatible']);
+
     return response()->json(
-      (new ArticleResource($result))->resolve(),
+      array_merge(
+        (new ArticleResource($result))->resolve(),
+        [
+          'reference_code' => ReferenceCodeResource::collection($createreferenceCode)->resolve(),
+          'detail_pc_compatible' => DetailPcCompatibleResource::collection($createDetailPcCompatible)->resolve()
+        ]
+      ),
       200
     );
   }
@@ -253,6 +266,7 @@ class ArticleController extends Controller
       $data['image_url'] = null;
     }
 
+
     //  Crear DTO y ejecutar caso de uso
     $articleDTO = new ArticleDTO($data);
     $articleUseCase = new CreateArticleUseCase(
@@ -267,8 +281,7 @@ class ArticleController extends Controller
     );
 
     $article = $articleUseCase->execute($articleDTO);
-
-
+ 
     return response()->json(
       (new ArticleResource($article))->resolve(),
       201
@@ -386,5 +399,42 @@ class ArticleController extends Controller
       ArticleResource::collection($findbyidCombo)->resolve(),
       200
     );
+  }
+
+  private function createReferenceCode($articleId, $referenceCode)
+  {
+    $referenceCodeUseCase = new CreateReferenceCodeUseCase($this->referenceCodeRepository);
+    $data = [];
+
+    foreach ($referenceCode as $code) {
+
+      $referenceCodeDTO = new ReferenceCodeDTO([
+        'ref_code' => $code,
+      ]);
+
+      // Agregar cada resultado al array
+      $data[] = $referenceCodeUseCase->execute($articleId, $referenceCodeDTO);
+    }
+
+    return $data;
+  }
+
+  private function createDetailPcCompatible($articleId, $detailPcCompatible)
+  {
+    $createDetailPcCompatibleUseCase = new CreateDetailPcCompatibleUseCase($this->detailPcCompatibleRepository);
+    $data = [];
+
+    foreach ($detailPcCompatible as $pc) {
+
+      $detailPcCompatibleDTO = new DetailPcCompatibleDTO([
+        'article_major_id' => $articleId->getId(),
+        'article_accesory_id' => $pc,
+      ]);
+
+      // Agregar cada resultado al array
+      $data[] = $createDetailPcCompatibleUseCase->execute($detailPcCompatibleDTO);
+    }
+
+    return $data;
   }
 }

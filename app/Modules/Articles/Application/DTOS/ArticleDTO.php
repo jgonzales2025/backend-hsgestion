@@ -74,5 +74,5 @@ class ArticleDTO
         $this->filtNameEsp = $data['filtNameEsp'] ?? '';
         $this->statusEsp = isset($data['statusEsp']) ? filter_var($data['statusEsp'], FILTER_VALIDATE_BOOLEAN) : false;
         $this->is_combo = isset($data['is_combo']) ? filter_var($data['is_combo'], FILTER_VALIDATE_BOOLEAN) : false;
-    }
+ }
 }

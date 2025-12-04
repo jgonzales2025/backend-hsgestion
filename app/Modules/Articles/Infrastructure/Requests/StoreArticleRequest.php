@@ -39,7 +39,8 @@ class StoreArticleRequest extends FormRequest
             'currency_type_id' => isset($this->currency_type_id) ? (int) $this->currency_type_id : 0,
             'statusEsp' => isset($this->statusEsp) ? filter_var($this->statusEsp, FILTER_VALIDATE_BOOLEAN) : false,
            'state_modify_article' => isset($this->state_modify_article) ? (int) $this->state_modify_article : 0,
-
+            'reference_code' => isset($this->reference_code) ? $this->reference_code : [],
+            'detail_pc_compatible' => isset($this->detail_pc_compatible) ? $this->detail_pc_compatible : [],
         ]);
     }
 

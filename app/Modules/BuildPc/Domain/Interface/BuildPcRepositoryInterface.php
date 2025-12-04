@@ -10,4 +10,5 @@ interface BuildPcRepositoryInterface
     public function findById(int $id): ?BuildPc;
     public function findAll(?string $search, ?int $is_active);
     public function update(BuildPc $data): ?BuildPc;
+    public function updateSstatus(int $id, int $status): ?BuildPc;
 }

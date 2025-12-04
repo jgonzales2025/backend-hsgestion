@@ -39,6 +39,7 @@ use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
 class ControllerEntryGuide extends Controller
@@ -78,11 +79,13 @@ class ControllerEntryGuide extends Controller
             $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
             $documentEntryGuide = $this->documentEntryGuideRepositoryInterface->findById($entryGuide->getId());
 
-            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle,$documentEntryGuide) {
+            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle, $documentEntryGuide) {
                 $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
                 $article->document_entry_guide = $documentEntryGuide;
                 return $article;
             }, $articles);
+
+
 
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
@@ -90,7 +93,17 @@ class ControllerEntryGuide extends Controller
             $result[] = $response;
         }
 
-        return response()->json($result, 200);
+        return new JsonResponse([
+            'data' => $result,
+            'current_page' => $entryGuides->currentPage(),
+            'per_page' => $entryGuides->perPage(),
+            'total' => $entryGuides->total(),
+            'last_page' => $entryGuides->lastPage(),
+            'next_page_url' => $entryGuides->nextPageUrl(),
+            'prev_page_url' => $entryGuides->previousPageUrl(),
+            'first_page_url' => $entryGuides->url(1),
+            'last_page_url' => $entryGuides->url($entryGuides->lastPage()),
+        ]);
     }
 
     public function indexC(Request $request): JsonResponse
@@ -132,8 +145,8 @@ class ControllerEntryGuide extends Controller
         $entryArticles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
         $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
         $documentEntryGuide = $this->documentEntryGuideRepositoryInterface->findById($entryGuide->getId());
-        
-        $entryArticles = array_map(function ($article) use ($serialsByArticle,$documentEntryGuide) {
+
+        $entryArticles = array_map(function ($article) use ($serialsByArticle, $documentEntryGuide) {
             $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
             $article->document_entry_guide = $documentEntryGuide;
             return $article;

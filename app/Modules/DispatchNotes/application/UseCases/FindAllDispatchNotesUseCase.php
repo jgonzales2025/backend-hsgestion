@@ -12,7 +12,7 @@ class FindAllDispatchNotesUseCase
 
     }
 
-    public function execute(?string $description, ?int $status): array
+    public function execute(?string $description, ?int $status)
     {
         return $this->dispatchNotesRepositoryInterface->findAll($description, $status);
     }

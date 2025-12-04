@@ -5,10 +5,11 @@ namespace App\Modules\DispatchNotes\Infrastructure\Persistence;
 use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Models\EloquentDispatchNote;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
 {
-    public function findAll(?string $description, ?int $status): array
+    public function findAll(?string $description, ?int $status): LengthAwarePaginator
     {
         $dispatchNotes = EloquentDispatchNote::with([
             'company',
@@ -19,7 +20,9 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'document_type',
             'supplier',
             'address_supplier',
-        ])->orderByDesc('id')->where('document_type_id', '!=', 21)
+        ])
+            ->orderByDesc('id')
+            ->where('document_type_id', '!=', 21)
             ->when($description, function ($query) use ($description) {
                 return $query->where('correlativo', 'like', '%' . $description . '%')
                     ->orWhere('license_plate', 'like', '%' . $description . '%')
@@ -36,14 +39,15 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             ->when($status !== null, function ($query) use ($status) {
                 return $query->where('status', $status);
             })
-            ->get();
+            ->paginate(10);
 
-        if ($dispatchNotes->isEmpty()) {
-            return [];
-        }
+        $dispatchNotes->getCollection()->transform(
+            fn($dispatchNote) => $this->mapToDomain($dispatchNote)
+        );
 
-        return $dispatchNotes->map(fn($dispatchNote) => $this->mapToDomain($dispatchNote))->toArray();
+        return $dispatchNotes;
     }
+
 
     public function getLastDocumentNumber(): ?string
     {
@@ -185,9 +189,5 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
     public function updateStatus(int $dispatchNote, int $status): void
     {
         EloquentDispatchNote::where('id', $dispatchNote)->update(['status' => $status]);
-
     }
-
-
-
 }

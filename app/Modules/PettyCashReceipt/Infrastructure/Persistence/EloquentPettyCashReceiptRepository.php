@@ -6,6 +6,7 @@ use App\Modules\PettyCashReceipt\Domain\Entities\PettyCashReceipt;
 use App\Modules\PettyCashReceipt\Domain\Interface\PettyCashReceiptRepositoryInterface;
 use App\Modules\PettyCashReceipt\Infrastructure\Models\EloquentPettyCashReceipt;
 use Eloquent;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 
 class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryInterface

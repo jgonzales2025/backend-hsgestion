@@ -9,7 +9,7 @@ interface UserRepositoryInterface
     public function save(User $user): ?User;
     public function findById(int $id): ?User;
     public function update(User $user): void;
-    public function findAllUsers(): array;
+    public function findAllUsers(?string $description, ?int $roleId, ?int $statusLogin, ?int $status);
     public function findByUserName(string $userName): ?User;
     public function updateStLogin(int $id, int $stLogin): void;
     public function findAllUsersByVendedor(): array;

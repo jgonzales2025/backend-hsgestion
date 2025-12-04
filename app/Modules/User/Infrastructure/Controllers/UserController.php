@@ -150,12 +150,26 @@ class UserController extends Controller
         ]);
     }
 
-    public function findAllUsers(): array
+    public function findAllUsers(Request $request): JsonResponse
     {
+        $description = $request->query('description');
+        $roleId = $request->query('role_id');
+        $statusLogin = $request->query('status_login');
+        $status = $request->query('status');
         $userUseCase = new FindAllUsersUseCase($this->userRepository);
-        $users = $userUseCase->execute();
+        $users = $userUseCase->execute($description, $roleId, $statusLogin, $status);
 
-        return UserResource::collection($users)->resolve();
+        return new JsonResponse([
+            'data' => UserResource::collection($users)->resolve(),
+            'current_page' => $users->currentPage(),
+            'per_page' => $users->perPage(),
+            'total' => $users->total(),
+            'last_page' => $users->lastPage(),
+            'next_page_url' => $users->nextPageUrl(),
+            'prev_page_url' => $users->previousPageUrl(),
+            'first_page_url' => $users->url(1),
+            'last_page_url' => $users->url($users->lastPage()),
+        ]);
     }
 
     public function update(UpdateUserRequest $request, $id): JsonResponse

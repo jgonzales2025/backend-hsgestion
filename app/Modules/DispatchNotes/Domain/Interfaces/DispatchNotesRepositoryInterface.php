@@ -7,7 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 interface DispatchNotesRepositoryInterface
 {
-    public function findAll(?string $description, ?int $status): LengthAwarePaginator;
+    public function findAll(?string $description, ?int $status, ?int $emissionReasonId): LengthAwarePaginator;
     public function save(DispatchNote $dispatchNote): ?DispatchNote;
     public function findById(int $id): ?DispatchNote;
     public function update(DispatchNote $dispatchNote): ?DispatchNote;

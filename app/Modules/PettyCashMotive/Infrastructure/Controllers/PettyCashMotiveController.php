@@ -16,6 +16,8 @@ use App\Modules\PettyCashMotive\Infrastructure\Request\UpdatePettyCashMotiveRequ
 use App\Modules\PettyCashMotive\Infrastructure\Resource\PettyCashMotiveResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpKernel\Log\Logger;
 
 class PettyCashMotiveController extends Controller
 {
@@ -86,7 +88,7 @@ class PettyCashMotiveController extends Controller
 
     public function updateStatus(Request $request, int $id): JsonResponse
     {
-        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
+        $status = $request->input('status') !== null ? (int) $request->query('status') : null;
         $updateStatusCashMotiveUseCase = new UpdateStatusCashMotiveUseCase($this->pettyCashMotiveInterfaceRepository);
         $updateStatusCashMotiveUseCase->execute($id, $status);
 

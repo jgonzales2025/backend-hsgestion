@@ -76,10 +76,10 @@ class DispatchNotesController extends Controller
 
         $description = $request->query('description');
         $status = $request->query('status') !== null ? (int) $request->query('status') : null;
-
+        $emissionReasonId = $request->query('emission_reason_id');
 
         $dispatchNoteUseCase = new FindAllDispatchNotesUseCase($this->dispatchNoteRepository);
-        $dispatchNotes = $dispatchNoteUseCase->execute($description, $status);
+        $dispatchNotes = $dispatchNoteUseCase->execute($description, $status, $emissionReasonId);
 
         $result = [];
         foreach ($dispatchNotes as $articlesNote) {

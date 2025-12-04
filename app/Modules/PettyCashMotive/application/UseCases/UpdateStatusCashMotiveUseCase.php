@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Modules\PettyCashMotive\Application\UseCases;
+
 use App\Modules\PettyCashMotive\Domain\Interface\PettyCashMotiveInterfaceRepository;
 
-class FindAllPettyCashMotive{
+class UpdateStatusCashMotiveUseCase{
     public function __construct(private readonly PettyCashMotiveInterfaceRepository $pettyCashMotiveInterfaceRepository){}
 
-    public function execute(?string $description, ?string $receipt_type, ?string $status){
-        return $this->pettyCashMotiveInterfaceRepository->findAll($description, $receipt_type, $status);
-    
+    public function execute(int $id, int $status): void{
+        $this->pettyCashMotiveInterfaceRepository->updateStatus($id, $status);
     }
 }

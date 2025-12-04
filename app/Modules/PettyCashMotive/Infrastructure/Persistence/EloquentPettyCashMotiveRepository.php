@@ -50,23 +50,24 @@ class EloquentPettyCashMotiveRepository implements PettyCashMotiveInterfaceRepos
             status: $eloquentPettyCashMotive->status,
         );
     }
-    public function findAll(?string $receipt_type): array
+    public function findAll(?string $description, ?string $receipt_type, ?string $status)
     {
         $eloquentPettyCashMotive = EloquentPettyCashMotive::with(['documentType'])
+            ->when($description, fn($q) => $q->where('description', 'like', "%{$description}%"))
             ->when($receipt_type, fn($q) => $q->where('receipt_type', $receipt_type))
-            ->get();
+            ->when($status !== null, fn($q) => $q->where('status', $status))
+            ->paginate(10);
 
-        return $eloquentPettyCashMotive->map(function ($eloquentPettyCashMotive) {
-
-            return new PettyCashMotive(
+        $eloquentPettyCashMotive->getCollection()->transform(fn($eloquentPettyCashMotive) => new PettyCashMotive(
                 id: $eloquentPettyCashMotive->id,
                 company_id: $eloquentPettyCashMotive->company_id,
                 description: $eloquentPettyCashMotive->description,
                 receipt_type: $eloquentPettyCashMotive->documentType?->toDomain($eloquentPettyCashMotive->documentType),
                 user_id: $eloquentPettyCashMotive->user_id,
                 status: $eloquentPettyCashMotive->status,
-            );
-        })->toArray();
+            ));
+
+        return $eloquentPettyCashMotive;
     }
     public function findById(int $id): ?PettyCashMotive
     {
@@ -82,5 +83,9 @@ class EloquentPettyCashMotiveRepository implements PettyCashMotiveInterfaceRepos
             user_id: $eloquentPettyCashMotive->user_id,
             status: $eloquentPettyCashMotive->status,
         );
+    }
+
+    public function updateStatus(int $id, int $status): void{
+        EloquentPettyCashMotive::where('id', $id)->update(['status' => $status]);
     }
 }

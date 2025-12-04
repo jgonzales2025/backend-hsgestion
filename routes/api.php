@@ -366,6 +366,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/pettyCashMotive', [PettyCashMotiveController::class, 'store']);
     Route::put('/pettyCashMotive/{id}', [PettyCashMotiveController::class, 'update']);
     Route::get('/pettyCashMotive/{id}', [PettyCashMotiveController::class, 'show']);
+    Route::put('/pettyCashMotive/update-status/{id}', [PettyCashMotiveController::class, 'updateStatus']);
 
     //detailPcCompatible
     Route::get('/detailPcCompatible', [DetailPcCompatibleController::class, 'index']);

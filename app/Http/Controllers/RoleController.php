@@ -18,7 +18,7 @@ class RoleController extends Controller
         $description = $request->query('description');
         $roles = Role::when($description, fn($query) => $query->where('name', 'like', "%{$description}%"))->paginate(10);
         return new JsonResponse([
-            'data' => $roles,
+            'data' => $roles->items(),
             'current_page' => $roles->currentPage(),
             'per_page' => $roles->perPage(),
             'total' => $roles->total(),

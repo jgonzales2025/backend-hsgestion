@@ -6,7 +6,7 @@ use PhpParser\Node\Expr\Cast\Void_;
 
 interface CompanyRepositoryInterface
 {
-    public function findAllCompanys(): array;
+    public function findAllCompanys(?string $description, ?int $status);
     public function findById(int $id): ?Company;
     public function indexByUser(int $userId): array;
 

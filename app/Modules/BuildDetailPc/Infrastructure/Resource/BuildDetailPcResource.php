@@ -13,9 +13,7 @@ class BuildDetailPcResource extends JsonResource
             'id' => $this->resource->getId(),
             'build_pc_id' => $this->resource->getBuildPcId(),
             'article_id' => $this->resource->getArticleId(),
-            'quantity' => $this->resource->getQuantity(),
-            'price' => $this->resource->getPrice(),
-            'subtotal' => $this->resource->getSubtotal(),
+            'quantity' => $this->resource->getQuantity(), 
             'cod_fab' => $this->resource->getCodFab(),
             'description' => $this->resource->getDescription(),
         ];

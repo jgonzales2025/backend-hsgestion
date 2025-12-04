@@ -15,9 +15,7 @@ class EloquentBuildPc extends Model
         'description',
         'total_price',
         'user_id',
-        'status',
-        'quantity',
-        'article_ensamb_id'
+        'status', 
     ];
     protected $hidden = [
         'created_at',

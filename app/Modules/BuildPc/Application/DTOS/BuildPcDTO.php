@@ -4,6 +4,7 @@ namespace App\Modules\BuildPc\application\DTOS;
 
 class BuildPcDTO
 {
+    public int $company_id;
     public string $name;
     public string $description;
     public float $total_price;
@@ -13,7 +14,7 @@ class BuildPcDTO
 
     public function __construct(array $data)
     {
-
+        $this->company_id = $data['company_id'];
         $this->name = $data['name'];
         $this->description = $data['description'];
         $this->total_price = $data['total_price'];

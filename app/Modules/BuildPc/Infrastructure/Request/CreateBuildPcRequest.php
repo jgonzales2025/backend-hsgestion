@@ -13,14 +13,17 @@ class CreateBuildPcRequest extends FormRequest
     }
     protected function prepareForValidation(): void
     {
+        $company_id = $this->input('company_id');
         $this->merge([
             'user_id' => auth('api')->id(),
+            'company_id' => $company_id,
         ]);
     }
 
     public function rules()
     {
         return [
+            'company_id' => 'nullable|numeric',
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             // 'total_price' => 'required|numeric',

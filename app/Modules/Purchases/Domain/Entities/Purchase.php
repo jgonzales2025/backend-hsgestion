@@ -10,6 +10,7 @@ use App\Modules\PaymentMethod\Domain\Entities\PaymentMethod;
 class Purchase
 {
     private ?int $id;
+    private int $company_id;
     private ?Branch $branch;
     private ?Customer $supplier;
     private string $serie;
@@ -61,6 +62,7 @@ class Purchase
         ?int $type_document_id,
         string $reference_serie,
         string $reference_correlative,
+        int $company_id
     ) {
         $this->id = $id;
         $this->branch = $branch;
@@ -87,6 +89,7 @@ class Purchase
         $this->type_document_id = $type_document_id;
         $this->reference_serie = $reference_serie;
         $this->reference_correlative = $reference_correlative;
+        $this->company_id = $company_id;
     }
 
     public function getId(): int|null
@@ -188,6 +191,10 @@ class Purchase
     public function getReferenceCorrelative(): string
     {
         return $this->reference_correlative;
+    }
+    public function getCompanyId(): int
+    {
+        return $this->company_id;
     }
 
 }

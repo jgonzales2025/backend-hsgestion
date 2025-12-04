@@ -5,6 +5,7 @@ namespace App\Modules\BuildPc\Domain\Entities;
 class BuildPc
 {
     private ?int $id;
+    private int $company_id;
     private string $name;
     private string $description;
     private float $total_price;
@@ -14,6 +15,7 @@ class BuildPc
 
     public function __construct(
         ?int $id,
+        int $company_id,
         string $name,
         string $description,
         float $total_price,
@@ -22,6 +24,7 @@ class BuildPc
 
     ) {
         $this->id = $id;
+        $this->company_id = $company_id;
         $this->name = $name;
         $this->description = $description;
         $this->total_price = $total_price;
@@ -32,6 +35,10 @@ class BuildPc
     public function getId(): int|null
     {
         return $this->id;
+    }
+    public function getCompanyId(): int
+    {
+        return $this->company_id;
     }
 
     public function getName(): string

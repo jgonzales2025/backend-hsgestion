@@ -116,7 +116,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
 
 
-    public function findAllArticleNotesDebito(?string $description): array
+    public function findAllArticleNotesDebito(?string $description)
     {
         $companyId = request()->get('company_id');
         $articles = EloquentArticle::with([
@@ -137,17 +137,16 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 });
             })
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(10);
 
-        return $articles->map(function ($article) {
-            return new ArticleNotasDebito(
+        $articles->getCollection()->transform(fn ($article) => new ArticleNotasDebito(
                 id: $article->id,
                 user_id: $article->user_id,
                 company_id: $article->company_type_id,
                 filt_NameEsp: $article->description,
                 status_Esp: $article->status_Esp
-            );
-        })->toArray();
+            ));
+        return $articles;
     }
 
     public function findById(int $id): ?Article

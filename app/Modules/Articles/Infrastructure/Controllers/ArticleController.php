@@ -137,7 +137,7 @@ class ArticleController extends Controller
       200
     );
   } 
-  public function indexNotesDebito(Request $request): array
+  public function indexNotesDebito(Request $request): JsonResponse
   {
     $description = $request->query("description");
 
@@ -145,7 +145,17 @@ class ArticleController extends Controller
 
     $article = $articleUseCase->execute($description);
 
-    return ArticleNotesDebitoResource::collection($article)->resolve();
+    return new JsonResponse([
+      'data' => ArticleNotesDebitoResource::collection($article)->resolve(),
+      'current_page' => $article->currentPage(),
+      'per_page' => $article->perPage(),
+      'total' => $article->total(),
+      'last_page' => $article->lastPage(),
+      'next_page_url' => $article->nextPageUrl(),
+      'prev_page_url' => $article->previousPageUrl(),
+      'first_page_url' => $article->url(1),
+      'last_page_url' => $article->url($article->lastPage()),
+    ]);
   }
   public function showNotesDebito(int $id): JsonResponse
   {

@@ -9,7 +9,7 @@ interface ArticleRepositoryInterface
 {
   public function save(Article $article): ?Article;
   public function findAllArticle(?string $name, ?int $branchId, ?int $brand_id, ?int $category_id, ?int $status);
-  public function findAllArticleNotesDebito(?string $name): array;
+  public function findAllArticleNotesDebito(?string $name);
   public function findById(int $id): ?Article;
   public function update(Article $article): ?Article;
   public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId);

@@ -6,9 +6,22 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePurchaseRequest extends FormRequest
 {
+      public function authorize(): bool
+  {
+    return true;
+  }
+  public function prepareForValidation()
+  {
+    $company_id = $this->input('company_id');
+
+    $this->merge([
+      'company_id' =>$company_id
+    ]);
+  }
     public function rules(): array
     {
         return [
+            'company_id' => 'nullable|integer',
             'branch_id' => 'required|integer',
             'supplier_id' => 'required|integer',
             'serie' => 'required|string',

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('build_pc_tabla', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained('companies');
             $table->string('name');
             $table->string('description');
             $table->float('total_price');

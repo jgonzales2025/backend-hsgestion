@@ -12,6 +12,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
     {
         $buildPc = EloquentBuildPc::create([
             'id' => $data->getId(),
+            'company_id' => $data->getCompanyId(),
             'name' => $data->getName(),
             'description' => $data->getDescription(),
             'total_price' => $data->getTotalPrice(),
@@ -20,6 +21,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
         ]);
         return new BuildPc(
             id: $buildPc->id,
+            company_id: $buildPc->company_id,
             name: $buildPc->name,
             description: $buildPc->description,
             total_price: $buildPc->total_price,
@@ -35,6 +37,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
         if ($buildPc) {
             return new BuildPc(
                 id: $buildPc->id,
+                company_id: $buildPc->company_id,
                 name: $buildPc->name,
                 description: $buildPc->description,
                 total_price: $buildPc->total_price,
@@ -64,6 +67,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
         $buildPcs->getCollection()->transform(function ($buildPc) {
             return new BuildPc(
                 id: $buildPc->id,
+                company_id: $buildPc->company_id,
                 name: $buildPc->name,
                 description: $buildPc->description,
                 total_price: $buildPc->total_price,
@@ -90,6 +94,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
         ]);
         return new BuildPc(
             id: $buildPc->id,
+            company_id: $buildPc->company_id,
             name: $buildPc->name,
             description: $buildPc->description,
             total_price: $buildPc->total_price,

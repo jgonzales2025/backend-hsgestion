@@ -11,6 +11,7 @@ class EloquentBuildPc extends Model
     protected $table = 'build_pc_tabla';
     protected $fillable = [
         'id',
+        'company_id',
         'name',
         'description',
         'total_price',

@@ -19,6 +19,7 @@ class CreateBuildPcUseCase
 
         $buildPc = new BuildPc(
             id: 0,
+            company_id: $data->company_id,
             name: $data->name,
             description: $data->description,
             total_price: $data->total_price,

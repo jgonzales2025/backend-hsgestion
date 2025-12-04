@@ -7,6 +7,10 @@ use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\DetEntryguidePurchaseorder\application\DTOS\DetEntryguidePurchaseorderDTO;
+use App\Modules\DetEntryguidePurchaseOrder\application\UseCases\CreateDetEntryguidePurchaseOrderUseCase;
+use App\Modules\DetEntryguidePurchaseOrder\Domain\Interface\DetEntryguidePurchaseOrderRepositoryInterface;
+use App\Modules\DetEntryguidePurchaseOrder\Infrastrucutre\Resource\DetEntryguidePurchaseOrderResource;
 use App\Modules\DocumentEntryGuide\application\DTOS\DocumentEntryGuideDTO;
 use App\Modules\DocumentEntryGuide\application\UseCases\CreateDocumentEntryGuide;
 use App\Modules\DocumentEntryGuide\Domain\Interface\DocumentEntryGuideRepositoryInterface;
@@ -40,6 +44,7 @@ use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ControllerEntryGuide extends Controller
@@ -59,6 +64,7 @@ class ControllerEntryGuide extends Controller
         private readonly UserRepositoryInterface             $userRepository,
         private readonly DocumentTypeRepositoryInterface     $documentTypeRepository,
         private readonly DocumentEntryGuideRepositoryInterface $documentEntryGuideRepositoryInterface,
+        private readonly DetEntryguidePurchaseOrderRepositoryInterface $detEntryguidePurchaseOrderRepository,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -161,26 +167,33 @@ class ControllerEntryGuide extends Controller
 
     public function store(EntryGuideRequest $request): JsonResponse
     {
-        $entryGuideDTO = new EntryGuideDTO($request->validated());
-        $entryGuideUseCase = new CreateEntryGuideUseCase(
-            $this->entryGuideRepositoryInterface,
-            $this->companyRepositoryInterface,
-            $this->branchRepositoryInterface,
-            $this->customerRepositoryInterface,
-            $this->ingressReasonRepositoryInterface,
-            $this->documentNumberGeneratorService,
-        );
-        $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
+        return DB::transaction(function () use ($request) {
 
-        $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
-        $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
-        $this->logTransaction($request, $entryGuide);
+            $entryGuideDTO = new EntryGuideDTO($request->validated());
+            $entryGuideUseCase = new CreateEntryGuideUseCase(
+                $this->entryGuideRepositoryInterface,
+                $this->companyRepositoryInterface,
+                $this->branchRepositoryInterface,
+                $this->customerRepositoryInterface,
+                $this->ingressReasonRepositoryInterface,
+                $this->documentNumberGeneratorService,
+            );
+            $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
-        $response = (new EntryGuideResource($entryGuide))->resolve();
-        $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
-        $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
+            $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
+            $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
+            $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id']);
+            $this->logTransaction($request, $entryGuide);
 
-        return response()->json($response, 201);
+            $response = (new EntryGuideResource($entryGuide))->resolve();
+            $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
+            $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
+            $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
+
+
+
+            return response()->json($response, 201);
+        });
     }
 
     public function update(UpdateGuideRequest $request, $id): JsonResponse
@@ -382,5 +395,19 @@ class ControllerEntryGuide extends Controller
         } catch (\Throwable $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    private function createDetEntryguidePurchaseOrder($purchaseOrderId, array $entryGuideIds): array
+    {
+        $createDetEntryguidePurchaseOrderUseCase = new CreateDetEntryguidePurchaseOrderUseCase($this->detEntryguidePurchaseOrderRepository);
+        $createdDetails = [];
+        foreach ($entryGuideIds as $entryGuideId) {
+            $detEntryguidePurchaseOrderDTO = new DetEntryguidePurchaseorderDTO([
+                'entry_guide_id' => $purchaseOrderId->getId(),
+                'purchase_order_id' => $entryGuideId,
+            ]);
+            $createdDetails[] = $createDetEntryguidePurchaseOrderUseCase->execute($detEntryguidePurchaseOrderDTO);
+        }
+        return $createdDetails;
     }
 }

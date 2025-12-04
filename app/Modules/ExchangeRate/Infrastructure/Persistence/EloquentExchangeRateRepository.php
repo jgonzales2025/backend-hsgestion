@@ -64,22 +64,21 @@ class EloquentExchangeRateRepository implements ExchangeRateRepositoryInterface
         );
     }
 
-    public function findAll(): array
+    public function findAll(string $startDate, string $endDate)
     {
-        $exchangeRates = EloquentExchangeRate::all()->sortByDesc('date');
+        $exchangeRates = EloquentExchangeRate::query()
+            ->whereBetween('date', [$startDate, $endDate])
+            ->orderBy('date', 'desc')
+            ->paginate(10);
 
-        if ($exchangeRates->isEmpty()) {
-            return [];
-        }
-
-        return $exchangeRates->map(function ($exchangeRate) {
-            return new ExchangeRate(
+        $exchangeRates->getCollection()->transform(fn($exchangeRate) => new ExchangeRate(
                 id: $exchangeRate->id,
                 date: $exchangeRate->date,
                 purchase_rate: $exchangeRate->purchase_rate,
                 sale_rate: $exchangeRate->sale_rate,
                 parallel_rate: $exchangeRate->parallel_rate
-            );
-        })->toArray();
+            ));
+
+        return $exchangeRates;
     }
 }

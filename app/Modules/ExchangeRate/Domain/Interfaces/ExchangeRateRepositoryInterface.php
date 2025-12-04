@@ -12,5 +12,5 @@ interface ExchangeRateRepositoryInterface
 
     public function update(ExchangeRate $exchangeRate): ?ExchangeRate;
 
-    public function findAll(): array;
+    public function findAll(string $startDate, string $endDate);
 }

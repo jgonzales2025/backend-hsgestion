@@ -8,8 +8,8 @@ readonly class FindAllExchangeRatesUseCase
 {
     public function __construct(private readonly ExchangeRateRepositoryInterface $exchangeRateRepository){}
 
-    public function execute(): array
+    public function execute(?string $startDate, ?string $endDate)
     {
-        return $this->exchangeRateRepository->findAll();
+        return $this->exchangeRateRepository->findAll($startDate, $endDate);
     }
 }

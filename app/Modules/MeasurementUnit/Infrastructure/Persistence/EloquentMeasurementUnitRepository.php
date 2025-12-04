@@ -12,11 +12,15 @@ class EloquentMeasurementUnitRepository implements MeasurementUnitRepositoryInte
     public function findAll(?string $description, ?int $status)
     {
         $measurementUnits = EloquentMeasurementUnit::query()
-        ->when($description, fn($query) => $query->where('name', 'like', "%{$description}%"))
-            ->orWhere('abbreviation', 'like', "%{$description}%")
-        ->when($status !== null, fn($query) => $query->where('status', $status))
-        ->orderBy('created_at', 'desc')
-        ->paginate(10);
+            ->when($description, function ($query) use ($description) {
+                $query->where(function ($q) use ($description) {
+                    $q->where('name', 'like', "%{$description}%")
+                        ->orWhere('abbreviation', 'like', "%{$description}%");
+                });
+            })
+            ->when($status !== null, fn($query) => $query->where('status', $status))
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
         $measurementUnits->getCollection()->transform(fn($measurementUnit) => $this->mapToEntity($measurementUnit));
 

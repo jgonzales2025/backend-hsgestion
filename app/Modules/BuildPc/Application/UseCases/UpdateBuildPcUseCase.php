@@ -15,6 +15,7 @@ class UpdateBuildPcUseCase
 
       $buildPc = new BuildPc(
           id:$id,
+          company_id:$data->company_id,
           name:$data->name,
           description:$data->description,
           total_price:$data->total_price,

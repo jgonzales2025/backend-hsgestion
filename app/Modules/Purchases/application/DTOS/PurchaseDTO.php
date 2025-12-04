@@ -3,6 +3,7 @@
 namespace App\Modules\Purchases\Application\DTOS;
 
 class PurchaseDTO{
+    public int $company_id;
     public int $branch_id;
     public int $supplier_id;
     public string $serie;
@@ -29,6 +30,7 @@ class PurchaseDTO{
     public string $reference_correlative;
    
     public function __construct(array $array){
+        $this->company_id = $array['company_id'];
         $this->branch_id = $array['branch_id'];
         $this->supplier_id = $array['supplier_id'];
         $this->serie = $array['serie'];

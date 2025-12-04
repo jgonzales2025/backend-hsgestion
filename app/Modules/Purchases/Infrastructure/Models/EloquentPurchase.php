@@ -12,6 +12,7 @@ class EloquentPurchase extends Model{
     protected $table = 'purchase';
     
     protected $fillable = [
+        'company_id',
         'branch_id',
         'supplier_id',
         'serie',

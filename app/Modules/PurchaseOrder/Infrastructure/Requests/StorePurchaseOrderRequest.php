@@ -42,7 +42,7 @@ class StorePurchaseOrderRequest extends FormRequest
             'articles.*.quantity' => 'required|integer|min:1',
             'articles.*.purchase_price' => 'required|numeric|min:0',
             'articles.*.subtotal' => 'required|numeric|min:0',
-            'order_purchase_ids' => 'required|array|min:1',
+         
         ];
     }
 

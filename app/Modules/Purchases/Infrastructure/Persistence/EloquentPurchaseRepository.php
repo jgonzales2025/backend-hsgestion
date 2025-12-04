@@ -26,6 +26,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         return $eloquentpurchase->map(function ($purchase) {
             return new Purchase(
                 id: $purchase->id,
+                company_id: $purchase->company_id,
                 branch: $purchase->branches->toDomain($purchase->branches),
                 supplier: $purchase->customers->toDomain($purchase->customers),
                 serie: $purchase->serie,
@@ -63,6 +64,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         }
         return new Purchase(
             id: $eloquentpurchase->id,
+            company_id: $eloquentpurchase->company_id,
             branch: $eloquentpurchase->branches->toDomain($eloquentpurchase->branches),
             supplier: $eloquentpurchase->customers->toDomain($eloquentpurchase->customers),
             serie: $eloquentpurchase->serie,
@@ -92,6 +94,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
     public function save(Purchase $purchase): ?Purchase
     {
         $eloquentpurchase = EloquentPurchase::create([
+            'company_id' => $purchase->getCompanyId(),
             'branch_id' => $purchase->getBranch()->getId(),
             'supplier_id' => $purchase->getSupplier()->getId(),
             'serie' => $purchase->getSerie(),
@@ -143,6 +146,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             type_document_id: $eloquentpurchase->document_type_id  ,
             reference_serie: $eloquentpurchase->reference_serie,
             reference_correlative: $eloquentpurchase->reference_correlative,
+            company_id: $eloquentpurchase->company_id,
         );
     }
     public function update(Purchase $purchase): ?Purchase
@@ -177,9 +181,11 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'document_type_id' => $purchase->getTypeDocumentId(),
             'reference_serie' => $purchase->getReferenceSerie(),
             'reference_correlative' => $purchase->getReferenceCorrelative(),
+            'company_id' => $purchase->getCompanyId(),
         ]);
         return new Purchase(
             id: $purchaseUpdtate->id,
+            company_id: $purchaseUpdtate->company_id,
             branch: $purchaseUpdtate->branches->toDomain($purchaseUpdtate->branches),
             supplier: $purchaseUpdtate->customers->toDomain($purchaseUpdtate->customers),
             serie: $purchaseUpdtate->serie,
@@ -204,6 +210,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             type_document_id: $purchaseUpdtate->document_type_id,
             reference_serie: $purchaseUpdtate->reference_serie,
             reference_correlative: $purchaseUpdtate->reference_correlative,
+
         );
     }
 }

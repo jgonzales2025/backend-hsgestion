@@ -8,7 +8,7 @@ readonly class FindAllPurchaseOrdersUseCase
 {
     public function __construct(private readonly PurchaseOrderRepositoryInterface $purchaseOrderRepository){}
 
-    public function execute(string $role, array $branches, int $companyId): array
+    public function execute(string $role, array $branches, int $companyId)
     {
         return $this->purchaseOrderRepository->findAll($role, $branches, $companyId);
     }

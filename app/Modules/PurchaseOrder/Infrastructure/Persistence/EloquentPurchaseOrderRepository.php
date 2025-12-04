@@ -5,11 +5,12 @@ namespace App\Modules\PurchaseOrder\Infrastructure\Persistence;
 use App\Modules\PurchaseOrder\Domain\Entities\PurchaseOrder;
 use App\Modules\PurchaseOrder\Domain\Interfaces\PurchaseOrderRepositoryInterface;
 use App\Modules\PurchaseOrder\Infrastructure\Models\EloquentPurchaseOrder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterface
 {
 
-    public function findAll(string $role, array $branches, int $companyId): array
+    public function findAll(string $role, array $branches, int $companyId): LengthAwarePaginator
     {
         if ($role === 'admin') {
             $purchaseOrders = EloquentPurchaseOrder::orderBy('created_at', 'desc')->get();
@@ -17,10 +18,10 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
             $purchaseOrders = EloquentPurchaseOrder::where('company_id', $companyId)
                 ->whereIn('branch_id', $branches)
                 ->orderBy('created_at', 'desc')
-                ->get();
+                ->paginate(10);
         }
 
-        return $purchaseOrders->map(function ($purchaseOrder) {
+    $purchaseOrders->getCollection()->transform(function ($purchaseOrder) {
             return new PurchaseOrder(
                 id: $purchaseOrder->id,
                 company_id: $purchaseOrder->company_id,
@@ -46,7 +47,9 @@ class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterfac
                 igv: $purchaseOrder->igv,
                 total: $purchaseOrder->total
             );
-        })->toArray();
+        });
+
+        return $purchaseOrders; 
     }
 
     public function save(PurchaseOrder $purchaseOrder): ?PurchaseOrder

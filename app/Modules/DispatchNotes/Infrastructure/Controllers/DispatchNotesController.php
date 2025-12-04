@@ -90,8 +90,19 @@ class DispatchNotesController extends Controller
             ];
         }
 
-        return response()->json($result, 200);
+        return new JsonResponse([
+            'data' => $result,
+            'current_page' => $dispatchNotes->currentPage(),
+            'per_page' => $dispatchNotes->perPage(),
+            'total' => $dispatchNotes->total(),
+            'last_page' => $dispatchNotes->lastPage(),
+            'next_page_url' => $dispatchNotes->nextPageUrl(),
+            'prev_page_url' => $dispatchNotes->previousPageUrl(),
+            'first_page_url' => $dispatchNotes->url(1),
+            'last_page_url' => $dispatchNotes->url($dispatchNotes->lastPage()),
+        ]);
     }
+
     public function store(RequestStore $store): JsonResponse
     {
         $dispatchUseCase = new FindByDocumentSale($this->dispatchNoteRepository);

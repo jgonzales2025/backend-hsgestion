@@ -59,7 +59,7 @@ class PurchaseOrderController extends Controller
         private readonly DetEntryguidePurchaseOrderRepositoryInterface $detEntryguidePurchaseOrderRepository
     ) {}
 
-    public function index(): array
+    public function index(): JsonResponse
     {
         $role = request()->get('role');
         $branches = request()->get('branches');
@@ -78,7 +78,17 @@ class PurchaseOrderController extends Controller
             $result[] = $response;
         }
 
-        return $result;
+        return new JsonResponse([
+            "data"=> $result,
+            "current_page"=> $purchaseOrders->currentPage(),
+            "per_page"=> $purchaseOrders->perPage(),
+            "total"=> $purchaseOrders->total(),
+            "last_page"=> $purchaseOrders->lastPage(),
+            "next_page_url"=> $purchaseOrders->nextPageUrl(),
+            "prev_page_url"=> $purchaseOrders->previousPageUrl(),
+            "first_page_url"=> $purchaseOrders->url(1),
+            "last_page_url"=> $purchaseOrders->url($purchaseOrders->lastPage()),
+        ]);
     }
 
     public function store(StorePurchaseOrderRequest $request): JsonResponse
@@ -89,7 +99,7 @@ class PurchaseOrderController extends Controller
             $purchaseOrder = $purchaseOrderUseCase->execute($purchaseOrderDTO);
 
             $purchaseOrderArticles = $this->createPurchaseOrderArticles($purchaseOrder, $request->validated()['articles']);
-            $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($purchaseOrder, $request->validated()['det_entry_guide_purchase_order']);
+            $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($purchaseOrder, $request->validated()['order_purchase_ids']);
            
             $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
             $response['articles'] = PurchaseOrderArticleResource::collection($purchaseOrderArticles)->resolve();
@@ -296,8 +306,8 @@ class PurchaseOrderController extends Controller
         $createdDetails = [];
         foreach ($entryGuideIds as $entryGuideId) {
             $detEntryguidePurchaseOrderDTO = new DetEntryguidePurchaseorderDTO([
-                'purchase_order_id' => $purchaseOrderId->getId(),
-                'entry_guide_id' => $entryGuideId,
+                'entry_guide_id' => $purchaseOrderId->getId(),
+                'purchase_order_id' => $entryGuideId,
             ]);
             $createdDetails[] = $createDetEntryguidePurchaseOrderUseCase->execute($detEntryguidePurchaseOrderDTO);
         }

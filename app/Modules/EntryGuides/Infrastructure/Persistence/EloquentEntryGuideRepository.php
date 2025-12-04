@@ -6,32 +6,27 @@ use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
 use App\Modules\EntryGuides\Infrastructure\Models\EloquentEntryGuide;
+use Illuminate\Pagination\LengthAwarePaginator;
 use PhpParser\Node\NullableType;
 
 class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 {
 
-    public function findAll(?string $serie, ?string $correlativo): array|EntryGuide
+    public function findAll(?string $serie, ?string $correlativo): LengthAwarePaginator
     {
         $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason']);
-
-
+ 
         if (!empty($serie)) {
-            $query->where(function ($q) use ($serie) {
-                $q->where('customer_id', $serie);
-                //   ->orWhere('correlative', $seriecorrel);
-            });
+            $query->where('serie', $serie);
         }
 
         if (!empty($correlativo)) {
-            $query->where(function ($q) use ($correlativo) {
-                $q->where('correlative', $correlativo);
-            });
+            $query->where('correlative', $correlativo);
         }
 
-        $eloquentAll = $query->orderByDesc('id')->get();
+        $paginator = $query->orderByDesc('id')->paginate(10);
 
-        return $eloquentAll->map(function ($entryGuide) {
+        $paginator->getCollection()->transform(function ($entryGuide) {
             return new EntryGuide(
                 id: $entryGuide->id,
                 cia: $entryGuide->company?->toDomain($entryGuide->company),
@@ -46,8 +41,11 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 reference_po_correlative: $entryGuide->reference_po_correlative,
                 status: 1,
             );
-        })->toArray();
+        });
+
+        return $paginator;
     }
+
     public function findByCorrelative(?string $correlativo): ?EntryGuide
     {
 

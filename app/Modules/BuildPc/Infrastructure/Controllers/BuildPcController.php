@@ -29,7 +29,7 @@ class BuildPcController
     {
         $search = $request->query('search');
         $is_active = $request->query('is_active');
-    
+
 
         $buildPcUseCase = new FindAllBuildPcUseCase($this->buildPcRepository);
         $buildPcs = $buildPcUseCase->execute($search, $is_active);
@@ -157,5 +157,21 @@ class BuildPcController
 
             return $createDetailUseCase->execute($detailDTO);
         }, $detailsData);
+    }
+    public function updateStatus(Request $request, int $id): JsonResponse
+    {
+        $validated = $request->validate([
+            'status' => 'required|integer'
+        ]);
+
+        $status = $validated['status'];
+
+        $buildPc = $this->buildPcRepository->updateSstatus($id, $status);
+
+        if (!$buildPc) {
+            return response()->json(['message' => 'Build PC no encontrado'], 404);
+        }
+
+        return response()->json((new BuildPcResource($buildPc))->resolve(), 200);
     }
 }

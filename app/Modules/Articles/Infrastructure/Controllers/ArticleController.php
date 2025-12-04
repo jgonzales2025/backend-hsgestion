@@ -272,7 +272,7 @@ class ArticleController extends Controller
     $articleUseCase = new CreateArticleUseCase(
       $this->categoryRepository,
       $this->articleRepository,
-      $this->measurementUnitRepository,
+      $this->measurementUnitRepository, 
       $this->brandRepository,
       $this->userRepository,
       $this->currencyTypeRepository,

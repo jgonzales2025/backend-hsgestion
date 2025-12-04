@@ -6,7 +6,7 @@ use App\Modules\Bank\Domain\Entities\Bank;
 
 interface BankRepositoryInterface
 {
-    public function findAll(): array;
+    public function findAll(?string $description, ?int $status, ?int $company_id, ?int $currency_type_id);
     public function save(Bank $bank): ?Bank;
     public function findById(int $id): ?Bank;
     public function update(Bank $bank): ?Bank;

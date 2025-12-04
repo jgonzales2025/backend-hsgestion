@@ -64,10 +64,11 @@ class EloquentExchangeRateRepository implements ExchangeRateRepositoryInterface
         );
     }
 
-    public function findAll(string $startDate, string $endDate)
+    public function findAll(?string $startDate, ?string $endDate)
     {
         $exchangeRates = EloquentExchangeRate::query()
-            ->whereBetween('date', [$startDate, $endDate])
+            ->when($startDate, fn($query) => $query->where('date', '>=', $startDate))
+            ->when($endDate, fn($query) => $query->where('date', '<=', $endDate))
             ->orderBy('date', 'desc')
             ->paginate(10);
 

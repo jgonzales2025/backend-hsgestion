@@ -177,6 +177,7 @@ class PettyCashReceiptController extends Controller
             'total'          => $datos->total(),
             'last_page'      => $datos->lastPage(),
             'next_page_url'  => $datos->nextPageUrl(),
+            'last_page_url' => $datos->url($datos->lastPage()),
             'prev_page_url'  => $datos->previousPageUrl(),
             
         ]);

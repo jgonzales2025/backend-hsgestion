@@ -9,21 +9,16 @@ use App\Modules\PercentageIGV\Infrastructure\Models\EloquentPercentageIGV;
 class EloquentPercentageIGVRepository implements PercentageIGVRepositoryInterface
 {
 
-    public function findAll(): array
+    public function findAll()
     {
-        $percentages = EloquentPercentageIGV::all()->sortByDesc('date');
+        $percentages = EloquentPercentageIGV::query()->orderBy('date', 'desc')->paginate(10);
 
-        if ($percentages->isEmpty()) {
-            return [];
-        }
-
-        return $percentages->map(function ($percentage) {
-            return new PercentageIGV(
+        $percentages->getCollection()->transform(fn($percentage) => new PercentageIGV(
                 id: $percentage->id,
                 date: new \DateTimeImmutable($percentage->date),
                 percentage: $percentage->percentage,
-            );
-        })->toArray();
+            ));
+        return $percentages;
     }
 
     public function save(PercentageIGV $percentageIGV): ?PercentageIGV

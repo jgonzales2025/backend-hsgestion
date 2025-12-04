@@ -8,8 +8,8 @@ readonly class FindAllCustomersExcludingCompaniesUseCase
 {
     public function __construct(private readonly CustomerRepositoryInterface $customerRepository){}
 
-    public function execute(?string $customerName): array
+    public function execute(?string $customerName, ?int $status, ?int $documentTypeId)
     {
-        return $this->customerRepository->findAllCustomerExceptionCompanies($customerName);
+        return $this->customerRepository->findAllCustomerExceptionCompanies($customerName, $status, $documentTypeId);
     }
 }

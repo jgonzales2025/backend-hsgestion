@@ -28,12 +28,25 @@ class BankController extends Controller
         private readonly CompanyRepositoryInterface $companyRepository,
     ){}
 
-    public function index(): array
+    public function index(Request $request): JsonResponse
     {
+        $description = $request->query('description');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
+        $currency_type_id = $request->query('currency_type_id');
         $bankUseCase = new FindAllBanksUseCase($this->bankRepository);
-        $banks = $bankUseCase->execute();
+        $banks = $bankUseCase->execute($description, $status, $currency_type_id);
 
-        return BankResource::collection($banks)->resolve();
+        return new JsonResponse([
+            'data' => BankResource::collection($banks)->resolve(),
+            'current_page' => $banks->currentPage(),
+            'per_page' => $banks->perPage(),
+            'total' => $banks->total(),
+            'last_page' => $banks->lastPage(),
+            'next_page_url' => $banks->nextPageUrl(),
+            'prev_page_url' => $banks->previousPageUrl(),
+            'first_page_url' => $banks->url(1),
+            'last_page_url' => $banks->url($banks->lastPage()),
+        ]);
     }
 
     public function store(StoreBankRequest $request): JsonResponse

@@ -12,17 +12,30 @@ use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
 use App\Modules\ExchangeRate\Infrastructure\Requests\UpdateExchangeRateRequest;
 use App\Modules\ExchangeRate\Infrastructure\Resources\ExchangeRateResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ExchangeRateController extends Controller
 {
     public function __construct(private readonly ExchangeRateRepositoryInterface $exchangeRateRepository){}
 
-    public function index(): array
+    public function index(Request $request): JsonResponse
     {
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
         $exchangeRateUseCase = new FindAllExchangeRatesUseCase($this->exchangeRateRepository);
-        $exchangeRates = $exchangeRateUseCase->execute();
+        $exchangeRates = $exchangeRateUseCase->execute($startDate, $endDate);
 
-        return ExchangeRateResource::collection($exchangeRates)->resolve();
+        return new JsonResponse([
+            'data' => ExchangeRateResource::collection($exchangeRates)->resolve(),
+            'current_page' => $exchangeRates->currentPage(),
+            'per_page' => $exchangeRates->perPage(),
+            'total' => $exchangeRates->total(),
+            'last_page' => $exchangeRates->lastPage(),
+            'next_page_url' => $exchangeRates->nextPageUrl(),
+            'prev_page_url' => $exchangeRates->previousPageUrl(),
+            'first_page_url' => $exchangeRates->url(1),
+            'last_page_url' => $exchangeRates->url($exchangeRates->lastPage()),
+        ]);
     }
 
     public function current(): JsonResponse

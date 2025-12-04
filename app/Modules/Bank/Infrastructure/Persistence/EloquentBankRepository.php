@@ -10,18 +10,21 @@ use App\Modules\Bank\Infrastructure\Models\EloquentBank;
 class EloquentBankRepository implements BankRepositoryInterface
 {
 
-    public function findAll(): array
+    public function findAll(?string $description, ?int $status, ?int $currency_type_id)
     {
         $payload = auth('api')->payload();
         $companyId = $payload->get('company_id');
 
         $eloquentBanks = EloquentBank::with('currencyType', 'user', 'company')
             ->where('company_id', $companyId)
-            ->get();
+            ->when($description, fn($query) => $query->where('name', 'like', "%{$description}%")
+                ->orWhere('account_number', 'like', "%{$description}%"))
+            ->when($status !== null, fn($query) => $query->where('status', $status))
+            ->when($currency_type_id, fn($query) => $query->where('currency_type_id', $currency_type_id))
+            ->paginate(10);
 
-        return $eloquentBanks->map(function ($eloquentBank) {
-
-            return new Bank(
+        $eloquentBanks->getCollection()->transform(fn($eloquentBank) => (
+            new Bank(
                 id: $eloquentBank->id,
                 name: $eloquentBank->name,
                 account_number: $eloquentBank->account_number,
@@ -30,8 +33,10 @@ class EloquentBankRepository implements BankRepositoryInterface
                 date_at: $eloquentBank->created_at,
                 company: $eloquentBank->company->toDomain($eloquentBank->company),
                 status: $eloquentBank->status,
-            );
-        })->toArray();
+            ))
+        );
+
+        return $eloquentBanks;
     }
 
     public function save(Bank $bank): ?Bank

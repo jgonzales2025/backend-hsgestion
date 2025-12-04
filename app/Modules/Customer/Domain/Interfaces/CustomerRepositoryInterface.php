@@ -12,7 +12,7 @@ interface CustomerRepositoryInterface
     public function update(Customer $customer): ?Customer;
     public function findAllUnassigned(): array;
     public function findCustomerCompany(): ?Customer;
-    public function findAllCustomerExceptionCompanies(?string $customerName): array;
+    public function findAllCustomerExceptionCompanies(?string $customerName, ?int $status, ?int $documentTypeId);
     public function saveCustomerBySunatApi(Customer $customer): ?Customer;
     public function findCustomerByDocumentNumber(string $documentNumber): ?Customer;
     public function findAllCustomersSuppliers(): array;

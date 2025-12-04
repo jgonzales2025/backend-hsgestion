@@ -13,8 +13,8 @@ class FindAllUsersUseCase
         $this->userRepository = $userRepository;
     }
 
-    public function execute()
+    public function execute(?string $description, ?int $roleId, ?int $statusLogin, ?int $status)
     {
-        return $this->userRepository->findAllUsers();
+        return $this->userRepository->findAllUsers($description, $roleId, $statusLogin, $status);
     }
 }

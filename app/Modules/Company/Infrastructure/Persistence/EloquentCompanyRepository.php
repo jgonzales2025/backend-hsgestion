@@ -11,14 +11,14 @@ use Illuminate\Support\Facades\Log;
 
 class EloquentCompanyRepository implements CompanyRepositoryInterface
 {
-    public function findAllCompanys():array{
-       $companys = EloquentCompany::with('branches')->orderBy('created_at')->get();
-       if ($companys->isEmpty()) {
-          return [];
-       }
-
-        return $companys->map(function($company){
-            return new Company(
+    public function findAllCompanys(?string $description, ?int $status){
+       $companys = EloquentCompany::with('branches')->orderBy('created_at')
+       ->when($description, fn($query) => $query->where('company_name', 'like', "%{$description}%")
+           ->orWhere('ruc', 'like', "%{$description}%"))
+       ->when($status !== null, fn($query) => $query->where('status', $status))
+       ->paginate(10);
+       
+        $companys->getCollection()->transform(fn($company) => new Company(
                 id:$company->id,
                 ruc:$company->ruc,
                 company_name:$company->company_name,
@@ -26,8 +26,8 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
                 start_date:$company->start_date,
                 ubigeo:$company->ubigeo,
                 status:$company->status
-            );
-           })->toArray();
+            ));
+        return $companys;
     }
     public function findById(int $id):?Company{
         $company = EloquentCompany::with('assignments')->find($id);

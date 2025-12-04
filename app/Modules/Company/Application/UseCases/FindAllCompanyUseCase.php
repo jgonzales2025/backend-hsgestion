@@ -10,8 +10,8 @@ class FindAllCompanyUseCase{
     public function __construct(CompanyRepositoryInterface $companyRepository){
        $this->companyRepository= $companyRepository;
     }
-    public function execute(){
-        return $this->companyRepository->findAllCompanys();
+    public function execute(?string $description, ?int $status){
+        return $this->companyRepository->findAllCompanys($description, $status);
     }
     
 }

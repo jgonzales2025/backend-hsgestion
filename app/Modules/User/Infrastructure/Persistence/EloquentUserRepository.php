@@ -105,15 +105,19 @@ class EloquentUserRepository implements UserRepositoryInterface
         $eloquentUser->update($data);
     }
 
-    public function findAllUsers(): array
+    public function findAllUsers(?string $description, ?int $roleId, ?int $statusLogin, ?int $status)
     {
-        $users = EloquentUser::with('roles', 'assignments')->orderBy('created_at', 'desc')->get();
+        $users = EloquentUser::with('roles', 'assignments')
+        ->when($description, fn($query) => $query->where('username', 'like', "%{$description}%")
+            ->orWhere('firstname', 'like', "%{$description}%")
+            ->orWhere('lastname', 'like', "%{$description}%")
+            ->orWhereHas('roles', fn($query) => $query->where('name', 'like', "%{$description}%")))
+        ->when($roleId, fn($query) => $query->whereHas('roles', fn($query) => $query->where('id', $roleId)))
+        ->when($statusLogin !== null, fn($query) => $query->where('st_login', $statusLogin))
+        ->when($status !== null, fn($query) => $query->where('status', $status))
+        ->orderBy('created_at', 'desc')->paginate(10);
 
-        if ($users->isEmpty()) {
-            return [];
-        }
-
-        return $users->map(function ($user) {
+        $users->getCollection()->transform(function ($user) {
             $assignments = $user->assignments->map(function ($assignment) {
                 return [
                     'id' => $assignment->id,
@@ -134,7 +138,9 @@ class EloquentUserRepository implements UserRepositoryInterface
                 assignment: $assignments,
                 st_login: $user->st_login
             );
-        })->toArray();
+        });
+
+        return $users;
     }
 
     public function findByUserName(string $userName): ?User

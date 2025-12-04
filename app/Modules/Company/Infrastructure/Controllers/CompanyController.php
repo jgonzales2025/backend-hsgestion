@@ -18,18 +18,30 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class CompanyController extends Controller
 {
 
-      protected $companieRepository;
+    protected $companieRepository;
 
     public function __construct()
     {
         $this->companieRepository = new EloquentCompanyRepository();
     }
-    public function index(): array
+    public function index(Request $request): JsonResponse
     {
-          $companyUseCase = new FindAllCompanyUseCase($this->companieRepository);
-        $company = $companyUseCase->execute();
-            // Log::info('companys', $company);
-        return CompanyResource::collection($company)->resolve();
+        $description = $request->query('description');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
+        $companyUseCase = new FindAllCompanyUseCase($this->companieRepository);
+        $company = $companyUseCase->execute($description, $status);
+        
+        return new JsonResponse([
+            'data' => CompanyResource::collection($company)->resolve(),
+            'current_page' => $company->currentPage(),
+            'per_page' => $company->perPage(),
+            'total' => $company->total(),
+            'last_page' => $company->lastPage(),
+            'next_page_url' => $company->nextPageUrl(),
+            'prev_page_url' => $company->previousPageUrl(),
+            'first_page_url' => $company->url(1),
+            'last_page_url' => $company->url($company->lastPage()),
+        ]);
     }
 
     public function indexByUser(Request $request): JsonResource
@@ -42,10 +54,10 @@ class CompanyController extends Controller
             });
         })->get();
 
-        return CompanyByUserResource    ::collection($company);
+        return CompanyByUserResource::collection($company);
     }
 
-   public function show(int $id): JsonResponse
+    public function show(int $id): JsonResponse
     {
         $branchUseCase = new FindByIdCompanyUseCase($this->companieRepository);
         $branch = $branchUseCase->execute($id);

@@ -9,7 +9,7 @@ use App\Modules\DigitalWallet\Infrastructure\Models\EloquentDigitalWallet;
 class EloquentDigitalWalletRepository implements DigitalWalletRepositoryInterface
 {
 
-    public function findAll(): array
+    public function findAll(?string $description, ?int $status)
     {
         $payload = auth('api')->payload();
         $companyId = $payload->get('company_id');
@@ -17,18 +17,23 @@ class EloquentDigitalWalletRepository implements DigitalWalletRepositoryInterfac
         $eloquentDigitalWallets = EloquentDigitalWallet::with('user', 'company')
             ->where('company_id', $companyId)
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->when($description, fn($query) => $query->where('name', 'like', "%{$description}%")
+                ->orWhere('phone', 'like', "%{$description}%"))
+            ->when($status !== null, fn($query) => $query->where('status', $status))
+            ->paginate(10);
 
-        return $eloquentDigitalWallets->map(function ($eloquentDigitalWallet) {
-            return new DigitalWallet(
+        $eloquentDigitalWallets->getCollection()->transform(fn($eloquentDigitalWallet) => (
+            new DigitalWallet(
                 id: $eloquentDigitalWallet->id,
                 name: $eloquentDigitalWallet->name,
                 phone: $eloquentDigitalWallet->phone,
                 company: $eloquentDigitalWallet->company->toDomain($eloquentDigitalWallet->company),
                 user: $eloquentDigitalWallet->user->toDomain($eloquentDigitalWallet->user),
                 status: $eloquentDigitalWallet->status,
-            );
-        })->toArray();
+            ))
+        );
+
+        return $eloquentDigitalWallets;
     }
 
     public function save(DigitalWallet $digitalWallet): ?DigitalWallet

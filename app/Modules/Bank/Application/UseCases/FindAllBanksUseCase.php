@@ -8,8 +8,8 @@ readonly class FindAllBanksUseCase
 {
     public function __construct(private readonly BankRepositoryInterface $bankRepository){}
 
-    public function execute(): array
+    public function execute(?string $description, ?int $status, ?int $currency_type_id)
     {
-        return $this->bankRepository->findAll();
+        return $this->bankRepository->findAll($description, $status, $currency_type_id);
     }
 }

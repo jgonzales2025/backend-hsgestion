@@ -13,10 +13,21 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $roles = Role::all();
-        return response()->json($roles);
+        $description = $request->query('description');
+        $roles = Role::when($description, fn($query) => $query->where('name', 'like', "%{$description}%"))->paginate(10);
+        return new JsonResponse([
+            'data' => $roles->items(),
+            'current_page' => $roles->currentPage(),
+            'per_page' => $roles->perPage(),
+            'total' => $roles->total(),
+            'last_page' => $roles->lastPage(),
+            'next_page_url' => $roles->nextPageUrl(),
+            'prev_page_url' => $roles->previousPageUrl(),
+            'first_page_url' => $roles->url(1),
+            'last_page_url' => $roles->url($roles->lastPage()),
+        ]);
     }
 
     public function store(StoreRoleRequest $request)

@@ -13,7 +13,7 @@ class FindAllPercentageIGVUseCase
         $this->percentageIGVRepository = $percentageIGVRepository;
     }
 
-    public function execute(): array
+    public function execute()
     {
         return $this->percentageIGVRepository->findAll();
     }

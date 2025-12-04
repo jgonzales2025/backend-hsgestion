@@ -69,7 +69,8 @@ class CustomerController extends Controller
         private readonly CustomerPortfolioRepositoryInterface $customerPortfolioRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly ApiSunatService $apiSunatService
-    ){}
+    ) {
+    }
 
     public function index(Request $request): array
     {
@@ -90,8 +91,7 @@ class CustomerController extends Controller
         $customerUseCase = new CreateCustomerUseCase($this->customerRepository);
         $customer = $customerUseCase->execute($customerDTO);
 
-        if ($role == 'Vendedor')
-        {
+        if ($role == 'Vendedor') {
             $userId = request()->get('user_id');
             $customerPortfolioDTO = new CustomerPortfolioDTO(['customer_ids' => [$customer->getId()], 'user_id' => $userId]);
             $customerPortfolioUseCase = new CreateCustomerPortfolioUseCase($this->customerPortfolioRepository, $this->customerRepository, $this->userRepository);
@@ -165,7 +165,8 @@ class CustomerController extends Controller
                 'phones' => CustomerPhoneResource::collection($customer->getPhones())->resolve(),
                 'emails' => CustomerEmailResource::collection($customer->getEmails())->resolve(),
                 'addresses' => CustomerAddressResource::collection($customer->getAddresses())->resolve(),
-            ], 200
+            ],
+            200
         );
     }
 
@@ -245,17 +246,30 @@ class CustomerController extends Controller
 
         return response()->json([
             'customer' => (new CustomerCompanyResource($customer))->resolve(),
-            'addresses' => CustomerAddressResource::collection($customer->getAddresses())->resolve(),]);
+            'addresses' => CustomerAddressResource::collection($customer->getAddresses())->resolve(),
+        ]);
 
     }
-    public function findAllCustomersExceptionCompanies(Request $request):array
+    public function findAllCustomersExceptionCompanies(Request $request): JsonResponse
     {
         $customerName = $request->query('customer_name');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
+        $documentTypeId = $request->query('document_type_id');
 
         $customersUseCase = new FindAllCustomersExcludingCompaniesUseCase($this->customerRepository);
-        $customers = $customersUseCase->execute($customerName);
+        $customers = $customersUseCase->execute($customerName, $status, $documentTypeId);
 
-        return CustomerAllResource::collection($customers)->resolve();
+        return new JsonResponse([
+            'data' => CustomerAllResource::collection($customers)->resolve(),
+            'current_page' => $customers->currentPage(),
+            'per_page' => $customers->perPage(),
+            'total' => $customers->total(),
+            'last_page' => $customers->lastPage(),
+            'next_page_url' => $customers->nextPageUrl(),
+            'prev_page_url' => $customers->previousPageUrl(),
+            'first_page_url' => $customers->url(1),
+            'last_page_url' => $customers->url($customers->lastPage()),
+        ]);
     }
 
     public function storeCustomerBySunatApi(Request $request): JsonResponse

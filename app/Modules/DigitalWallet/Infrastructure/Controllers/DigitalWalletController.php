@@ -27,12 +27,24 @@ class DigitalWalletController extends Controller
         private readonly UserRepositoryInterface $userRepository,
     ){}
 
-    public function index(): array
+    public function index(Request $request): JsonResponse
     {
+        $description = $request->query('description');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
         $digitalWalletUseCase = new FindAllDigitalWalletUseCase($this->digitalWalletRepository);
-        $digitalWallets = $digitalWalletUseCase->execute();
+        $digitalWallets = $digitalWalletUseCase->execute($description, $status);
 
-        return DigitalWalletResource::collection($digitalWallets)->resolve();
+        return new JsonResponse([
+            'data' => DigitalWalletResource::collection($digitalWallets)->resolve(),
+            'current_page' => $digitalWallets->currentPage(),
+            'per_page' => $digitalWallets->perPage(),
+            'total' => $digitalWallets->total(),
+            'last_page' => $digitalWallets->lastPage(),
+            'next_page_url' => $digitalWallets->nextPageUrl(),
+            'prev_page_url' => $digitalWallets->previousPageUrl(),
+            'first_page_url' => $digitalWallets->url(1),
+            'last_page_url' => $digitalWallets->url($digitalWallets->lastPage()),
+        ]);
     }
 
     public function store(StoreDigitalWalletRequest $request): JsonResponse

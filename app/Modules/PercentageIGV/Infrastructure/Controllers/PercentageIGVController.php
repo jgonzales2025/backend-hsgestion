@@ -24,11 +24,21 @@ class PercentageIGVController extends Controller
         $this->percentageIGVRepository = $percentageIGVRepository;
     }
 
-    public function index(): array
+    public function index(): JsonResponse
     {
         $percentageIGVs = new FindAllPercentageIGVUseCase($this->percentageIGVRepository);
         $percentageIGVs = $percentageIGVs->execute();
-        return PercentageIGVResource::collection($percentageIGVs)->resolve();
+        return new JsonResponse([
+            'data' => PercentageIGVResource::collection($percentageIGVs)->resolve(),
+            'current_page' => $percentageIGVs->currentPage(),
+            'per_page' => $percentageIGVs->perPage(),
+            'total' => $percentageIGVs->total(),
+            'last_page' => $percentageIGVs->lastPage(),
+            'next_page_url' => $percentageIGVs->nextPageUrl(),
+            'prev_page_url' => $percentageIGVs->previousPageUrl(),
+            'first_page_url' => $percentageIGVs->url(1),
+            'last_page_url' => $percentageIGVs->url($percentageIGVs->lastPage()),
+        ]);
     }
 
     public function store(StorePercentageIGVRequest $request): JsonResponse

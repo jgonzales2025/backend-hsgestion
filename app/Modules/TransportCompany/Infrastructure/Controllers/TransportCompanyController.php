@@ -36,10 +36,21 @@ class TransportCompanyController extends Controller
     public function index(Request $request): JsonResponse
     {
         $description = $request->query('description');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
         $transportUseCase = new FindAllTransportCompaniesUseCase($this->transportCompanyRepository);
-        $transportCompanies = $transportUseCase->execute($description);
+        $transportCompanies = $transportUseCase->execute($description, $status);
 
-        return response()->json((TransportCompanyResource::collection($transportCompanies))->resolve());
+        return new JsonResponse([
+            'data' => TransportCompanyResource::collection($transportCompanies)->resolve(),
+            'current_page' => $transportCompanies->currentPage(),
+            'per_page' => $transportCompanies->perPage(),
+            'total' => $transportCompanies->total(),
+            'last_page' => $transportCompanies->lastPage(),
+            'next_page_url' => $transportCompanies->nextPageUrl(),
+            'prev_page_url' => $transportCompanies->previousPageUrl(),
+            'first_page_url' => $transportCompanies->url(1),
+            'last_page_url' => $transportCompanies->url($transportCompanies->lastPage()),
+        ]);
     }
 
     public function store(StoreTransportCompanyRequest $request): JsonResponse

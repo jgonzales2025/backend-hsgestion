@@ -19,7 +19,8 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
         private readonly CustomerPhoneRepositoryInterface $customerPhoneRepository,
         private readonly CustomerEmailRepositoryInterface $customerEmailRepository,
         private readonly CustomerAddressRepositoryInterface $customerAddressRepository,
-    ){}
+    ) {
+    }
     public function findAll(?string $customerName, ?string $documentNumber): array
     {
         $customers = EloquentCustomer::all()->sortByDesc('created_at');
@@ -132,7 +133,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
         return $this->buildCustomer($customerCompany, [], [], $addresses);
     }
 
-    public function findAllCustomerExceptionCompanies(?string $customerName): array
+    public function findAllCustomerExceptionCompanies(?string $customerName, ?int $status, ?int $documentTypeId)
     {
         $customers = EloquentCustomer::query()
             ->when($customerName, function ($query, $name) {
@@ -144,11 +145,17 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
                         ->orWhere('document_number', 'like', "%{$name}%");
                 });
             })
+            ->when($status !== null, function ($query) use ($status) {
+                return $query->where('status', $status);
+            })
+            ->when($documentTypeId, function ($query) use ($documentTypeId) {
+                return $query->where('customer_document_type_id', $documentTypeId);
+            })
             ->where('st_sales', 1)
-            ->orderByDesc('created_at')
-            ->get();
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-        return $customers->map(function (EloquentCustomer $customer) {
+        $customers->getCollection()->transform(function (EloquentCustomer $customer) {
 
             $contactData = $this->getCustomerContactData($customer->id);
             $phones = $contactData['phones'];
@@ -156,7 +163,9 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             $addresses = $contactData['addresses'];
 
             return $this->buildCustomer($customer, $phones, $emails, $addresses);
-        })->toArray();
+        });
+
+        return $customers;
     }
 
     public function saveCustomerBySunatApi(Customer $customer): ?Customer

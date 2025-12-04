@@ -8,8 +8,8 @@ readonly class FindAllLoginAttemptsUseCase
 {
     public function __construct(private readonly LoginAttemptRepositoryInterface $loginAttemptRepository){}
 
-    public function execute(): array
+    public function execute(?string $description, ?string $roleId)
     {
-        return $this->loginAttemptRepository->findAllLoginAttempts();
+        return $this->loginAttemptRepository->findAllLoginAttempts($description, $roleId);
     }
 }

@@ -9,11 +9,17 @@ use App\Modules\LoginAttempt\Infrastructure\Models\EloquentLoginAttempt;
 
 class EloquentLoginAttemptRepository implements LoginAttemptRepositoryInterface
 {
-    public function findAllLoginAttempts(): array
+    public function findAllLoginAttempts(?string $description, ?string $roleId)
     {
-        $loginAttempts = EloquentLoginAttempt::with('company')->orderBy('created_at', 'desc')->get();
+        $loginAttempts = EloquentLoginAttempt::with('company')->orderBy('created_at', 'desc')
+        ->when($description, fn($query) => $query->where('username', 'like', "%{$description}%")
+            ->orWhere('ip_address', 'like', "%{$description}%")
+            ->orWhere('user_agent', 'like', "%{$description}%")
+            ->orWhere('failure_reason', 'like', "%{$description}%"))
+        ->when($roleId, fn($query) => $query->where('role_id', $roleId))
+        ->paginate(10);
 
-        return $loginAttempts->map(function ($loginAttempt) {
+        $loginAttempts->getCollection()->transform(function ($loginAttempt) {
             $roleName = Role::find($loginAttempt->role_id);
             return new LoginAttempt(
                 id: $loginAttempt->id,
@@ -29,7 +35,9 @@ class EloquentLoginAttemptRepository implements LoginAttemptRepositoryInterface
                 roleName: $roleName?->name,
                 attemptAt: $loginAttempt->created_at,
             );
-        })->toArray();
+        });
+
+        return $loginAttempts;
     }
 
     public function save(LoginAttempt $loginAttempt): void

@@ -71,11 +71,27 @@ class SaleDTO
         $this->user_authorized_id = $data['user_authorized_id'] ?? null;
         $this->coddetrac = $data['coddetrac'] ?? null;
         $this->pordetrac = $data['pordetrac'] ?? null;
-        $this->impdetracs = ($data['currency_type_id'] === 1 ? round($data['total'] * ($data['pordetrac'] / 100), 2) : round($data['total'] * ($data['pordetrac'] / 100) * $data['parallel_rate'], 2)) ?? null;
-        $this->impdetracd = ($data['currency_type_id'] === 2 ? round($data['total'] * ($data['pordetrac'] / 100), 2) : round($data['total'] * ($data['pordetrac'] / 100) / $data['parallel_rate'], 2)) ?? null;
+        $this->impdetracs = $this->pordetrac !== null
+            ? ($data['currency_type_id'] === 1
+                ? round($data['total'] * ($this->pordetrac / 100), 2)
+                : round($data['total'] * ($this->pordetrac / 100) * $data['parallel_rate'], 2))
+            : null;
+        $this->impdetracd = $this->pordetrac !== null
+            ? ($data['currency_type_id'] === 2
+                ? round($data['total'] * ($this->pordetrac / 100), 2)
+                : round($data['total'] * ($this->pordetrac / 100) / $data['parallel_rate'], 2))
+            : null;
         $this->stretencion = $data['stretencion'] ?? null;
         $this->porretencion = $data['porretencion'] ?? null;
-        $this->impretens = ($data['currency_type_id'] === 1 ? round($data['total'] * ($data['porretencion'] / 100), 2) : round(($data['total'] * ($data['porretencion'] / 100)) * $data['parallel_rate'], 2)) ?? null;
-        $this->impretend = ($data['currency_type_id'] === 2 ? round($data['total'] * ($data['porretencion'] / 100), 2) : round($data['total'] * ($data['porretencion'] / 100) / $data['parallel_rate'], 2)) ?? null;
+        $this->impretens = $this->porretencion !== null
+            ? ($data['currency_type_id'] === 1
+                ? round($data['total'] * ($this->porretencion / 100), 2)
+                : round(($data['total'] * ($this->porretencion / 100)) * $data['parallel_rate'], 2))
+            : null;
+        $this->impretend = $this->porretencion !== null
+            ? ($data['currency_type_id'] === 2
+                ? round($data['total'] * ($this->porretencion / 100), 2)
+                : round($data['total'] * ($this->porretencion / 100) / $data['parallel_rate'], 2))
+            : null;
     }
 }

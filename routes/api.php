@@ -448,9 +448,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/detractions', [DetractionController::class, 'index']);
 
     // Statistics - Estadísticas
-    
+
 });
 Route::get('/statistics/customer-consumed-items', [StatisticsController::class, 'getCustomerConsumedItems']);
+Route::get('/statistics/articles-sold', [StatisticsController::class, 'getArticlesSold']);
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);

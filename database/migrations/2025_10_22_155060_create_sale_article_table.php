@@ -20,6 +20,8 @@ return new class extends Migration
             $table->decimal('unit_price', 8, 2);
             $table->decimal('public_price', 8, 2);
             $table->decimal('subtotal', 8, 2);
+            $table->decimal('purchase_price', 8, 2);
+            $table->decimal('costo_neto', 8, 2);
             $table->timestamps();
         });
     }

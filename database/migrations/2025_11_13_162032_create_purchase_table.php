@@ -34,7 +34,11 @@ return new class extends Migration
             $table->float('inafecto');
             $table->float('igv');
             $table->float('total');
+            $table->float('saldo');
             $table->boolean('is_igv')->default(false);
+            $table->foreignId('document_type_id')->constrained('document_types');
+            $table->string('reference_serie');
+            $table->string('reference_correlative');
             $table->timestamps();
         });
     }

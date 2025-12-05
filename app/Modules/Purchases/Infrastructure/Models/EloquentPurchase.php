@@ -33,6 +33,7 @@ class EloquentPurchase extends Model{
         'inafecto',
         'igv',
         'total',
+        'saldo',
         'is_igv',
         'document_type_id',
         'reference_serie',

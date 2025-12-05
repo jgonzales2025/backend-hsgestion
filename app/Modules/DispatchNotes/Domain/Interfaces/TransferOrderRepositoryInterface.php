@@ -6,7 +6,7 @@ use App\Modules\DispatchNotes\Domain\Entities\TransferOrder;
 
 interface TransferOrderRepositoryInterface
 {
-    public function findAll(int $companyId): array;
+    public function findAll(int $companyId, ?string $description, ?string $startDate, ?string $endDate, ?int $status, ?int $emissionReasonId);
     public function save(TransferOrder $transferOrder): TransferOrder;
     public function getLastDocumentNumber(string $serie): ?string;
     public function findById(int $id): ?TransferOrder;

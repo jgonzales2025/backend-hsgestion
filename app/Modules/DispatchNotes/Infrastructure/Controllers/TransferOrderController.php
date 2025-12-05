@@ -43,19 +43,27 @@ class TransferOrderController extends Controller
         private DispatchArticleSerialRepositoryInterface $dispatchArticleSerialRepository,
         private ArticleRepositoryInterface $articleRepository,
         private DispatchNotesRepositoryInterface $dispatchNoteRepository,
-    ){}
+    ) {
+    }
 
-    public function index()
+    public function index(Request $request): JsonResponse
     {
         $companyId = request()->get('company_id');
+
+        $description = $request->query('description');
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
+        $emissionReasonId = $request->query('emission_reason_id');
+
         $transferOrdersUseCase = new FindAllTransferOrdersUseCase($this->transferOrderRepository);
-        $transferOrders = $transferOrdersUseCase->execute($companyId);
+        $transferOrders = $transferOrdersUseCase->execute($companyId, $description, $startDate, $endDate, $status, $emissionReasonId);
 
         $result = [];
-        foreach($transferOrders as $transferOrder) {
+        foreach ($transferOrders as $transferOrder) {
             $articles = $this->dispatchArticleRepositoryInterface->findByDispatchNoteId($transferOrder->getId());
             $serialsByArticle = $this->dispatchArticleSerialRepository->findSerialsByTransferOrderId($transferOrder->getId());
-            
+
             $articlesWithSerials = array_map(function ($article) use ($serialsByArticle) {
                 $article->serials = $serialsByArticle[$article->getArticleId()] ?? [];
                 return $article;
@@ -66,7 +74,17 @@ class TransferOrderController extends Controller
             $result[] = $response;
         }
 
-        return response()->json($result);
+        return new JsonResponse([
+            'data' => $result,
+            'current_page' => $transferOrders->currentPage(),
+            'per_page' => $transferOrders->perPage(),
+            'total' => $transferOrders->total(),
+            'last_page' => $transferOrders->lastPage(),
+            'next_page_url' => $transferOrders->nextPageUrl(),
+            'prev_page_url' => $transferOrders->previousPageUrl(),
+            'first_page_url' => $transferOrders->url(1),
+            'last_page_url' => $transferOrders->url($transferOrders->lastPage()),
+        ]);
     }
 
     public function store(StoreTransferOrderRequest $request)
@@ -96,7 +114,7 @@ class TransferOrderController extends Controller
             $dispatchArticle = $createDispatchArticleUseCase->execute($dispatchArticleDTO);
 
             // Array para almacenar los seriales
-             $serials = [];
+            $serials = [];
 
             if (!empty($article['serials'])) {
                 foreach ($article['serials'] as $serial) {
@@ -159,8 +177,7 @@ class TransferOrderController extends Controller
             return response()->json(['message' => 'Orden de salida no encontrada'], 404);
         }
 
-        if ($transferOrder->getStatus() == 1)
-        {
+        if ($transferOrder->getStatus() == 1) {
             return response()->json(['message' => 'No se puede modificar una orden de salida que ya ha sido recibida.'], 400);
         }
 
@@ -187,7 +204,7 @@ class TransferOrderController extends Controller
             $dispatchArticle = $createDispatchArticleUseCase->execute($dispatchArticleDTO);
 
             // Array para almacenar los seriales
-             $serials = [];
+            $serials = [];
 
             if (!empty($article['serials'])) {
                 foreach ($article['serials'] as $serial) {
@@ -222,8 +239,7 @@ class TransferOrderController extends Controller
             return response()->json(['message' => 'Orden de salida no encontrada'], 404);
         }
 
-        if ($transferOrder->getStatus() == 1)
-        {
+        if ($transferOrder->getStatus() == 1) {
             return response()->json(['message' => 'No se puede modificar una orden de salida que ya ha sido recibida.'], 400);
         }
 

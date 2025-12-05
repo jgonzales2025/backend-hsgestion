@@ -192,12 +192,9 @@ class ControllerEntryGuide extends Controller
             $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
 
-            $detEntryguidePurchaseOrder = null;
 
-            if ($request->validated()['order_purchase_id'] != []) {
-                $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id']);
-            }
-            $detEntryguidePurchaseOrder = [];
+            $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
+         
 
             $this->logTransaction($request, $entryGuide);
 

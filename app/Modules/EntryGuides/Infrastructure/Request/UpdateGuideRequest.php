@@ -29,7 +29,7 @@ class UpdateGuideRequest extends FormRequest
             'entry_guide_articles.*.quantity' => 'required|numeric',
             'entry_guide_articles.*.serials' => 'nullable|array',
             'entry_guide_articles.*.serials.*' => 'required|string|distinct',
-            'order_purchase_id' => 'required|array|min:1',
+            'order_purchase_id' => 'nullable|array',
             // 'order_purchase_id.*.entry_guide_id' => 'required|integer',
         ];
     }

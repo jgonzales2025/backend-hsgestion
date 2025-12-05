@@ -11,4 +11,5 @@ interface ReferenceCodeRepositoryInterface
     public function findById(int $id): array;
     public function update(ReferenceCode $referenceCode): void;
     public function indexid(int $id): ?ReferenceCode;
+    public function deleteByArticleId(int $articleId): bool;
 }

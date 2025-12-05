@@ -79,15 +79,15 @@ class PurchaseOrderController extends Controller
         }
 
         return new JsonResponse([
-            "data"=> $result,
-            "current_page"=> $purchaseOrders->currentPage(),
-            "per_page"=> $purchaseOrders->perPage(),
-            "total"=> $purchaseOrders->total(),
-            "last_page"=> $purchaseOrders->lastPage(),
-            "next_page_url"=> $purchaseOrders->nextPageUrl(),
-            "prev_page_url"=> $purchaseOrders->previousPageUrl(),
-            "first_page_url"=> $purchaseOrders->url(1),
-            "last_page_url"=> $purchaseOrders->url($purchaseOrders->lastPage()),
+            "data" => $result,
+            "current_page" => $purchaseOrders->currentPage(),
+            "per_page" => $purchaseOrders->perPage(),
+            "total" => $purchaseOrders->total(),
+            "last_page" => $purchaseOrders->lastPage(),
+            "next_page_url" => $purchaseOrders->nextPageUrl(),
+            "prev_page_url" => $purchaseOrders->previousPageUrl(),
+            "first_page_url" => $purchaseOrders->url(1),
+            "last_page_url" => $purchaseOrders->url($purchaseOrders->lastPage()),
         ]);
     }
 
@@ -99,10 +99,10 @@ class PurchaseOrderController extends Controller
             $purchaseOrder = $purchaseOrderUseCase->execute($purchaseOrderDTO);
 
             $purchaseOrderArticles = $this->createPurchaseOrderArticles($purchaseOrder, $request->validated()['articles']);
-       
+
             $response = (new PurchaseOrderResource($purchaseOrder))->resolve();
             $response['articles'] = PurchaseOrderArticleResource::collection($purchaseOrderArticles)->resolve();
-       
+
             $this->logTransaction($request, $purchaseOrder);
 
             return response()->json($response, 201);
@@ -297,6 +297,4 @@ class PurchaseOrderController extends Controller
 
         $transactionLogs->execute($transactionDTO);
     }
-
-
 }

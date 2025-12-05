@@ -13,8 +13,10 @@ class UpdateScVoucherRequest extends FormRequest
     public function prepareForValidation()
     {
         $companyId = request()->get('company_id');
+        $userId = auth('api')->user()->id;
         $this->merge([
             'cia' => $companyId,
+            'usrmod' => $userId,
         ]);
     }
 
@@ -23,7 +25,7 @@ class UpdateScVoucherRequest extends FormRequest
         return [
             'cia' => 'required|integer',
             'anopr' => 'required|integer',
-            'correlativo' => 'required|integer',
+            'correlativo' => 'nullable|string',  
             'fecha' => 'required|date',
             'codban' => 'required|integer',
             'codigo' => 'required|integer',
@@ -33,12 +35,12 @@ class UpdateScVoucherRequest extends FormRequest
             'tipmon' => 'required|integer',
             'tipcam' => 'required|numeric',
             'total' => 'required|numeric',
-            'medpag' => 'required|integer',
+            'medpag_id' => 'required|integer',
             'tipopago' => 'required|integer',
             'status' => 'required|integer',
             'usradi' => 'required|integer',
             'fecadi' => 'required|date',
-            'usrmod' => 'required|integer',
+            'usrmod' => 'nullable|integer',
             'detail_sc_voucher' => 'nullable|array',
             'detail_sc_voucher.*.codcon' => 'required|integer',
             'detail_sc_voucher.*.numdoc' => 'required|string',

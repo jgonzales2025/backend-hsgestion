@@ -44,6 +44,20 @@ class EloquentDetEntryguidePurchaseOrderRepository implements DetEntryguidePurch
         );
     }
 
+    public function findByIdEntryGuide(int $id): array
+    {
+        $eloquentDetEntryguidePurchaseOrder = EloquentDetEntryguidePurchaseOrder::where('entry_guide_id', $id)->get();
+
+        $arraydet = $eloquentDetEntryguidePurchaseOrder->map(function ($eloquentDetEntryguidePurchaseOrder) {
+            return new DetEntryguidePurchaseOrder(
+                id: $eloquentDetEntryguidePurchaseOrder->id,
+                purchase_order_id: $eloquentDetEntryguidePurchaseOrder->purchase_order_id,
+                entry_guide_id: $eloquentDetEntryguidePurchaseOrder->entry_guide_id
+            );
+        })->toArray();
+        return $arraydet;
+    }
+
     public function findAll(): array
     {
         $eloquentDetEntryguidePurchaseOrders = EloquentDetEntryguidePurchaseOrder::all();

@@ -102,4 +102,23 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             status: $buildPc->status,
         );
     }
+    public function updateSstatus(int $id, int $status): ?BuildPc
+    {
+        $buildPc = EloquentBuildPc::find($id);
+        if (!$buildPc) {
+            return null;
+        }
+        $buildPc->update([
+            'status' => $status,
+        ]);
+        return new BuildPc(
+            id: $buildPc->id,
+            company_id: $buildPc->company_id,
+            name: $buildPc->name,
+            description: $buildPc->description,
+            total_price: $buildPc->total_price,
+            user_id: $buildPc->user_id,
+            status: $buildPc->status,
+        );
+    }
 }

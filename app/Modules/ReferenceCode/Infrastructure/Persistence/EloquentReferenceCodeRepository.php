@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\ReferenceCode\Infrastructure\Persistence;
 
 use App\Modules\ReferenceCode\Domain\Entities\ReferenceCode;
@@ -55,7 +56,6 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
 
         if (!$EloquentreferenceCode) {
             throw new \Exception("Error Processing Request", 1);
-
         }
         $EloquentreferenceCode->update([
             'ref_code' => $referenceCode->getRefCode(),
@@ -81,4 +81,8 @@ class EloquentReferenceCodeRepository implements ReferenceCodeRepositoryInterfac
         );
     }
 
+    public function deleteByArticleId(int $articleId): bool
+    {
+        return EloquentReferenceCode::where('article_id', $articleId)->delete() !== false;
+    }
 }

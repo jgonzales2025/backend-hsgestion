@@ -399,7 +399,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/build-pc', [BuildPcController::class, 'store']);
     Route::get('/build-pc/{id}', [BuildPcController::class, 'show']);
     Route::put('/build-pc/{id}', [BuildPcController::class, 'update']);
-
+    Route::put('/build-pc/status/{id}', [BuildPcController::class, 'updateStatus']);
 
     // Ruta para las ordenes de compra
     Route::get('/purchase-orders', [PurchaseOrderController::class, 'index']);

@@ -9,5 +9,6 @@ interface DetEntryguidePurchaseOrderRepositoryInterface
     public function create(DetEntryguidePurchaseOrder $detEntryguidePurchaseOrder): DetEntryguidePurchaseOrder;
     public function update(DetEntryguidePurchaseOrder $detEntryguidePurchaseOrder): DetEntryguidePurchaseOrder;
     public function findById(int $id): DetEntryguidePurchaseOrder;
+    public function findByIdEntryGuide(int $id): array;
     public function findAll(): array;
 }

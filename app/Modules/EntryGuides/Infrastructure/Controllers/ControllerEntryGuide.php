@@ -84,10 +84,12 @@ class ControllerEntryGuide extends Controller
             $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
             $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
             $documentEntryGuide = $this->documentEntryGuideRepositoryInterface->findById($entryGuide->getId());
+            $detEntryguidePurchaseOrder = $this->detEntryguidePurchaseOrderRepository->findByIdEntryGuide($entryGuide->getId());
 
-            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle, $documentEntryGuide) {
+            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle, $documentEntryGuide, $detEntryguidePurchaseOrder) {
                 $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
                 $article->document_entry_guide = $documentEntryGuide;
+                $article->order_purchase_id = $detEntryguidePurchaseOrder;
                 return $article;
             }, $articles);
 
@@ -96,6 +98,7 @@ class ControllerEntryGuide extends Controller
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
             $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
+            $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
             $result[] = $response;
         }
 
@@ -125,14 +128,17 @@ class ControllerEntryGuide extends Controller
         foreach ($entryGuides as $entryGuide) {
             $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
             $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
+            $detEntryguidePurchaseOrder = $this->detEntryguidePurchaseOrderRepository->findByIdEntryGuide($entryGuide->getId());
 
-            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle) {
+            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle, $detEntryguidePurchaseOrder) {
                 $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
+                $article->order_purchase_id = $detEntryguidePurchaseOrder;
                 return $article;
             }, $articles);
 
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
+            $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
             $result[] = $response;
         }
 
@@ -151,16 +157,19 @@ class ControllerEntryGuide extends Controller
         $entryArticles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
         $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
         $documentEntryGuide = $this->documentEntryGuideRepositoryInterface->findById($entryGuide->getId());
+        $detEntryguidePurchaseOrder = $this->detEntryguidePurchaseOrderRepository->findByIdEntryGuide($entryGuide->getId());
 
-        $entryArticles = array_map(function ($article) use ($serialsByArticle, $documentEntryGuide) {
+        $entryArticles = array_map(function ($article) use ($serialsByArticle, $documentEntryGuide, $detEntryguidePurchaseOrder) {
             $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
             $article->document_entry_guide = $documentEntryGuide;
+            $article->order_purchase_id = $detEntryguidePurchaseOrder;
             return $article;
         }, $entryArticles);
 
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryArticles)->resolve();
         $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
+        $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
 
         return response()->json($response, 200);
     }
@@ -182,15 +191,20 @@ class ControllerEntryGuide extends Controller
 
             $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
-            $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id']);
+
+            $detEntryguidePurchaseOrder = null;
+
+            if ($request->validated()['order_purchase_id'] != []) {
+                $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id']);
+            }
+            $detEntryguidePurchaseOrder = [];
+
             $this->logTransaction($request, $entryGuide);
 
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
             $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-
-
 
             return response()->json($response, 201);
         });
@@ -220,11 +234,13 @@ class ControllerEntryGuide extends Controller
         $this->entryGuideArticleRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
 
         $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
+        $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
 
         $this->logTransaction($request, $entryGuide);
 
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
+        $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
 
         return response()->json($response, 200);
     }

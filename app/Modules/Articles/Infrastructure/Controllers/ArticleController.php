@@ -221,8 +221,15 @@ class ArticleController extends Controller
 
     $result = $articleUseCase->execute($id, $articleDTO);
 
-    $createreferenceCode = $this->createReferenceCode($result->getId(), $data['reference_code']);
-    $createDetailPcCompatible = $this->createDetailPcCompatible($result, $data['detail_pc_compatible']);
+    // Eliminar registros anteriores para reemplazarlos
+    $this->referenceCodeRepository->deleteByArticleId($id);
+    $this->detailPcCompatibleRepository->deleteByArticleMajorId($id);
+
+    $referenceCodesData = $data['reference_code'] ?? [];
+    $createreferenceCode = $this->createReferenceCode($result->getId(), $referenceCodesData);
+
+    $detailPcData = $data['detail_pc_compatible'] ?? [];
+    $createDetailPcCompatible = $this->createDetailPcCompatible($result, $detailPcData);
 
     return response()->json(
       array_merge(
@@ -282,7 +289,7 @@ class ArticleController extends Controller
     $articleUseCase = new CreateArticleUseCase(
       $this->categoryRepository,
       $this->articleRepository,
-      $this->measurementUnitRepository, 
+      $this->measurementUnitRepository,
       $this->brandRepository,
       $this->userRepository,
       $this->currencyTypeRepository,
@@ -291,7 +298,7 @@ class ArticleController extends Controller
     );
 
     $article = $articleUseCase->execute($articleDTO);
- 
+
     return response()->json(
       (new ArticleResource($article))->resolve(),
       201

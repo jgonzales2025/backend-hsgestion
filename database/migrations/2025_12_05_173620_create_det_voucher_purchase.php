@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('det_voucher_purchase', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('voucher_id')->constrained('vouchers')->cascadeOnDelete();
-            $table->foreignId('purchase_id')->constrained('purchases')->cascadeOnDelete();
+            $table->foreignId('voucher_id')->constrained('sc_voucher')->cascadeOnDelete();
+            $table->foreignId('purchase_id')->constrained('sc_purchase')->cascadeOnDelete();
             $table->decimal('amount', 10, 2);
             $table->timestamps();
         });

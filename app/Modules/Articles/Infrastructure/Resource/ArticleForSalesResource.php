@@ -38,11 +38,11 @@ class ArticleForSalesResource extends JsonResource
                 'name' => $this->resource->getMeasurementUnit()->getName(),
                 'status' => ($this->resource->getMeasurementUnit()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             ],
-            'subCategory' => [
+            'subCategory' => $this->resource->getSubCategory()?->getId() ? [
                 'id' => $this->resource->getSubCategory()->getId(),
                 'name' => $this->resource->getSubCategory()->getName(),
                 'status' => ($this->resource->getSubCategory()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
-            ],
+            ] : null,
             'location' => $this->getLocation(),
             'warranty' => $this->getWarranty(),
             'tariff_rate' => $this->getTariffRate(),

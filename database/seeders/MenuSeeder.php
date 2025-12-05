@@ -217,6 +217,17 @@ class MenuSeeder extends Seeder
             'type' => 'item',
         ]);
 
+        Menu::create([
+            'name' => 'caja_registro_pago_proveedores',
+            'label' => 'Registro de Pago a Proveedores',
+            'route' => '/caja/registro-pagos',
+            'permission' => 'caja.registro_pago_proveedores',
+            'parent_id' => $caja->id,
+            'order' => 8,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
         // ===== ESTADÍSTICAS =====
         $estadistica = Menu::create([
             'name' => 'estadisticas',

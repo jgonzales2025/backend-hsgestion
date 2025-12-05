@@ -21,6 +21,7 @@ class EloquentBankRepository implements BankRepositoryInterface
                 ->orWhere('account_number', 'like', "%{$description}%"))
             ->when($status !== null, fn($query) => $query->where('status', $status))
             ->when($currency_type_id, fn($query) => $query->where('currency_type_id', $currency_type_id))
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         $eloquentBanks->getCollection()->transform(fn($eloquentBank) => (

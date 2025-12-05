@@ -361,4 +361,12 @@ class CustomerController extends Controller
 
         return response()->json(['message' => 'Estado actualizado correctamente'], 200);
     }
+
+    public function findAllUnassigned(): array
+    {
+        $customersUseCase = new FindAllUnassignedCustomerUseCase($this->customerRepository);
+        $customers = $customersUseCase->execute();
+
+        return CustomerAllResource::collection($customers)->resolve();
+    }
 }

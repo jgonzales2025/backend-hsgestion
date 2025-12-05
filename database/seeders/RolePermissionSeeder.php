@@ -41,6 +41,7 @@ class RolePermissionSeeder extends Seeder
             'caja.deposito_cheques',
             'caja.deposito_tarjetas',
             'caja.consulta_voucher',
+            'caja.registro_pago_proveedores',
 
             // ESTADÍSTICAS
             'estadisticas.ventas_vs_costo',
@@ -272,7 +273,8 @@ class RolePermissionSeeder extends Seeder
             ['role_id' => $admin->id, 'menu_id' => 109],
             ['role_id' => $admin->id, 'menu_id' => 110],
             ['role_id' => $admin->id, 'menu_id' => 111],
-            ['role_id' => $admin->id, 'menu_id' => 112]
+            ['role_id' => $admin->id, 'menu_id' => 112],
+            ['role_id' => $admin->id, 'menu_id' => 113]
         ]);
 
         // Gerente

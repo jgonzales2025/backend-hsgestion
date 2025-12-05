@@ -35,6 +35,7 @@ class Purchase
     private ?int $type_document_id;
     private string $reference_serie;
     private string $reference_correlative;
+    private float $saldo;
 
     public function __construct(
         ?int $id,
@@ -62,7 +63,8 @@ class Purchase
         ?int $type_document_id,
         string $reference_serie,
         string $reference_correlative,
-        int $company_id
+        int $company_id,
+        float $saldo
     ) {
         $this->id = $id;
         $this->branch = $branch;
@@ -90,6 +92,7 @@ class Purchase
         $this->reference_serie = $reference_serie;
         $this->reference_correlative = $reference_correlative;
         $this->company_id = $company_id;
+        $this->saldo = $saldo;
     }
 
     public function getId(): int|null
@@ -195,6 +198,10 @@ class Purchase
     public function getCompanyId(): int
     {
         return $this->company_id;
+    }
+    public function getSaldo(): float
+    {
+        return $this->saldo;
     }
 
 }

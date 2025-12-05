@@ -52,6 +52,8 @@ use App\Modules\DetEntryguidePurchaseOrder\Domain\Interface\DetEntryguidePurchas
 use App\Modules\DetEntryguidePurchaseOrder\Infrastrucutre\Persistence\EloquentDetEntryguidePurchaseOrderRepository;
 use App\Modules\Detraction\Domain\Interface\DetractionRepositoryInterface;
 use App\Modules\Detraction\Infrastructure\Persistence\EloquentDetractionRepository;
+use App\Modules\DetVoucherPurchase\Domain\Interface\DetVoucherPurchaseRepositoryInterface;
+use App\Modules\DetVoucherPurchase\Infrastructure\Persistence\EloquentDetVoucherPurchaseRepository;
 use App\Modules\DigitalWallet\Domain\Interfaces\DigitalWalletRepositoryInterface;
 use App\Modules\DigitalWallet\Infrastructure\Persistence\EloquentDigitalWalletRepository;
 use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
@@ -246,6 +248,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ScVoucherdetRepositoryInterface::class, EloquentScVoucherdetRepository::class);
         $this->app->bind(PaymentMethodSunatRepositoryInterface::class, EloquentPaymentMethodSunatRepository::class);
         $this->app->bind(DetEntryguidePurchaseOrderRepositoryInterface::class, EloquentDetEntryguidePurchaseOrderRepository::class);
+       $this->app->bind(DetVoucherPurchaseRepositoryInterface::class, EloquentDetVoucherPurchaseRepository::class);
     }
 
     /**

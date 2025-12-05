@@ -94,8 +94,8 @@ class UpdateArticleRequest extends FormRequest
             'authorized_price_percent' => 'nullable|numeric|min:0',
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
             'is_combo' => 'nullable|boolean',
-            'reference_code' => 'nullable|array|exists:reference_codes,id',
-            'detail_pc_compatible' => 'nullable|array|exists:detail_pc_compatible_tabla,id',
+            'reference_code' => 'nullable|array',
+            'detail_pc_compatible' => 'nullable|array',
         ];
     }
 

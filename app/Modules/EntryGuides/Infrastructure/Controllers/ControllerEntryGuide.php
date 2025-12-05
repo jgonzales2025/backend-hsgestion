@@ -182,16 +182,16 @@ class ControllerEntryGuide extends Controller
 
             $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
-            $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id']);
+
+            $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
+
             $this->logTransaction($request, $entryGuide);
 
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
             $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-
-
-
+ 
             return response()->json($response, 201);
         });
     }
@@ -220,11 +220,13 @@ class ControllerEntryGuide extends Controller
         $this->entryGuideArticleRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
 
         $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
+        $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
 
         $this->logTransaction($request, $entryGuide);
 
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
+        $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
 
         return response()->json($response, 200);
     }

@@ -38,6 +38,7 @@ class EloquentPurchase extends Model{
         'document_type_id',
         'reference_serie',
         'reference_correlative',
+        'saldo'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

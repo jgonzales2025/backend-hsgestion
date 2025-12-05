@@ -7,7 +7,7 @@ class ScVoucher
     private ?int $id;
     private ?int $cia;
     private int $anopr;
-    private int $correlativo;
+    private string $correlativo;
     private string $fecha;
     private int $codban;
     private int $codigo;
@@ -28,7 +28,7 @@ class ScVoucher
         ?int $id,
         ?int $cia,
         int $anopr,
-        int $correlativo,
+        string $correlativo,
         string $fecha,
         int $codban,
         int $codigo,
@@ -77,7 +77,7 @@ class ScVoucher
     {
         return $this->anopr;
     }
-    public function getCorrelativo(): int
+    public function getCorrelativo(): string
     {
         return $this->correlativo;
     }

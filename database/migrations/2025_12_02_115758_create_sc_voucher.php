@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('cia')->nullable();             // INT(2)
             $table->integer('anopr')->default(0);      // SMALLINT(4)
-            $table->integer('correlativo')->default(0);     // INT(5)
+            $table->string('correlativo');     
             $table->date('fecha')->nullable();              // DATE
 
             $table->integer('codban')->default(0);     // SMALLINT(3)

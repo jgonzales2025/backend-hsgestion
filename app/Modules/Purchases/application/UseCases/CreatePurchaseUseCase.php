@@ -75,6 +75,7 @@ class CreatePurchaseUseCase
             type_document_id: $purchaseDTO->type_document_id,
             reference_serie: $purchaseDTO->reference_serie,
             reference_correlative: $purchaseDTO->reference_correlative,
+            saldo: $purchaseDTO->total,
         );
         return $this->purchaseRepository->save($puchaseCreate);
     }

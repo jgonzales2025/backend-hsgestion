@@ -30,6 +30,7 @@ class ScVoucherController extends Controller
     public function index(Request $request): JsonResponse
     {
         $search = $request->query('search');
+        $codiigo = $request->query('codigo');
 
         $findAllUseCase = new FindAllScVoucherUseCase($this->scVoucherRepository);
         $scVouchers = $findAllUseCase->execute($search);

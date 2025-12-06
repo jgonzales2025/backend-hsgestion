@@ -27,7 +27,7 @@ class ScVoucherDTO
     {
         $this->cia = $data['cia'] ?? null;
         $this->anopr = $data['anopr'] ?? 2025;
-        $this->correlativo = $data['correlativo'] ?? '';
+        $this->correlativo = $data['correlative'] ?? '';
         $this->fecha = $data['fecha'];
         $this->codban = $data['codban'];
         $this->codigo = $data['codigo'];

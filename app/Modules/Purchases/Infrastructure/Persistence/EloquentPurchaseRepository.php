@@ -51,6 +51,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 type_document_id: $purchase->document_type_id,
                 reference_serie: $purchase->reference_serie,
                 reference_correlative: $purchase->reference_correlative,
+                saldo: $purchase->saldo,
 
             );
         })->toArray();
@@ -89,6 +90,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             type_document_id: $eloquentpurchase->document_type_id,
             reference_serie: $eloquentpurchase->reference_serie,
             reference_correlative: $eloquentpurchase->reference_correlative,
+            saldo: $eloquentpurchase->saldo,
         );
     }
     public function save(Purchase $purchase): ?Purchase
@@ -119,6 +121,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'document_type_id' => $purchase->getTypeDocumentId(),
             'reference_serie' => $purchase->getReferenceSerie(),
             'reference_correlative' => $purchase->getReferenceCorrelative(),
+            'saldo' => $purchase->getTotal(),
         ]);
         return new Purchase(
             id: $eloquentpurchase->id,
@@ -147,6 +150,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             reference_serie: $eloquentpurchase->reference_serie,
             reference_correlative: $eloquentpurchase->reference_correlative,
             company_id: $eloquentpurchase->company_id,
+            saldo: $eloquentpurchase->saldo,
         );
     }
     public function update(Purchase $purchase): ?Purchase
@@ -182,6 +186,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'reference_serie' => $purchase->getReferenceSerie(),
             'reference_correlative' => $purchase->getReferenceCorrelative(),
             'company_id' => $purchase->getCompanyId(),
+            'saldo' => $purchase->getTotal(),
         ]);
         return new Purchase(
             id: $purchaseUpdtate->id,
@@ -210,6 +215,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             type_document_id: $purchaseUpdtate->document_type_id,
             reference_serie: $purchaseUpdtate->reference_serie,
             reference_correlative: $purchaseUpdtate->reference_correlative,
+            saldo: $purchaseUpdtate->saldo,
 
         );
     }

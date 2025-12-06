@@ -14,7 +14,7 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             'cia' => $scVoucherdet->getCia(),
             'codcon' => $scVoucherdet->getCodcon(),
             'tipdoc' => $scVoucherdet->getTipdoc(),
-            'numdoc' => $scVoucherdet->getNumdoc(),
+
             'glosa' => $scVoucherdet->getGlosa(),
             'impsol' => $scVoucherdet->getImpsol(),
             'impdol' => $scVoucherdet->getImpdol(),
@@ -25,7 +25,7 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             cia: $scVoucherdet->cia,
             codcon: $scVoucherdet->codcon,
             tipdoc: $scVoucherdet->tipdoc,
-            numdoc: $scVoucherdet->numdoc,
+
             glosa: $scVoucherdet->glosa,
             impsol: $scVoucherdet->impsol,
             impdol: $scVoucherdet->impdol,
@@ -39,7 +39,7 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             'cia' => $scVoucherdet->getCia(),
             'codcon' => $scVoucherdet->getCodcon(),
             'tipdoc' => $scVoucherdet->getTipdoc(),
-            'numdoc' => $scVoucherdet->getNumdoc(),
+
             'glosa' => $scVoucherdet->getGlosa(),
             'impsol' => $scVoucherdet->getImpsol(),
             'impdol' => $scVoucherdet->getImpdol(),
@@ -50,7 +50,7 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             cia: $scVoucherdetA->cia,
             codcon: $scVoucherdetA->codcon,
             tipdoc: $scVoucherdetA->tipdoc,
-            numdoc: $scVoucherdetA->numdoc,
+
             glosa: $scVoucherdetA->glosa,
             impsol: $scVoucherdetA->impsol,
             impdol: $scVoucherdetA->impdol,
@@ -65,7 +65,7 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             cia: $scVoucherdet->cia,
             codcon: $scVoucherdet->codcon,
             tipdoc: $scVoucherdet->tipdoc,
-            numdoc: $scVoucherdet->numdoc,
+
             glosa: $scVoucherdet->glosa,
             impsol: $scVoucherdet->impsol,
             impdol: $scVoucherdet->impdol,
@@ -80,7 +80,7 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
                 cia: $scVoucherdet->cia,
                 codcon: $scVoucherdet->codcon,
                 tipdoc: $scVoucherdet->tipdoc,
-                numdoc: $scVoucherdet->numdoc,
+
                 glosa: $scVoucherdet->glosa,
                 impsol: $scVoucherdet->impsol,
                 impdol: $scVoucherdet->impdol,
@@ -98,7 +98,7 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
                 cia: $scVoucherdet->cia,
                 codcon: $scVoucherdet->codcon,
                 tipdoc: $scVoucherdet->tipdoc,
-                numdoc: $scVoucherdet->numdoc,
+
                 glosa: $scVoucherdet->glosa,
                 impsol: $scVoucherdet->impsol,
                 impdol: $scVoucherdet->impdol,

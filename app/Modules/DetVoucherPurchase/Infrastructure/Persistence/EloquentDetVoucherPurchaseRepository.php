@@ -9,7 +9,7 @@ use App\Modules\DetVoucherPurchase\Infrastructure\Models\EloquentDetVoucherPurch
 
 class EloquentDetVoucherPurchaseRepository implements DetVoucherPurchaseRepositoryInterface
 {
-    public function create(DetVoucherPurchaseDTO $detVoucherPurchaseDTO): DetVoucherPurchase
+    public function create(DetVoucherPurchase $detVoucherPurchaseDTO): DetVoucherPurchase
     {
         $detVoucherPurchase = EloquentDetVoucherPurchase::create([
             'voucher_id' => $detVoucherPurchaseDTO->voucher_id,
@@ -50,7 +50,7 @@ class EloquentDetVoucherPurchaseRepository implements DetVoucherPurchaseReposito
         
     }
 
-     public function findAllVoucher(int $id): array
+     public function findByIdVoucher(int $id): array
     {
         $eloquentDetVoucherPurchases = EloquentDetVoucherPurchase::where('voucher_id',$id)->get();
         return $eloquentDetVoucherPurchases->map(function ($eloquentDetVoucherPurchase) {

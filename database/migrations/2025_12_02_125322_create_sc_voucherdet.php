@@ -17,7 +17,6 @@ return new class extends Migration
             $table->integer('codcon')->nullable();
 
             $table->integer('tipdoc')->default(0);
-            $table->string('numdoc', 20)->nullable();
 
             $table->string('glosa', 40)->nullable();
 

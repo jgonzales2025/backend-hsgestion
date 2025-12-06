@@ -13,7 +13,7 @@ class ScVoucherdetResource extends JsonResource
             'cia' => $this->resource->getCia(),
             'codcon' => $this->resource->getCodcon(),
             'tipdoc' => $this->resource->getTipdoc(),
-            'numdoc' => $this->resource->getNumdoc(),
+
             'glosa' => $this->resource->getGlosa(),
             'impsol' => $this->resource->getImpsol(),
             'impdol' => $this->resource->getImpdol(),

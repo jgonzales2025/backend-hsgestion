@@ -51,7 +51,7 @@ class CreatePurchaseRequest extends FormRequest
             'det_compras_guia_ingreso.*.descuento' => 'required|numeric',
             'det_compras_guia_ingreso.*.sub_total' => 'required|numeric',
             'det_compras_guia_ingreso.*.total' => 'required|numeric',
-            'det_compras_guia_ingreso.*.cantidad_update' => 'required|numeric|',
+            'det_compras_guia_ingreso.*.cantidad_update' => 'nullable|numeric',
             //descuento no puede ser mayor que el sub_total
             // 'det_compras_guia_ingreso.*.descuento' => 'required|numeric|lte:det_compras_guia_ingreso.*.sub_total',
         

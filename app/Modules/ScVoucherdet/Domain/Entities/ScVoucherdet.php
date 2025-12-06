@@ -7,8 +7,7 @@ class ScVoucherdet
     private ?int $id;
     private int $cia;
     private int $codcon;
-    private int $tipdoc;
-    private string $numdoc;
+    private int $tipdoc; 
     private string $glosa;
     private float $impsol;
     private float $impdol;
@@ -17,8 +16,7 @@ class ScVoucherdet
         ?int $id,
         int $cia,
         int $codcon,
-        int $tipdoc,
-        string $numdoc,
+        int $tipdoc, 
         string $glosa,
         float $impsol,
         float $impdol
@@ -26,8 +24,7 @@ class ScVoucherdet
         $this->id = $id;
         $this->cia = $cia;
         $this->codcon = $codcon;
-        $this->tipdoc = $tipdoc;
-        $this->numdoc = $numdoc;
+        $this->tipdoc = $tipdoc; 
         $this->glosa = $glosa;
         $this->impsol = $impsol;
         $this->impdol = $impdol;
@@ -51,11 +48,6 @@ class ScVoucherdet
     public function getTipdoc(): int
     {
         return $this->tipdoc;
-    }
-
-    public function getNumdoc(): string
-    {
-        return $this->numdoc;
     }
 
     public function getGlosa(): string

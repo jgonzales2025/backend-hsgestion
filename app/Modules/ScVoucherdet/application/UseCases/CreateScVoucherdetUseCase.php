@@ -18,7 +18,6 @@ class CreateScVoucherdetUseCase
             cia: $scVoucherdetDTO->cia,
             codcon: $scVoucherdetDTO->codcon,
             tipdoc: $scVoucherdetDTO->tipdoc,
-            numdoc: $scVoucherdetDTO->numdoc,
             glosa: $scVoucherdetDTO->glosa,
             impsol: $scVoucherdetDTO->impsol,
             impdol: $scVoucherdetDTO->impdol,

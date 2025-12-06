@@ -25,7 +25,7 @@ class StoreScVoucherRequest extends FormRequest
         return [
             'cia' => 'nullable|integer',
             'anopr' => 'required|integer',
-            'correlativo' => 'nullable|string',
+            'correlative' => 'required|string',
             'fecha' => 'required|date',
             'codban' => 'required|integer',
             'codigo' => 'required|integer',
@@ -43,11 +43,12 @@ class StoreScVoucherRequest extends FormRequest
             'usrmod' => 'nullable|integer',
             'detail_sc_voucher' => 'required|array',
             'detail_sc_voucher.*.codcon' => 'required|integer',
-            'detail_sc_voucher.*.numdoc' => 'required|string',
             'detail_sc_voucher.*.glosa' => 'required|string',
             'detail_sc_voucher.*.impsol' => 'required|numeric',
             'detail_sc_voucher.*.impdol' => 'required|numeric',
-
+            'detail_voucher_purchase' => 'nullable|array',
+            'detail_voucher_purchase.*.purchase_id' => 'nullable|integer',
+            'detail_voucher_purchase.*.amount' => 'nullable|numeric',
 
         ];
     }

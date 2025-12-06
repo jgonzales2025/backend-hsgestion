@@ -452,6 +452,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 });
 Route::get('/statistics/customer-consumed-items', [StatisticsController::class, 'getCustomerConsumedItems']);
 Route::get('/statistics/articles-sold', [StatisticsController::class, 'getArticlesSold']);
+Route::get('/statistics/article-id-sold/{id}', [StatisticsController::class, 'getArticleIdSold']);
+Route::get('/statistics/article-id-purchase/{id}', [StatisticsController::class, 'getArticleIdPurchase']);
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);

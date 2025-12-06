@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        /* Schema::create('advances', function (Blueprint $table) {
+        Schema::create('advances', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('company_id')->constrained('companies')->cascadeOnDelete();
             $table->string('correlative')->unique();
             $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete();
             $table->foreignId('payment_method_id')->constrained('payment_methods')->cascadeOnDelete();
@@ -25,7 +26,7 @@ return new class extends Migration
             $table->decimal('saldo', 10, 2);
             $table->integer('status')->default(1);
             $table->timestamps();
-        }); */
+        });
     }
 
     /**

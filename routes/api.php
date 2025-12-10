@@ -59,6 +59,7 @@ use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
 use App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController;
 use App\Modules\NoteReason\Infrastructure\Controllers\NoteReasonController;
+use App\Modules\PaymentConcept\Infrastructure\Controller\PaymentConceptController;
 use App\Modules\PaymentMethodsSunat\Infrastructure\Controllers\PaymentMethoddSunatController;
 use App\Modules\ScVoucher\Infrastructure\Controllers\ScVoucherController;
 use App\Modules\ScVoucherdet\Infrastructure\Controllers\ScVoucherdetController;
@@ -447,6 +448,13 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Detractions
     Route::get('/detractions', [DetractionController::class, 'index']);
+
+    // PaymentConcepts - Conceptos de pago
+    Route::get('/payment-concepts', [PaymentConceptController::class, 'index']);
+    Route::post('/payment-concepts', [PaymentConceptController::class, 'store']);
+    Route::get('/payment-concepts/{id}', [PaymentConceptController::class, 'show']);
+    Route::put('/payment-concepts/{id}', [PaymentConceptController::class, 'update']);
+    Route::put('/payment-concepts-status/{id}', [PaymentConceptController::class, 'updateStatus']);
 
     // Statistics - Estadísticas
 

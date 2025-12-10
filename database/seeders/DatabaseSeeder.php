@@ -52,6 +52,7 @@ class DatabaseSeeder extends Seeder
              //DispatchArticle::class,
             NoteReasonSeeder::class,
             SeedersPettyCashMotiveSeeder::class,
+            PaymentConceptSeeder::class
         ]);
     }
 }

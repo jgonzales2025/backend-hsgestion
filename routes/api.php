@@ -227,6 +227,7 @@ Route::get('document-types/sales', [DocumentTypeController::class, 'indexSales']
 Route::get('document-types/invoices', [DocumentTypeController::class, 'indexInvoices']);
 Route::get('document-types/petty-cash', [DocumentTypeController::class, 'indexPettyCash']);
 Route::get('document-types/document-sales', [DocumentTypeController::class, 'indexDocumentSales']);
+Route::get('document-types/purchases', [DocumentTypeController::class, 'indexPurchases']);
 
 // Banks - Bancos
 Route::get('banks', [BankController::class, 'index']);

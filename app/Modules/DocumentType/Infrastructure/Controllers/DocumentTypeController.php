@@ -7,6 +7,7 @@ use App\Modules\DocumentType\Application\UseCases\FindAllDocumentTypesUseCase;
 use App\Modules\DocumentType\Application\UseCases\FindAllForDocumentSalesUseCase;
 use App\Modules\DocumentType\Application\UseCases\FindAllForInvoicesUseCase;
 use App\Modules\DocumentType\Application\UseCases\FindAllForPettyCashUseCase;
+use App\Modules\DocumentType\Application\UseCases\FindAllForPurchasesUseCases;
 use App\Modules\DocumentType\Application\UseCases\FindAllForSalesUseCase;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\DocumentType\Infrastructure\Resources\DocumentTypeResource;
@@ -51,6 +52,14 @@ class DocumentTypeController extends Controller
     public function indexDocumentSales(): array
     {
         $documentTypeUseCase = new FindAllForDocumentSalesUseCase($this->documentTypeRepository);
+        $documentTypes = $documentTypeUseCase->execute();
+
+        return DocumentTypeResource::collection($documentTypes)->resolve();
+    }
+
+    public function indexPurchases(): array
+    {
+        $documentTypeUseCase = new FindAllForPurchasesUseCases($this->documentTypeRepository);
         $documentTypes = $documentTypeUseCase->execute();
 
         return DocumentTypeResource::collection($documentTypes)->resolve();

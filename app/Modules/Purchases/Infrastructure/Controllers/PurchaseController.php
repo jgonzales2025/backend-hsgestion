@@ -11,6 +11,7 @@ use App\Modules\DetailPurchaseGuides\Application\UseCases\CreateDetailPurchaseGu
 use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
 use App\Modules\DetailPurchaseGuides\Infrastructure\Resource\DetailPurchaseGuideResource;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
+use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
 use App\Modules\Purchases\Application\UseCases\CreatePurchaseUseCase;
 use App\Modules\Purchases\Application\UseCases\FindAllPurchaseUseCase;
@@ -41,7 +42,8 @@ class PurchaseController extends Controller
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
-        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
+        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
+        private readonly PaymentTypeRepositoryInterface $paymentTypeRepository
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -108,7 +110,7 @@ class PurchaseController extends Controller
         $purchaseDTO = new PurchaseDTO($request->validated());
         $cretaePurchaseUseCase = new CreatePurchaseUseCase(
             $this->purchaseRepository,
-            $this->paymentMethodRepository,
+            $this->paymentTypeRepository,   
             $this->branchRepository,
             $this->customerRepository,
             $this->currencyRepository,
@@ -145,7 +147,7 @@ class PurchaseController extends Controller
         $purchaseDTO = new PurchaseDTO($request->validated());
         $updatePurchaseUseCase = new UpdatePurchaseUseCase(
             $this->purchaseRepository,
-            $this->paymentMethodRepository,
+          $this->paymentTypeRepository,
             $this->branchRepository,
             $this->customerRepository,
             $this->currencyRepository,

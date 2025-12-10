@@ -89,6 +89,7 @@ class PurchaseController extends Controller
             200
         );
     }
+    
     public function store(CreatePurchaseRequest $request): JsonResponse
     {
         $purchaseDTO = new PurchaseDTO($request->validated());

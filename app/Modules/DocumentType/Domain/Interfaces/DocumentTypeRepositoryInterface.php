@@ -17,4 +17,6 @@ interface DocumentTypeRepositoryInterface
     public function findAllForPettyCash(): array;
 
     public function findAllForDocumentSales(): array;
+    
+    public function findAllForPurchases(): array;
 }

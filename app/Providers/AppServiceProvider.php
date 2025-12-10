@@ -107,6 +107,8 @@ use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRe
 use App\Modules\EntryGuideArticle\Domain\Interface\EntryGuideArticleRepositoryInterface;
 use App\Modules\Installment\Domain\Interface\InstallmentRepositoryInterface;
 use App\Modules\Installment\Infrastructure\Persistence\EloquentInstallmentRepository;
+use App\Modules\PaymentConcept\Domain\Interfaces\PaymentConceptRepositoryInterface;
+use App\Modules\PaymentConcept\Infrastructure\Persistence\EloquentPaymentConceptRepository;
 use App\Modules\PettyCashMotive\Domain\Interface\PettyCashMotiveInterfaceRepository;
 use App\Modules\PettyCashMotive\Infrastructure\Persistence\EloquentPettyCashMotiveRepository;
 use App\Modules\PettyCashReceipt\Domain\Interface\PettyCashReceiptRepositoryInterface;
@@ -252,6 +254,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PaymentMethodSunatRepositoryInterface::class, EloquentPaymentMethodSunatRepository::class);
         $this->app->bind(DetEntryguidePurchaseOrderRepositoryInterface::class, EloquentDetEntryguidePurchaseOrderRepository::class);
        $this->app->bind(DetVoucherPurchaseRepositoryInterface::class, EloquentDetVoucherPurchaseRepository::class);
+       $this->app->bind(PaymentConceptRepositoryInterface::class, EloquentPaymentConceptRepository::class);
     }
 
     /**

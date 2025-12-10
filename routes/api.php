@@ -59,6 +59,7 @@ use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
 use App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController;
 use App\Modules\NoteReason\Infrastructure\Controllers\NoteReasonController;
+use App\Modules\PaymentConcept\Infrastructure\Controller\PaymentConceptController;
 use App\Modules\PaymentMethodsSunat\Infrastructure\Controllers\PaymentMethoddSunatController;
 use App\Modules\ScVoucher\Infrastructure\Controllers\ScVoucherController;
 use App\Modules\ScVoucherdet\Infrastructure\Controllers\ScVoucherdetController;
@@ -226,6 +227,7 @@ Route::get('document-types/sales', [DocumentTypeController::class, 'indexSales']
 Route::get('document-types/invoices', [DocumentTypeController::class, 'indexInvoices']);
 Route::get('document-types/petty-cash', [DocumentTypeController::class, 'indexPettyCash']);
 Route::get('document-types/document-sales', [DocumentTypeController::class, 'indexDocumentSales']);
+Route::get('document-types/purchases', [DocumentTypeController::class, 'indexPurchases']);
 
 // Banks - Bancos
 Route::get('banks', [BankController::class, 'index']);
@@ -447,6 +449,13 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Detractions
     Route::get('/detractions', [DetractionController::class, 'index']);
+
+    // PaymentConcepts - Conceptos de pago
+    Route::get('/payment-concepts', [PaymentConceptController::class, 'index']);
+    Route::post('/payment-concepts', [PaymentConceptController::class, 'store']);
+    Route::get('/payment-concepts/{id}', [PaymentConceptController::class, 'show']);
+    Route::put('/payment-concepts/{id}', [PaymentConceptController::class, 'update']);
+    Route::put('/payment-concepts-status/{id}', [PaymentConceptController::class, 'updateStatus']);
 
     // Statistics - Estadísticas
 

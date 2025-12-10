@@ -22,7 +22,7 @@ class EntryGuideResource extends JsonResource{
             'reference_serie' => $this->resource->getReferenceSerie(),
             'reference_correlative' => $this->resource->getReferenceCorrelative(),
 
-            'status' => $this->resource->getStatus(),
+            'status' => $this->resource->getStatus() ? 'Activo' : 'Inactivo',
             'branch'=> [
                 'id' => $this->resource->getBranch()->getId(),
                 'name' => $this->resource->getBranch()->getName(),

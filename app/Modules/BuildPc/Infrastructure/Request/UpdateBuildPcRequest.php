@@ -26,14 +26,11 @@ class UpdateBuildPcRequest extends FormRequest
             'company_id' => 'nullable|numeric',
             'name' => 'required|string|max:255',
             'description' => 'required|string',
-            'total_price' => 'required|numeric',
             'user_id' => 'required|numeric',
             'status' => 'nullable|boolean',
             'details' => 'required|array|min:1',
             'details.*.article_id' => 'required|integer|exists:articles,id',
-            'details.*.quantity' => 'required|integer|min:1',
-            'details.*.price' => 'required|numeric|min:0',
-            'details.*.subtotal' => 'required|numeric|min:0',
+            'details.*.quantity' => 'required|integer|min:1'
         ];
     }
 }

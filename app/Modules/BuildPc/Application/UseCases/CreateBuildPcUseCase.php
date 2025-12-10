@@ -22,7 +22,6 @@ class CreateBuildPcUseCase
             company_id: $data->company_id,
             name: $data->name,
             description: $data->description,
-            total_price: $data->total_price,
             user_id: $data->user_id,
             status: $data->status,
         );

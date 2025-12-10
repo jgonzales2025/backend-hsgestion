@@ -10,6 +10,8 @@ use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\PaymentMethod\Application\UseCases\FindByIdPaymentMethodUseCase;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
+use App\Modules\PaymentType\Application\UseCases\FindByIdPaymentTypeUseCase;
+use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
 use App\Modules\Purchases\Domain\Entities\Purchase;
 use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
@@ -17,7 +19,7 @@ use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 class UpdatePurchaseUseCase{
     public function __construct(
         private readonly PurchaseRepositoryInterface $purchaseRepository,
-        private readonly PaymentMethodRepositoryInterface $paymentTypeRepository,
+        private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
@@ -27,8 +29,8 @@ class UpdatePurchaseUseCase{
 
     public function execute(PurchaseDTO $purchaseDTO ,int $id): ?Purchase
     {
-           $metodoPago =  new FindByIdPaymentMethodUseCase($this->paymentTypeRepository);
-       $payment = $metodoPago->execute($purchaseDTO->methodpayment);
+        $paymentTypeUseCase =  new FindByIdPaymentTypeUseCase($this->paymentTypeRepository);
+        $paymentType = $paymentTypeUseCase->execute($purchaseDTO->methodpayment);
 
         $branch = new FindByIdBranchUseCase($this->branchRepository);
         $branch = $branch->execute($purchaseDTO->branch_id);
@@ -47,7 +49,7 @@ class UpdatePurchaseUseCase{
             serie: $purchaseDTO->serie,
             correlative: $purchaseDTO->correlative,
             exchange_type: $purchaseDTO->exchange_type,
-            methodpaymentO: $payment,
+            payment_type: $paymentType,
             currency: $currency,
             date: $purchaseDTO->date,
             date_ven: $purchaseDTO->date_ven,
@@ -65,7 +67,7 @@ class UpdatePurchaseUseCase{
             is_igv: $purchaseDTO->is_igv,
             type_document_id: $purchaseDTO->type_document_id,
             reference_serie: $purchaseDTO->reference_serie,
-            reference_correlative: $purchaseDTO->reference_correlative,
+            reference_correlative: $purchaseDTO->reference_correlative
         );
         return $this->purchaseRepository->update($updatePurchase);
     }

@@ -29,7 +29,7 @@ return new class extends Migration
             $table->decimal('tipcam', 6, 4)->default(0);     // DECIMAL(6,4)
             $table->decimal('total', 10, 2)->default(0);     // DECIMAL(10,2)
 
-            $table->integer('medpag')->default(0);      // INT(3)
+            $table->foreignId('medpag')->constrained('payment_concepts')->onDelete('cascade');      // INT(3)
             $table->integer('tipopago')->default(0);     // INT(1)
 
             $table->integer('status')->default(0);      // SMALLINT(1)

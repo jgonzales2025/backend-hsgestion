@@ -33,6 +33,11 @@ class EloquentEntryGuide extends Model
     ];
     protected $hidden = ['created_at', 'updated_at'];
 
+    public function getDateAttribute($value)
+    {
+        return $value ? \Carbon\Carbon::parse($value)->format('d/m/Y') : null;
+    }
+
     public function branch(): BelongsTo
     {
         return $this->belongsTo(EloquentBranch::class, 'branch_id');
@@ -41,7 +46,7 @@ class EloquentEntryGuide extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(EloquentCustomer::class, 'customer_id');
-        }
+    }
     public function ingressReason(): BelongsTo
     {
         return $this->belongsTo(EloquentIngressReason::class, 'ingress_reason_id');

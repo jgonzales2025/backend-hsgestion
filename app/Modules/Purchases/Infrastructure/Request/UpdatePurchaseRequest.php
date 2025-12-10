@@ -27,7 +27,7 @@ class UpdatePurchaseRequest extends FormRequest
             'serie' => 'required|string',
             "entry_guide_id" => 'numeric',
             'exchange_type' => 'required|numeric',
-            'methodpayment_id' => 'required|numeric|exists:payment_methods,id',
+            'payment_type_id' => 'required|numeric|exists:payment_types,id',
             'currency_id' => 'required|numeric',
             'date' => 'required|string',
             'date_ven' => 'required|string',

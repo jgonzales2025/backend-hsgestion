@@ -33,6 +33,7 @@ class EloquentCollection extends Model
         'credit_document_type_id',
         'credit_serie',
         'credit_correlative',
+        'rounding',
         'advance_id'
     ];
 

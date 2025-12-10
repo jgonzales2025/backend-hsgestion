@@ -9,8 +9,8 @@ class FindAllTransferOrdersUseCase
 
     public function __construct(private TransferOrderRepositoryInterface $transferOrderRepository){}
 
-    public function execute(int $companyId): array
+    public function execute(int $companyId, ?string $description, ?string $startDate, ?string $endDate, ?int $status, ?int $emissionReasonId)
     {
-        return $this->transferOrderRepository->findAll($companyId);
+        return $this->transferOrderRepository->findAll($companyId, $description, $startDate, $endDate, $status, $emissionReasonId);
     }
 }

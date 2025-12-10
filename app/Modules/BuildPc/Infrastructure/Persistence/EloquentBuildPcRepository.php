@@ -15,7 +15,6 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             'company_id' => $data->getCompanyId(),
             'name' => $data->getName(),
             'description' => $data->getDescription(),
-            'total_price' => $data->getTotalPrice(),
             'user_id' => $data->getUserId(),
             'status' => $data->getStatus(),
         ]);
@@ -24,7 +23,6 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             company_id: $buildPc->company_id,
             name: $buildPc->name,
             description: $buildPc->description,
-            total_price: $buildPc->total_price,
             user_id: $buildPc->user_id,
             status: $buildPc->status,
 
@@ -40,7 +38,6 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
                 company_id: $buildPc->company_id,
                 name: $buildPc->name,
                 description: $buildPc->description,
-                total_price: $buildPc->total_price,
                 user_id: $buildPc->user_id,
                 status: $buildPc->status,
             );
@@ -70,7 +67,6 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
                 company_id: $buildPc->company_id,
                 name: $buildPc->name,
                 description: $buildPc->description,
-                total_price: $buildPc->total_price,
                 user_id: $buildPc->user_id,
                 status: $buildPc->status,
             );
@@ -88,7 +84,6 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
         $buildPc->update([
             'name' => $data->getName(),
             'description' => $data->getDescription(),
-            'total_price' => $data->getTotalPrice(),
             'user_id' => $data->getUserId(),
             'status' => $data->getStatus(),
         ]);
@@ -97,7 +92,6 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             company_id: $buildPc->company_id,
             name: $buildPc->name,
             description: $buildPc->description,
-            total_price: $buildPc->total_price,
             user_id: $buildPc->user_id,
             status: $buildPc->status,
         );
@@ -116,7 +110,6 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             company_id: $buildPc->company_id,
             name: $buildPc->name,
             description: $buildPc->description,
-            total_price: $buildPc->total_price,
             user_id: $buildPc->user_id,
             status: $buildPc->status,
         );

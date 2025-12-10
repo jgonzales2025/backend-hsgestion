@@ -17,9 +17,7 @@ class CreateBuildDetailPcUseCase
             id: 0,
             build_pc_id: $buildDetailPc->build_pc_id,
             article_id: $buildDetailPc->article_id,
-            quantity: $buildDetailPc->quantity,
-            price: $buildDetailPc->price,
-            subtotal: $buildDetailPc->subtotal
+            quantity: $buildDetailPc->quantity
         );
         return $this->buildDetailPcRepositoryInterface->create($buildDetailPc);
     }

@@ -13,7 +13,6 @@ class BuildPcResource extends JsonResource
             'id' => $this->resource->getId(),
             'name' => $this->resource->getName(),
             'description' => $this->resource->getDescription(),
-            'total_price' => $this->resource->getTotalPrice(),
             'user_id' => $this->resource->getUserId(),
             'status' => $this->resource->getStatus(),
 

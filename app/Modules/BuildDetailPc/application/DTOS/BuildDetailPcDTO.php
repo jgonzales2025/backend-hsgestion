@@ -13,7 +13,5 @@ class BuildDetailPcdto
         $this->build_pc_id = $data['build_pc_id'];
         $this->article_id = $data['article_id'];
         $this->quantity = $data['quantity'];
-        $this->price = $data['price'];
-        $this->subtotal = $data['subtotal'];
     }
 }

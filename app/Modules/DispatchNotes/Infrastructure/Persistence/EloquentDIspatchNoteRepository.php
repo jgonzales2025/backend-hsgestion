@@ -9,7 +9,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
 {
-    public function findAll(?string $description, ?int $status): LengthAwarePaginator
+    public function findAll(?string $description, ?int $status, ?int $emissionReasonId): LengthAwarePaginator
     {
         $dispatchNotes = EloquentDispatchNote::with([
             'company',
@@ -24,20 +24,25 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             ->orderByDesc('id')
             ->where('document_type_id', '!=', 21)
             ->when($description, function ($query) use ($description) {
-                return $query->where('correlativo', 'like', '%' . $description . '%')
-                    ->orWhere('license_plate', 'like', '%' . $description . '%')
-                    ->orWhereHas('emission_reason', function ($query) use ($description) {
-                        $query->where('description', 'like', '%' . $description . '%');
-                    })
-                    ->orWhereHas('transport', function ($query) use ($description) {
-                        $query->where('company_name', 'like', '%' . $description . '%');
-                    })
-                    ->orWhereHas('conductor', function ($query) use ($description) {
-                        $query->where('name', 'like', '%' . $description . '%');
-                    });
+                return $query->where(function ($q) use ($description) {
+                    $q->where('correlativo', 'like', '%' . $description . '%')
+                        ->orWhere('license_plate', 'like', '%' . $description . '%')
+                        ->orWhereHas('emission_reason', function ($query) use ($description) {
+                            $query->where('description', 'like', '%' . $description . '%');
+                        })
+                        ->orWhereHas('transport', function ($query) use ($description) {
+                            $query->where('company_name', 'like', '%' . $description . '%');
+                        })
+                        ->orWhereHas('conductor', function ($query) use ($description) {
+                            $query->where('name', 'like', '%' . $description . '%');
+                        });
+                });
             })
             ->when($status !== null, function ($query) use ($status) {
                 return $query->where('status', $status);
+            })
+            ->when($emissionReasonId, function ($query) use ($emissionReasonId) {
+                return $query->where('emission_reason_id', $emissionReasonId);
             })
             ->paginate(10);
 

@@ -42,6 +42,7 @@ class Sale
     private ?string $correlative_prof;
     private ?string $purchase_order;
     private ?User $user_authorized;
+    private ?float $credit_amount;
     private ?int $coddetrac;
     private ?float $pordetrac;
     private ?float $impdetracs;
@@ -81,6 +82,7 @@ class Sale
         ?string $correlative_prof,
         ?string $purchase_order,
         ?User $user_authorized,
+        ?float $credit_amount,
         ?int $coddetrac,
         ?float $pordetrac,
         ?float $impdetracs,
@@ -121,6 +123,7 @@ class Sale
         $this->correlative_prof = $correlative_prof;
         $this->purchase_order = $purchase_order;
         $this->user_authorized = $user_authorized;
+        $this->credit_amount = $credit_amount;
         $this->coddetrac = $coddetrac;
         $this->pordetrac = $pordetrac;
         $this->impdetracs = $impdetracs;
@@ -161,6 +164,7 @@ class Sale
     public function getCorrelativeProf(): string|null { return $this->correlative_prof; }
     public function getPurchaseOrder(): string|null { return $this->purchase_order; }
     public function getUserAuthorized(): ?User { return $this->user_authorized; }
+    public function getCreditAmount(): ?float { return $this->credit_amount; }
     public function getCoddetrac(): ?int { return $this->coddetrac; }
     public function getPordetrac(): ?float { return $this->pordetrac; }
     public function getImpdetracs(): ?float { return $this->impdetracs; }

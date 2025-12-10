@@ -217,6 +217,17 @@ class MenuSeeder extends Seeder
             'type' => 'item',
         ]);
 
+        Menu::create([
+            'name' => 'caja_registro_pago_proveedores',
+            'label' => 'Registro de Pago a Proveedores',
+            'route' => '/caja/registro-pagos',
+            'permission' => 'caja.registro_pago_proveedores',
+            'parent_id' => $caja->id,
+            'order' => 8,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
         // ===== ESTADÍSTICAS =====
         $estadistica = Menu::create([
             'name' => 'estadisticas',
@@ -980,6 +991,17 @@ class MenuSeeder extends Seeder
             'permission' => 'tablas.motivos_caja_chica',
             'parent_id' => $tabla->id,
             'order' => 21,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
+        Menu::create([
+            'name' => 'tablas_concepto_pago',
+            'label' => 'Conceptos de Pago',
+            'route' => '/tablas/concepto-pago',
+            'permission' => 'tablas.concepto_pago',
+            'parent_id' => $tabla->id,
+            'order' => 22,
             'status' => 1,
             'type' => 'item',
         ]);

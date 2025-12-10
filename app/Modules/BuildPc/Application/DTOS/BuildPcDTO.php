@@ -17,7 +17,6 @@ class BuildPcDTO
         $this->company_id = $data['company_id'];
         $this->name = $data['name'];
         $this->description = $data['description'];
-        $this->total_price = $data['total_price'];
         $this->user_id = $data['user_id'];
         $this->status = $data['status'] ?? 1;
         $this->details = $data['details'] ?? [];

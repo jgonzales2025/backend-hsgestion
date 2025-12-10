@@ -70,4 +70,157 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
 
         return $query->get();
     }
+
+    public function getArticlesSold(int $company_id, ?int $branch_id, ?string $start_date, ?string $end_date, ?int $category_id, ?int $brand_id)
+    {
+        $query = DB::table('sales as s')
+            ->join('sale_article as sa', 's.id', '=', 'sa.sale_id')
+            ->join('articles as a', 'sa.article_id', '=', 'a.id')
+            ->leftJoin('users as u', 's.user_sale_id', '=', 'u.id')
+            ->leftJoin('categories as cat', 'a.category_id', '=', 'cat.id')
+            ->leftJoin('brands as br', 'a.brand_id', '=', 'br.id')
+            ->where('s.company_id', $company_id)
+            ->where('s.status', 1)
+            ->whereIn('s.document_type_id', [1, 3]) // Facturas y Boletas
+            ->select(
+                'a.id',
+                'a.cod_fab',
+                'a.description as nombre_articulo',
+                'sa.quantity as cantidad',
+                'sa.unit_price as precio_venta',
+                'sa.subtotal as total_venta',
+                DB::raw('(sa.quantity * sa.costo_neto) as total_costo'),
+                DB::raw('(sa.subtotal - (sa.quantity * sa.costo_neto)) as utilidad'),
+                'sa.costo_neto as costo_unitario',
+                DB::raw("CONCAT(u.firstname, ' ', u.lastname) as vendedor")
+            );
+
+        // Apply optional filters
+        if ($branch_id !== null) {
+            $query->where('s.branch_id', $branch_id);
+        }
+
+        if ($start_date !== null) {
+            $query->where('s.date', '>=', $start_date);
+        }
+
+        if ($end_date !== null) {
+            $query->where('s.date', '<=', $end_date);
+        }
+
+        if ($category_id !== null) {
+            $query->where('a.category_id', $category_id);
+        }
+
+        if ($brand_id !== null) {
+            $query->where('a.brand_id', $brand_id);
+        }
+
+        // Order by article code
+        $query->orderBy('a.cod_fab')
+            ->orderBy('s.date');
+
+        return $query->get();
+    }
+
+    public function getArticleIdSold(int $company_id, int $article_id, ?int $branch_id, ?string $start_date, ?string $end_date, ?int $category_id, ?int $brand_id)
+    {
+        $query = DB::table('sales as s')
+            ->join('sale_article as sa', 's.id', '=', 'sa.sale_id')
+            ->join('branches as b', 's.branch_id', '=', 'b.id')
+            ->join('document_types as dt', 's.document_type_id', '=', 'dt.id')
+            ->join('customers as c', 's.customer_id', '=', 'c.id')
+            ->join('currency_types as ct', 's.currency_type_id', '=', 'ct.id')
+            ->where('s.company_id', $company_id)
+            ->where('sa.article_id', $article_id)
+            ->where('s.status', 1)
+            ->whereIn('s.document_type_id', [1, 3]) // Facturas y Boletas
+            ->select(
+                'b.name as sucursal',
+                'dt.abbreviation as tipo_documento',
+                's.serie',
+                's.document_number as correlativo',
+                's.date as fecha_venta',
+                'c.company_name as cliente',
+                'sa.quantity as cantidad',
+                'ct.commercial_symbol as tipo_moneda',
+                'sa.unit_price as precio_venta',
+                's.parallel_rate as tipo_cambio',
+                DB::raw('CASE 
+                    WHEN s.currency_type_id = 1 THEN sa.subtotal 
+                    WHEN s.currency_type_id = 2 THEN sa.subtotal * s.parallel_rate 
+                    ELSE sa.subtotal 
+                END as importe_soles')
+            );
+
+        // Apply optional filters
+        if ($branch_id !== null) {
+            $query->where('s.branch_id', $branch_id);
+        }
+
+        if ($start_date !== null) {
+            $query->where('s.date', '>=', $start_date);
+        }
+
+        if ($end_date !== null) {
+            $query->where('s.date', '<=', $end_date);
+        }
+
+        // Order by date descending (most recent first)
+        $query->orderBy('s.date', 'desc')
+            ->orderBy('s.id', 'desc');
+
+        return $query->get();
+    }
+
+    public function getArticleIdPurchase(int $company_id, int $article_id, ?int $branch_id, ?string $start_date, ?string $end_date, ?int $category_id, ?int $brand_id)
+    {
+        $query = DB::table('purchase as p')
+            ->join('detail_purchase_guides as dpg', 'p.id', '=', 'dpg.purchase_id')
+            ->join('branches as b', 'p.branch_id', '=', 'b.id')
+            ->join('document_types as dt', 'p.document_type_id', '=', 'dt.id')
+            ->leftJoin('customers as c', 'p.supplier_id', '=', 'c.id')
+            ->where('p.company_id', $company_id)
+            ->where('dpg.article_id', $article_id)
+            ->select(
+                'b.name as sucursal',
+                'dt.abbreviation as tipo_documento',
+                'p.serie',
+                'p.correlative as correlativo',
+                'p.date as fecha_compra',
+                DB::raw('COALESCE(c.company_name, "Sin proveedor") as proveedor'),
+                'dpg.cantidad',
+                DB::raw('CASE 
+                    WHEN p.currency = 1 THEN "S/" 
+                    WHEN p.currency = 2 THEN "$" 
+                    ELSE "S/" 
+                END as tipo_moneda'),
+                'dpg.precio_costo as precio_compra',
+                'p.exchange_type as tipo_cambio',
+                DB::raw('CASE 
+                    WHEN p.currency = 1 THEN dpg.total 
+                    WHEN p.currency = 2 THEN dpg.total * p.exchange_type 
+                    ELSE dpg.total 
+                END as importe_soles')
+            );
+
+        // Apply optional filters
+        if ($branch_id !== null) {
+            $query->where('p.branch_id', $branch_id);
+        }
+
+        if ($start_date !== null) {
+            $query->where('p.date', '>=', $start_date);
+        }
+
+        if ($end_date !== null) {
+            $query->where('p.date', '<=', $end_date);
+        }
+
+        // Order by date descending (most recent first)
+        $query->orderBy('p.date', 'desc')
+            ->orderBy('p.id', 'desc');
+
+        return $query->get();
+    }
 }

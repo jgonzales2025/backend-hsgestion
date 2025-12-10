@@ -54,6 +54,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Modules\Customer\Application\UseCases\UpdateStatusUseCase;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
@@ -84,74 +85,76 @@ class CustomerController extends Controller
 
     public function store(StoreCustomerRequest $request): JsonResponse
     {
-        $validatedData = $request->validated();
-        $role = request()->get('role');
+        return DB::transaction(function () use ($request) {
+            $validatedData = $request->validated();
+            $role = request()->get('role');
 
-        $customerDTO = new CustomerDTO($validatedData);
-        $customerUseCase = new CreateCustomerUseCase($this->customerRepository);
-        $customer = $customerUseCase->execute($customerDTO);
+            $customerDTO = new CustomerDTO($validatedData);
+            $customerUseCase = new CreateCustomerUseCase($this->customerRepository);
+            $customer = $customerUseCase->execute($customerDTO);
 
-        if ($role == 'Vendedor') {
-            $userId = request()->get('user_id');
-            $customerPortfolioDTO = new CustomerPortfolioDTO(['customer_ids' => [$customer->getId()], 'user_id' => $userId]);
-            $customerPortfolioUseCase = new CreateCustomerPortfolioUseCase($this->customerPortfolioRepository, $this->customerRepository, $this->userRepository);
-            $customerPorfolio = $customerPortfolioUseCase->execute($customerPortfolioDTO);
-        }
+            if ($role == 'Vendedor') {
+                $userId = request()->get('user_id');
+                $customerPortfolioDTO = new CustomerPortfolioDTO(['customer_ids' => [$customer->getId()], 'user_id' => $userId]);
+                $customerPortfolioUseCase = new CreateCustomerPortfolioUseCase($this->customerPortfolioRepository, $this->customerRepository, $this->userRepository);
+                $customerPorfolio = $customerPortfolioUseCase->execute($customerPortfolioDTO);
+            }
 
-        // Crear los teléfonos con foreach
-        $createPhoneUseCase = new CreateCustomerPhoneUseCase($this->customerPhoneRepository);
+            // Crear los teléfonos con foreach
+            $createPhoneUseCase = new CreateCustomerPhoneUseCase($this->customerPhoneRepository);
 
-        $phones = [];
-        foreach ($validatedData['phones'] as $phoneData) {
-            $customerPhoneDTO = new CustomerPhoneDTO([
-                'phone' => $phoneData['phone'],
-                'customer_id' => $customer->getId(),
-                'status' => 1
-            ]);
-            $phones[] = $createPhoneUseCase->execute($customerPhoneDTO);
-        }
+            $phones = [];
+            foreach ($validatedData['phones'] as $phoneData) {
+                $customerPhoneDTO = new CustomerPhoneDTO([
+                    'phone' => $phoneData['phone'],
+                    'customer_id' => $customer->getId(),
+                    'status' => 1
+                ]);
+                $phones[] = $createPhoneUseCase->execute($customerPhoneDTO);
+            }
 
-        // Crear los emails con foreach
-        $createEmailUseCase = new CreateCustomerEmailUseCase($this->customerEmailRepository);
+            // Crear los emails con foreach
+            $createEmailUseCase = new CreateCustomerEmailUseCase($this->customerEmailRepository);
 
-        $emails = [];
-        foreach ($validatedData['emails'] as $emailData) {
-            $customerEmailDTO = new CustomerEmailDTO([
-                'email' => $emailData['email'],
-                'customer_id' => $customer->getId(),
-                'status' => 1
-            ]);
-            $emails[] = $createEmailUseCase->execute($customerEmailDTO);
-        }
+            $emails = [];
+            foreach ($validatedData['emails'] as $emailData) {
+                $customerEmailDTO = new CustomerEmailDTO([
+                    'email' => $emailData['email'],
+                    'customer_id' => $customer->getId(),
+                    'status' => 1
+                ]);
+                $emails[] = $createEmailUseCase->execute($customerEmailDTO);
+            }
 
-        // Crear las direcciones con foreach
-        $createCustomerAddressUseCase = new CreateCustomerAddressUseCase(
-            $this->customerAddressRepository,
-            $this->departmentRepository,
-            $this->provinceRepository,
-            $this->districtRepository,
-        );
+            // Crear las direcciones con foreach
+            $createCustomerAddressUseCase = new CreateCustomerAddressUseCase(
+                $this->customerAddressRepository,
+                $this->departmentRepository,
+                $this->provinceRepository,
+                $this->districtRepository,
+            );
 
-        $addresses = [];
-        foreach ($validatedData['addresses'] as $addressData) {
-            $customerAddressDTO = new CustomerAddressDTO([
-                'customer_id' => $customer->getId(),
-                'address' => $addressData['address'],
-                'department_id' => $addressData['department_id'],
-                'province_id' => $addressData['province_id'],
-                'district_id' => $addressData['district_id'],
-                'status' => 1,
-                'st_principal' => $addressData['st_principal'] ?? 0,
-            ]);
-            $addresses[] = $createCustomerAddressUseCase->execute($customerAddressDTO);
-        }
+            $addresses = [];
+            foreach ($validatedData['addresses'] as $addressData) {
+                $customerAddressDTO = new CustomerAddressDTO([
+                    'customer_id' => $customer->getId(),
+                    'address' => $addressData['address'],
+                    'department_id' => $addressData['department_id'],
+                    'province_id' => $addressData['province_id'],
+                    'district_id' => $addressData['district_id'],
+                    'status' => 1,
+                    'st_principal' => $addressData['st_principal'] ?? 0,
+                ]);
+                $addresses[] = $createCustomerAddressUseCase->execute($customerAddressDTO);
+            }
 
-        return response()->json([
-            'customer' => (new CustomerResource($customer))->resolve(),
-            'phones' => CustomerPhoneResource::collection($phones)->resolve(),
-            'emails' => CustomerEmailResource::collection($emails)->resolve(),
-            'addresses' => CustomerAddressResource::collection($addresses)->resolve(),
-        ], 201);
+            return response()->json([
+                'customer' => (new CustomerResource($customer))->resolve(),
+                'phones' => CustomerPhoneResource::collection($phones)->resolve(),
+                'emails' => CustomerEmailResource::collection($emails)->resolve(),
+                'addresses' => CustomerAddressResource::collection($addresses)->resolve(),
+            ], 201);
+        });
     }
 
     public function show(int $id): JsonResponse
@@ -172,63 +175,65 @@ class CustomerController extends Controller
 
     public function update(UpdateCustomerRequest $request, int $id): JsonResponse
     {
-        $validatedData = $request->validated();
+        return DB::transaction(function () use ($request, $id) {
+            $validatedData = $request->validated();
 
-        $customerDTO = new CustomerDTO($validatedData);
-        $customerUseCase = new UpdateCustomerUseCase($this->customerRepository);
-        $customer = $customerUseCase->execute($id, $customerDTO);
+            $customerDTO = new CustomerDTO($validatedData);
+            $customerUseCase = new UpdateCustomerUseCase($this->customerRepository);
+            $customer = $customerUseCase->execute($id, $customerDTO);
 
-        EloquentCustomerPhone::where('customer_id', $id)->delete();
-        $createPhoneUseCase = new CreateCustomerPhoneUseCase($this->customerPhoneRepository);
-        $phones = [];
-        foreach ($validatedData['phones'] as $phoneData) {
-            $customerPhoneDTO = new CustomerPhoneDTO([
-                'phone' => $phoneData['phone'],
-                'customer_id' => $id,
-                'status' => $phoneData['status'],
+            EloquentCustomerPhone::where('customer_id', $id)->delete();
+            $createPhoneUseCase = new CreateCustomerPhoneUseCase($this->customerPhoneRepository);
+            $phones = [];
+            foreach ($validatedData['phones'] as $phoneData) {
+                $customerPhoneDTO = new CustomerPhoneDTO([
+                    'phone' => $phoneData['phone'],
+                    'customer_id' => $id,
+                    'status' => $phoneData['status'],
+                ]);
+                $phones[] = $createPhoneUseCase->execute($customerPhoneDTO);
+            }
+
+            EloquentCustomerEmail::where('customer_id', $id)->delete();
+            $createEmailUseCase = new CreateCustomerEmailUseCase($this->customerEmailRepository);
+            $emails = [];
+            foreach ($validatedData['emails'] as $emailData) {
+                $customerEmailDTO = new CustomerEmailDTO([
+                    'email' => $emailData['email'],
+                    'customer_id' => $id,
+                    'status' => $emailData['status'],
+                ]);
+                $emails[] = $createEmailUseCase->execute($customerEmailDTO);
+            }
+
+            EloquentCustomerAddress::where('customer_id', $id)->delete();
+            $createCustomerAddressUseCase = new CreateCustomerAddressUseCase(
+                $this->customerAddressRepository,
+                $this->departmentRepository,
+                $this->provinceRepository,
+                $this->districtRepository,
+            );
+            $addresses = [];
+            foreach ($validatedData['addresses'] as $addressData) {
+                $customerAddressDTO = new CustomerAddressDTO([
+                    'customer_id' => $id,
+                    'address' => $addressData['address'],
+                    'department_id' => $addressData['department_id'],
+                    'province_id' => $addressData['province_id'],
+                    'district_id' => $addressData['district_id'],
+                    'status' => $addressData['status'],
+                    'st_principal' => $addressData['st_principal'] ?? 0,
+                ]);
+                $addresses[] = $createCustomerAddressUseCase->execute($customerAddressDTO);
+            }
+
+            return response()->json([
+                'customer' => (new CustomerResource($customer))->resolve(),
+                'phones' => CustomerPhoneResource::collection($phones)->resolve(),
+                'emails' => CustomerEmailResource::collection($emails)->resolve(),
+                'addresses' => CustomerAddressResource::collection($addresses)->resolve(),
             ]);
-            $phones[] = $createPhoneUseCase->execute($customerPhoneDTO);
-        }
-
-        EloquentCustomerEmail::where('customer_id', $id)->delete();
-        $createEmailUseCase = new CreateCustomerEmailUseCase($this->customerEmailRepository);
-        $emails = [];
-        foreach ($validatedData['emails'] as $emailData) {
-            $customerEmailDTO = new CustomerEmailDTO([
-                'email' => $emailData['email'],
-                'customer_id' => $id,
-                'status' => $emailData['status'],
-            ]);
-            $emails[] = $createEmailUseCase->execute($customerEmailDTO);
-        }
-
-        EloquentCustomerAddress::where('customer_id', $id)->delete();
-        $createCustomerAddressUseCase = new CreateCustomerAddressUseCase(
-            $this->customerAddressRepository,
-            $this->departmentRepository,
-            $this->provinceRepository,
-            $this->districtRepository,
-        );
-        $addresses = [];
-        foreach ($validatedData['addresses'] as $addressData) {
-            $customerAddressDTO = new CustomerAddressDTO([
-                'customer_id' => $id,
-                'address' => $addressData['address'],
-                'department_id' => $addressData['department_id'],
-                'province_id' => $addressData['province_id'],
-                'district_id' => $addressData['district_id'],
-                'status' => $addressData['status'],
-                'st_principal' => $addressData['st_principal'] ?? 0,
-            ]);
-            $addresses[] = $createCustomerAddressUseCase->execute($customerAddressDTO);
-        }
-
-        return response()->json([
-            'customer' => (new CustomerResource($customer))->resolve(),
-            'phones' => CustomerPhoneResource::collection($phones)->resolve(),
-            'emails' => CustomerEmailResource::collection($emails)->resolve(),
-            'addresses' => CustomerAddressResource::collection($addresses)->resolve(),
-        ]);
+        });
     }
 
     public function findAllSuppliers(): array
@@ -274,71 +279,73 @@ class CustomerController extends Controller
 
     public function storeCustomerBySunatApi(Request $request): JsonResponse
     {
-        $documentNumber = $request->query('document_number');
+        return DB::transaction(function () use ($request) {
+            $documentNumber = $request->query('document_number');
 
-        if (!$documentNumber) {
-            return response()->json(['error' => 'No ha enviado el número de documento'], 422);
-        }
+            if (!$documentNumber) {
+                return response()->json(['error' => 'No ha enviado el número de documento'], 422);
+            }
 
-        $data = $this->apiSunatService->getDataByDocument($documentNumber);
+            $data = $this->apiSunatService->getDataByDocument($documentNumber);
 
-        if (!$data['success']) {
-            return response()->json(['error' => 'Documento no válido'], 422);
-        }
+            if (!$data['success']) {
+                return response()->json(['error' => 'Documento no válido'], 422);
+            }
 
-        $findCustomerUseCase = new FindCustomerByDocumentNumberUseCase($this->customerRepository);
-        $customer = $findCustomerUseCase->execute($documentNumber);
+            $findCustomerUseCase = new FindCustomerByDocumentNumberUseCase($this->customerRepository);
+            $customer = $findCustomerUseCase->execute($documentNumber);
 
-        if ($customer) {
-            return response()->json(['error' => 'Cliente ya existe'], 409);
-        }
+            if ($customer) {
+                return response()->json(['error' => 'Cliente ya existe'], 409);
+            }
 
-        $documentNumberValue = $data['data']['ruc'] ?? $data['data']['document_number'];
+            $documentNumberValue = $data['data']['ruc'] ?? $data['data']['document_number'];
 
-        $customerDTO = new CustomerDTO([
-            'customer_document_type_id' => strlen($documentNumber) == 11 ? 2 : 3,
-            'document_number' => $documentNumberValue,
-            'company_name' => $data['data']['razsoc'] ?? null,
-            'name' => $data['data']['first_name'] ?? null,
-            'lastname' => $data['data']['first_last_name'] ?? null,
-            'second_lastname' => $data['data']['second_last_name'] ?? null,
-            'is_withholding_applicable' => $data['data']['es_agente_retencion'] ?? null,
-        ]);
-
-        $customerUseCase = new CreateCustomerSunatApiUseCase($this->customerRepository);
-        $customer = $customerUseCase->execute($customerDTO);
-
-        $address = null;
-
-        if (isset($data['data']['ubigeo']) && $data['data']['ubigeo'] !== '-') {
-            $ubigeo = $data['data']['ubigeo'];
-            $departmentId = substr($ubigeo, 0, 2);
-            $provinceId = substr($ubigeo, 2, 2);
-            $districtId = substr($ubigeo, 4, 2);
-
-            $createCustomerAddressUseCase = new CreateCustomerAddressUseCase(
-                $this->customerAddressRepository,
-                $this->departmentRepository,
-                $this->provinceRepository,
-                $this->districtRepository,
-            );
-
-            $customerAddressDTO = new CustomerAddressDTO([
-                'customer_id' => $customer->getId(),
-                'address' => $data['data']['direccion'],
-                'department_id' => $departmentId,
-                'province_id' => $provinceId,
-                'district_id' => $districtId,
-                'status' => 1,
-                'st_principal' => 1,
+            $customerDTO = new CustomerDTO([
+                'customer_document_type_id' => strlen($documentNumber) == 11 ? 2 : 3,
+                'document_number' => $documentNumberValue,
+                'company_name' => $data['data']['razsoc'] ?? null,
+                'name' => $data['data']['first_name'] ?? null,
+                'lastname' => $data['data']['first_last_name'] ?? null,
+                'second_lastname' => $data['data']['second_last_name'] ?? null,
+                'is_withholding_applicable' => $data['data']['es_agente_retencion'] ?? null,
             ]);
-            $address = $createCustomerAddressUseCase->execute($customerAddressDTO);
-        }
 
-        return response()->json([
-            'customer' => (new CustomerResource($customer))->resolve(),
-            'address' => $address ? (new CustomerAddressResource($address))->resolve() : null
-        ], 201);
+            $customerUseCase = new CreateCustomerSunatApiUseCase($this->customerRepository);
+            $customer = $customerUseCase->execute($customerDTO);
+
+            $address = null;
+
+            if (isset($data['data']['ubigeo']) && $data['data']['ubigeo'] !== '-') {
+                $ubigeo = $data['data']['ubigeo'];
+                $departmentId = substr($ubigeo, 0, 2);
+                $provinceId = substr($ubigeo, 2, 2);
+                $districtId = substr($ubigeo, 4, 2);
+
+                $createCustomerAddressUseCase = new CreateCustomerAddressUseCase(
+                    $this->customerAddressRepository,
+                    $this->departmentRepository,
+                    $this->provinceRepository,
+                    $this->districtRepository,
+                );
+
+                $customerAddressDTO = new CustomerAddressDTO([
+                    'customer_id' => $customer->getId(),
+                    'address' => $data['data']['direccion'],
+                    'department_id' => $departmentId,
+                    'province_id' => $provinceId,
+                    'district_id' => $districtId,
+                    'status' => 1,
+                    'st_principal' => 1,
+                ]);
+                $address = $createCustomerAddressUseCase->execute($customerAddressDTO);
+            }
+
+            return response()->json([
+                'customer' => (new CustomerResource($customer))->resolve(),
+                'address' => $address ? (new CustomerAddressResource($address))->resolve() : null
+            ], 201);
+        });
     }
 
     public function updateStatus(int $id, Request $request): JsonResponse
@@ -353,5 +360,13 @@ class CustomerController extends Controller
         $updateStatusUseCase->execute($id, $status);
 
         return response()->json(['message' => 'Estado actualizado correctamente'], 200);
+    }
+
+    public function findAllUnassigned(): array
+    {
+        $customersUseCase = new FindAllUnassignedCustomerUseCase($this->customerRepository);
+        $customers = $customersUseCase->execute();
+
+        return CustomerAllResource::collection($customers)->resolve();
     }
 }

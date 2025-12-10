@@ -312,7 +312,11 @@ class ArticleController extends Controller
     $branchId = $request->query("branch_id");
 
     $validatedData = $request->validate([
-      'date' => 'date|required'
+      'date' => 'date|required',
+      'branch_id' => 'integer|required',
+    ], [
+      'date.required' => 'La fecha es obligatoria',
+      'branch_id.required' => 'El id de la sucursal es obligatorio',
     ]);
 
     $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);

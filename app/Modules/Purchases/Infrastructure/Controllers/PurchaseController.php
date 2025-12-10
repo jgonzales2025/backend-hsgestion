@@ -28,6 +28,7 @@ use Illuminate\Http\JsonResponse;
 use App\Modules\Purchases\Application\UseCases\GeneratePurchasePdfUseCase;
 use App\Modules\Purchases\Domain\Interface\GeneratepdfRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class PurchaseController extends Controller
@@ -43,10 +44,12 @@ class PurchaseController extends Controller
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
     ) {}
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
+        $description = $request->query('description');
+
         $findAllPurchaseUseCase = new FindAllPurchaseUseCase($this->purchaseRepository);
-        $purchases = $findAllPurchaseUseCase->execute();
+        $purchases = $findAllPurchaseUseCase->execute($description);
 
         $result = [];
 
@@ -65,7 +68,17 @@ class PurchaseController extends Controller
             );
         }
 
-        return response()->json($result, 200);
+        return new JsonResponse([
+            'data' => $result,
+            'current_page' => $purchases->currentPage(),
+            'per_page' => $purchases->perPage(),
+            'total' => $purchases->total(),
+            'last_page' => $purchases->lastPage(),
+            'next_page_url' => $purchases->nextPageUrl(),
+            'prev_page_url' => $purchases->previousPageUrl(),
+            'first_page_url' => $purchases->url(1),
+            'last_page_url' => $purchases->url($purchases->lastPage())
+        ]);
     }
 
     public function show(int $id): JsonResponse

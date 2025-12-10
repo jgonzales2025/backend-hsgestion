@@ -8,7 +8,6 @@ class BuildPc
     private int $company_id;
     private string $name;
     private string $description;
-    private float $total_price;
     private int $user_id;
     private bool $status;
 
@@ -18,7 +17,6 @@ class BuildPc
         int $company_id,
         string $name,
         string $description,
-        float $total_price,
         int $user_id,
         bool $status,
 
@@ -27,7 +25,6 @@ class BuildPc
         $this->company_id = $company_id;
         $this->name = $name;
         $this->description = $description;
-        $this->total_price = $total_price;
         $this->user_id = $user_id;
         $this->status = $status;
     }
@@ -49,11 +46,6 @@ class BuildPc
     public function getDescription(): string
     {
         return $this->description;
-    }
-
-    public function getTotalPrice(): float
-    {
-        return $this->total_price;
     }
 
     public function getUserId(): int

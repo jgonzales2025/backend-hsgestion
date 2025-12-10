@@ -18,8 +18,6 @@ class EloquentBuildDetaiPcRepository implements BuildDetailPcRepositoryInterface
                 build_pc_id: $buildDetailPc->build_pc_id,
                 article_id: $buildDetailPc->article_id,
                 quantity: $buildDetailPc->quantity,
-                price: $buildDetailPc->price,
-                subtotal: $buildDetailPc->subtotal,
                 cod_fab: $buildDetailPc->article->cod_fab ?? null,
                 description: $buildDetailPc->article->description ?? null
             );
@@ -35,8 +33,6 @@ class EloquentBuildDetaiPcRepository implements BuildDetailPcRepositoryInterface
             build_pc_id: $buildDetailPc->build_pc_id,
             article_id: $buildDetailPc->article_id,
             quantity: $buildDetailPc->quantity,
-            price: $buildDetailPc->price,
-            subtotal: $buildDetailPc->subtotal,
             cod_fab: $buildDetailPc->article->cod_fab ?? null,
             description: $buildDetailPc->article->description ?? null
         );
@@ -52,8 +48,6 @@ class EloquentBuildDetaiPcRepository implements BuildDetailPcRepositoryInterface
                 build_pc_id: $detail->build_pc_id,
                 article_id: $detail->article_id,
                 quantity: $detail->quantity,
-                price: $detail->price,
-                subtotal: $detail->subtotal,
                 cod_fab: $detail->article->cod_fab ?? null,
                 description: $detail->article->description ?? null
             );
@@ -66,8 +60,6 @@ class EloquentBuildDetaiPcRepository implements BuildDetailPcRepositoryInterface
             'build_pc_id' => $data->getBuildPcId(),
             'article_id' => $data->getArticleId(),
             'quantity' => $data->getQuantity(),
-            'price' => $data->getPrice(),
-            'subtotal' => $data->getSubtotal(),
         ]);
         // Reload to get relationship
         $buildDetailPc->load('article');
@@ -77,8 +69,6 @@ class EloquentBuildDetaiPcRepository implements BuildDetailPcRepositoryInterface
             build_pc_id: $buildDetailPc->build_pc_id,
             article_id: $buildDetailPc->article_id,
             quantity: $buildDetailPc->quantity,
-            price: $buildDetailPc->price,
-            subtotal: $buildDetailPc->subtotal,
             cod_fab: $buildDetailPc->article->cod_fab ?? null,
             description: $buildDetailPc->article->description ?? null
         );
@@ -89,9 +79,7 @@ class EloquentBuildDetaiPcRepository implements BuildDetailPcRepositoryInterface
         $buildDetailPc = EloquentBuildDetailPc::find($data->getId())->update([
             'build_pc_id' => $data->getBuildPcId(),
             'article_id' => $data->getArticleId(),
-            'quantity' => $data->getQuantity(),
-            'price' => $data->getPrice(),
-            'subtotal' => $data->getSubtotal(),
+            'quantity' => $data->getQuantity()
         ]);
         $buildDetailPc = EloquentBuildDetailPc::with('article')->find($data->getId());
 
@@ -100,8 +88,6 @@ class EloquentBuildDetaiPcRepository implements BuildDetailPcRepositoryInterface
             build_pc_id: $buildDetailPc->build_pc_id,
             article_id: $buildDetailPc->article_id,
             quantity: $buildDetailPc->quantity,
-            price: $buildDetailPc->price,
-            subtotal: $buildDetailPc->subtotal,
             cod_fab: $buildDetailPc->article->cod_fab ?? null,
             description: $buildDetailPc->article->description ?? null
         );

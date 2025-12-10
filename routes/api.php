@@ -353,6 +353,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/entry-guides/{id}', [ControllerEntryGuide::class, 'update']);
     Route::post('/purchases/consolidate-guides', [ControllerEntryGuide::class, 'validateSameCustomer']);
     Route::get('/entry-guide-pdf/{id}', [ControllerEntryGuide::class, 'downloadPdf']);
+    Route::put('/entry-guides-status/{id}', [ControllerEntryGuide::class, 'updateStatus']);
     //PettyCashReceipt
     Route::get('/pettyCashReceipt', [PettyCashReceiptController::class, 'index']);
     Route::post('/pettyCashReceipt', [PettyCashReceiptController::class, 'store']);
@@ -448,9 +449,12 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/detractions', [DetractionController::class, 'index']);
 
     // Statistics - Estadísticas
-    
+
 });
 Route::get('/statistics/customer-consumed-items', [StatisticsController::class, 'getCustomerConsumedItems']);
+Route::get('/statistics/articles-sold', [StatisticsController::class, 'getArticlesSold']);
+Route::get('/statistics/article-id-sold/{id}', [StatisticsController::class, 'getArticleIdSold']);
+Route::get('/statistics/article-id-purchase/{id}', [StatisticsController::class, 'getArticleIdPurchase']);
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);

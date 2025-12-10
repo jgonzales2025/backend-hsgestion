@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Database\Seeders\PettyCashMotiveSeeder;
 use App\Models\User;
+use Database\Seeders\PettyCashMotiveSeeder as SeedersPettyCashMotiveSeeder;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -50,7 +51,7 @@ class DatabaseSeeder extends Seeder
             SerieSeeder::class,
              //DispatchArticle::class,
             NoteReasonSeeder::class,
-            PettyCashMotiveSeeder::class,
+            SeedersPettyCashMotiveSeeder::class,
         ]);
     }
 }

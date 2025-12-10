@@ -24,14 +24,14 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
     public function findAll(?string $description)
     {
         $eloquentpurchase = EloquentPurchase::with(['paymentType', 'branches', 'customers', 'currencyType'])
-            ->when($description, fn($query) => 
-                $query->whereHas('customers', fn($query) => 
-                    $query->where('name', 'like', "%{$description}%")
-                        ->orWhere('lastname', 'like', "%{$description}%")
-                        ->orWhere('second_lastname', 'like', "%{$description}%")
-                        ->orWhere('company_name', 'like', "%{$description}%"))
-                    ->orWhereHas('paymentType', fn($query) => 
-                        $query->where('name', 'like', "%{$description}%")))
+            ->when($description, fn($query) =>
+            $query->whereHas('customers', fn($query) =>
+            $query->where('name', 'like', "%{$description}%")
+                ->orWhere('lastname', 'like', "%{$description}%")
+                ->orWhere('second_lastname', 'like', "%{$description}%")
+                ->orWhere('company_name', 'like', "%{$description}%"))
+                ->orWhereHas('paymentType', fn($query) =>
+                $query->where('name', 'like', "%{$description}%")))
             ->orderByDesc('id')
             ->paginate(10);
 
@@ -137,15 +137,15 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'reference_correlative' => $purchase->getReferenceCorrelative(),
             'saldo' => $purchase->getTotal(),
         ]);
- 
+
         DB::statement(
-            "CALL update_purchase_balance(?, ?, ?, ?, ?)",
+            " CALL update_entry_guides_from_purchase(?, ?, ?, ?, ?)",
             [
-               (int) $purchase->getCompanyId(),
-               (int) $purchase->getSupplier()->getId(),
-               (int) $purchase->getTypeDocumentId(),
-               (string) $purchase->getReferenceSerie(),
-               (string) $purchase->getReferenceCorrelative(),
+                $purchase->getCompanyId(),
+                $purchase->getSupplier()->getId(),
+                $purchase->getTypeDocumentId(),
+                $purchase->getReferenceSerie(),
+                $purchase->getReferenceCorrelative()
             ]
         );
         return new Purchase(

@@ -5,6 +5,7 @@ namespace App\Modules\Purchases\Infrastructure\Persistence;
 use App\Modules\Purchases\Domain\Entities\Purchase;
 use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 use App\Modules\Purchases\Infrastructure\Models\EloquentPurchase;
+use Illuminate\Support\Facades\DB;
 
 class EloquentPurchaseRepository implements PurchaseRepositoryInterface
 {
@@ -20,8 +21,8 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
     public function findAll(): array
     {
         $eloquentpurchase = EloquentPurchase::with(['paymentMethod', 'branches', 'customers', 'currencyType'])
-        ->orderByDesc('id')
-        ->get();
+            ->orderByDesc('id')
+            ->get();
 
         return $eloquentpurchase->map(function ($purchase) {
             return new Purchase(
@@ -123,6 +124,17 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'reference_correlative' => $purchase->getReferenceCorrelative(),
             'saldo' => $purchase->getTotal(),
         ]);
+ 
+        DB::statement(
+            "CALL update_purchase_balance(?, ?, ?, ?, ?)",
+            [
+               (int) $purchase->getCompanyId(),
+               (int) $purchase->getSupplier()->getId(),
+               (int) $purchase->getTypeDocumentId(),
+               (string) $purchase->getReferenceSerie(),
+               (string) $purchase->getReferenceCorrelative(),
+            ]
+        );
         return new Purchase(
             id: $eloquentpurchase->id,
             branch: $eloquentpurchase->branches->toDomain($eloquentpurchase->branches),
@@ -146,7 +158,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             igv: $eloquentpurchase->igv,
             total: $eloquentpurchase->total,
             is_igv: $eloquentpurchase->is_igv,
-            type_document_id: $eloquentpurchase->document_type_id  ,
+            type_document_id: $eloquentpurchase->document_type_id,
             reference_serie: $eloquentpurchase->reference_serie,
             reference_correlative: $eloquentpurchase->reference_correlative,
             company_id: $eloquentpurchase->company_id,
@@ -159,7 +171,16 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         if (!$purchaseUpdtate) {
             return null;
         }
-
+        // DB::statement(
+        //     "CALL update_purchase_balance(?, ?, ?, ?, ?)",
+        //     [
+        //         $purchase->getCompanyId(),
+        //         $purchase->getSupplier()->getId(),
+        //         $purchase->getTypeDocumentId(),
+        //         $purchase->getReferenceSerie(),
+        //         $purchase->getReferenceCorrelative(),
+        //     ]
+        // );
         $purchaseUpdtate->update([
             'branch_id' => $purchase->getBranch()->getId(),
             'supplier_id' => $purchase->getSupplier()->getId(),

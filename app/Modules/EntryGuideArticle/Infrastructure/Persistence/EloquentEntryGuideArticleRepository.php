@@ -17,6 +17,7 @@ class EloquentEntryGuideArticleRepository implements EntryGuideArticleRepository
             'article_id' => $entryGuideArticle->getArticle()->getId(),
             'description' => $entryGuideArticle->getDescription(),
             'quantity' => $entryGuideArticle->getQuantity(),
+            'saldo' => $entryGuideArticle->getSaldo(),
 
         ]);
         return new EntryGuideArticle(
@@ -24,7 +25,8 @@ class EloquentEntryGuideArticleRepository implements EntryGuideArticleRepository
             entry_guide_id: $eloquentEntryGuideArticle->entry_guide_id,
             article: $entryGuideArticle->getArticle(),
             description: $eloquentEntryGuideArticle->description,
-            quantity: $eloquentEntryGuideArticle->quantity
+            quantity: $eloquentEntryGuideArticle->quantity,
+            saldo: $eloquentEntryGuideArticle->saldo,
         );
     }
     public function findAll(): array
@@ -40,7 +42,8 @@ class EloquentEntryGuideArticleRepository implements EntryGuideArticleRepository
                 entry_guide_id: $entryGuideArticle->entry_guide_id,
                 article: $entryGuideArticle->article->toDomain($entryGuideArticle->article),
                 description: $entryGuideArticle->description,
-                quantity: $entryGuideArticle->quantity
+                quantity: $entryGuideArticle->quantity,
+                saldo: (float) $entryGuideArticle->saldo
             );
         })->toArray();
     }

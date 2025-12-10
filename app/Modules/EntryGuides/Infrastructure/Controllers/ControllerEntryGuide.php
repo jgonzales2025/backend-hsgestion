@@ -195,7 +195,7 @@ class ControllerEntryGuide extends Controller
 
 
             $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
-         
+
 
             $this->logTransaction($request, $entryGuide);
 
@@ -371,11 +371,13 @@ class ControllerEntryGuide extends Controller
                         'article_id' => $key,
                         'description' => $article->getDescription(),
                         'quantity' => $article->getQuantity(),
+                        'saldo' => $article->getSaldo(),
                         'cod_fab' => $article->getArticle()->getCodFab(),
 
                     ];
                 } else {
                     $aggregated[$key]['quantity'] += $article->getQuantity();
+                    $aggregated[$key]['saldo'] += $article->getSaldo();
                 }
             }
         }
@@ -433,7 +435,7 @@ class ControllerEntryGuide extends Controller
         if (!$entryGuide) {
             return response()->json(['message' => 'Guía de ingreso no encontrada'], 404);
         }
-        
+
         $status = $request->input('status');
         $updateStatusUseCase = new UpdateStatusUseCase($this->entryGuideRepositoryInterface);
         $updateStatusUseCase->execute($id, $status);

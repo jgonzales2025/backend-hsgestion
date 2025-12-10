@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\EntryGuideArticle\Infrastructure\Models;
 
 use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
@@ -14,6 +15,7 @@ class EloquentEntryGuideArticle extends Model
         'article_id',
         'description',
         'quantity',
+        'saldo',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

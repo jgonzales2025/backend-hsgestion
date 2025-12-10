@@ -353,6 +353,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/entry-guides/{id}', [ControllerEntryGuide::class, 'update']);
     Route::post('/purchases/consolidate-guides', [ControllerEntryGuide::class, 'validateSameCustomer']);
     Route::get('/entry-guide-pdf/{id}', [ControllerEntryGuide::class, 'downloadPdf']);
+    Route::put('/entry-guides-status/{id}', [ControllerEntryGuide::class, 'updateStatus']);
     //PettyCashReceipt
     Route::get('/pettyCashReceipt', [PettyCashReceiptController::class, 'index']);
     Route::post('/pettyCashReceipt', [PettyCashReceiptController::class, 'store']);

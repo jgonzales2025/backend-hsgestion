@@ -31,6 +31,7 @@ use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterf
 use App\Modules\EntryGuideArticle\Domain\Interface\EntryGuideArticleRepositoryInterface;
 use App\Modules\EntryGuideArticle\Infrastructure\Resource\EntryGuideArticleResource;
 use App\Modules\EntryGuides\Application\UseCases\GeneratePDF;
+use App\Modules\EntryGuides\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuidePDF;
 use App\Modules\EntryItemSerial\Application\DTOS\EntryItemSerialDTO;
 use App\Modules\EntryItemSerial\Infrastructure\Resource\EntryItemSerialResource;
@@ -70,13 +71,13 @@ class ControllerEntryGuide extends Controller
     public function index(Request $request): JsonResponse
     {
 
-        $serie = $request->query('serie');
-        $correlativo = $request->query('correlativo');
+        $description = $request->query('description');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
 
 
 
         $entryGuideUseCase = new FindAllEntryGuideUseCase($this->entryGuideRepositoryInterface);
-        $entryGuides = $entryGuideUseCase->execute($serie, $correlativo);
+        $entryGuides = $entryGuideUseCase->execute($description, $status);
 
         $result = [];
 
@@ -422,5 +423,21 @@ class ControllerEntryGuide extends Controller
             $createdDetails[] = $createDetEntryguidePurchaseOrderUseCase->execute($detEntryguidePurchaseOrderDTO);
         }
         return $createdDetails;
+    }
+
+    public function updateStatus(Request $request, int $id)
+    {
+        $entryGuideUseCase = new FindByIdEntryGuideUseCase($this->entryGuideRepositoryInterface);
+        $entryGuide = $entryGuideUseCase->execute($id);
+
+        if (!$entryGuide) {
+            return response()->json(['message' => 'Guía de ingreso no encontrada'], 404);
+        }
+        
+        $status = $request->input('status');
+        $updateStatusUseCase = new UpdateStatusUseCase($this->entryGuideRepositoryInterface);
+        $updateStatusUseCase->execute($id, $status);
+
+        return response()->json(['message' => 'Estado actualizado correctamente']);
     }
 }

@@ -12,17 +12,15 @@ use PhpParser\Node\NullableType;
 class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 {
 
-    public function findAll(?string $serie, ?string $correlativo): LengthAwarePaginator
+    public function findAll(?string $description, ?int $status): LengthAwarePaginator
     {
-        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason']);
- 
-        if (!empty($serie)) {
-            $query->where('serie', $serie);
-        }
-
-        if (!empty($correlativo)) {
-            $query->where('correlative', $correlativo);
-        }
+        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])
+        ->when($description, fn($query) => $query->whereHas('customer', fn($query) => 
+            $query->where('name', 'like', "%{$description}%")
+            ->orWhere('lastname', 'like', "%{$description}%")
+            ->orWhere('second_lastname', 'like', "%{$description}%")
+            ->orWhere('company_name', 'like', "%{$description}%")))
+        ->when($status !== null, fn($query) => $query->where('status', $status));
 
         $paginator = $query->orderByDesc('id')->paginate(10);
 
@@ -39,7 +37,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
                 reference_po_serie: $entryGuide->reference_po_serie,
                 reference_po_correlative: $entryGuide->reference_po_correlative,
-                status: 1,
+                status: $entryGuide->status,
             );
         });
 
@@ -212,5 +210,10 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             ->pluck('customer_id');
 
         return $distinctCustomers->count() === 1;
+    }
+
+    public function updateStatus(int $id, int $status): void
+    {
+        EloquentEntryGuide::where('id', $id)->update(['status' => $status]);
     }
 }

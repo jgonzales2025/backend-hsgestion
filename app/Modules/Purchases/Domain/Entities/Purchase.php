@@ -6,6 +6,7 @@ use App\Modules\Branch\Domain\Entities\Branch;
 use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
 use App\Modules\Customer\Domain\Entities\Customer;
 use App\Modules\PaymentMethod\Domain\Entities\PaymentMethod;
+use App\Modules\PaymentType\Domain\Entities\PaymentType;
 
 class Purchase
 {
@@ -16,7 +17,7 @@ class Purchase
     private string $serie;
     private string $correlative;
     private float $exchange_type;
-    private ?PaymentMethod $methodpaymentO;
+    private ?PaymentType $payment_type;
     private ?CurrencyType $currency;
     private string $date;
     private string $date_ven;
@@ -44,7 +45,7 @@ class Purchase
         string $serie,
         string $correlative,
         float $exchange_type,
-        ?PaymentMethod $methodpaymentO,
+        ?PaymentType $payment_type,
         ?CurrencyType $currency,
         string $date,
         string $date_ven,
@@ -64,7 +65,7 @@ class Purchase
         string $reference_serie,
         string $reference_correlative,
         int $company_id,
-        float $saldo
+        float $saldo = null
     ) {
         $this->id = $id;
         $this->branch = $branch;
@@ -72,7 +73,7 @@ class Purchase
         $this->serie = $serie;
         $this->correlative = $correlative;
         $this->exchange_type = $exchange_type;
-        $this->methodpaymentO = $methodpaymentO;
+        $this->payment_type = $payment_type;
         $this->currency = $currency;
         $this->date = $date;
         $this->date_ven = $date_ven;
@@ -119,9 +120,9 @@ class Purchase
     {
         return $this->exchange_type;
     }
-    public function getMethodpayment(): PaymentMethod | null
+    public function getPaymentType(): PaymentType | null
     {
-        return $this->methodpaymentO;
+        return $this->payment_type;
     }
     public function getCurrency(): CurrencyType | null
     {

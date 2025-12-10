@@ -995,6 +995,17 @@ class MenuSeeder extends Seeder
             'type' => 'item',
         ]);
 
+        Menu::create([
+            'name' => 'tablas_concepto_pago',
+            'label' => 'Conceptos de Pago',
+            'route' => '/tablas/concepto-pago',
+            'permission' => 'tablas.concepto_pago',
+            'parent_id' => $tabla->id,
+            'order' => 22,
+            'status' => 1,
+            'type' => 'item',
+        ]);
+
         // ===== MANTENIMIENTO =====
         $mantenimiento = Menu::create([
             'name' => 'mantenimiento',

@@ -14,9 +14,7 @@ class CreateBuildDetailPcRequest extends FormRequest
         return [
             'build_pc_id' => 'required',
             'article_id' => 'required',
-            'quantity' => 'required',
-            'price' => 'required',
-            'subtotal' => 'required',
+            'quantity' => 'required'
         ];
     }
 }

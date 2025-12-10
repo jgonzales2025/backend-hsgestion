@@ -5,6 +5,7 @@ use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\PaymentMethod\Infrastructure\Model\EloquentPaymentMethod;
+use App\Modules\PaymentType\Infrastructure\Models\EloquentPaymentType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -18,7 +19,7 @@ class EloquentPurchase extends Model{
         'serie',
         'correlative',
         'exchange_type',
-        'methodpayment',
+        'payment_type_id',
         'currency',
         'date',
         'date_ven',
@@ -42,9 +43,10 @@ class EloquentPurchase extends Model{
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
-       public function paymentMethod(): BelongsTo
+
+    public function paymentType(): BelongsTo
     {
-        return $this->belongsTo(EloquentPaymentMethod::class, 'methodpayment');
+        return $this->belongsTo(EloquentPaymentType::class, 'payment_type_id');
     }
 
     public function branches(): BelongsTo

@@ -98,6 +98,7 @@ readonly class CreateSaleUseCase
             correlative_prof: $saleDTO->correlative_prof,
             purchase_order: $saleDTO->purchase_order,
             user_authorized: $userAuthorized,
+            credit_amount: $saleDTO->credit_amount,
             coddetrac: $saleDTO->coddetrac,
             pordetrac: $saleDTO->pordetrac,
             impdetracs: $saleDTO->impdetracs,

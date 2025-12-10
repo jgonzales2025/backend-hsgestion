@@ -31,6 +31,7 @@ class SaleDTO
     public ?string $correlative_prof;
     public ?string $purchase_order;
     public ?int $user_authorized_id;
+    public ?float $credit_amount;
     public ?int $coddetrac;
     public ?float $pordetrac;
     public ?float $impdetracs;
@@ -69,6 +70,7 @@ class SaleDTO
         $this->correlative_prof = $data['correlative_prof'] ?? null;
         $this->purchase_order = $data['purchase_order'] ?? null;
         $this->user_authorized_id = $data['user_authorized_id'] ?? null;
+        $this->credit_amount = $data['credit_amount'] ?? null;
         $this->coddetrac = $data['coddetrac'] ?? null;
         $this->pordetrac = $data['pordetrac'] ?? null;
         $this->impdetracs = $this->pordetrac !== null

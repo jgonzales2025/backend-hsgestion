@@ -45,6 +45,7 @@ return new class extends Migration
             $table->string('reference_correlative')->nullable();
             $table->foreignId('note_reason_id')->nullable()->constrained('note_reasons')->onDelete('cascade');
             $table->foreignId('user_authorized_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->decimal('credit_amount', 10, 2)->nullable();
             $table->integer('coddetrac')->nullable();
             $table->decimal('pordetrac', 8, 2)->nullable();
             $table->decimal('impdetracs', 8, 2)->nullable();

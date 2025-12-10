@@ -7,7 +7,6 @@ use App\Modules\Sale\Domain\Entities\Sale;
 use App\Modules\Sale\Domain\Entities\SaleCreditNote;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -360,6 +359,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'reference_correlative' => $sale->getCorrelativeProf(),
             'purchase_order' => $sale->getPurchaseOrder(),
             'user_authorized_id' => $sale->getUserAuthorized()?->getId(),
+            'credit_amount' => $sale->getCreditAmount(),
             'coddetrac' => $sale->getCoddetrac(),
             'pordetrac' => $sale->getPordetrac(),
             'impdetracs' => $sale->getImpdetracs(),
@@ -478,6 +478,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             correlative_prof: $eloquentSale->reference_correlative,
             purchase_order: $eloquentSale->purchase_order,
             user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized),
+            credit_amount: $eloquentSale->credit_amount,
             coddetrac: $eloquentSale->coddetrac,
             pordetrac: $eloquentSale->pordetrac,
             impdetracs: $eloquentSale->impdetracs,
@@ -522,6 +523,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             correlative_prof: $eloquentSale->correlative_prof,
             purchase_order: $eloquentSale->purchase_order,
             user_authorized: $eloquentSale->userAuthorized?->toDomain($eloquentSale->userAuthorized),
+            credit_amount: $eloquentSale->credit_amount,
             coddetrac: $eloquentSale->coddetrac,
             pordetrac: $eloquentSale->pordetrac,
             impdetracs: $eloquentSale->impdetracs,

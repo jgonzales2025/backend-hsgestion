@@ -49,6 +49,7 @@ class EloquentSale extends Model
         'reference_serie',
         'reference_correlative',
         'note_reason_id',
+        'credit_amount',
         'coddetrac',
         'pordetrac',
         'impdetracs',

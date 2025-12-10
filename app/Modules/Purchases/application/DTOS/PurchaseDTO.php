@@ -9,7 +9,7 @@ class PurchaseDTO{
     public string $serie;
     public string $correlative;
     public  $exchange_type;
-    public int $methodpayment;
+    public int $payment_type_id;
     public  $currency;
     public string $date;
     public string $date_ven;
@@ -36,7 +36,7 @@ class PurchaseDTO{
         $this->serie = $array['serie'];
         $this->correlative = $array['correlative'] ?? '';
         $this->exchange_type = $array['exchange_type'];
-        $this->methodpayment = $array['methodpayment_id'];
+        $this->payment_type_id = $array['payment_type_id'];
         $this->currency = $array['currency_id'];
         $this->date = $array['date'];
         $this->date_ven = $array['date_ven'];

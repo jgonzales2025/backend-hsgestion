@@ -11,6 +11,8 @@ use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\PaymentMethod\Application\UseCases\FindByIdPaymentMethodUseCase;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
+use App\Modules\PaymentType\Application\UseCases\FindByIdPaymentTypeUseCase;
+use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
 use App\Modules\Purchases\Domain\Entities\Purchase;
 use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
@@ -20,7 +22,7 @@ class CreatePurchaseUseCase
 {
     public function __construct(
         private readonly PurchaseRepositoryInterface $purchaseRepository,
-        private readonly PaymentMethodRepositoryInterface $paymentTypeRepository,
+        private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
@@ -30,12 +32,12 @@ class CreatePurchaseUseCase
 
     public function execute(PurchaseDTO $purchaseDTO): ?Purchase
     {
-        $lastDocumentNumber = $this->purchaseRepository->getLastDocumentNumber($purchaseDTO->branch_id, $purchaseDTO->serie);
+        $lastDocumentNumber = $this->purchaseRepository->getLastDocumentNumber($purchaseDTO->company_id, $purchaseDTO->branch_id, $purchaseDTO->serie);
 
         $purchaseDTO->correlative = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
 
-        $metodoPago =  new FindByIdPaymentMethodUseCase($this->paymentTypeRepository);
-        $payment = $metodoPago->execute($purchaseDTO->methodpayment);
+        $paymentTypeUseCase =  new FindByIdPaymentTypeUseCase($this->paymentTypeRepository);
+        $paymentType = $paymentTypeUseCase->execute($purchaseDTO->payment_type_id);
 
         $branch = new FindByIdBranchUseCase($this->branchRepository);
         $branch = $branch->execute($purchaseDTO->branch_id);
@@ -56,7 +58,7 @@ class CreatePurchaseUseCase
             serie: $purchaseDTO->serie,
             correlative: $purchaseDTO->correlative,
             exchange_type: $purchaseDTO->exchange_type,
-            methodpaymentO: $payment,
+            payment_type: $paymentType,
             currency: $currency,
             date: $purchaseDTO->date,
             date_ven: $purchaseDTO->date_ven,

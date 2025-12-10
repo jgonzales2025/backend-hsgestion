@@ -150,9 +150,7 @@ class BuildPcController
             $detailDTO = new BuildDetailPcdto([
                 'build_pc_id' => $buildPc->getId(),
                 'article_id' => $item['article_id'],
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-                'subtotal' => $item['quantity'] * $item['price'],
+                'quantity' => $item['quantity']
             ]);
 
             return $createDetailUseCase->execute($detailDTO);

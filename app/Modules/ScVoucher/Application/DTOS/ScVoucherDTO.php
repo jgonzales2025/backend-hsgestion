@@ -5,7 +5,7 @@ namespace App\Modules\ScVoucher\Application\DTOS;
 class ScVoucherDTO
 {
     public ?int $cia;
-    public int $anopr;
+    public string $anopr;
     public string $correlativo;
     public string $fecha;
     public int $codban;
@@ -26,8 +26,8 @@ class ScVoucherDTO
     public function __construct(array $data)
     {
         $this->cia = $data['cia'] ?? null;
-        $this->anopr = $data['anopr'] ?? 2025;
-        $this->correlativo = $data['correlative'] ?? '';
+        $this->anopr = $data['anopr'] ?? "";
+        $this->correlativo = $data['correlative'] ?? '' ;
         $this->fecha = $data['fecha'];
         $this->codban = $data['codban'];
         $this->codigo = $data['codigo'];
@@ -41,7 +41,7 @@ class ScVoucherDTO
         $this->tipopago = $data['tipopago'];
         $this->status = $data['status'] ?? 1;
         $this->usradi = $data['usradi'];
-        $this->fecadi = $data['fecadi'];
+        $this->fecadi = $data['fecadi'] ?? "2025-12-02";
         $this->usrmod = $data['usrmod'];
     }
 }

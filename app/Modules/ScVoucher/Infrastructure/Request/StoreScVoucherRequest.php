@@ -17,6 +17,7 @@ class StoreScVoucherRequest extends FormRequest
         $this->merge([
             'cia' => $companyId,
             'usrmod' => $user->id,
+            'usradi' => $user->id,
         ]);
     }
 
@@ -24,8 +25,7 @@ class StoreScVoucherRequest extends FormRequest
     {
         return [
             'cia' => 'nullable|integer',
-            'anopr' => 'required|integer',
-            'correlative' => 'required|string',
+            'anopr' => 'required|string',
             'fecha' => 'required|date',
             'codban' => 'required|integer',
             'codigo' => 'required|integer',
@@ -39,7 +39,7 @@ class StoreScVoucherRequest extends FormRequest
             'tipopago' => 'required|integer',
             'status' => 'nullable|integer',
             'usradi' => 'required|integer',
-            'fecadi' => 'required|date',
+            'fecadi' => 'nullable|date',
             'usrmod' => 'nullable|integer',
             'detail_sc_voucher' => 'required|array',
             'detail_sc_voucher.*.codcon' => 'required|integer',

@@ -9,8 +9,8 @@ class FindAllPurchaseUseCase
     public function __construct(private readonly PurchaseRepositoryInterface $purchaseRepository)
     {
     }
-    public function execute(?string $description)
+    public function execute(?string $description, ?string $num_doc, ?int $id_proveedr)
     {
-        return $this->purchaseRepository->findAll($description);
+        return $this->purchaseRepository->findAll($description, $num_doc, $id_proveedr);
     }
 }

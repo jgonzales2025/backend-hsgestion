@@ -18,9 +18,9 @@ use App\Modules\ScVoucher\Infrastructure\Request\UpdateScVoucherRequest;
 use App\Modules\ScVoucher\Infrastructure\Resource\ScVoucherResource;
 use App\Modules\ScVoucherdet\application\DTOS\ScVoucherdetDTO;
 use App\Modules\ScVoucherdet\application\UseCases\CreateScVoucherdetUseCase;
-use App\Modules\ScVoucherdet\application\UseCases\UpdateScVoucherdetUseCase;
 use App\Modules\ScVoucherdet\Domain\Interface\ScVoucherdetRepositoryInterface;
 use App\Modules\ScVoucherdet\Infrastructure\Resource\ScVoucherdetResource;
+use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -30,12 +30,12 @@ class ScVoucherController extends Controller
         private ScVoucherRepositoryInterface $scVoucherRepository,
         private readonly ScVoucherdetRepositoryInterface $scVoucherdetRepository,
         private readonly DetVoucherPurchaseRepositoryInterface $detVoucherPurchaseRepository,
+        private DocumentNumberGeneratorService $documentNumberGeneratorService,
     ) {}
 
     public function index(Request $request): JsonResponse
     {
-        $search = $request->query('search');
-        $codiigo = $request->query('codigo');
+        $search = $request->query('search'); 
 
         $findAllUseCase = new FindAllScVoucherUseCase($this->scVoucherRepository);
         $scVouchers = $findAllUseCase->execute($search);
@@ -54,7 +54,7 @@ class ScVoucherController extends Controller
             );
         });
 
-     
+
         return new JsonResponse([
             'data' => $data,
             'current_page' => $scVouchers->currentPage(),
@@ -74,7 +74,7 @@ class ScVoucherController extends Controller
         $scVoucher = $findByIdUseCase->execute($id);
 
         if (!$scVoucher) {
-            return response()->json(['message' => 'ScVoucher no encontrado'], 404);
+            return response()->json(['message' => 'Voucher no encontrado'], 404);
         }
 
         // Get voucher details
@@ -94,7 +94,7 @@ class ScVoucherController extends Controller
     public function store(StoreScVoucherRequest $request): JsonResponse
     {
         $scVoucherDTO = new ScVoucherDTO($request->validated());
-        $createUseCase = new CreateScVoucherUseCase($this->scVoucherRepository);
+        $createUseCase = new CreateScVoucherUseCase($this->scVoucherRepository,$this->documentNumberGeneratorService);
         $scVoucher = $createUseCase->execute($scVoucherDTO);
 
         $createdetailvoucher = $this->createScVoucherdet($scVoucher, $request->validated()['detail_sc_voucher']);
@@ -142,9 +142,7 @@ class ScVoucherController extends Controller
             ),
             200
         );
-    }
-
-
+    } 
 
     public function createScVoucherdet($voucher, array $data)
     {
@@ -152,7 +150,6 @@ class ScVoucherController extends Controller
 
         return array_map(function ($item) use ($voucher, $createdetailvoucher) {
 
-    
             $scVoucherdetDTO = new ScVoucherdetDTO([
                 'cia' => $voucher->getCia(),
                 'codcon' => $item['codcon'],

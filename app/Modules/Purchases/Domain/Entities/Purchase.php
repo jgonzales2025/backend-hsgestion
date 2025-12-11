@@ -7,6 +7,7 @@ use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
 use App\Modules\Customer\Domain\Entities\Customer;
 use App\Modules\PaymentMethod\Domain\Entities\PaymentMethod;
 use App\Modules\PaymentType\Domain\Entities\PaymentType;
+use App\Modules\DocumentType\Domain\Entities\DocumentType;
 
 class Purchase
 {
@@ -33,7 +34,7 @@ class Purchase
     private float $igv;
     private float $total;
     private bool $is_igv;
-    private ?int $type_document_id;
+    private ?DocumentType $type_document_id;
     private string $reference_serie;
     private string $reference_correlative;
     private float $saldo;
@@ -61,11 +62,11 @@ class Purchase
         float $igv,
         float $total,
         bool $is_igv,
-        ?int $type_document_id,
+        ?DocumentType $type_document_id,
         string $reference_serie,
         string $reference_correlative,
         int $company_id,
-        float $saldo = null
+        float $saldo = 0
     ) {
         $this->id = $id;
         $this->branch = $branch;
@@ -184,7 +185,7 @@ class Purchase
     {
         return $this->is_igv;
     }
-    public function getTypeDocumentId(): int|null
+    public function getTypeDocumentId(): ?DocumentType
     {
         return $this->type_document_id;
     }
@@ -204,5 +205,4 @@ class Purchase
     {
         return $this->saldo;
     }
-
 }

@@ -5,16 +5,21 @@ namespace App\Modules\ScVoucher\Application\UseCases;
 use App\Modules\ScVoucher\Application\DTOS\ScVoucherDTO;
 use App\Modules\ScVoucher\Domain\Entities\ScVoucher;
 use App\Modules\ScVoucher\Domain\Interface\ScVoucherRepositoryInterface;
+use App\Services\DocumentNumberGeneratorService;
 
 class CreateScVoucherUseCase
 {
     public function __construct(
         private ScVoucherRepositoryInterface $scVoucherRepository,
+        private DocumentNumberGeneratorService $documentNumberGeneratorService,
     ) {}
 
     public function execute(ScVoucherDTO $scVoucherDTO): ?ScVoucher
     {
-        $scVoucher = new ScVoucher(
+        $lastDocumentNumber = $this->scVoucherRepository->getLastDocumentNumber($scVoucherDTO->nroope);
+        $scVoucherDTO->correlativo = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
+
+        $scVoucher = new ScVoucher( 
             id: null,
             cia: $scVoucherDTO->cia,
             anopr: $scVoucherDTO->anopr,

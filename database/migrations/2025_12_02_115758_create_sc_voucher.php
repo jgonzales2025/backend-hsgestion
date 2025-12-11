@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sc_voucher', function (Blueprint $table) {
             $table->id();
             $table->integer('cia')->nullable();             // INT(2)
-            $table->integer('anopr')->default(0);      // SMALLINT(4)
+            $table->string('anopr');      // SMALLINT(4)
             $table->string('correlativo');     
             $table->date('fecha')->nullable();              // DATE
 

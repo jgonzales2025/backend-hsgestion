@@ -10,4 +10,5 @@ interface ScVoucherRepositoryInterface
     public function findAll();
     public function create(ScVoucher $scVoucher): ?ScVoucher;
     public function update(ScVoucher $scVoucher): ?ScVoucher;
+    public function getLastDocumentNumber(string $serie): ?string;
 }

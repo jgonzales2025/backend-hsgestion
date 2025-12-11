@@ -10,6 +10,7 @@ use App\Modules\DetailPurchaseGuides\Application\DTOS\DetailPurchaseGuideDTO;
 use App\Modules\DetailPurchaseGuides\Application\UseCases\CreateDetailPurchaseGuideUseCase;
 use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
 use App\Modules\DetailPurchaseGuides\Infrastructure\Resource\DetailPurchaseGuideResource;
+use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
@@ -37,21 +38,24 @@ class PurchaseController extends Controller
     public function __construct(
         private readonly PurchaseRepositoryInterface $purchaseRepository,
         private readonly ShoppingIncomeGuideRepositoryInterface $shoppingIncomeGuideRepository,
-        private readonly DetailPurchaseGuideRepositoryInterface $detailPurchaseGuideRepository,
-        private readonly PaymentMethodRepositoryInterface $paymentMethodRepository,
+        private readonly DetailPurchaseGuideRepositoryInterface $detailPurchaseGuideRepository, 
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
-        private readonly PaymentTypeRepositoryInterface $paymentTypeRepository
+        private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
+        private readonly DocumentTypeRepositoryInterface $documentTypeRepository
     ) {}
 
     public function index(Request $request): JsonResponse
     {
         $description = $request->query('description');
+        $num_doc = $request->query('num_doc');
+        $id_proveedr= $request->query('id_proveedr');
 
+       
         $findAllPurchaseUseCase = new FindAllPurchaseUseCase($this->purchaseRepository);
-        $purchases = $findAllPurchaseUseCase->execute($description);
+        $purchases = $findAllPurchaseUseCase->execute($description, $num_doc, $id_proveedr);
 
         $result = [];
 
@@ -104,26 +108,27 @@ class PurchaseController extends Controller
             200
         );
     }
-    
+
     public function store(CreatePurchaseRequest $request): JsonResponse
     {
         $purchaseDTO = new PurchaseDTO($request->validated());
         $cretaePurchaseUseCase = new CreatePurchaseUseCase(
             $this->purchaseRepository,
-            $this->paymentTypeRepository,   
+            $this->paymentTypeRepository,
             $this->branchRepository,
             $this->customerRepository,
             $this->currencyRepository,
             $this->documentNumberGeneratorService,
+            $this->documentTypeRepository
         );
         $purchase = $cretaePurchaseUseCase->execute($purchaseDTO);
-       
-          $existingDetails = $this->detailPurchaseGuideRepository->findById($purchase->getId());
+
+        $existingDetails = $this->detailPurchaseGuideRepository->findById($purchase->getId());
 
         $this->detailPurchaseGuideRepository->deletedBy($purchase->getId());
 
-              $det_compras_guia_ingreso = $this->updateDetailCompra($purchase, $request->validated()['det_compras_guia_ingreso'], $existingDetails);
-     
+        $det_compras_guia_ingreso = $this->updateDetailCompra($purchase, $request->validated()['det_compras_guia_ingreso'], $existingDetails);
+
 
         $shopping_income_guide = $this->updateShopping($purchase,  $request->validated()['entry_guide']);
 
@@ -134,7 +139,7 @@ class PurchaseController extends Controller
                 (new PurchaseResource($purchase))->resolve(),
                 [
                     'det_compras_guia_ingreso' => DetailPurchaseGuideResource::collection($det_compras_guia_ingreso)->resolve(),
-                   //purchaseGuide
+                    //purchaseGuide
                     'entry_guide' => $entryGuideIds,
                 ]
             ),
@@ -147,7 +152,7 @@ class PurchaseController extends Controller
         $purchaseDTO = new PurchaseDTO($request->validated());
         $updatePurchaseUseCase = new UpdatePurchaseUseCase(
             $this->purchaseRepository,
-          $this->paymentTypeRepository,
+            $this->paymentTypeRepository,
             $this->branchRepository,
             $this->customerRepository,
             $this->currencyRepository,
@@ -176,7 +181,7 @@ class PurchaseController extends Controller
                 ]
             ),
             201
-        );
+        ); 
     }
     public function downloadPdf(int $id): Response
     {
@@ -200,12 +205,13 @@ class PurchaseController extends Controller
                 'purchase_id' => $purchase->getId(),
                 'article_id' => $item['article_id'],
                 'description' => $item['description'],
+                'cantidad' => $item['cantidad'],
                 'precio_costo' => $item['precio_costo'],
                 'descuento' => $item['descuento'],
                 'sub_total' => $item['sub_total'],
                 'total' => $item['total'],
-                'cantidad_update' =>  $item['cantidad_update'],
-                'process_status' => $item['process_status'],
+                'cantidad_update' =>  $item['cantidad'],
+                'process_status' => $item['cantidad'] == 0 ? 'Facturado' : 'En proceso',
             ]);
 
             $shoppingGuide = $createGuideUseCase->execute($detailDTO);
@@ -234,7 +240,7 @@ class PurchaseController extends Controller
         return array_map(function ($entryGuideId) use ($shooping, $createShooping) {
             $shoopingDTO = new ShoppingIncomeGuideDTO([
                 'purchase_id' => $shooping->getId(),
-                'entry_guide_id' => (int) $entryGuideId,    
+                'entry_guide_id' => (int) $entryGuideId,
             ]);
 
             $result = $createShooping->execute($shoopingDTO);
@@ -249,17 +255,19 @@ class PurchaseController extends Controller
 
             // Find the original cantidad for this article from existing details
             $cantidadOriginal = $purchase['cantidad'] ?? 0;
+            $cantidadUpdateOriginal =  0;
 
             foreach ($existingDetails as $existingDetail) {
                 if ($existingDetail->getArticleId() == $purchase['article_id']) {
                     $cantidadOriginal = $existingDetail->getCantidad();
+                    $cantidadUpdateOriginal = $existingDetail->getCantidadUpdate();
                     break;
                 }
             }
 
             // Calculate new cantidad: original - cantidad_update
             $cantidadUpdate = $purchase['cantidad_update'] ?? 0;
-            $nuevaCantidad = $cantidadOriginal - $cantidadUpdate;
+            $nuevaCantidad = $cantidadUpdateOriginal - $cantidadUpdate;
 
             // Ensure cantidad doesn't go negative
             if ($nuevaCantidad < 0) {
@@ -275,12 +283,12 @@ class PurchaseController extends Controller
                 'purchase_id' => $detail->getId(),
                 'article_id' => $purchase['article_id'],
                 'description' => $purchase['description'],
-                'cantidad' => $nuevaCantidad,
+                'cantidad' => $cantidadOriginal,
                 'precio_costo' => $precio,
                 'descuento' => $descuento,
                 'sub_total' => $subTotal,
                 'total' => $total,
-                'cantidad_update' => $cantidadUpdate,
+                'cantidad_update' => $nuevaCantidad,
                 'process_status' => $nuevaCantidad == 0 ? 'Facturado' : 'En proceso',
             ]);
 
@@ -320,8 +328,7 @@ class PurchaseController extends Controller
         // Validate request
         $validated = request()->validate([
             'cantidad_update' => 'required|numeric|min:0',
-        ], [
-            'cantidad_update.required' => 'La cantidad a actualizar es requerida',
+            'cantidad_update.required' => 'La cantidad a actualizar es requerida', 
             'cantidad_update.numeric' => 'La cantidad a actualizar debe ser un número',
             'cantidad_update.min' => 'La cantidad a actualizar debe ser mayor o igual a 0',
         ]);

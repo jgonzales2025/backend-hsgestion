@@ -9,6 +9,7 @@ class PurchaseResource extends JsonResource
 {
     public function toArray(Request $request):array
     {
+        $currencyId = $this->resource->getCurrency()->getId();
         return [
             'id' => $this->resource->getId(),
             'branch' =>[
@@ -44,9 +45,14 @@ class PurchaseResource extends JsonResource
             'igv' => $this->resource->getIgv(),
             'total' => $this->resource->getTotal(),
             'is_igv' => $this->resource->getIsIgv(),
-            'reference_document_type' =>$this->resource->getTypeDocumentId(),
+            'reference_document_type' => [
+                'id' => $this->resource->getTypeDocumentId()->getId(),
+                'description' => $this->resource->getTypeDocumentId()->getDescription(),
+            ],
             'reference_serie' => $this->resource->getReferenceSerie(),
             'reference_correlative' => $this->resource->getReferenceCorrelative(),
+            'saldo_soles' => $currencyId == 1 ? $this->resource->getSaldo() : (float)number_format($this->resource->getSaldo() * $this->resource->getExchangeType(), 4),
+            'saldo_dolares' => $currencyId == 2 ? $this->resource->getSaldo() : (float)number_format($this->resource->getSaldo() / $this->resource->getExchangeType(), 4),
         ];
     }
 }

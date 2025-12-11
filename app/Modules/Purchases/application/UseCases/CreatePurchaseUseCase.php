@@ -9,6 +9,8 @@ use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
+use App\Modules\DocumentType\Application\UseCases\FindByIdDocumentTypeUseCase;
+use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PaymentMethod\Application\UseCases\FindByIdPaymentMethodUseCase;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
 use App\Modules\PaymentType\Application\UseCases\FindByIdPaymentTypeUseCase;
@@ -26,7 +28,8 @@ class CreatePurchaseUseCase
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
-        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
+        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
+        private readonly DocumentTypeRepositoryInterface $documentTypeRepository
 
     ) {}
 
@@ -48,7 +51,8 @@ class CreatePurchaseUseCase
         $currency = new FindByIdCurrencyTypeUseCase($this->currencyRepository);
         $currency = $currency->execute($purchaseDTO->currency);
 
-
+        $documentType = new FindByIdDocumentTypeUseCase($this->documentTypeRepository);
+        $documentType = $documentType->execute($purchaseDTO->type_document_id);
 
         $puchaseCreate = new Purchase(
             id: 0,
@@ -74,7 +78,7 @@ class CreatePurchaseUseCase
             igv: $purchaseDTO->igv,
             total: $purchaseDTO->total,
             is_igv: $purchaseDTO->is_igv,
-            type_document_id: $purchaseDTO->type_document_id,
+            type_document_id: $documentType,
             reference_serie: $purchaseDTO->reference_serie,
             reference_correlative: $purchaseDTO->reference_correlative,
             saldo: $purchaseDTO->total,

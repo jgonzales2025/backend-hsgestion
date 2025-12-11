@@ -6,7 +6,7 @@ class ScVoucher
 {
     private ?int $id;
     private ?int $cia;
-    private int $anopr;
+    private string $anopr;
     private string $correlativo;
     private string $fecha;
     private int $codban;
@@ -27,7 +27,7 @@ class ScVoucher
     public function __construct(
         ?int $id,
         ?int $cia,
-        int $anopr,
+        string $anopr,
         string $correlativo,
         string $fecha,
         int $codban,
@@ -73,7 +73,7 @@ class ScVoucher
     {
         return $this->cia;
     }
-    public function getAnopr(): int
+    public function getAnopr(): string
     {
         return $this->anopr;
     }

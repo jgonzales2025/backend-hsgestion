@@ -1,17 +1,20 @@
 <?php
+
 namespace App\Modules\Purchases\Infrastructure\Models;
 
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
+use App\Modules\DocumentType\Infrastructure\Models\EloquentDocumentType;
 use App\Modules\PaymentMethod\Infrastructure\Model\EloquentPaymentMethod;
 use App\Modules\PaymentType\Infrastructure\Models\EloquentPaymentType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class EloquentPurchase extends Model{
+class EloquentPurchase extends Model
+{
     protected $table = 'purchase';
-    
+
     protected $fillable = [
         'company_id',
         'branch_id',
@@ -39,7 +42,7 @@ class EloquentPurchase extends Model{
         'document_type_id',
         'reference_serie',
         'reference_correlative',
-        'saldo'
+        'saldo',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -62,5 +65,9 @@ class EloquentPurchase extends Model{
     public function currencyType(): BelongsTo
     {
         return $this->belongsTo(EloquentCurrencyType::class, 'currency');
+    }
+    public function documentType(): BelongsTo
+    {
+        return $this->belongsTo(EloquentDocumentType::class, 'document_type_id');
     }
 }

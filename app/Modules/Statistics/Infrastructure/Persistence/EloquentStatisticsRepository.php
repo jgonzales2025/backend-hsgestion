@@ -188,7 +188,11 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
                 'p.serie',
                 'p.correlative as correlativo',
                 'p.date as fecha_compra',
-                DB::raw('COALESCE(c.company_name, "Sin proveedor") as proveedor'),
+                DB::raw('CASE 
+                    WHEN c.company_name IS NOT NULL AND c.company_name != "" THEN c.company_name
+                    WHEN c.name IS NOT NULL THEN TRIM(CONCAT(COALESCE(c.name, ""), " ", COALESCE(c.lastname, ""), " ", COALESCE(c.second_lastname, "")))
+                    ELSE "Sin proveedor"
+                END as proveedor'),
                 'dpg.cantidad',
                 DB::raw('CASE 
                     WHEN p.currency = 1 THEN "S/" 

@@ -464,6 +464,7 @@ Route::get('/statistics/customer-consumed-items', [StatisticsController::class, 
 Route::get('/statistics/articles-sold', [StatisticsController::class, 'getArticlesSold']);
 Route::get('/statistics/article-id-sold/{id}', [StatisticsController::class, 'getArticleIdSold']);
 Route::get('/statistics/article-id-purchase/{id}', [StatisticsController::class, 'getArticleIdPurchase']);
+Route::get('/statistics/article-id-purchase/{id}/export', [StatisticsController::class, 'exportArticleIdPurchase']);
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);

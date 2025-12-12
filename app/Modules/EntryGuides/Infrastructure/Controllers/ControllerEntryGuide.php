@@ -100,6 +100,7 @@ class ControllerEntryGuide extends Controller
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
             $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
+            $response['process_status'] = array_reduce($articlesWithSerials, fn($carry, $article) => $carry || ($article->getSaldo() > 0), false) ? 'pendiente' : 'completado';
             $result[] = $response;
         }
 
@@ -140,6 +141,7 @@ class ControllerEntryGuide extends Controller
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
+            $response['process_status'] = array_reduce($articlesWithSerials, fn($carry, $article) => $carry || ($article->getSaldo() > 0), false) ? 'pendiente' : 'completado';
             $result[] = $response;
         }
 
@@ -171,6 +173,7 @@ class ControllerEntryGuide extends Controller
         $response['articles'] = EntryGuideArticleResource::collection($entryArticles)->resolve();
         $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
         $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
+        $response['process_status'] = array_reduce($entryArticles, fn($carry, $article) => $carry || ($article->getSaldo() > 0), false) ? 'pendiente' : 'completado';
 
         return response()->json($response, 200);
     }
@@ -203,6 +206,7 @@ class ControllerEntryGuide extends Controller
             $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
             $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
+            $response['process_status'] = array_reduce($entryGuideArticle, fn($carry, $article) => $carry || ($article->getSaldo() > 0), false) ? 'pendiente' : 'completado';
 
             return response()->json($response, 201);
         });
@@ -239,6 +243,7 @@ class ControllerEntryGuide extends Controller
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
         $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
+        $response['process_status'] = array_reduce($entryGuideArticle, fn($carry, $article) => $carry || ($article->getSaldo() > 0), false) ? 'pendiente' : 'completado';
 
         return response()->json($response, 200);
     }

@@ -19,7 +19,7 @@ class   EntryGuideArticleResource extends JsonResource
             'serials' => array_map(
                 fn($itemSerial) => method_exists($itemSerial, 'getSerial') ? $itemSerial->getSerial() : $itemSerial,
                 $this->resource->serials ?? []
-            )
+            ),
         ];
     }
 }

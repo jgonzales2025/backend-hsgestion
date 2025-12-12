@@ -66,13 +66,13 @@ class BuildPcController
     {
         $data = $request->validated();
 
-        // Calcular total
-        $totalPrice = 0;
-        foreach ($data['details'] as $detail) {
-            $totalPrice += $detail['quantity'] * $detail['price'];
-        }
+        // El precio no se calcula aquí, se usan los campos min y max
+        // $totalPrice = 0;
+        // foreach ($data['details'] as $detail) {
+        //     $totalPrice += $detail['quantity'] * $detail['price'];
+        // }
 
-        $data['total_price'] = $totalPrice;
+        // $data['total_price'] = 0;
 
         // Crear PC
         $buildPcDTO = new BuildPcDTO($data);

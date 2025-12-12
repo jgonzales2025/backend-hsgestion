@@ -26,7 +26,7 @@ class RequestStore extends FormRequest
         return [
             'cia_id' => 'integer|exists:companies,id',
             'branch_id' => ['required', 'integer', 'exists:branches,id'],
-            'serie' => ['required', 'string', 'max:10'],
+            'serie' => ['nullable', 'string', 'max:10'],
             'emission_reason_id' => ['required', 'integer', 'exists:emission_reasons,id'],
             'description' => ['nullable', 'string', 'max:255'],
             'destination_branch_id' => ['nullable', 'integer', 'exists:branches,id'],

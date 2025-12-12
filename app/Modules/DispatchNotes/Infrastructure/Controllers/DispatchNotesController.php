@@ -105,13 +105,16 @@ class DispatchNotesController extends Controller
 
     public function store(RequestStore $store): JsonResponse
     {
-        $dispatchUseCase = new FindByDocumentSale($this->dispatchNoteRepository);
-        $dispatchNote = $dispatchUseCase->execute($store->validated()['doc_referencia'], $store->validated()['num_referencia']);
+        // Solo verificar duplicados si tanto doc_referencia como num_referencia están presentes
+        if (!empty($store->validated()['doc_referencia']) && !empty($store->validated()['num_referencia'])) {
+            $dispatchUseCase = new FindByDocumentSale($this->dispatchNoteRepository);
+            $dispatchNote = $dispatchUseCase->execute($store->validated()['doc_referencia'], $store->validated()['num_referencia']);
 
-        if ($dispatchNote) {
-            return response()->json([
-                'message' => 'Esta venta ya tiene una guía de remisión asignada.'
-            ], 400);
+            if ($dispatchNote) {
+                return response()->json([
+                    'message' => 'Esta venta ya tiene una guía de remisión asignada.'
+                ], 400);
+            }
         }
 
         $dispatchNotesDTO = new DispatchNoteDTO($store->validated());

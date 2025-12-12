@@ -19,6 +19,8 @@ return new class extends Migration
             $table->float('total_price');
             $table->integer('user_id');
             $table->boolean('status')->default(true);
+            $table->float('min')->default(0);
+            $table->float('max')->default(0);
             $table->timestamps();
         });
     }

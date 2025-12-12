@@ -30,7 +30,10 @@ class UpdateBuildPcRequest extends FormRequest
             'status' => 'nullable|boolean',
             'details' => 'required|array|min:1',
             'details.*.article_id' => 'required|integer|exists:articles,id',
-            'details.*.quantity' => 'required|integer|min:1'
+            'details.*.quantity' => 'required|integer|min:1',
+            // 'details.*.price' => 'required|numeric|min:0',
+            'min' => 'required|numeric',
+            'max' => 'required|numeric',
         ];
     }
 }

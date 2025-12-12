@@ -31,7 +31,17 @@ class CreateBuildPcRequest extends FormRequest
             'status' => 'nullable|boolean',
             'details' => 'required|array|min:1',
             'details.*.article_id' => 'required|integer|exists:articles,id',
-            'details.*.quantity' => 'required|integer|min:1'
+            'details.*.quantity' => 'required|integer|min:1',
+            // 'details.*.price' => 'required|numeric|min:0',
+            'min' => 'required|numeric',
+            'max' => 'required|numeric',
+        ];
+    }
+    public function messages()
+    {
+        return [
+            // 'min.min' => 'El valor mínimo debe ser mayor o igual a 5',
+            // 'max.max' => 'El valor máximo debe ser menor o igual a 10',
         ];
     }
 }

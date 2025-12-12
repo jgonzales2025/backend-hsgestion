@@ -9,8 +9,7 @@ class FindByDocumentSale
 {
     public function __construct(
         private readonly DispatchNotesRepositoryInterface $dispatchNotesRepository
-    ) {
-    }
+    ) {}
 
     public function execute(string $serie, string $correlative): ?DispatchNote
     {

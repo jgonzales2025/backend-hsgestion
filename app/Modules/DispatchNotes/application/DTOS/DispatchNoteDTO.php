@@ -36,7 +36,7 @@ class DispatchNoteDTO
   {
     $this->cia_id = $date['cia_id'] ?? 1;
     $this->branch_id = $date['branch_id'] ?? 1;
-    $this->serie = $date['serie'] ?? 2;
+    $this->serie = $date['serie'] ?? '';
     $this->correlativo = $date['correlativo'] ?? '';
     $this->emission_reason_id = $date['emission_reason_id'] ?? 1;
     $this->description = $date['description'] ?? '';

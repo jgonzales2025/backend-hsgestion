@@ -11,6 +11,8 @@ class BuildPcDTO
     public int $user_id;
     public bool $status;
     public array $details;
+    public float $min;
+    public float $max;
 
     public function __construct(array $data)
     {
@@ -20,5 +22,7 @@ class BuildPcDTO
         $this->user_id = $data['user_id'];
         $this->status = $data['status'] ?? 1;
         $this->details = $data['details'] ?? [];
+        $this->min = $data['min'] ?? 0;
+        $this->max = $data['max'] ?? 0;
     }
 }

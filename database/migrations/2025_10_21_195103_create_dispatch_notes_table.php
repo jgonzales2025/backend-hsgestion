@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->foreignId('cia_id')->nullable()->constrained('companies');
             $table->foreignId('branch_id')->nullable()->constrained('branches');
             $table->foreignId('document_type_id')->nullable()->constrained('document_types');
-            $table->string('serie');
+            $table->string('serie')->nullable();
             $table->string('correlativo');
 
             $table->foreignId('emission_reason_id')->nullable()->constrained('emission_reasons');

@@ -19,11 +19,12 @@ class SubCategoryResource extends JsonResource
                 'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo'
             ];
         } else {
+            // Es un modelo Eloquent - acceder a category_name a través de la relación
             return [
                 'id' => $this->resource->id,
                 'name' => $this->resource->name,
                 'category_id' => $this->resource->category_id,
-                'category_name' => $this->resource->category_name,
+                'category_name' => $this->resource->category?->name ?? 'Sin categoría',
                 'status' => ($this->resource->status) == 1 ? 'Activo' : 'Inactivo'
             ];
         }

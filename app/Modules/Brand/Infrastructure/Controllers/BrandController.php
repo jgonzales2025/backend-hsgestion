@@ -20,12 +20,14 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 readonly class BrandController
 {
-    public function __construct(private readonly BrandRepositoryInterface $brandRepository){}
+    public function __construct(private readonly BrandRepositoryInterface $brandRepository)
+    {
+    }
 
 
     public function indexPaginateInfinite(Request $request): JsonResponse
     {
-        $name = $request->query('description');
+        $name = $request->query('name');
         $brandUseCase = new FindAllPaginateInfiniteBrandUseCase($this->brandRepository);
         $brands = $brandUseCase->execute($name);
 
@@ -109,6 +111,6 @@ readonly class BrandController
         $brandUseCase = new UpdateStatusBrand($this->brandRepository);
         $brandUseCase->execute($id, $status);
 
-        return response()->json(['message' => 'Estado actualizado correctamente'],200);
+        return response()->json(['message' => 'Estado actualizado correctamente'], 200);
     }
 }

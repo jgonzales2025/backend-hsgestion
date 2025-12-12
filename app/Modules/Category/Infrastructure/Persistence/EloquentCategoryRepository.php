@@ -18,7 +18,7 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
             ->where('st_concept', 0)
             ->where('status', 1) // Solo categorías activas para el select
             ->when($description, fn($query) => $query->where('name', 'like', "%{$description}%"))
-            ->orderBy('name', 'asc') // Ordenar alfabéticamente para mejor UX en select
+            ->orderBy('id', 'asc') // Cursor pagination requiere ordenar por columna única
             ->cursorPaginate(10); // Cursor pagination es más eficiente para infinite scroll
     }
 

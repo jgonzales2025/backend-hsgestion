@@ -70,6 +70,7 @@ use App\Modules\PaymentMethodsSunat\Infrastructure\Controllers\PaymentMethodSuna
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/roles', [RoleController::class, 'index']);
+Route::get('/roles-paginate-infinite', [RoleController::class, 'indexPaginateInfinite']);
 Route::get('/roles/{id}', [RoleController::class, 'show']);
 Route::get('/permissions', [RoleController::class, 'indexPermissions']);
 Route::post('/roles', [RoleController::class, 'store']);
@@ -120,6 +121,7 @@ Route::post('referenceCode-save/{id}', [ReferenceCodeController::class, 'store']
 
 // Marcas
 Route::get('brands', [BrandController::class, 'index']);
+Route::get('brands-paginate-infinite', [BrandController::class, 'indexPaginateInfinite']);
 Route::post('brands', [BrandController::class, 'store']);
 Route::get('brands/{id}', [BrandController::class, 'show']);
 Route::put('brands/{id}', [BrandController::class, 'update']);
@@ -150,6 +152,7 @@ Route::post('sub-categories', [SubCategoryController::class, 'store']);
 Route::get('sub-categories/{id}', [SubCategoryController::class, 'show']);
 Route::put('sub-categories/{id}', [SubCategoryController::class, 'update']);
 Route::put('sub-categories-status/{id}', [SubCategoryController::class, 'updateStatus']);
+Route::get('sub-categories-infinite', [SubCategoryController::class, 'indexPaginateInfinite']);
 
 // TransportCompanies - Empresa de transportes
 Route::get('transport-companies', [TransportCompanyController::class, 'index']);

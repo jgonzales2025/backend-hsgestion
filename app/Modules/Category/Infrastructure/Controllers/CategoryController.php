@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Category\Application\DTOs\CategoryDTO;
 use App\Modules\Category\Application\UseCases\CreateCategoryUseCase;
 use App\Modules\Category\Application\UseCases\FindAllCategoriesUseCase;
+use App\Modules\Category\Application\UseCases\FindAllPaginateInfiniteUseCase;
 use App\Modules\Category\Application\UseCases\FindByIdCategoryUseCase;
 use App\Modules\Category\Application\UseCases\UpdateCategoryUseCase;
 use App\Modules\Category\Application\UseCases\UpdateStatusCategoryUseCase;
@@ -25,7 +26,7 @@ class CategoryController extends Controller
     public function indexPaginateInfinite(Request $request): JsonResponse
     {
         $description = $request->query('description');
-        $categoriesUseCase = new \App\Modules\Category\Application\UseCases\FindAllPaginateInfiniteUseCase($this->categoryRepository);
+        $categoriesUseCase = new FindAllPaginateInfiniteUseCase($this->categoryRepository);
         $categories = $categoriesUseCase->execute($description);
 
         return new JsonResponse([
@@ -34,8 +35,7 @@ class CategoryController extends Controller
             'prev_cursor' => $categories->previousCursor()?->encode(),
             'next_page_url' => $categories->nextPageUrl(),
             'prev_page_url' => $categories->previousPageUrl(),
-            'per_page' => $categories->perPage(),
-            'path' => $categories->path(),
+            'per_page' => $categories->perPage()
         ]);
     }
     public function indexPaginate(Request $request): JsonResponse

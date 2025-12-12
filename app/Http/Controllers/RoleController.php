@@ -13,6 +13,20 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
+
+    public function indexPaginateInfinite(Request $request): JsonResponse
+    {
+        $description = $request->query('description');
+        $roles = Role::when($description, fn($query) => $query->where('name', 'like', "%{$description}%"))->cursorPaginate(10);
+        return new JsonResponse([
+            'data' => $roles->items(),
+            'next_cursor' => $roles->nextCursor()?->encode(),
+            'prev_cursor' => $roles->previousCursor()?->encode(),
+            'next_page_url' => $roles->nextPageUrl(),
+            'prev_page_url' => $roles->previousPageUrl(),
+            'per_page' => $roles->perPage()
+        ]);
+    }
     public function index(Request $request): JsonResponse
     {
         $description = $request->query('description');

@@ -23,6 +23,17 @@ class EloquentBrandRepository implements BrandRepositoryInterface
         );
     }
 
+    public function findAllPaginateInfinite(?string $name)
+    {
+        return EloquentBrand::query()
+            ->when($name, function ($query) use ($name) {
+                return $query->where('name', 'like', "%{$name}%");
+            })
+            ->where('status', 1)
+            ->orderBy('created_at', 'desc')
+            ->cursorPaginate(10);
+    }
+
     public function findAll(?string $name, ?int $status)
     {
         $brands = EloquentBrand::query()

@@ -9,6 +9,16 @@ use App\Modules\SubCategory\Infrastructure\Models\EloquentSubCategory;
 class EloquentSubCategoryRepository implements SubCategoryRepositoryInterface
 {
 
+    public function findAllPaginateInfinite(?string $description, ?int $category_id)
+    {
+        return EloquentSubCategory::query()
+            ->when($description, fn($query) => $query->where('name', 'like', "%{$description}%"))
+            ->when($category_id, fn($query) => $query->where('category_id', $category_id))
+            ->where('status', 1)
+            ->orderBy('created_at', 'desc')
+            ->cursorPaginate(10);
+    }
+
     public function findAll(?string $description, ?int $category_id, ?int $status)
     {
         $subCategories = EloquentSubCategory::with('category')

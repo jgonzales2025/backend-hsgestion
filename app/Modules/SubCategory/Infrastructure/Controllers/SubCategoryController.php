@@ -5,6 +5,7 @@ namespace App\Modules\SubCategory\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\SubCategory\Application\DTOs\SubCategoryDTO;
 use App\Modules\SubCategory\Application\UseCases\CreateSubCategoryUseCase;
+use App\Modules\SubCategory\Application\UseCases\FindAllPaginateInfiniteSubCategoryUseCase;
 use App\Modules\SubCategory\Application\UseCases\FindAllSubCategoriesUseCase;
 use App\Modules\SubCategory\Application\UseCases\FindByCategoryIdUseCase;
 use App\Modules\SubCategory\Application\UseCases\FindByIdSubCategoryUseCase;
@@ -25,6 +26,23 @@ class SubCategoryController extends Controller
     public function __construct(SubCategoryRepositoryInterface $subCategoryRepository)
     {
         $this->subCategoryRepository = $subCategoryRepository;
+    }
+
+    public function indexPaginateInfinite(Request $request): JsonResponse
+    {
+        $description = $request->query('description');
+        $category_id = $request->query('category_id');
+        $subCategoriesUseCases = new FindAllPaginateInfiniteSubCategoryUseCase($this->subCategoryRepository);
+        $subCategories = $subCategoriesUseCases->execute($description, $category_id);
+
+        return new JsonResponse([
+            'data' => SubCategoryResource::collection($subCategories)->resolve(),
+            'next_cursor' => $subCategories->nextCursor()?->encode(),
+            'prev_cursor' => $subCategories->previousCursor()?->encode(),
+            'next_page_url' => $subCategories->nextPageUrl(),
+            'prev_page_url' => $subCategories->previousPageUrl(),
+            'per_page' => $subCategories->perPage()
+        ]);
     }
 
     public function index(Request $request): JsonResponse

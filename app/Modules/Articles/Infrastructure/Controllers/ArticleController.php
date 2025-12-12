@@ -11,6 +11,7 @@ use App\Modules\Articles\Application\UseCases\ExportArticlesToExcelUseCase;
 use App\Modules\Articles\Application\UseCases\FindAllArticlesNotesDebitoUseCase;
 use App\Modules\Articles\Application\UseCases\FindAllArticlesPriceConvertionUseCase;
 use App\Modules\Articles\Application\UseCases\FindAllArticleUseCase;
+use App\Modules\Articles\Application\UseCases\FindArticlesByPlacaMadreUseCase;
 use App\Modules\Articles\Application\UseCases\FindByIdArticleUseCase;
 use App\Modules\Articles\Application\UseCases\FindByIdNotesDebito;
 use App\Modules\Articles\Application\UseCases\RequiredSerialUseCase;
@@ -36,6 +37,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Modules\Articles\Application\UseCases\UpdateStatusArticleUseCase;
+use App\Modules\Articles\Infrastructure\Resource\EloquentArticleResource;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\VisibleArticles\application\UseCases\FindStatusByArticleId;
 use App\Modules\VisibleArticles\Domain\Interfaces\VisibleArticleRepositoryInterface;
@@ -68,7 +70,8 @@ class ArticleController extends Controller
     private BranchRepositoryInterface $branchRepository,
     private ReferenceCodeRepositoryInterface $referenceCodeRepository,
     private DetailPcCompatibleRepositoryInterface $detailPcCompatibleRepository
-  ) {}
+  ) {
+  }
   public function export()
   {
     try {
@@ -140,7 +143,7 @@ class ArticleController extends Controller
       ),
       200
     );
-  } 
+  }
   public function indexNotesDebito(Request $request): JsonResponse
   {
     $description = $request->query("description");
@@ -323,7 +326,8 @@ class ArticleController extends Controller
     $articles = $articlesUseCase->execute($validatedData['date'], $description, $articleId, $branchId);
 
     // Check if the result is empty (when paginated, check if items are empty)
-    if (is_object($articles) && method_exists($articles, 'isEmpty') && $articles->isEmpty()) {
+    // Solo buscar por serial si hay una descripción y no hay articleId
+    if (is_object($articles) && method_exists($articles, 'isEmpty') && $articles->isEmpty() && $articleId === null && $description !== null) {
       $entrySerialUseCase = new FindBySerialUseCase($this->entryItemSerialRepository);
       $entrySerial = $entrySerialUseCase->execute($description);
 
@@ -353,25 +357,15 @@ class ArticleController extends Controller
       }
     }
 
-    if ($articleId) {
-      // When searching by specific article ID, return single item
-      $firstItem = $articles->items()[0] ?? null;
-      if ($firstItem) {
-        return response()->json((new ArticleForSalesResource($firstItem))->resolve());
-      }
-      return response()->json(['message' => 'Artículo no encontrado'], 404);
-    } else {
-      // Return paginated response
-      return new JsonResponse([
-        'data' => ArticleForSalesResource::collection($articles->items())->resolve(),
-        'current_page' => $articles->currentPage(),
-        'per_page' => $articles->perPage(),
-        'total' => $articles->total(),
-        'last_page' => $articles->lastPage(),
-        'next_page_url' => $articles->nextPageUrl(),
-        'prev_page_url' => $articles->previousPageUrl(),
-      ]);
-    }
+    return new JsonResponse([
+      'data' => ArticleForSalesResource::collection($articles->items())->resolve(),
+      'current_page' => $articles->currentPage(),
+      'per_page' => $articles->perPage(),
+      'total' => $articles->total(),
+      'last_page' => $articles->lastPage(),
+      'next_page_url' => $articles->nextPageUrl(),
+      'prev_page_url' => $articles->previousPageUrl(),
+    ]);
   }
 
   public function storeNotesDebito(StoreArticleNotasDebito $request): JsonResponse
@@ -438,6 +432,30 @@ class ArticleController extends Controller
     }
 
     return $data;
+  }
+
+  public function findArticlesByPlacaMadre(Request $request): JsonResponse
+  {
+    $description = $request->query("description");
+    $branchId = $request->query("branch_id");
+
+    if (!$branchId) {
+      return response()->json([
+        'message' => 'El id de la sucursal es obligatorio'
+      ], 400);
+    }
+
+    $articlesUseCase = new FindArticlesByPlacaMadreUseCase($this->articleRepository);
+    $articles = $articlesUseCase->execute($description, $branchId);
+
+    return response()->json([
+      'data' => EloquentArticleResource::collection($articles)->resolve(),
+      'next_cursor' => $articles->nextCursor()?->encode(),
+      'prev_cursor' => $articles->previousCursor()?->encode(),
+      'next_page_url' => $articles->nextPageUrl(),
+      'prev_page_url' => $articles->previousPageUrl(),
+      'per_page' => $articles->perPage()
+    ], 200);
   }
 
   private function createDetailPcCompatible($articleId, $detailPcCompatible)

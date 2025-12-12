@@ -139,13 +139,13 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             ->orderByDesc('created_at')
             ->paginate(10);
 
-        $articles->getCollection()->transform(fn ($article) => new ArticleNotasDebito(
-                id: $article->id,
-                user_id: $article->user_id,
-                company_id: $article->company_type_id,
-                filt_NameEsp: $article->description,
-                status_Esp: $article->status_Esp
-            ));
+        $articles->getCollection()->transform(fn($article) => new ArticleNotasDebito(
+            id: $article->id,
+            user_id: $article->user_id,
+            company_id: $article->company_type_id,
+            filt_NameEsp: $article->description,
+            status_Esp: $article->status_Esp
+        ));
         return $articles;
     }
 
@@ -216,7 +216,12 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         $exchangeRate = EloquentExchangeRate::select('parallel_rate')->where('date', $date)->first();
         $articles = EloquentArticle::where('company_type_id', $companyId)
             ->when($articleId, function ($query, $id) {
-                return $query->where('id', $id);
+                // Obtener los IDs de accesorios compatibles desde DetailPcCompatible
+                $accessoryIds = \App\Modules\DetailPcCompatible\Infrastructure\Models\EloquentDetailPcCompatible::where('article_major_id', $id)
+                    ->pluck('article_accesory_id')
+                    ->toArray();
+                // Filtrar artículos cuyos IDs estén en la lista de accesorios
+                return $query->whereIn('id', $accessoryIds);
             })
             ->when($description, function ($query, $name) use ($branchId) {
                 return $query->where(function ($mainGroup) use ($name, $branchId) {
@@ -239,22 +244,23 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                     })
                         // Grupo 2: Búsqueda por Serie (Validar con entryItemSerials y visibleArticles)
                         ->orWhere(function ($subQ) use ($name, $branchId) {
-                            if ($branchId) {
-                                $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
-                                    $s->where('serial', $name)
-                                        ->where('branch_id', $branchId);
-                                });
-                                // Validar también que sea visible en la sucursal
-                                $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
-                                    $v->where('branch_id', $branchId)
-                                        ->where('status', 1);
-                                });
-                            }
-                        });
+                        if ($branchId) {
+                            $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
+                                $s->where('serial', $name)
+                                    ->where('branch_id', $branchId);
+                            });
+                            // Validar también que sea visible en la sucursal
+                            $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
+                                $v->where('branch_id', $branchId)
+                                    ->where('status', 1);
+                            });
+                        }
+                    });
                 });
             })
             // Si NO hay descripción, mantener el filtro original (solo lo que tiene stock/series en la sucursal)
-            ->when(!$description && $branchId, function ($query) use ($branchId) {
+            // PERO: si se proporciona articleId, no aplicar este filtro para permitir mostrar accesorios compatibles
+            ->when(!$description && $branchId && !$articleId, function ($query) use ($branchId) {
                 return $query->whereHas('entryItemSerials', function ($q) use ($branchId) {
                     $q->where('branch_id', $branchId);
                 });
@@ -395,6 +401,21 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             ->get();
 
         return $articles->map(fn($article) => $this->mapToDomain($article))->all();
+    }
+
+    public function findArticlesByPlacaMadre(?string $description, int $branchId)
+    {
+        return EloquentArticle::query()
+            //->where('is_combo', true)
+            ->where('category_id', 2)
+            ->whereHas('visibleArticles', fn($query) =>
+                $query->where('branch_id', $branchId)
+                    ->where('status', 1))
+            ->when($description, function ($query, $description) {
+                return $query->where('description', 'like', "%{$description}%");
+            })
+            ->orderBy('id', 'asc')
+            ->cursorPaginate(10);
     }
 
 

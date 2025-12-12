@@ -19,4 +19,5 @@ interface ArticleRepositoryInterface
   public function requiredSerial(int $articleId): bool;
   public function updateStatus(int $articleId, int $status): void;
   public function findAllCombos(?string $name): array;
+  public function findArticlesByPlacaMadre(?string $description, int $branchId);
 }

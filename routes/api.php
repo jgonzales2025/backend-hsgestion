@@ -133,12 +133,15 @@ Route::put('drivers/{id}', [DriverController::class, 'update']);
 Route::post('drivers-sunatApi', [DriverController::class, 'storeCustomerBySunatApi']);
 Route::put('drivers-status/{id}', [DriverController::class, 'updateStatus']);
 
+
 // Categories - categorias
-Route::get('categories', [CategoryController::class, 'index']);
+Route::get('categories-infinite', [CategoryController::class, 'indexPaginateInfinite']);
+Route::get('categories', [CategoryController::class, 'indexPaginate']);
 Route::post('categories', [CategoryController::class, 'store']);
 Route::get('categories/{id}', [CategoryController::class, 'show']);
 Route::put('categories/{id}', [CategoryController::class, 'update']);
 Route::put('categories-status/{id}', [CategoryController::class, 'updateStatus']);
+
 
 // SubCategories - subcategorias
 Route::get('sub-categories', [SubCategoryController::class, 'index']);

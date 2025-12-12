@@ -18,9 +18,27 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function __construct(private readonly CategoryRepositoryInterface $categoryRepository){}
+    public function __construct(private readonly CategoryRepositoryInterface $categoryRepository)
+    {
+    }
 
-    public function index(Request $request): JsonResponse
+    public function indexPaginateInfinite(Request $request): JsonResponse
+    {
+        $description = $request->query('description');
+        $categoriesUseCase = new \App\Modules\Category\Application\UseCases\FindAllPaginateInfiniteUseCase($this->categoryRepository);
+        $categories = $categoriesUseCase->execute($description);
+
+        return new JsonResponse([
+            'data' => CategoryResource::collection($categories)->resolve(),
+            'next_cursor' => $categories->nextCursor()?->encode(),
+            'prev_cursor' => $categories->previousCursor()?->encode(),
+            'next_page_url' => $categories->nextPageUrl(),
+            'prev_page_url' => $categories->previousPageUrl(),
+            'per_page' => $categories->perPage(),
+            'path' => $categories->path(),
+        ]);
+    }
+    public function indexPaginate(Request $request): JsonResponse
     {
         $descripton = $request->query('description');
         $status = $request->query('status');
@@ -48,7 +66,7 @@ class CategoryController extends Controller
 
         return response()->json(
             (new CategoryResource($category))->resolve(),
-             201
+            201
         );
     }
 
@@ -63,7 +81,7 @@ class CategoryController extends Controller
 
         return response()->json(
             (new CategoryResource($category))->resolve(),
-             200
+            200
         );
     }
 
@@ -82,7 +100,7 @@ class CategoryController extends Controller
 
         return response()->json(
             (new CategoryResource($categoryUpdate))->resolve(),
-              200
+            200
         );
     }
 

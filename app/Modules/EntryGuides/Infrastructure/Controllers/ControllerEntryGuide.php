@@ -102,8 +102,8 @@ class ControllerEntryGuide extends Controller
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
             $response['process_status'] = array_reduce($articlesWithSerials, fn($carry, $article) => $carry || ($article->getSaldo() > 0), false) ? 'pendiente' : 'completado';
             $result[] = $response;
-        }
-
+        } 
+  
         return new JsonResponse([
             'data' => $result,
             'current_page' => $entryGuides->currentPage(),

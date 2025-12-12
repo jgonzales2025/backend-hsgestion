@@ -79,7 +79,7 @@ class ExcelNoteResource extends JsonResource
                 return [
                     'id' => $code->id,
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
-                    'name' => $code->address[0]['address'],
+                    'name' => data_get($code, 'address.0.address', ''),
 
                 ];
             })(),
@@ -98,7 +98,7 @@ class ExcelNoteResource extends JsonResource
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
                     'name' => $code->name,
                     'ruc' => $code->document_number ?? '',
-                    'address' => $code->address[0]['address'] ?? '',
+                    'address' => data_get($code, 'address.0.address', ''),
                 ];
             })(),
             'created_at' => $this->resource->getCreatedFecha(),

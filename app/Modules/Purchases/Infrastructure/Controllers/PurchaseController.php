@@ -121,6 +121,7 @@ class PurchaseController extends Controller
             $this->documentNumberGeneratorService,
             $this->documentTypeRepository
         );
+        
         $purchase = $cretaePurchaseUseCase->execute($purchaseDTO);
 
         $existingDetails = $this->detailPurchaseGuideRepository->findById($purchase->getId());

@@ -14,20 +14,35 @@ class ScVoucherResource extends JsonResource
             'anopr' => $this->getAnopr(),
             'correlativo' => $this->getCorrelativo(),
             'fecha' => $this->getFecha(),
-            'codban' => $this->getCodban(),
-            'codigo' => $this->getCodigo(),
+            'codban' => [
+                'id' => $this->getCodban()?->getId(),
+                'name' => $this->getCodban()?->getName(),
+            ],
+            'codigo' => [
+                'id' => $this->getCodigo()?->getId(),
+                'name' => $this->getCodigo()?->getName()?? $this->getCodigo()?->getCompanyName(),
+            ],
             'nroope' => $this->getNroope(),
             'glosa' => $this->getGlosa(),
             'orden' => $this->getOrden(),
-            'tipmon' => $this->getTipmon(),
+            'tipmon' => [
+                'id' => $this->getTipmon()?->getId(),
+                'name' => $this->getTipmon()?->getName(),
+            ],
             'tipcam' => $this->getTipcam(),
             'total' => $this->getTotal(),
-            'medpag' => $this->getMedpag(),
-            'tipopago' => $this->getTipopago(),
+            'medpag' => [
+                'id' => $this->getMedpag()?->getCod(),
+                'name' => $this->getMedpag()?->getDes(),
+            ],
+            'tipopago' => [
+                'id' => $this->getTipopago()?->getId(),
+                'name' => $this->getTipopago()?->getName(),
+            ],
             'status' => $this->getStatus(),
             'usradi' => $this->getUsradi(),
             'fecadi' => $this->getFecadi(),
-            'usrmod' => $this->getUsrmod(),  
+            'usrmod' => $this->getUsrmod(),
         ];
     }
 }

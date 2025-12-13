@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
 {
-        public function getLastDocumentNumber(string $serie): ?string
+    public function getLastDocumentNumber(string $serie): ?string
     {
         $entryGuide = EloquentScVoucher::where('nroope', $serie)
             ->orderBy('correlativO', 'desc')
@@ -21,7 +21,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
 
     public function findById(int $id): ?ScVoucher
     {
-        $eloquentScVoucher = EloquentScVoucher::find($id);
+        $eloquentScVoucher = EloquentScVoucher::with(['customer', 'currencyType', 'paymentMethodSunat', 'paymentType'])->find($id);
 
         if (!$eloquentScVoucher) {
             return null;
@@ -34,15 +34,15 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
             correlativo: $eloquentScVoucher->correlativo,
             fecha: $eloquentScVoucher->fecha,
             codban: $eloquentScVoucher->codban,
-            codigo: $eloquentScVoucher->codigo,
+            codigo: $eloquentScVoucher->customer?->toDomain($eloquentScVoucher->customer),
             nroope: $eloquentScVoucher->nroope,
             glosa: $eloquentScVoucher->glosa,
             orden: $eloquentScVoucher->orden,
-            tipmon: $eloquentScVoucher->tipmon,
+            tipmon: $eloquentScVoucher->currencyType?->toDomain($eloquentScVoucher->currencyType),
             tipcam: $eloquentScVoucher->tipcam,
             total: $eloquentScVoucher->total,
-            medpag: $eloquentScVoucher->medpag,
-            tipopago: $eloquentScVoucher->tipopago,
+            medpag: $eloquentScVoucher->paymentMethodSunat?->toDomain($eloquentScVoucher->paymentMethodSunat),
+            tipopago: $eloquentScVoucher->paymentType?->toDomain($eloquentScVoucher->paymentType),
             status: $eloquentScVoucher->status,
             usradi: $eloquentScVoucher->usradi,
             fecadi: $eloquentScVoucher->fecadi,
@@ -51,10 +51,19 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
         );
     }
 
-    public function findAll()
+    public function findAll(?string $search)
     {
-        $eloquentScVouchers = EloquentScVoucher::orderByDesc('created_at')
-            ->paginate(10);
+        $query = EloquentScVoucher::with(['customer', 'currencyType', 'paymentMethodSunat', 'paymentType', 'bank'])
+            ->orderByDesc('created_at');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('glosa', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%");
+            });
+        }
+
+        $eloquentScVouchers = $query->paginate(10);
 
         // Transform the items in the paginator
         $eloquentScVouchers->getCollection()->transform(function ($eloquentScVoucher) {
@@ -64,16 +73,16 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
                 anopr: $eloquentScVoucher->anopr,
                 correlativo: $eloquentScVoucher->correlativo,
                 fecha: $eloquentScVoucher->fecha,
-                codban: $eloquentScVoucher->codban,
-                codigo: $eloquentScVoucher->codigo,
+                codban: $eloquentScVoucher->bank?->toDomain($eloquentScVoucher->bank),
+                codigo: $eloquentScVoucher->customer?->toDomain($eloquentScVoucher->customer),
                 nroope: $eloquentScVoucher->nroope,
                 glosa: $eloquentScVoucher->glosa,
                 orden: $eloquentScVoucher->orden,
-                tipmon: $eloquentScVoucher->tipmon,
+                tipmon: $eloquentScVoucher->currencyType?->toDomain($eloquentScVoucher->currencyType),
                 tipcam: $eloquentScVoucher->tipcam,
                 total: $eloquentScVoucher->total,
-                medpag: $eloquentScVoucher->medpag,
-                tipopago: $eloquentScVoucher->tipopago,
+                medpag: $eloquentScVoucher->paymentMethodSunat?->toDomain($eloquentScVoucher->paymentMethodSunat),
+                tipopago: $eloquentScVoucher->paymentType?->toDomain($eloquentScVoucher->paymentType),
                 status: $eloquentScVoucher->status,
                 usradi: $eloquentScVoucher->usradi,
                 fecadi: $eloquentScVoucher->fecadi,
@@ -92,19 +101,19 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
         try {
             $eloquentScVoucher = EloquentScVoucher::create([
                 'cia' => $scVoucher->getCia(),
-                'anopr' => $scVoucher->getAnopr()."-" . date('n'),
+                'anopr' => $scVoucher->getAnopr() . "-" . date('n'),
                 'correlativo' => $scVoucher->getCorrelativo(),
                 'fecha' => $scVoucher->getFecha(),
-                'codban' => $scVoucher->getCodban(),
-                'codigo' => $scVoucher->getCodigo(),
+                'codban' => $scVoucher->getCodban()?->getId(),
+                'codigo' => $scVoucher->getCodigo()?->getId(),
                 'nroope' => $scVoucher->getNroope(),
                 'glosa' => $scVoucher->getGlosa(),
                 'orden' => $scVoucher->getOrden(),
-                'tipmon' => $scVoucher->getTipmon(),
+                'tipmon' => $scVoucher->getTipmon()?->getId(),
                 'tipcam' => $scVoucher->getTipcam(),
                 'total' => $scVoucher->getTotal(),
-                'medpag' => $scVoucher->getMedpag(),
-                'tipopago' => $scVoucher->getTipopago(),
+                'medpag' => $scVoucher->getMedpag()?->getCod(),
+                'tipopago' => $scVoucher->getTipopago()?->getId(),
                 'status' => $scVoucher->getStatus(),
                 'usradi' => $scVoucher->getUsradi(),
                 'fecadi' => $scVoucher->getFecadi(),
@@ -127,16 +136,16 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
                 anopr: $eloquentScVoucher->anopr,
                 correlativo: $eloquentScVoucher->correlativo,
                 fecha: $eloquentScVoucher->fecha,
-                codban: $eloquentScVoucher->codban,
-                codigo: $eloquentScVoucher->codigo,
+                codban: $eloquentScVoucher->bank?->toDomain($eloquentScVoucher->bank),
+                codigo: $eloquentScVoucher->customer?->toDomain($eloquentScVoucher->customer),
                 nroope: $eloquentScVoucher->nroope,
                 glosa: $eloquentScVoucher->glosa,
                 orden: $eloquentScVoucher->orden,
-                tipmon: $eloquentScVoucher->tipmon,
+                tipmon: $eloquentScVoucher->currencyType?->toDomain($eloquentScVoucher->currencyType),
                 tipcam: $eloquentScVoucher->tipcam,
                 total: $eloquentScVoucher->total,
-                medpag: $eloquentScVoucher->medpag,
-                tipopago: $eloquentScVoucher->tipopago,
+                medpag: $eloquentScVoucher->paymentMethodSunat?->toDomain($eloquentScVoucher->paymentMethodSunat),
+                tipopago: $eloquentScVoucher->paymentType?->toDomain($eloquentScVoucher->paymentType),
                 status: $eloquentScVoucher->status,
                 usradi: $eloquentScVoucher->usradi,
                 fecadi: $eloquentScVoucher->fecadi,
@@ -160,19 +169,18 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
 
         $eloquentScVoucher->update([
             'cia' => $scVoucher->getCia(),
-            'anopr' => $scVoucher->getAnopr(),
-            'correlativo' => $scVoucher->getCorrelativo(),
+            'anopr' => $scVoucher->getAnopr(), 
             'fecha' => $scVoucher->getFecha(),
-            'codban' => $scVoucher->getCodban(),
-            'codigo' => $scVoucher->getCodigo(),
+            'codban' => $scVoucher->getCodban()->getId(),
+            'codigo' => $scVoucher->getCodigo()?->getId(),
             'nroope' => $scVoucher->getNroope(),
             'glosa' => $scVoucher->getGlosa(),
             'orden' => $scVoucher->getOrden(),
-            'tipmon' => $scVoucher->getTipmon(),
+            'tipmon' => $scVoucher->getTipmon()?->getId(),
             'tipcam' => $scVoucher->getTipcam(),
             'total' => $scVoucher->getTotal(),
-            'medpag' => $scVoucher->getMedpag(),
-            'tipopago' => $scVoucher->getTipopago(),
+            'medpag' => $scVoucher->getMedpag()?->getCod(),
+            'tipopago' => $scVoucher->getTipopago()?->getId(),
             'status' => $scVoucher->getStatus(),
             'usradi' => $scVoucher->getUsradi(),
             'fecadi' => $scVoucher->getFecadi(),
@@ -186,21 +194,35 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
             anopr: $eloquentScVoucher->anopr,
             correlativo: $eloquentScVoucher->correlativo,
             fecha: $eloquentScVoucher->fecha,
-            codban: $eloquentScVoucher->codban,
-            codigo: $eloquentScVoucher->codigo,
+            codban: $eloquentScVoucher->bank?->toDomain($eloquentScVoucher->bank),
+            codigo: $eloquentScVoucher->customer?->toDomain($eloquentScVoucher->customer),
             nroope: $eloquentScVoucher->nroope,
             glosa: $eloquentScVoucher->glosa,
             orden: $eloquentScVoucher->orden,
-            tipmon: $eloquentScVoucher->tipmon,
+            tipmon: $eloquentScVoucher->currencyType?->toDomain($eloquentScVoucher->currencyType),
             tipcam: $eloquentScVoucher->tipcam,
             total: $eloquentScVoucher->total,
-            medpag: $eloquentScVoucher->medpag,
-            tipopago: $eloquentScVoucher->tipopago,
+            medpag: $eloquentScVoucher->paymentMethodSunat?->toDomain($eloquentScVoucher->paymentMethodSunat),
+            tipopago: $eloquentScVoucher->paymentType?->toDomain($eloquentScVoucher->paymentType),
             status: $eloquentScVoucher->status,
             usradi: $eloquentScVoucher->usradi,
             fecadi: $eloquentScVoucher->fecadi,
             usrmod: $eloquentScVoucher->usrmod,
 
         );
+    }
+    public function updateStatus(int $id, int $status)
+    {
+        $scVoucher = $this->findById($id);
+
+        if (!$scVoucher) {
+            return null;
+        }
+        $updatestatuseloquent = EloquentScVoucher::find($id);
+        $updatestatuseloquent->update([
+            'status' => $status,
+        ]);
+
+        return $updatestatuseloquent;
     }
 }

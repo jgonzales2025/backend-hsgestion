@@ -2,34 +2,53 @@
 
 namespace App\Modules\ScVoucher\Application\UseCases;
 
+use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface;
+use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
+use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\PaymentMethodsSunat\Domain\Interface\PaymentMethodSunatRepositoryInterface;
+use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\ScVoucher\Application\DTOS\ScVoucherDTO;
 use App\Modules\ScVoucher\Domain\Entities\ScVoucher;
 use App\Modules\ScVoucher\Domain\Interface\ScVoucherRepositoryInterface;
+use App\Services\DocumentNumberGeneratorService;
 
 class UpdateScVoucherUseCase
 {
     public function __construct(
         private ScVoucherRepositoryInterface $scVoucherRepository,
+        private DocumentNumberGeneratorService $documentNumberGeneratorService,
+        private CustomerRepositoryInterface $customerRepository,
+        private CurrencyTypeRepositoryInterface $currencyTypeRepository,
+        private PaymentMethodSunatRepositoryInterface $paymentMethodSunatRepository,
+        private PaymentTypeRepositoryInterface $paymentTypeRepository,
+        private BankRepositoryInterface $bankRepository,
     ) {}
 
     public function execute(ScVoucherDTO $scVoucherDTO, int $id): ?ScVoucher
     {
+
+        $customer = $this->customerRepository->findById($scVoucherDTO->codigo);
+        $currencyType = $this->currencyTypeRepository->findById($scVoucherDTO->tipmon);
+        $paymentMethodSunat = $this->paymentMethodSunatRepository->findById($scVoucherDTO->medpag);
+        $paymentType = $this->paymentTypeRepository->findById($scVoucherDTO->tipopago);
+        $bank = $this->bankRepository->findById($scVoucherDTO->codban);
+
         $scVoucher = new ScVoucher(
             id: $id,
             cia: $scVoucherDTO->cia,
             anopr: $scVoucherDTO->anopr,
             correlativo: $scVoucherDTO->correlativo,
             fecha: $scVoucherDTO->fecha,
-            codban: $scVoucherDTO->codban,
-            codigo: $scVoucherDTO->codigo,
+            codban: $bank,
+            codigo: $customer,
             nroope: $scVoucherDTO->nroope,
             glosa: $scVoucherDTO->glosa,
             orden: $scVoucherDTO->orden,
-            tipmon: $scVoucherDTO->tipmon,
+            tipmon: $currencyType,
             tipcam: $scVoucherDTO->tipcam,
             total: $scVoucherDTO->total,
-            medpag: $scVoucherDTO->medpag,
-            tipopago: $scVoucherDTO->tipopago,
+            medpag: $paymentMethodSunat,
+            tipopago: $paymentType,
             status: $scVoucherDTO->status,
             usradi: $scVoucherDTO->usradi,
             fecadi: $scVoucherDTO->fecadi,

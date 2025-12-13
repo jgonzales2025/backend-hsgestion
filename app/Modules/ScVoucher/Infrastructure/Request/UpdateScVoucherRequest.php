@@ -37,7 +37,7 @@ class UpdateScVoucherRequest extends FormRequest
             'total' => 'required|numeric',
             'medpag_id' => 'required|integer',
             'tipopago' => 'required|integer',
-            'status' => 'required|integer',
+            'status' => 'nullable|integer',
             'usradi' => 'required|integer',
             'fecadi' => 'nullable|date',
             'usrmod' => 'nullable|integer',

@@ -14,6 +14,7 @@ use App\Modules\ScVoucher\Application\UseCases\FindAllScVoucherUseCase;
 use App\Modules\ScVoucher\Application\UseCases\FindByIdScVoucherUseCase;
 use App\Modules\ScVoucher\Application\UseCases\UpdateScVoucherUseCase;
 use App\Modules\ScVoucher\Application\UseCases\UpdateStatusScVoucherUseCase;
+use App\Modules\ScVoucher\Application\UseCases\GenerateScVoucherPdfUseCase;
 use App\Modules\ScVoucher\Domain\Interface\ScVoucherRepositoryInterface;
 use App\Modules\ScVoucher\Infrastructure\Request\StoreScVoucherRequest;
 use App\Modules\ScVoucher\Infrastructure\Request\UpdateScVoucherRequest;
@@ -42,15 +43,34 @@ class ScVoucherController extends Controller
         private CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private PaymentMethodSunatRepositoryInterface $paymentMethodSunatRepository,
         private PaymentTypeRepositoryInterface $paymentTypeRepository,
-        private BankRepositoryInterface $bankRepository
+        private BankRepositoryInterface $bankRepository,
+        private GenerateScVoucherPdfUseCase $generatePdfUseCase
     ) {}
+
+    public function generate(int $id)
+    {
+        try {
+            $pdfContent = $this->generatePdfUseCase->execute((int) $id);
+
+            $filename = 'voucher_electronico_' . $id . '.pdf';
+
+            return response()->streamDownload(function () use ($pdfContent) {
+                echo $pdfContent;
+            }, $filename, [
+                'Content-Type' => 'application/pdf',
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 
     public function index(Request $request): JsonResponse
     {
         $search = $request->query('description');
+        $status = $request->query('status');
 
         $findAllUseCase = new FindAllScVoucherUseCase($this->scVoucherRepository);
-        $scVouchers = $findAllUseCase->execute($search);
+        $scVouchers = $findAllUseCase->execute($search, $status);
 
         // Transform collection to include details
         $data = $scVouchers->getCollection()->map(function ($scVoucher) {
@@ -91,12 +111,14 @@ class ScVoucherController extends Controller
 
         // Get voucher details
         $details = $this->scVoucherdetRepository->findByVoucherId($id);
+        $detailVoucherPurchase = $this->detVoucherPurchaseRepository->findByIdVoucher($scVoucher->getId());
 
         return response()->json(
             array_merge(
                 (new ScVoucherResource($scVoucher))->resolve(),
                 [
-                    'details' => ScVoucherdetResource::collection($details)->resolve(),
+                    'detail_sc_voucher' => ScVoucherdetResource::collection($details)->resolve(),
+                    'detail_voucher_purchase' => DetVoucherPurchaseResource::collection($detailVoucherPurchase)->resolve(),
                 ]
             ),
             200
@@ -134,7 +156,8 @@ class ScVoucherController extends Controller
     public function update(UpdateScVoucherRequest $request, int $id): JsonResponse
     {
         $scVoucherDTO = new ScVoucherDTO($request->validated());
-        $updateUseCase = new UpdateScVoucherUseCase($this->scVoucherRepository,
+        $updateUseCase = new UpdateScVoucherUseCase(
+            $this->scVoucherRepository,
             $this->documentNumberGeneratorService,
             $this->customerRepository,
             $this->currencyTypeRepository,

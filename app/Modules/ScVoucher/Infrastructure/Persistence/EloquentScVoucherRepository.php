@@ -12,7 +12,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
     public function getLastDocumentNumber(string $serie): ?string
     {
         $entryGuide = EloquentScVoucher::where('nroope', $serie)
-            ->orderBy('correlativO', 'desc')
+            ->orderBy('correlativo', 'desc')
             ->first();
 
         return $entryGuide?->correlativo;
@@ -21,7 +21,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
 
     public function findById(int $id): ?ScVoucher
     {
-        $eloquentScVoucher = EloquentScVoucher::with(['customer', 'currencyType', 'paymentMethodSunat', 'paymentType'])->find($id);
+        $eloquentScVoucher = EloquentScVoucher::with(['customer', 'currencyType', 'paymentMethodSunat', 'paymentType', 'bank'])->find($id);
 
         if (!$eloquentScVoucher) {
             return null;
@@ -33,7 +33,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
             anopr: $eloquentScVoucher->anopr,
             correlativo: $eloquentScVoucher->correlativo,
             fecha: $eloquentScVoucher->fecha,
-            codban: $eloquentScVoucher->codban,
+            codban: $eloquentScVoucher->bank?->toDomain($eloquentScVoucher->bank),
             codigo: $eloquentScVoucher->customer?->toDomain($eloquentScVoucher->customer),
             nroope: $eloquentScVoucher->nroope,
             glosa: $eloquentScVoucher->glosa,
@@ -51,16 +51,19 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
         );
     }
 
-    public function findAll(?string $search)
+    public function findAll(?string $search, ?int $status)
     {
         $query = EloquentScVoucher::with(['customer', 'currencyType', 'paymentMethodSunat', 'paymentType', 'bank'])
             ->orderByDesc('created_at');
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-                $q->where('glosa', 'like', "%{$search}%")
-                    ->orWhere('status', 'like', "%{$search}%");
+                $q->where('glosa', 'like', "%{$search}%");
             });
+        }
+
+        if ($status !== null) { // Check for null explicitly to allow status 0
+            $query->where('status', $status);
         }
 
         $eloquentScVouchers = $query->paginate(10);
@@ -169,7 +172,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
 
         $eloquentScVoucher->update([
             'cia' => $scVoucher->getCia(),
-            'anopr' => $scVoucher->getAnopr(), 
+            'anopr' => $scVoucher->getAnopr(),
             'fecha' => $scVoucher->getFecha(),
             'codban' => $scVoucher->getCodban()->getId(),
             'codigo' => $scVoucher->getCodigo()?->getId(),

@@ -2,6 +2,12 @@
 
 namespace App\Modules\ScVoucher\Domain\Entities;
 
+use App\Modules\Bank\Domain\Entities\Bank;
+use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
+use App\Modules\Customer\Domain\Entities\Customer;
+use App\Modules\PaymentMethodsSunat\Domain\Entities\PaymentMethodSunat;
+use App\Modules\PaymentType\Domain\Entities\PaymentType;
+
 class ScVoucher
 {
     private ?int $id;
@@ -9,16 +15,16 @@ class ScVoucher
     private string $anopr;
     private string $correlativo;
     private string $fecha;
-    private int $codban;
-    private int $codigo;
+    private ?Bank $codban;
+    private ?Customer $codigo;
     private string $nroope;
     private ?string $glosa;
     private ?string $orden;
-    private int $tipmon;
+    private ?CurrencyType $tipmon;
     private float $tipcam;
     private float $total;
-    private int $medpag;
-    private int $tipopago;
+    private ?PaymentMethodSunat $medpag;
+    private ?PaymentType $tipopago;
     private int $status;
     private int $usradi;
     private string $fecadi;
@@ -30,16 +36,16 @@ class ScVoucher
         string $anopr,
         string $correlativo,
         string $fecha,
-        int $codban,
-        int $codigo,
+        ?Bank $codban,
+        ?Customer $codigo,
         string $nroope,
         ?string $glosa,
         ?string $orden,
-        int $tipmon,
+        ?CurrencyType $tipmon,
         float $tipcam,
         float $total,
-        int $medpag,
-        int $tipopago,
+        ?PaymentMethodSunat $medpag,
+        ?PaymentType $tipopago,
         int $status,
         int $usradi,
         string $fecadi,
@@ -85,11 +91,11 @@ class ScVoucher
     {
         return $this->fecha;
     }
-    public function getCodban(): int
+    public function getCodban(): ?Bank
     {
         return $this->codban;
     }
-    public function getCodigo(): int
+    public function getCodigo(): ?Customer
     {
         return $this->codigo;
     }
@@ -105,7 +111,7 @@ class ScVoucher
     {
         return $this->orden;
     }
-    public function getTipmon(): int
+    public function getTipmon(): ?CurrencyType
     {
         return $this->tipmon;
     }
@@ -117,11 +123,11 @@ class ScVoucher
     {
         return $this->total;
     }
-    public function getMedpag(): int
+    public function getMedpag(): ?PaymentMethodSunat
     {
         return $this->medpag;
     }
-    public function getTipopago(): int
+    public function getTipopago(): ?PaymentType
     {
         return $this->tipopago;
     }

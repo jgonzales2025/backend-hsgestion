@@ -3,6 +3,7 @@
 namespace App\Modules\ScVoucher\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface;
 use App\Modules\DetVoucherPurchase\application\DTOS\DetVoucherPurchaseDTO;
 use App\Modules\DetVoucherPurchase\application\UseCases\CreateDetVoucherPurchaseUseCase;
 use App\Modules\DetVoucherPurchase\Domain\Interface\DetVoucherPurchaseRepositoryInterface;
@@ -12,9 +13,11 @@ use App\Modules\ScVoucher\Application\UseCases\CreateScVoucherUseCase;
 use App\Modules\ScVoucher\Application\UseCases\FindAllScVoucherUseCase;
 use App\Modules\ScVoucher\Application\UseCases\FindByIdScVoucherUseCase;
 use App\Modules\ScVoucher\Application\UseCases\UpdateScVoucherUseCase;
+use App\Modules\ScVoucher\Application\UseCases\UpdateStatusScVoucherUseCase;
 use App\Modules\ScVoucher\Domain\Interface\ScVoucherRepositoryInterface;
 use App\Modules\ScVoucher\Infrastructure\Request\StoreScVoucherRequest;
 use App\Modules\ScVoucher\Infrastructure\Request\UpdateScVoucherRequest;
+use App\Modules\ScVoucher\Infrastructure\Request\UpdateStatusScVoucherRequest;
 use App\Modules\ScVoucher\Infrastructure\Resource\ScVoucherResource;
 use App\Modules\ScVoucherdet\application\DTOS\ScVoucherdetDTO;
 use App\Modules\ScVoucherdet\application\UseCases\CreateScVoucherdetUseCase;
@@ -23,6 +26,10 @@ use App\Modules\ScVoucherdet\Infrastructure\Resource\ScVoucherdetResource;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
+use App\Modules\PaymentMethodsSunat\Domain\Interface\PaymentMethodSunatRepositoryInterface;
+use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 
 class ScVoucherController extends Controller
 {
@@ -31,11 +38,16 @@ class ScVoucherController extends Controller
         private readonly ScVoucherdetRepositoryInterface $scVoucherdetRepository,
         private readonly DetVoucherPurchaseRepositoryInterface $detVoucherPurchaseRepository,
         private DocumentNumberGeneratorService $documentNumberGeneratorService,
+        private CustomerRepositoryInterface $customerRepository,
+        private CurrencyTypeRepositoryInterface $currencyTypeRepository,
+        private PaymentMethodSunatRepositoryInterface $paymentMethodSunatRepository,
+        private PaymentTypeRepositoryInterface $paymentTypeRepository,
+        private BankRepositoryInterface $bankRepository
     ) {}
 
     public function index(Request $request): JsonResponse
     {
-        $search = $request->query('search'); 
+        $search = $request->query('description');
 
         $findAllUseCase = new FindAllScVoucherUseCase($this->scVoucherRepository);
         $scVouchers = $findAllUseCase->execute($search);
@@ -94,7 +106,15 @@ class ScVoucherController extends Controller
     public function store(StoreScVoucherRequest $request): JsonResponse
     {
         $scVoucherDTO = new ScVoucherDTO($request->validated());
-        $createUseCase = new CreateScVoucherUseCase($this->scVoucherRepository,$this->documentNumberGeneratorService);
+        $createUseCase = new CreateScVoucherUseCase(
+            $this->scVoucherRepository,
+            $this->documentNumberGeneratorService,
+            $this->customerRepository,
+            $this->currencyTypeRepository,
+            $this->paymentMethodSunatRepository,
+            $this->paymentTypeRepository,
+            $this->bankRepository
+        );
         $scVoucher = $createUseCase->execute($scVoucherDTO);
 
         $createdetailvoucher = $this->createScVoucherdet($scVoucher, $request->validated()['detail_sc_voucher']);
@@ -114,7 +134,14 @@ class ScVoucherController extends Controller
     public function update(UpdateScVoucherRequest $request, int $id): JsonResponse
     {
         $scVoucherDTO = new ScVoucherDTO($request->validated());
-        $updateUseCase = new UpdateScVoucherUseCase($this->scVoucherRepository);
+        $updateUseCase = new UpdateScVoucherUseCase($this->scVoucherRepository,
+            $this->documentNumberGeneratorService,
+            $this->customerRepository,
+            $this->currencyTypeRepository,
+            $this->paymentMethodSunatRepository,
+            $this->paymentTypeRepository,
+            $this->bankRepository
+        );
         $scVoucher = $updateUseCase->execute($scVoucherDTO, $id);
 
         if (!$scVoucher) {
@@ -142,7 +169,7 @@ class ScVoucherController extends Controller
             ),
             200
         );
-    } 
+    }
 
     public function createScVoucherdet($voucher, array $data)
     {
@@ -180,5 +207,18 @@ class ScVoucherController extends Controller
 
             return $svvoucherdetalle;
         }, $data);
+    }
+    public function updateStatus(int $id, UpdateStatusScVoucherRequest $request): JsonResponse
+    {
+        $updateStatusUseCase = new UpdateStatusScVoucherUseCase($this->scVoucherRepository);
+        $scVoucher = $updateStatusUseCase->execute($id, $request->validated()['status']);
+
+        if (!$scVoucher) {
+            return response()->json(['message' => 'Voucher no encontrado'], 404);
+        }
+
+        return response()->json([
+            'message' => 'Estado actualizado correctamente',
+        ]);
     }
 }

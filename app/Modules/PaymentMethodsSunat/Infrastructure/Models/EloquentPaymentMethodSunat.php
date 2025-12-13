@@ -2,6 +2,7 @@
 
 namespace App\Modules\PaymentMethodsSunat\Infrastructure\Models;
 
+use App\Modules\PaymentMethodsSunat\Domain\Entities\PaymentMethodSunat;
 use Illuminate\Database\Eloquent\Model;
 
 class EloquentPaymentMethodSunat extends Model
@@ -15,4 +16,12 @@ class EloquentPaymentMethodSunat extends Model
         'cod',
         'des'
     ];
+
+    public function toDomain(EloquentPaymentMethodSunat $eloquentPaymentMethodSunat): PaymentMethodSunat
+    {
+        return new PaymentMethodSunat(
+            cod: $eloquentPaymentMethodSunat->cod,
+            des: $eloquentPaymentMethodSunat->des
+        );
+    }
 }

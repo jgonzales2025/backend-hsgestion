@@ -43,6 +43,8 @@ class ScVoucherResource extends JsonResource
             'usradi' => $this->getUsradi(),
             'fecadi' => $this->getFecadi(),
             'usrmod' => $this->getUsrmod(),
+            'total_soles' =>(float) number_format($this->getTotal() / $this->getTipcam(),4),
+            'total_dolares' => (float)number_format($this->getTotal() * $this->getTipcam(),4),
         ];
     }
 }

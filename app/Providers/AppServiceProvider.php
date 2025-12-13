@@ -253,8 +253,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ScVoucherdetRepositoryInterface::class, EloquentScVoucherdetRepository::class);
         $this->app->bind(PaymentMethodSunatRepositoryInterface::class, EloquentPaymentMethodSunatRepository::class);
         $this->app->bind(DetEntryguidePurchaseOrderRepositoryInterface::class, EloquentDetEntryguidePurchaseOrderRepository::class);
-       $this->app->bind(DetVoucherPurchaseRepositoryInterface::class, EloquentDetVoucherPurchaseRepository::class);
-       $this->app->bind(PaymentConceptRepositoryInterface::class, EloquentPaymentConceptRepository::class);
+        $this->app->bind(DetVoucherPurchaseRepositoryInterface::class, EloquentDetVoucherPurchaseRepository::class);
+        $this->app->bind(PaymentConceptRepositoryInterface::class, EloquentPaymentConceptRepository::class);
+        $this->app->bind(\App\Modules\ScVoucher\Domain\Interface\PdfGeneratorInterface::class, \App\Modules\ScVoucher\Infrastructure\Pdf\DomPdfScVoucherGenerator::class);
     }
 
     /**

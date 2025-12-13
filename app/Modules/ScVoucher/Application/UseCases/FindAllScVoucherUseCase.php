@@ -10,8 +10,8 @@ class FindAllScVoucherUseCase
         private ScVoucherRepositoryInterface $scVoucherRepository,
     ) {}
 
-    public function execute(?string $search)
+    public function execute(?string $search, ?int $status)
     {
-        return $this->scVoucherRepository->findAll($search);
+        return $this->scVoucherRepository->findAll($search, $status);
     }
 }

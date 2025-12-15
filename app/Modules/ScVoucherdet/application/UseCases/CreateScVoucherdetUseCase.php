@@ -24,6 +24,8 @@ class CreateScVoucherdetUseCase
             id_purchase: $scVoucherdetDTO->id_purchase,
             id_sc_voucher: $scVoucherdetDTO->id_sc_voucher,
             numdoc: $scVoucherdetDTO->numdoc,
+            correlativo: $scVoucherdetDTO->correlativo,
+            serie: $scVoucherdetDTO->serie,
         );
 
         return $this->scVoucherdetRepository->create($scVoucherdet);

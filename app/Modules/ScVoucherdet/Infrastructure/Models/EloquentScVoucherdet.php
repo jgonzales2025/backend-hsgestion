@@ -16,7 +16,9 @@ class EloquentScVoucherdet extends Model
         'impsol',
         'impdol',
         'id_purchase',
-        'id_sc_voucher'
+        'id_sc_voucher',
+        'correlativo',
+        'serie'
     ];
     protected $hidden = [
         'created_at',

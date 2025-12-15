@@ -149,6 +149,9 @@
             display: table;
             width: 100%;
             margin-bottom: 3px;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
         }
 
         .totals-label {
@@ -177,6 +180,12 @@
             display: table;
             clear: both;
         }
+       .electronic-label{
+        background-color: transparent;
+        color: #000;
+        font-weight: bold;
+        font-size: 8px;
+       }
     </style>
 </head>
 
@@ -238,7 +247,7 @@
         <table class="items-table">
             <thead>
                 <tr>
-                    <th style="width: 5%;">ITEM</th>
+                    
                     <th style="width: 15%;">CUENTA</th>
                     <th style="width: 50%;">DESCRIPCIÓN</th>
                     <th style="width: 15%;">IMPORTE</th>
@@ -247,7 +256,7 @@
             <tbody>
                 @foreach($details as $index => $item)
                 <tr>
-                    <td class="center">{{ $index + 1 }}</td>
+                
                     <td class="center">{{ $item['codcon'] }}</td>
                     <td>{{ $item['glosa'] }}</td>
                     <td class="right">

@@ -21,6 +21,9 @@ class UpdateScVoucherdetUseCase
             glosa: $scVoucherdetDTO->glosa,
             impsol: $scVoucherdetDTO->impsol,
             impdol: $scVoucherdetDTO->impdol,
+            id_purchase: $scVoucherdetDTO->id_purchase,
+            id_sc_voucher: $scVoucherdetDTO->id_sc_voucher,
+            numdoc: $scVoucherdetDTO->numdoc,   
         );
 
         return $this->scVoucherdetRepository->update($scVoucherdet);

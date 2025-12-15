@@ -10,13 +10,20 @@ class ScVoucherdetDTO
     public string $glosa;
     public float $impsol;
     public float $impdol;
+    public ?int $id_purchase;
+    public ?int $id_sc_voucher;
+    public int $numdoc;
 
-    public function __construct(array $data) {
+    public function __construct(array $data)
+    {
         $this->cia = $data['cia'];
         $this->codcon = $data['codcon'];
         $this->tipdoc = $data['tipdoc'];
         $this->glosa = $data['glosa'];
         $this->impsol = $data['impsol'];
         $this->impdol = $data['impdol'];
+        $this->id_purchase = $data['id_purchase'] ?? null;
+        $this->id_sc_voucher = $data['id_sc_voucher'] ?? null;
+        $this->numdoc = $data['numdoc'];
     }
 }

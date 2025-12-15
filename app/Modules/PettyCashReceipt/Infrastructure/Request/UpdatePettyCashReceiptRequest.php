@@ -36,4 +36,24 @@ class UpdatePettyCashReceiptRequest extends FormRequest
             'branch_id' => 'required|integer'
         ];
     }
+    public function messages():array{
+        return [
+            'document_type.required' => 'El tipo de documento es obligatorio',
+            'series.required' => 'La serie es obligatoria',
+            'date.required' => 'La fecha es obligatoria',
+            'delivered_to.required' => 'El destinatario es obligatorio',
+            'reason_code.required' => 'El codigo de motivo es obligatorio',
+            'currency_type.required' => 'El tipo de moneda es obligatorio',
+            'amount.required' => 'El monto es obligatorio',
+            'amount.numeric' => 'El monto debe ser un numero',
+            'observation.string' => 'La observacion debe ser una cadena de texto',
+            'status.integer' => 'El estado debe ser un numero',
+            'created_by.integer' => 'El creado por debe ser un numero',
+            'created_at_manual.string' => 'La fecha de creacion manual debe ser una cadena de texto',
+            'updated_by.integer' => 'El actualizado por debe ser un numero',
+            'updated_at_manual.string' => 'La fecha de actualizacion manual debe ser una cadena de texto',
+            'branch_id.required' => 'El id de sucursal es obligatorio',
+            'branch_id.integer' => 'El id de sucursal debe ser un numero',
+        ];
+    }
 }

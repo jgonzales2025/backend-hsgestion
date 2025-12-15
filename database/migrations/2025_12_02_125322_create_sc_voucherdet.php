@@ -22,6 +22,7 @@ return new class extends Migration
 
             $table->decimal('impsol', 10, 2)->default(0.00);
             $table->decimal('impdol', 10, 2)->default(0.00);
+            $table->foreignId('id_purchase')->nullable()->constrained('purchases')->nullOnDelete();
             $table->timestamps();
         });
     }

@@ -51,12 +51,7 @@ class CreatePurchaseRequest extends FormRequest
       'det_compras_guia_ingreso.*.descuento' => 'required|numeric|min:0',
       'det_compras_guia_ingreso.*.sub_total' => 'required|numeric|gt:0',
       'det_compras_guia_ingreso.*.total' => 'required|numeric|gt:0',
-      'det_compras_guia_ingreso.*.cantidad_update' => 'nullable|numeric',
-      //descuento no puede ser mayor que el sub_total
-      // 'det_compras_guia_ingreso.*.descuento' => 'required|numeric|lte:det_compras_guia_ingreso.*.sub_total',
-
-      //  'det_compras_guia_ingreso.*.cantidad_update' => 'required|numeric|min:0|lte:det_compras_guia_ingreso.*.cantidad',
-
+      'det_compras_guia_ingreso.*.cantidad_update' => 'nullable|numeric', 
       'det_compras_guia_ingreso.*.process_status' => 'nullable|string',
       'entry_guide' => 'required|array',
       'entry_guide.*' => 'required|integer|exists:entry_guides,id',
@@ -73,8 +68,7 @@ class CreatePurchaseRequest extends FormRequest
       'type_document_id.required' => 'El tipo de documento es obligatorio',
       'det_compras_guia_ingreso.*.precio_costo.gt' => 'El precio de costo debe ser mayor a 0',
       'det_compras_guia_ingreso.*.total.gt' => 'El total debe ser mayor a 0',
-      'payment_type_id.required' => 'El tipo de pago es obligatorio',
-      // 'payment_type_id.exists' => 'El tipo de pago no existe',
+      'payment_type_id.required' => 'El tipo de pago es obligatorio', 
     ];
   }
 }

@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Modules\ScVoucherdet\Infrastructure\Models;
+
 use Illuminate\Database\Eloquent\Model;
 
 class EloquentScVoucherdet extends Model
@@ -12,7 +14,9 @@ class EloquentScVoucherdet extends Model
         'numdoc',
         'glosa',
         'impsol',
-        'impdol'
+        'impdol',
+        'id_purchase',
+        'id_sc_voucher'
     ];
     protected $hidden = [
         'created_at',

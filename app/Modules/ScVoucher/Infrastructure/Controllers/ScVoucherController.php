@@ -201,12 +201,15 @@ class ScVoucherController extends Controller
         return array_map(function ($item) use ($voucher, $createdetailvoucher) {
 
             $scVoucherdetDTO = new ScVoucherdetDTO([
-                'cia' => $voucher->getCia(),
+                'cia' => $voucher->getCia() ?? 0,
                 'codcon' => $item['codcon'],
-                'tipdoc' => $voucher->getId(),
+                'tipdoc' => $item['tipdoc'],
                 'glosa' => $item['glosa'],
                 'impsol' => $item['impsol'],
                 'impdol' => $item['impdol'],
+                'id_purchase' => $item['id_purchase'] ?? null,
+                'id_sc_voucher' => $voucher->getId(),
+                'numdoc' => $item['numdoc']
             ]);
 
             $svvoucherdetalle = $createdetailvoucher->execute($scVoucherdetDTO);

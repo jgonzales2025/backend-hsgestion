@@ -43,13 +43,27 @@ class UpdateScVoucherRequest extends FormRequest
             'usrmod' => 'nullable|integer',
             'detail_sc_voucher' => 'nullable|array',
             'detail_sc_voucher.*.codcon' => 'required|integer',
-            'detail_sc_voucher.*.glosa' => 'required|string',
+            'detail_sc_voucher.*.glosa' => 'nullable|string',
             'detail_sc_voucher.*.impsol' => 'required|numeric',
             'detail_sc_voucher.*.impdol' => 'required|numeric',
             'detail_voucher_purchase' => 'nullable|array',
             'detail_voucher_purchase.*.purchase_id' => 'required|integer',
             'detail_voucher_purchase.*.amount' => 'required|numeric',
 
+        ];
+    }
+    public function messages(): array
+    {
+        return [
+            'detail_sc_voucher.*.codcon.required' => 'Debe seleccionar una cuenta.',
+            'detail_sc_voucher.*.impsol.required' => 'Debe ingresar un importe.',
+            'detail_sc_voucher.*.impdol.required' => 'Debe ingresar un importe.',
+            'detail_voucher_purchase.*.purchase_id.required' => 'Debe seleccionar un documento.',
+            'detail_voucher_purchase.*.amount.required' => 'Debe ingresar un importe.',
+            'detail_sc_voucher.*.glosa.string' => 'La glosa debe ser una cadena de texto.',
+            'detail_sc_voucher.*.impsol.numeric' => 'El importe debe ser un numero.',
+            'detail_sc_voucher.*.impdol.numeric' => 'El importe debe ser un numero.',
+            'detail_voucher_purchase.*.amount.numeric' => 'El importe debe ser un numero.',
         ];
     }
 }

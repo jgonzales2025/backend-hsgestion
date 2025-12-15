@@ -18,6 +18,10 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             'glosa' => $scVoucherdet->getGlosa(),
             'impsol' => $scVoucherdet->getImpsol(),
             'impdol' => $scVoucherdet->getImpdol(),
+            'impdol' => $scVoucherdet->getImpdol(),
+            'id_purchase' => $scVoucherdet->getIdPurchase(),
+            'id_sc_voucher' => $scVoucherdet->getIdScVoucher(),
+            'numdoc' => $scVoucherdet->getNumdoc(),
         ]);
 
         return new ScVoucherdet(
@@ -29,6 +33,9 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             glosa: $scVoucherdet->glosa,
             impsol: $scVoucherdet->impsol,
             impdol: $scVoucherdet->impdol,
+            id_purchase: $scVoucherdet->id_purchase,
+            id_sc_voucher: $scVoucherdet->id_sc_voucher,
+            numdoc: $scVoucherdet->numdoc,
         );
     }
     public function update(ScVoucherdet $scVoucherdet): ?ScVoucherdet
@@ -43,6 +50,8 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             'glosa' => $scVoucherdet->getGlosa(),
             'impsol' => $scVoucherdet->getImpsol(),
             'impdol' => $scVoucherdet->getImpdol(),
+            'id_purchase' => $scVoucherdet->getIdPurchase(),
+            'numdoc' => $scVoucherdet->getNumdoc(),
         ]);
 
         return new ScVoucherdet(
@@ -54,6 +63,9 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             glosa: $scVoucherdetA->glosa,
             impsol: $scVoucherdetA->impsol,
             impdol: $scVoucherdetA->impdol,
+            id_purchase: $scVoucherdetA->id_purchase,
+            id_sc_voucher: $scVoucherdetA->id_sc_voucher,
+            numdoc: $scVoucherdet->numdoc,
         );
     }
 
@@ -69,6 +81,9 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             glosa: $scVoucherdet->glosa,
             impsol: $scVoucherdet->impsol,
             impdol: $scVoucherdet->impdol,
+            id_purchase: $scVoucherdet->id_purchase,
+            id_sc_voucher: $scVoucherdet->id_sc_voucher,
+              numdoc: $scVoucherdet->numdoc,
         );
     }
     public function findAll(): array
@@ -84,30 +99,35 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
                 glosa: $scVoucherdet->glosa,
                 impsol: $scVoucherdet->impsol,
                 impdol: $scVoucherdet->impdol,
+                id_purchase: $scVoucherdet->id_purchase,
+                id_sc_voucher: $scVoucherdet->id_sc_voucher,
+                  numdoc: $scVoucherdet->numdoc,
             );
         })->toArray();
     }
 
     public function findByVoucherId(int $voucherId): array
     {
-        $scVoucherdetCollection = EloquentScVoucherdet::where('tipdoc', $voucherId)->get();
+        $scVoucherdetCollection = EloquentScVoucherdet::where('id_sc_voucher', $voucherId)->get();
 
         return $scVoucherdetCollection->map(function ($scVoucherdet) {
             return new ScVoucherdet(
                 id: $scVoucherdet->id,
                 cia: $scVoucherdet->cia,
                 codcon: $scVoucherdet->codcon,
-                tipdoc: $scVoucherdet->tipdoc,
-
+                tipdoc: $scVoucherdet->tipdoc, 
                 glosa: $scVoucherdet->glosa,
                 impsol: $scVoucherdet->impsol,
                 impdol: $scVoucherdet->impdol,
+                id_purchase: $scVoucherdet->id_purchase,
+                id_sc_voucher: $scVoucherdet->id_sc_voucher,
+                numdoc: $scVoucherdet->numdoc,
             );
         })->toArray();
     }
 
     public function deleteByVoucherId(int $voucherId): void
     {
-        EloquentScVoucherdet::where('tipdoc', $voucherId)->delete();
+        EloquentScVoucherdet::where('id_sc_voucher', $voucherId)->delete();
     }
 }

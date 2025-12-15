@@ -17,6 +17,9 @@ class ScVoucherdetResource extends JsonResource
             'glosa' => $this->resource->getGlosa(),
             'impsol' => $this->resource->getImpsol(),
             'impdol' => $this->resource->getImpdol(),
+            'id_purchase' => $this->resource->getIdPurchase(),
+            'id_sc_voucher' => $this->resource->getIdScVoucher(),
+            'numdoc'=>$this->resource->getNumdoc() 
         ];
     }
 }

@@ -13,7 +13,9 @@ class ScVoucherdet
     private float $impdol;
     private ?int $id_purchase;
     private ?int $id_sc_voucher;
-    private ?int $numdoc;
+    private ?string $numdoc;
+    private ?string $correlativo;
+    private ?string $serie;
 
     public function __construct(
         ?int $id,
@@ -25,7 +27,9 @@ class ScVoucherdet
         float $impdol,
         ?int $id_purchase = null,
         ?int $id_sc_voucher = null,
-        int $numdoc = null
+        ?string $numdoc = "",
+        ?string $correlativo = "",
+        ?string $serie = ""
     ) {
         $this->id = $id;
         $this->cia = $cia;
@@ -37,6 +41,8 @@ class ScVoucherdet
         $this->id_purchase = $id_purchase;
         $this->id_sc_voucher = $id_sc_voucher;
         $this->numdoc = $numdoc;
+        $this->correlativo = $correlativo;
+        $this->serie = $serie;
 
     }
 
@@ -83,8 +89,16 @@ class ScVoucherdet
     {
         return $this->id_sc_voucher;
     }
-    public function getNumdoc(): ?int
+    public function getNumdoc(): ?string
     {
         return $this->numdoc;
+    }
+    public function getCorrelativo(): ?string
+    {
+        return $this->correlativo;
+    }
+    public function getSerie(): ?string
+    {
+        return $this->serie;
     }
 }

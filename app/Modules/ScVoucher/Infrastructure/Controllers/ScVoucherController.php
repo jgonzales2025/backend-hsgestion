@@ -206,10 +206,12 @@ class ScVoucherController extends Controller
                 'tipdoc' => $item['tipdoc'],
                 'glosa' => $item['glosa'],
                 'impsol' => $item['impsol'],
-                'impdol' => $item['impdol'],
+                'impdol' => $item['impdol'],    
                 'id_purchase' => $item['id_purchase'] ?? null,
                 'id_sc_voucher' => $voucher->getId(),
-                'numdoc' => $item['numdoc']
+                'numdoc' => $item['numdoc'],
+                'correlativo' => $item['correlativo'],
+                'serie' => $item['serie']
             ]);
 
             $svvoucherdetalle = $createdetailvoucher->execute($scVoucherdetDTO);

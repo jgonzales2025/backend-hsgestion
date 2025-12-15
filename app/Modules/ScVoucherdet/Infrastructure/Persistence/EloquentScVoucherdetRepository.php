@@ -22,6 +22,8 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             'id_purchase' => $scVoucherdet->getIdPurchase(),
             'id_sc_voucher' => $scVoucherdet->getIdScVoucher(),
             'numdoc' => $scVoucherdet->getNumdoc(),
+            'correlativo' => $scVoucherdet->getCorrelativo(),
+            'serie' => $scVoucherdet->getSerie(),
         ]);
 
         return new ScVoucherdet(
@@ -36,6 +38,8 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             id_purchase: $scVoucherdet->id_purchase,
             id_sc_voucher: $scVoucherdet->id_sc_voucher,
             numdoc: $scVoucherdet->numdoc,
+            correlativo: $scVoucherdet->correlativo,
+            serie: $scVoucherdet->serie,
         );
     }
     public function update(ScVoucherdet $scVoucherdet): ?ScVoucherdet
@@ -52,6 +56,8 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             'impdol' => $scVoucherdet->getImpdol(),
             'id_purchase' => $scVoucherdet->getIdPurchase(),
             'numdoc' => $scVoucherdet->getNumdoc(),
+            'correlativo' => $scVoucherdet->getCorrelativo(),
+            'serie' => $scVoucherdet->getSerie(),
         ]);
 
         return new ScVoucherdet(
@@ -66,6 +72,8 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             id_purchase: $scVoucherdetA->id_purchase,
             id_sc_voucher: $scVoucherdetA->id_sc_voucher,
             numdoc: $scVoucherdet->numdoc,
+            correlativo: $scVoucherdet->correlativo,
+            serie: $scVoucherdet->serie,
         );
     }
 
@@ -83,7 +91,9 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
             impdol: $scVoucherdet->impdol,
             id_purchase: $scVoucherdet->id_purchase,
             id_sc_voucher: $scVoucherdet->id_sc_voucher,
-              numdoc: $scVoucherdet->numdoc,
+            numdoc: $scVoucherdet->numdoc,
+            correlativo: $scVoucherdet->correlativo,
+            serie: $scVoucherdet->serie,
         );
     }
     public function findAll(): array
@@ -101,7 +111,9 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
                 impdol: $scVoucherdet->impdol,
                 id_purchase: $scVoucherdet->id_purchase,
                 id_sc_voucher: $scVoucherdet->id_sc_voucher,
-                  numdoc: $scVoucherdet->numdoc,
+                numdoc: $scVoucherdet->numdoc,
+                correlativo: $scVoucherdet->correlativo,
+                serie: $scVoucherdet->serie,
             );
         })->toArray();
     }
@@ -115,13 +127,15 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
                 id: $scVoucherdet->id,
                 cia: $scVoucherdet->cia,
                 codcon: $scVoucherdet->codcon,
-                tipdoc: $scVoucherdet->tipdoc, 
+                tipdoc: $scVoucherdet->tipdoc,
                 glosa: $scVoucherdet->glosa,
                 impsol: $scVoucherdet->impsol,
                 impdol: $scVoucherdet->impdol,
                 id_purchase: $scVoucherdet->id_purchase,
                 id_sc_voucher: $scVoucherdet->id_sc_voucher,
                 numdoc: $scVoucherdet->numdoc,
+                correlativo: $scVoucherdet->correlativo,
+                serie: $scVoucherdet->serie,
             );
         })->toArray();
     }

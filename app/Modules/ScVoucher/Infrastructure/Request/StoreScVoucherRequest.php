@@ -47,7 +47,9 @@ class StoreScVoucherRequest extends FormRequest
             'detail_sc_voucher.*.impsol' => 'required|numeric',
             'detail_sc_voucher.*.impdol' => 'required|numeric',
             'detail_sc_voucher.*.tipdoc' => 'required|integer',
-            'detail_sc_voucher.*.numdoc' => 'required|integer',
+            'detail_sc_voucher.*.numdoc' => 'required|string',
+            'detail_sc_voucher.*.correlativo' => 'required|string',
+            'detail_sc_voucher.*.serie' => 'required|string',
             
             'detail_sc_voucher.*.id_purchase' => 'nullable|integer',
             'detail_voucher_purchase' => 'nullable|array',

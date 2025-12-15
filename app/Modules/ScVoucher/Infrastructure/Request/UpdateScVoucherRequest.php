@@ -49,7 +49,10 @@ class UpdateScVoucherRequest extends FormRequest
             'detail_voucher_purchase' => 'nullable|array',
             'detail_voucher_purchase.*.purchase_id' => 'required|integer',
             'detail_voucher_purchase.*.amount' => 'required|numeric',
-
+            'detail_sc_voucher.*.tipdoc' => 'required|integer',
+            'detail_sc_voucher.*.numdoc' => 'required|string',
+            'detail_sc_voucher.*.correlativo' => 'required|string',
+            'detail_sc_voucher.*.serie' => 'required|string',
         ];
     }
     public function messages(): array

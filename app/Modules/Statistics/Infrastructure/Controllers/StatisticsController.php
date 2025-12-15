@@ -12,6 +12,7 @@ use App\Modules\Statistics\Application\UseCases\GetArticleIdPurchaseUseCase;
 use App\Modules\Statistics\Application\UseCases\GetArticleIdSoldUseCase;
 use App\Modules\Statistics\Application\UseCases\GetArticlesSoldUseCase;
 use App\Modules\Statistics\Application\UseCases\GetCustomerConsumedItemsUseCase;
+use App\Modules\Statistics\Application\UseCases\GetCustomerConsumedItemsPaginatedUseCase;
 use App\Modules\Statistics\Infrastructure\Persistence\ArticlePurchaseExport;
 use App\Modules\Statistics\Infrastructure\Persistence\CustomerConsumedItemsExport;
 use Illuminate\Http\Request;
@@ -21,6 +22,7 @@ class StatisticsController
 {
     public function __construct(
         private readonly GetCustomerConsumedItemsUseCase $getCustomerConsumedItemsUseCase,
+        private readonly GetCustomerConsumedItemsPaginatedUseCase $getCustomerConsumedItemsPaginatedUseCase,
         private readonly GetArticlesSoldUseCase $getArticlesSoldUseCase,
         private readonly CompanyRepositoryInterface $companyRepository,
         private readonly BranchRepositoryInterface $branchRepository,
@@ -28,6 +30,45 @@ class StatisticsController
         private readonly GetArticleIdPurchaseUseCase $getArticleIdPurchaseUseCase,
         private readonly ArticleRepositoryInterface $articleRepository
     ) {
+    }
+
+    public function getCustomerConsumedItemsJson(Request $request)
+    {
+        $request->validate([
+            'company_id' => 'required|integer',
+            'customer_id' => 'nullable|integer',
+            'branch_id' => 'nullable|integer',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'category_id' => 'nullable|integer',
+            'brand_id' => 'nullable|integer',
+            'per_page' => 'nullable|integer|min:1|max:100',
+        ]);
+
+        $perPage = $request->input('per_page', 10);
+
+        $items = $this->getCustomerConsumedItemsPaginatedUseCase->execute(
+            company_id: $request->input('company_id'),
+            branch_id: $request->input('branch_id'),
+            start_date: $request->input('start_date'),
+            end_date: $request->input('end_date'),
+            category_id: $request->input('category_id'),
+            brand_id: $request->input('brand_id'),
+            customerId: $request->input('customer_id'),
+            perPage: $perPage
+        );
+
+        return response()->json([
+            'data' => $items->items(),
+            'current_page' => $items->currentPage(),
+            'per_page' => $items->perPage(),
+            'total' => $items->total(),
+            'last_page' => $items->lastPage(),
+            'next_page_url' => $items->nextPageUrl(),
+            'prev_page_url' => $items->previousPageUrl(),
+            'first_page_url' => $items->url(1),
+            'last_page_url' => $items->url($items->lastPage()),
+        ]);
     }
 
     public function getCustomerConsumedItems(Request $request)

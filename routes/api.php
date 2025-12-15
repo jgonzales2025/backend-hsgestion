@@ -279,6 +279,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('articles-notas/{id}', [ArticleController::class, 'showNotesDebito']);
     Route::get('articles-required-serial/{id}', [ArticleController::class, 'requiredSerial']);
     Route::get('/articles-is-combo', [ArticleController::class, 'getIsCombo']);
+    Route::get('/articles-placa-madre', [ArticleController::class, 'findArticlesByPlacaMadre']);
     // Customer portfolios - Cartera de clientes
     Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index']);
     Route::get('/customer-portfolios-user/{id}', [CustomerPortfolioController::class, 'showUserByCustomer']);
@@ -466,13 +467,15 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/payment-concepts-status/{id}', [PaymentConceptController::class, 'updateStatus']);
 
     // Statistics - Estadísticas
+    Route::get('/statistics/customer-consumed-items-json', [StatisticsController::class, 'getCustomerConsumedItemsJson']);
+    Route::get('/statistics/customer-consumed-items', [StatisticsController::class, 'getCustomerConsumedItems']);
+    Route::get('/statistics/articles-sold', [StatisticsController::class, 'getArticlesSold']);
+    Route::get('/statistics/article-id-sold/{id}', [StatisticsController::class, 'getArticleIdSold']);
+    Route::get('/statistics/article-id-purchase/{id}', [StatisticsController::class, 'getArticleIdPurchase']);
+    Route::get('/statistics/article-id-purchase/{id}/export', [StatisticsController::class, 'exportArticleIdPurchase']);
 
 });
-Route::get('/statistics/customer-consumed-items', [StatisticsController::class, 'getCustomerConsumedItems']);
-Route::get('/statistics/articles-sold', [StatisticsController::class, 'getArticlesSold']);
-Route::get('/statistics/article-id-sold/{id}', [StatisticsController::class, 'getArticleIdSold']);
-Route::get('/statistics/article-id-purchase/{id}', [StatisticsController::class, 'getArticleIdPurchase']);
-Route::get('/statistics/article-id-purchase/{id}/export', [StatisticsController::class, 'exportArticleIdPurchase']);
+
 Route::middleware('auth:api')->group(function () {
     Route::get('/me', [AuthController::class, 'me']);
     Route::post('/logout', [AuthController::class, 'logout']);

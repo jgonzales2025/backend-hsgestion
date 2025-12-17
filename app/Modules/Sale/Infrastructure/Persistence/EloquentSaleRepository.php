@@ -7,6 +7,7 @@ use App\Modules\Sale\Domain\Entities\Sale;
 use App\Modules\Sale\Domain\Entities\SaleCreditNote;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -16,7 +17,10 @@ class EloquentSaleRepository implements SaleRepositoryInterface
     {
         $eloquentSale = EloquentSale::query()
             ->where('company_id', $companyId)
-            ->when($start_date && $end_date, fn($query) => $query->whereBetween('created_at', [$start_date, $end_date]))
+            ->when($start_date && $end_date, fn($query) => $query->whereBetween('date', [
+                Carbon::parse($start_date)->startOfDay(),
+                Carbon::parse($end_date)->endOfDay()
+            ]))
             ->when($description, fn($query) => $query->where('serie', 'like', "%{$description}%")
                 ->orWhere('document_number', 'like', "%{$description}%")
                 ->orWhereHas('documentType', fn($query) => $query->where('description', 'like', "%{$description}%"))
@@ -104,11 +108,21 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         return $this->mapToDomain($eloquentSale);
     }
 
-    public function findAllProformas(?string $start_date, ?string $end_date)
+    public function findAllProformas(?string $start_date, ?string $end_date, ?int $status, ?string $description)
     {
         $eloquentSalesProformas = EloquentSale::where('document_type_id', 16)
             ->orderBy('created_at', 'desc')
             ->when($start_date && $end_date, fn($query) => $query->whereBetween('date', [$start_date, $end_date]))
+            ->when($description, fn($query) => $query->where('serie', 'like', "%{$description}%")
+                ->orWhere('document_number', 'like', "%{$description}%")
+                ->orWhereHas('documentType', fn($query) => $query->where('description', 'like', "%{$description}%"))
+                ->orWhereHas('paymentType', fn($query) => $query->where('name', 'like', "%{$description}%"))
+                ->orWhereHas('customer', fn($query) => $query->where('name', 'like', "%{$description}%")
+                    ->orWhere('lastname', 'like', "%{$description}%")
+                    ->orWhere('company_name', 'like', "%{$description}%"))
+                ->orWhereHas('user', fn($query) => $query->where('firstname', 'like', "%{$description}%")
+                    ->orWhere('lastname', 'like', "%{$description}%")))
+            ->when($status !== null, fn($query) => $query->where('status', $status))
             ->paginate(10);
 
         $eloquentSalesProformas->getCollection()->transform(fn($sale) => $this->mapToDomain($sale));
@@ -346,6 +360,11 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         $paginatedSales->totals = $totals;
 
         return $paginatedSales;
+    }
+
+    public function updateStatus(int $id, int $status): void
+    {
+        EloquentSale::where('id', $id)->update(['status' => $status]);
     }
 
     private function mapToArray(Sale $sale): array

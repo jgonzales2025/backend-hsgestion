@@ -8,8 +8,8 @@ readonly class FindAllArticlesPriceConvertionUseCase
 {
     public function __construct(private readonly ArticleRepositoryInterface $articleRepository){}
 
-    public function execute(string $date, ?string $description, ?int $articleId, ?int $branchId)
+    public function execute(string $date, ?string $description, ?int $articleId, ?int $branchId, ?int $priceArticleId)
     {
-        return $this->articleRepository->findAllArticlePriceConvertion($date, $description, $articleId, $branchId);
+        return $this->articleRepository->findAllArticlePriceConvertion($date, $description, $articleId, $branchId, $priceArticleId);
     }
 }

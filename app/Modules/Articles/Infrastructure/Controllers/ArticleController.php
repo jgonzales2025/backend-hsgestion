@@ -313,6 +313,8 @@ class ArticleController extends Controller
     $description = $request->query("description");
     $articleId = $request->query("article_id");
     $branchId = $request->query("branch_id");
+    $date = $request->query("date");
+    $priceArticleId = $request->query("price_article_id");
 
     $validatedData = $request->validate([
       'date' => 'date|required',
@@ -323,7 +325,7 @@ class ArticleController extends Controller
     ]);
 
     $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);
-    $articles = $articlesUseCase->execute($validatedData['date'], $description, $articleId, $branchId);
+    $articles = $articlesUseCase->execute($date, $description, $articleId, $branchId, $priceArticleId);
 
     // Check if the result is empty (when paginated, check if items are empty)
     // Solo buscar por serial si hay una descripción y no hay articleId
@@ -357,15 +359,19 @@ class ArticleController extends Controller
       }
     }
 
-    return new JsonResponse([
-      'data' => ArticleForSalesResource::collection($articles->items())->resolve(),
-      'current_page' => $articles->currentPage(),
-      'per_page' => $articles->perPage(),
-      'total' => $articles->total(),
-      'last_page' => $articles->lastPage(),
-      'next_page_url' => $articles->nextPageUrl(),
-      'prev_page_url' => $articles->previousPageUrl(),
-    ]);
+    if ($priceArticleId) {
+      return response()->json((new ArticleForSalesResource($articles->first()))->resolve(), 200);
+    } else {
+      return new JsonResponse([
+        'data' => ArticleForSalesResource::collection($articles->items())->resolve(),
+        'current_page' => $articles->currentPage(),
+        'per_page' => $articles->perPage(),
+        'total' => $articles->total(),
+        'last_page' => $articles->lastPage(),
+        'next_page_url' => $articles->nextPageUrl(),
+        'prev_page_url' => $articles->previousPageUrl(),
+      ]);
+    }
   }
 
   public function storeNotesDebito(StoreArticleNotasDebito $request): JsonResponse

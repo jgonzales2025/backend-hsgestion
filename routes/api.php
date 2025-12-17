@@ -317,6 +317,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/sales-credit-notes/{id}', [SaleController::class, 'updateCreditNote']);
     Route::get('/sales/{id}/pdf', [SaleController::class, 'generatePdf']);
     Route::get('/documents-by-customer', [SaleController::class, 'findAllDocumentsByCustomerId']);
+    Route::put('/sales-status/{id}', [SaleController::class, 'updateStatus']);
 
     // Ruta para cobranzas
     Route::get('/collections', [CollectionController::class, 'index']);

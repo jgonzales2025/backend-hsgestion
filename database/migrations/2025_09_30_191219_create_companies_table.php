@@ -22,6 +22,8 @@ return new class extends Migration
             $table->decimal('min_profit', 4, 2);
             $table->decimal('max_profit', 4, 2);
             $table->integer('status')->default(1);
+            $table->string('usuario_sol', 100);
+            $table->string('clave_sol', 100);
             $table->timestamps();
         });
     }

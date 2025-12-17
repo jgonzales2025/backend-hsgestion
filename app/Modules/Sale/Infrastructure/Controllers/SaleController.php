@@ -90,9 +90,15 @@ class SaleController extends Controller
     public function index(Request $request): JsonResponse
     {
         $companyId = request()->get('company_id');
-        $saleUseCase = new FindAllSalesUseCase($this->saleRepository);
-        $sales = $saleUseCase->execute($companyId);
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+        $description = $request->query('description');
+        $status = $request->query('status') !== null ? $request->query('status') : null;
+        $paymentStatus = $request->query('payment_status') !== null ? $request->query('payment_status') : null;
 
+        $saleUseCase = new FindAllSalesUseCase($this->saleRepository);
+        $sales = $saleUseCase->execute($companyId, $startDate, $endDate, $description, $status, $paymentStatus);
+        
         $result = [];
         foreach ($sales as $sale) {
             $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
@@ -109,7 +115,17 @@ class SaleController extends Controller
             ];
         }
 
-        return response()->json($result, 200);
+        return response()->json([
+            'data' => $result,
+            'current_page' => $sales->currentPage(),
+            'per_page' => $sales->perPage(),
+            'total' => $sales->total(),
+            'last_page' => $sales->lastPage(),
+            'next_page_url' => $sales->nextPageUrl(),
+            'prev_page_url' => $sales->previousPageUrl(),
+            'first_page_url' => $sales->url(1),
+            'last_page_url' => $sales->url($sales->lastPage()),
+        ]);
     }
 
     public function store(StoreSaleRequest $request): JsonResponse
@@ -213,7 +229,7 @@ class SaleController extends Controller
             ]
         );
     }
-
+    
     public function update(UpdateSaleRequest $request, $id): JsonResponse
     {
         return DB::transaction(function () use ($request, $id) {
@@ -511,12 +527,25 @@ class SaleController extends Controller
         $transactionLogs->execute($transactionDTO);
     }
 
-    public function indexProformas(): array
+    public function indexProformas(Request $request): JsonResponse
     {
-        $saleUseCase = new FindAllProformasUseCase($this->saleRepository);
-        $sales = $saleUseCase->execute();
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
 
-        return SaleResource::collection($sales)->resolve();
+        $saleUseCase = new FindAllProformasUseCase($this->saleRepository);
+        $sales = $saleUseCase->execute($startDate, $endDate);
+
+        return new JsonResponse([
+            'data' => SaleResource::collection($sales)->resolve(),
+            'current_page' => $sales->currentPage(),
+            'per_page' => $sales->perPage(),
+            'total' => $sales->total(),
+            'last_page' => $sales->lastPage(),
+            'next_page_url' => $sales->nextPageUrl(),
+            'prev_page_url' => $sales->previousPageUrl(),
+            'first_page_url' => $sales->url(1),
+            'last_page_url' => $sales->url($sales->lastPage()),
+        ]);
     }
 
     public function getUpdatedQuantities(Request $request, FindSaleWithUpdatedQuantitiesUseCase $useCase): JsonResponse

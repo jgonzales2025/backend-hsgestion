@@ -5,15 +5,17 @@ namespace App\Modules\Company\Infrastructure\Model;
 use App\Modules\Bank\Infrastructure\Models\EloquentBank;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\Company\Domain\Entities\Company;
+use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\UserAssignment\Infrastructure\Models\EloquentUserAssignment;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class EloquentCompany extends Model
 {
 
      protected $table = 'companies';
-    protected $fillable = ['ruc', 'company_name', 'address', 'ubigeo', 'start_date', 'status'];
+    protected $fillable = ['ruc', 'company_name', 'address', 'ubigeo', 'start_date', 'default_currency_type_id', 'min_profit', 'max_profit', 'status'];
 
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -32,6 +34,11 @@ class EloquentCompany extends Model
         return $this->hasMany(EloquentBank::class, 'company_id');
     }
 
+    public function defaultCurrencyType(): BelongsTo
+    {
+        return $this->belongsTo(EloquentCurrencyType::class, 'default_currency_type_id');
+    }
+
     public function toDomain(EloquentCompany $eloquentCompany): ?Company
     {
         return new Company(
@@ -41,7 +48,10 @@ class EloquentCompany extends Model
             address: $eloquentCompany->address,
             start_date: $eloquentCompany->start_date,
             ubigeo: $eloquentCompany->ubigeo,
-            status: $eloquentCompany->status
+            status: $eloquentCompany->status,
+            default_currency_type: $eloquentCompany->defaultCurrencyType->toDomain($eloquentCompany->defaultCurrencyType),
+            min_profit: $eloquentCompany->min_profit,
+            max_profit: $eloquentCompany->max_profit,
         );
     }
 }

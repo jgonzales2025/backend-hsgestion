@@ -151,11 +151,9 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
     public function findById(int $id): ?Article
     {
-
         $article = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory', 'company'])
-            ->where('status_Esp', false)
             ->find($id);
-
+            
         if (!$article)
             return null;
 

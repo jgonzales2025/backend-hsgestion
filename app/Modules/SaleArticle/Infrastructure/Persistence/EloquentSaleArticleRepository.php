@@ -46,7 +46,7 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
     public function findBySaleId(int $sale_id): array
     {
         $eloquentSaleArticles = EloquentSaleArticle::where('sale_id', $sale_id)->get();
-
+        
         return $eloquentSaleArticles->map(function ($eloquentSaleArticle) {
             return new SaleArticle(
                 id: $eloquentSaleArticle->id,

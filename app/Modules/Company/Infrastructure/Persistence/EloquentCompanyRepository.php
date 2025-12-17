@@ -2,6 +2,7 @@
 namespace App\Modules\Company\Infrastructure\Persistence;
 
 use App\Modules\Company\Domain\Entities\Company;
+use App\Modules\Company\Domain\Entities\UpdateCompany;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
 use Illuminate\Support\Facades\Hash;
@@ -25,7 +26,10 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
                 address:$company->address,
                 start_date:$company->start_date,
                 ubigeo:$company->ubigeo,
-                status:$company->status
+                status:$company->status,
+                default_currency_type:$company->defaultCurrencyType->toDomain($company->defaultCurrencyType),
+                min_profit:$company->min_profit,
+                max_profit:$company->max_profit,
             ));
         return $companys;
     }
@@ -43,7 +47,10 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
             address:$company->address,
             start_date:$company->start_date,
             ubigeo:$company->ubigeo,
-            status:$company->status
+            status:$company->status,
+            default_currency_type:$company->defaultCurrencyType->toDomain($company->defaultCurrencyType),
+            min_profit:$company->min_profit,
+            max_profit:$company->max_profit,
         );
     }
    public function indexByUser(int $userId): array
@@ -65,9 +72,21 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
                 address: $company->address,
                 start_date: $company->start_date,
                 ubigeo: $company->ubigeo,
-                status: $company->status
+                status: $company->status,
+                default_currency_type:$company->defaultCurrencyType->toDomain($company->defaultCurrencyType),
+                min_profit:$company->min_profit,
+                max_profit:$company->max_profit,
             );
         })->toArray();
+    }
+
+    public function update(int $id, UpdateCompany $updateCompany): void
+    {
+        EloquentCompany::where('id', $id)->update([
+            'default_currency_type_id' => $updateCompany->getDefaultCurrencyTypeId(),
+            'min_profit' => $updateCompany->getMinProfit(),
+            'max_profit' => $updateCompany->getMaxProfit(),
+        ]);
     }
 
 }

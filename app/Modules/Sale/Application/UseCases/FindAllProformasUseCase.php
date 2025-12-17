@@ -8,8 +8,8 @@ readonly class FindAllProformasUseCase
 {
     public function __construct(private readonly SaleRepositoryInterface $saleRepository){}
 
-    public function execute(): array
+    public function execute(?string $start_date, ?string $end_date)
     {
-        return $this->saleRepository->findAllProformas();
+        return $this->saleRepository->findAllProformas($start_date, $end_date);
     }
 }

@@ -94,6 +94,7 @@ Route::get('/branchesID/{id}', [BranchController::class, 'showId']);
 Route::get('/companies', [CompanyController::class, 'index']);
 Route::get('/companies/{id}', [CompanyController::class, 'show']);
 Route::get('/companies-user', [CompanyController::class, 'indexByUser']);
+Route::put('/companies/{id}', [CompanyController::class, 'update']);
 
 
 Route::get('/menus', [MenuController::class, 'index']);

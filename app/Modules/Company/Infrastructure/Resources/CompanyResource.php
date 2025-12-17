@@ -21,6 +21,9 @@ class CompanyResource extends JsonResource
             'address' => $this->resource->getAddress(),
             'ubigeo' => $this->resource->getUbigeo(),
             'start_date' => $this->resource->getStartDate(),
+            'default_currency_type_id' => $this->resource->getDefaultCurrencyType()->getId(),
+            'min_profit' => $this->resource->getMinProfit(),
+            'max_profit' => $this->resource->getMaxProfit(),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
         ];
     }

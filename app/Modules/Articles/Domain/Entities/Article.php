@@ -12,13 +12,13 @@ use App\Modules\User\Domain\Entities\User;
 class Article
 {
     private ?int $id;
-    private string $cod_fab;
+    private ?string $cod_fab;
     private string $description;
     private float $weight;
     private bool $with_deduction;
     private bool $series_enabled;
-    private string $location;
-    private string $warranty;
+    private ?string $location;
+    private ?string $warranty;
     private float $tariff_rate;
     private bool $igv_applicable;
     private bool $plastic_bag_applicable;
@@ -52,13 +52,13 @@ class Article
 
     public function __construct(
         ?int $id,
-        string $cod_fab,
+        ?string $cod_fab,
         string $description,
         float $weight,
         bool $with_deduction,
         bool $series_enabled,
         ?string $location,
-        string $warranty,
+        ?string $warranty,
         float $tariff_rate,
         bool $igv_applicable,
         bool $plastic_bag_applicable,

@@ -7,18 +7,22 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class PurchaseResource extends JsonResource
 {
-    public function toArray(Request $request):array
+    public function toArray(Request $request): array
     {
         $currencyId = $this->resource->getCurrency()->getId();
         return [
             'id' => $this->resource->getId(),
-            'branch' =>[
+            'branch' => [
                 'id' => $this->resource->getBranch()->getId(),
                 'name' => $this->resource->getBranch()->getName(),
             ],
-            'supplier' =>[
+            'supplier' => [
                 'id' => $this->resource->getSupplier()->getId(),
-                'name' => $this->resource->getSupplier()->getName() ?? $this->resource->getSupplier()-> getCompanyName(),
+                'name' => $this->resource->getSupplier()->getCompanyName() ??
+                    trim($this->resource->getSupplier()->getName() . ' ' .
+                        $this->resource->getSupplier()->getLastName() . ' ' .
+                        $this->resource->getSupplier()->getSecondLastname()),
+                'ruc' => $this->resource->getSupplier()->getDocumentNumber() ?? "",
             ],
             'serie' => $this->resource->getSerie(),
             'correlative' => $this->resource->getCorrelative(),
@@ -27,7 +31,7 @@ class PurchaseResource extends JsonResource
                 'id' => $this->resource->getPaymentType()->getId(),
                 'name' => $this->resource->getPaymentType()?->getName(),
             ],
-            'currency' =>[
+            'currency' => [
                 'id' => $this->resource->getCurrency()->getId(),
                 'name' => $this->resource->getCurrency()->getName(),
             ],

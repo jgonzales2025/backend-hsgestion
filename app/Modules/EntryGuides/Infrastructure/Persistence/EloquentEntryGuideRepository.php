@@ -15,12 +15,12 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     public function findAll(?string $description, ?int $status): LengthAwarePaginator
     {
         $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])
-        ->when($description, fn($query) => $query->whereHas('customer', fn($query) => 
+            ->when($description, fn($query) => $query->whereHas('customer', fn($query) =>
             $query->where('name', 'like', "%{$description}%")
-            ->orWhere('lastname', 'like', "%{$description}%")
-            ->orWhere('second_lastname', 'like', "%{$description}%")
-            ->orWhere('company_name', 'like', "%{$description}%")))
-        ->when($status !== null, fn($query) => $query->where('status', $status));
+                ->orWhere('lastname', 'like', "%{$description}%")
+                ->orWhere('second_lastname', 'like', "%{$description}%")
+                ->orWhere('company_name', 'like', "%{$description}%")))
+            ->when($status !== null, fn($query) => $query->where('status', $status));
 
         $paginator = $query->orderByDesc('id')->paginate(10);
 
@@ -65,6 +65,32 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
             reference_po_serie: $entryGuide->reference_serie,
             reference_po_correlative: $entryGuide->reference_correlative,
+            status: $entryGuide->status
+        );
+    }
+    public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide
+    {
+        $entryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])
+            ->where('reference_po_serie', $serie)
+            ->where('reference_po_correlative', $correlative)
+            ->first();
+
+        if (!$entryGuide) {
+            return null;
+        }
+
+        return new EntryGuide(
+            id: $entryGuide->id,
+            cia: $entryGuide->company?->toDomain($entryGuide->company),
+            branch: $entryGuide->branch?->toDomain($entryGuide->branch),
+            serie: $entryGuide->serie,
+            correlative: $entryGuide->correlative,
+            date: $entryGuide->date,
+            customer: $entryGuide->customer?->toDomain($entryGuide->customer),
+            observations: $entryGuide->observations,
+            ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
+            reference_po_serie: $entryGuide->reference_po_serie,
+            reference_po_correlative: $entryGuide->reference_po_correlative,
             status: $entryGuide->status
         );
     }

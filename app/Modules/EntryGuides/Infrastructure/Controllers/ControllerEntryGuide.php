@@ -100,10 +100,10 @@ class ControllerEntryGuide extends Controller
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
             $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-            $response['process_status'] = array_reduce($articlesWithSerials, fn($carry, $article) => $carry || ($article->getSaldo() > 0), false) ? 'pendiente' : 'completado';
+            $response['process_status'] = $this->calculateProcessStatus($articlesWithSerials);
             $result[] = $response;
-        } 
-  
+        }
+
         return new JsonResponse([
             'data' => $result,
             'current_page' => $entryGuides->currentPage(),
@@ -141,7 +141,7 @@ class ControllerEntryGuide extends Controller
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-            $response['process_status'] = array_reduce($articlesWithSerials, fn($carry, $article) => $carry || ($article->getSaldo() > 0), false) ? 'pendiente' : 'completado';
+            $response['process_status'] = $this->calculateProcessStatus($articlesWithSerials);
             $result[] = $response;
         }
 
@@ -173,13 +173,14 @@ class ControllerEntryGuide extends Controller
         $response['articles'] = EntryGuideArticleResource::collection($entryArticles)->resolve();
         $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
         $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-        $response['process_status'] = array_reduce($entryArticles, fn($carry, $article) => $carry || ($article->getSaldo() > 0), false) ? 'pendiente' : 'completado';
+        $response['process_status'] = $this->calculateProcessStatus($entryArticles);
 
         return response()->json($response, 200);
     }
 
     public function store(EntryGuideRequest $request): JsonResponse
     {
+
         return DB::transaction(function () use ($request) {
 
             $entryGuideDTO = new EntryGuideDTO($request->validated());
@@ -206,7 +207,7 @@ class ControllerEntryGuide extends Controller
             $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
             $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-            $response['process_status'] = array_reduce($entryGuideArticle, fn($carry, $article) => $carry || ($article->getSaldo() > 0), false) ? 'pendiente' : 'completado';
+            $response['process_status'] = $this->calculateProcessStatus($entryGuideArticle);
 
             return response()->json($response, 201);
         });
@@ -243,7 +244,7 @@ class ControllerEntryGuide extends Controller
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
         $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-        $response['process_status'] = array_reduce($entryGuideArticle, fn($carry, $article) => $carry || ($article->getSaldo() > 0), false) ? 'pendiente' : 'completado';
+        $response['process_status'] = $this->calculateProcessStatus($entryGuideArticle);
 
         return response()->json($response, 200);
     }
@@ -305,6 +306,36 @@ class ControllerEntryGuide extends Controller
             $result = $createDocumentEntryGuideUseCase->execute($documentEntryGuide);
             return $result;
         }, $data);
+    }
+
+    private function calculateProcessStatus(array $articles): string
+    {
+        $totalQuantity = 0;
+        $totalSaldo = 0;
+
+        foreach ($articles as $article) {
+            // Handle both object and array access if necessary, though strict typing suggests objects here
+            // Based on usage, $article is likely an EntryGuideArticle or similar object with getters
+            $qty = method_exists($article, 'getQuantity') ? $article->getQuantity() : ($article['quantity'] ?? 0);
+            $saldo = method_exists($article, 'getSaldo') ? $article->getSaldo() : ($article['saldo'] ?? 0);
+
+            $totalQuantity += $qty;
+            $totalSaldo += $saldo;
+        }
+
+        if ($totalQuantity == 0) {
+            return 'pendiente'; // Edge case, avoid division by zero or weird states
+        }
+
+        if ($totalSaldo == $totalQuantity) {
+            return 'pendiente';
+        }
+
+        if ($totalSaldo == 0) {
+            return 'completado';
+        }
+
+        return 'en proceso';
     }
 
 

@@ -398,8 +398,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/sc-voucher/{id}', [ScVoucherController::class, 'show']);
     Route::put('/sc-voucher/{id}', [ScVoucherController::class, 'update']);
     Route::get('/sc-voucher-pdf/{id}', [ScVoucherController::class, 'generate']);
-    //scvoucherdetalle
-
+    Route::get('/sc-voucher-det/{id}', [ScVoucherController::class, 'getdetVoucher']);
+    //scvoucherdetalle 
     Route::get('/sc-voucherdetalle', [ScVoucherdetController::class, 'index']);
     Route::post('/sc-voucherdetalle', [ScVoucherdetController::class, 'store']);
     Route::get('/sc-voucherdetalle/{id}', [ScVoucherdetController::class, 'show']);

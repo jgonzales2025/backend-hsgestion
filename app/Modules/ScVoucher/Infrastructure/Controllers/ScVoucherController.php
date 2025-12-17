@@ -70,25 +70,10 @@ class ScVoucherController extends Controller
         $status = $request->query('status');
 
         $findAllUseCase = new FindAllScVoucherUseCase($this->scVoucherRepository);
-        $scVouchers = $findAllUseCase->execute($search, $status);
-
-        // Transform collection to include details
-        $data = $scVouchers->getCollection()->map(function ($scVoucher) {
-            $details = $this->scVoucherdetRepository->findByVoucherId($scVoucher->getId());
-            $detailVoucherPurchase = $this->detVoucherPurchaseRepository->findByIdVoucher($scVoucher->getId());
-
-            return array_merge(
-                (new ScVoucherResource($scVoucher))->resolve(),
-                [
-                    'detail_sc_voucher' => ScVoucherdetResource::collection($details)->resolve(),
-                    'detail_voucher_purchase' => DetVoucherPurchaseResource::collection($detailVoucherPurchase)->resolve(),
-                ]
-            );
-        });
-
+        $scVouchers = $findAllUseCase->execute($search, $status); 
 
         return new JsonResponse([
-            'data' => $data,
+            'data' => ScVoucherResource::collection($scVouchers)->resolve(),
             'current_page' => $scVouchers->currentPage(),
             'per_page' => $scVouchers->perPage(),
             'total' => $scVouchers->total(),
@@ -107,20 +92,9 @@ class ScVoucherController extends Controller
 
         if (!$scVoucher) {
             return response()->json(['message' => 'Voucher no encontrado'], 404);
-        }
-
-        // Get voucher details
-        $details = $this->scVoucherdetRepository->findByVoucherId($id);
-        $detailVoucherPurchase = $this->detVoucherPurchaseRepository->findByIdVoucher($scVoucher->getId());
-
+        } 
         return response()->json(
-            array_merge(
-                (new ScVoucherResource($scVoucher))->resolve(),
-                [
-                    'detail_sc_voucher' => ScVoucherdetResource::collection($details)->resolve(),
-                    'detail_voucher_purchase' => DetVoucherPurchaseResource::collection($detailVoucherPurchase)->resolve(),
-                ]
-            ),
+            (new ScVoucherResource($scVoucher))->resolve(),
             200
         );
     }
@@ -139,14 +113,14 @@ class ScVoucherController extends Controller
         );
         $scVoucher = $createUseCase->execute($scVoucherDTO);
 
-        $createdetailvoucher = $this->createScVoucherdet($scVoucher, $request->validated()['detail_sc_voucher']);
-        $createdetailvoucherpurchase = $this->createDetVoucherPurchase($scVoucher, $request->validated()['detail_voucher_purchase'] ?? []);
+        // $createdetailvoucher = $this->createScVoucherdet($scVoucher, $request->validated()['detail_sc_voucher']);
+        // $createdetailvoucherpurchase = $this->createDetVoucherPurchase($scVoucher, $request->validated()['detail_voucher_purchase'] ?? []);
         return response()->json(
             array_merge(
                 (new ScVoucherResource($scVoucher))->resolve(),
                 [
-                    'detail_sc_voucher' => ScVoucherdetResource::collection($createdetailvoucher)->resolve(),
-                    'detail_voucher_purchase' => DetVoucherPurchaseResource::collection($createdetailvoucherpurchase)->resolve(),
+                    // 'detail_sc_voucher' => ScVoucherdetResource::collection($createdetailvoucher)->resolve(),
+                    // 'detail_voucher_purchase' => DetVoucherPurchaseResource::collection($createdetailvoucherpurchase)->resolve(),
                 ]
             ),
             201
@@ -201,17 +175,17 @@ class ScVoucherController extends Controller
         return array_map(function ($item) use ($voucher, $createdetailvoucher) {
 
             $scVoucherdetDTO = new ScVoucherdetDTO([
-                'cia' => $voucher->getCia() ?? 0,
+                'cia' => $voucher->getCia(),
                 'codcon' => $item['codcon'],
                 'tipdoc' => $item['tipdoc'],
                 'glosa' => $item['glosa'],
                 'impsol' => $item['impsol'],
-                'impdol' => $item['impdol'],    
-                'id_purchase' => $item['id_purchase'] ?? null,
+                'impdol' => $item['impdol'],
+                'id_purchase' => $item['id_purchase'],
                 'id_sc_voucher' => $voucher->getId(),
                 'numdoc' => $item['numdoc'],
                 'correlativo' => $item['correlativo'],
-                'serie' => $item['serie']
+                'serie' => $item['serie'] ?? ''
             ]);
 
             $svvoucherdetalle = $createdetailvoucher->execute($scVoucherdetDTO);
@@ -248,5 +222,33 @@ class ScVoucherController extends Controller
         return response()->json([
             'message' => 'Estado actualizado correctamente',
         ]);
+    }
+
+    public function getdetVoucher(int $id): JsonResponse
+    {
+        $findByIdUseCase = new FindByIdScVoucherUseCase($this->scVoucherRepository);
+
+        $detailsByPurchase = $this->scVoucherdetRepository->getvoucherPurchase($id);
+        if (empty($detailsByPurchase)) {
+            return response()->json([], 200);
+        }
+
+        $groupedByVoucher = collect($detailsByPurchase)
+            ->groupBy(fn($detail) => $detail->getIdScVoucher())
+            ->filter(fn($details, $voucherId) => $voucherId !== null);
+
+        $vouchersData = $groupedByVoucher->map(function ($details, $voucherId) use ($findByIdUseCase) {
+            $voucher = $findByIdUseCase->execute((int) $voucherId);
+            if (!$voucher) return null;
+
+            return array_merge(
+                (new ScVoucherResource($voucher))->resolve(),
+                [
+                    'detail_sc_voucher' => ScVoucherdetResource::collection($details)->resolve(),
+        ]
+            );
+        })->filter()->values()->all();
+
+        return response()->json($vouchersData, 200);
     }
 }

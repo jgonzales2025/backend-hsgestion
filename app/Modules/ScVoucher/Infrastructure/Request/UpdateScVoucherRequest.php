@@ -24,7 +24,7 @@ class UpdateScVoucherRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'cia' => 'required|integer',
+            'cia' => 'nullable|integer',
             'anopr' => 'required|string',
             'fecha' => 'required|date',
             'codban' => 'required|integer',
@@ -41,32 +41,36 @@ class UpdateScVoucherRequest extends FormRequest
             'usradi' => 'required|integer',
             'fecadi' => 'nullable|date',
             'usrmod' => 'nullable|integer',
-            'detail_sc_voucher' => 'nullable|array',
+            'detail_sc_voucher' => 'required|array',
             'detail_sc_voucher.*.codcon' => 'required|integer',
-            'detail_sc_voucher.*.glosa' => 'nullable|string',
+            'detail_sc_voucher.*.glosa' => 'required|string',
             'detail_sc_voucher.*.impsol' => 'required|numeric',
             'detail_sc_voucher.*.impdol' => 'required|numeric',
-            'detail_voucher_purchase' => 'nullable|array',
-            'detail_voucher_purchase.*.purchase_id' => 'required|integer',
-            'detail_voucher_purchase.*.amount' => 'required|numeric',
             'detail_sc_voucher.*.tipdoc' => 'required|integer',
             'detail_sc_voucher.*.numdoc' => 'required|string',
             'detail_sc_voucher.*.correlativo' => 'required|string',
-            'detail_sc_voucher.*.serie' => 'required|string',
+            // 'detail_sc_voucher.*.serie' => 'required|string',
+
+            'detail_sc_voucher.*.id_purchase' => 'nullable|integer|exists:purchase,id',
+            'detail_voucher_purchase' => 'nullable|array',
+            'detail_voucher_purchase.*.purchase_id' => 'nullable|integer|exists:purchase,id',
+            'detail_voucher_purchase.*.amount' => 'nullable|numeric',
         ];
     }
     public function messages(): array
     {
         return [
+            'detail_sc_voucher.*.id_purchase.exists' => 'la compra que deseas crear no existe',
             'detail_sc_voucher.*.codcon.required' => 'Debe seleccionar una cuenta.',
             'detail_sc_voucher.*.impsol.required' => 'Debe ingresar un importe.',
             'detail_sc_voucher.*.impdol.required' => 'Debe ingresar un importe.',
-            'detail_voucher_purchase.*.purchase_id.required' => 'Debe seleccionar un documento.',
+
             'detail_voucher_purchase.*.amount.required' => 'Debe ingresar un importe.',
             'detail_sc_voucher.*.glosa.string' => 'La glosa debe ser una cadena de texto.',
             'detail_sc_voucher.*.impsol.numeric' => 'El importe debe ser un numero.',
             'detail_sc_voucher.*.impdol.numeric' => 'El importe debe ser un numero.',
             'detail_voucher_purchase.*.amount.numeric' => 'El importe debe ser un numero.',
+            'detail_voucher_purchase.*.purchase_id.exists' => 'la compra que deseas crear no existe',
         ];
     }
 }

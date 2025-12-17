@@ -38,7 +38,7 @@ class PurchaseController extends Controller
     public function __construct(
         private readonly PurchaseRepositoryInterface $purchaseRepository,
         private readonly ShoppingIncomeGuideRepositoryInterface $shoppingIncomeGuideRepository,
-        private readonly DetailPurchaseGuideRepositoryInterface $detailPurchaseGuideRepository, 
+        private readonly DetailPurchaseGuideRepositoryInterface $detailPurchaseGuideRepository,
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
@@ -51,9 +51,9 @@ class PurchaseController extends Controller
     {
         $description = $request->query('description');
         $num_doc = $request->query('num_doc');
-        $id_proveedr= $request->query('id_proveedr');
+        $id_proveedr = $request->query('id_proveedr');
 
-       
+
         $findAllPurchaseUseCase = new FindAllPurchaseUseCase($this->purchaseRepository);
         $purchases = $findAllPurchaseUseCase->execute($description, $num_doc, $id_proveedr);
 
@@ -65,9 +65,12 @@ class PurchaseController extends Controller
 
             $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping);
 
+            $processStatus = $this->calculateGlobalStatus($guide);
+
             $result[] = array_merge(
                 (new PurchaseResource($purchase))->resolve(),
                 [
+                    'process_status' => $processStatus,
                     'details' => DetailPurchaseGuideResource::collection($guide)->resolve(),
                     'entry_guide' => $entryGuideIds,
                 ]
@@ -97,10 +100,13 @@ class PurchaseController extends Controller
         $guide = $this->detailPurchaseGuideRepository->findById($purchase->getId());
         $shopping = $this->shoppingIncomeGuideRepository->findById($purchase->getId());
         $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping);
+        $processStatus = $this->calculateGlobalStatus($guide);
+
         return response()->json(
             array_merge(
                 (new PurchaseResource($purchase))->resolve(),
                 [
+                    'process_status' => $processStatus,
                     'det_compras_guia_ingreso' => DetailPurchaseGuideResource::collection($guide)->resolve(),
                     'entry_guide' => $entryGuideIds,
                 ]
@@ -111,6 +117,13 @@ class PurchaseController extends Controller
 
     public function store(CreatePurchaseRequest $request): JsonResponse
     {
+        $serie = request('reference_serie');
+        $correlative = request('reference_correlative');
+        $purchaseOrder = $this->purchaseRepository->findBySerieAndCorrelative($serie, $correlative);
+        if ($purchaseOrder) {
+            return response()->json(['message' => 'El correlativo y la serie de la orden de compra referenciada ya existen'], 409);
+        }
+
         $purchaseDTO = new PurchaseDTO($request->validated());
         $cretaePurchaseUseCase = new CreatePurchaseUseCase(
             $this->purchaseRepository,
@@ -121,7 +134,7 @@ class PurchaseController extends Controller
             $this->documentNumberGeneratorService,
             $this->documentTypeRepository
         );
-        
+
         $purchase = $cretaePurchaseUseCase->execute($purchaseDTO);
 
         $existingDetails = $this->detailPurchaseGuideRepository->findById($purchase->getId());
@@ -135,10 +148,13 @@ class PurchaseController extends Controller
 
         $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping_income_guide);
 
+        $processStatus = $this->calculateGlobalStatus($det_compras_guia_ingreso);
+
         return response()->json(
             array_merge(
                 (new PurchaseResource($purchase))->resolve(),
                 [
+                    'process_status' => $processStatus,
                     'det_compras_guia_ingreso' => DetailPurchaseGuideResource::collection($det_compras_guia_ingreso)->resolve(),
                     //purchaseGuide
                     'entry_guide' => $entryGuideIds,
@@ -173,16 +189,19 @@ class PurchaseController extends Controller
 
         $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping_income_guide);
 
+        $processStatus = $this->calculateGlobalStatus($detailcompras);
+
         return response()->json(
             array_merge(
                 (new PurchaseResource($purchase))->resolve(),
                 [
+                    'process_status' => $processStatus,
                     'det_compras_guia_ingreso' => DetailPurchaseGuideResource::collection($detailcompras)->resolve(),
                     'entry_guide' => $entryGuideIds,
                 ]
             ),
             201
-        ); 
+        );
     }
     public function downloadPdf(int $id): Response
     {
@@ -212,7 +231,7 @@ class PurchaseController extends Controller
                 'sub_total' => $item['sub_total'],
                 'total' => $item['total'],
                 'cantidad_update' =>  $item['cantidad'],
-                'process_status' => $item['cantidad'] == 0 ? 'Facturado' : 'En proceso',
+                'process_status' => $item['cantidad'] == 0 ? 'Facturado' : ($item['cantidad'] > 0 ? 'Pendiente' : 'En proceso'),
             ]);
 
             $shoppingGuide = $createGuideUseCase->execute($detailDTO);
@@ -275,22 +294,24 @@ class PurchaseController extends Controller
                 $nuevaCantidad = 0;
             }
 
-            $precio = isset($purchase['precio_costo']) ? (float) $purchase['precio_costo'] : 0.0;
-            $descuento = isset($purchase['descuento']) ? (float) $purchase['descuento'] : 0.0;
-            $subTotal = isset($purchase['sub_total']) ? (float) $purchase['sub_total'] : ($precio * (int) $nuevaCantidad);
-            $total = isset($purchase['total']) ? (float) $purchase['total'] : ($subTotal - $descuento);
+            $status = 'Pendiente';
+            if ($nuevaCantidad == 0) {
+                $status = 'Facturado';
+            } elseif ($nuevaCantidad < $cantidadOriginal) {
+                $status = 'En proceso';
+            }
 
             $detailDto = new DetailPurchaseGuideDTO([
                 'purchase_id' => $detail->getId(),
                 'article_id' => $purchase['article_id'],
                 'description' => $purchase['description'],
-                'cantidad' => $cantidadOriginal,
-                'precio_costo' => $precio,
-                'descuento' => $descuento,
-                'sub_total' => $subTotal,
-                'total' => $total,
-                'cantidad_update' => $nuevaCantidad,
-                'process_status' => $nuevaCantidad == 0 ? 'Facturado' : 'En proceso',
+                'cantidad' => $purchase['cantidad'],
+                'precio_costo' => $purchase['precio_costo'],
+                'descuento' => $purchase['descuento'],
+                'sub_total' => $purchase['sub_total'],
+                // 'total' => $purchase['total'],  
+                'cantidad_update' => $purchase['cantidad'],
+                'process_status' => $status,
             ]);
 
             $createDetail = $createDetail->execute($detailDto);
@@ -308,9 +329,12 @@ class PurchaseController extends Controller
         $guide = $this->detailPurchaseGuideRepository->findById($purchase->getId());
         $shopping = $this->shoppingIncomeGuideRepository->findById($purchase->getId());
 
+        $processStatus = $this->calculateGlobalStatus($guide);
+
         return response()->json(
             [
                 'purchase' => (new PurchaseResource($purchase))->resolve(),
+                'process_status' => $processStatus,
                 'details' => DetailPurchaseGuideResource::collection($guide)->resolve(),
                 'shopping' => ShoppingIncomeGuideResource::collection($shopping)->resolve()
             ],
@@ -329,7 +353,7 @@ class PurchaseController extends Controller
         // Validate request
         $validated = request()->validate([
             'cantidad_update' => 'required|numeric|min:0',
-            'cantidad_update.required' => 'La cantidad a actualizar es requerida', 
+            'cantidad_update.required' => 'La cantidad a actualizar es requerida',
             'cantidad_update.numeric' => 'La cantidad a actualizar debe ser un número',
             'cantidad_update.min' => 'La cantidad a actualizar debe ser mayor o igual a 0',
         ]);
@@ -379,5 +403,36 @@ class PurchaseController extends Controller
             'message' => 'Detalle de compra actualizado exitosamente',
             'data' => (new DetailPurchaseGuideResource($updatedDetail))->resolve()
         ], 200);
+    }
+
+    private function calculateGlobalStatus($details): string
+    {
+        if (empty($details)) {
+            return 'Pendiente';
+        }
+
+        $allFacturado = true;
+        $allPendiente = true;
+
+        foreach ($details as $detail) {
+            // Support both array and object access if necessary
+            $status = method_exists($detail, 'getProcessStatus') ? $detail->getProcessStatus() : ($detail['process_status'] ?? 'Pendiente');
+
+            if ($status !== 'Facturado') {
+                $allFacturado = false;
+            }
+            if ($status !== 'Pendiente') {
+                $allPendiente = false;
+            }
+        }
+
+        if ($allFacturado) {
+            return 'Facturado';
+        }
+        if ($allPendiente) {
+            return 'Pendiente';
+        }
+
+        return 'En proceso';
     }
 }

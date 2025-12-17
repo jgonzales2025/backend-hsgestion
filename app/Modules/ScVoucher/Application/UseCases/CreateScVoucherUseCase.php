@@ -22,7 +22,9 @@ class CreateScVoucherUseCase
     public function execute(ScVoucherDTO $scVoucherDTO): ?ScVoucher
     {
         $lastDocumentNumber = $this->scVoucherRepository->getLastDocumentNumber($scVoucherDTO->nroope);
-        $scVoucherDTO->correlativo = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
+        if (empty($scVoucherDTO->correlativo)) {
+            $scVoucherDTO->correlativo = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
+        }
 
         $customer = $this->customerRepository->findById($scVoucherDTO->codigo);
         $currencyType = $this->currencyTypeRepository->findById($scVoucherDTO->tipmon);
@@ -50,8 +52,10 @@ class CreateScVoucherUseCase
             usradi: $scVoucherDTO->usradi,
             fecadi: $scVoucherDTO->fecadi,
             usrmod: $scVoucherDTO->usrmod,
+            details: $scVoucherDTO->detail_sc_voucher,
+            detailVoucherpurchase: $scVoucherDTO->detail_voucher_purchase,
         );
-
+        
         return $this->scVoucherRepository->create($scVoucher);
     }
 }

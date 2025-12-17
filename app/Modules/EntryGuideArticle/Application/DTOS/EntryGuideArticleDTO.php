@@ -16,6 +16,6 @@ class EntryGuideArticleDTO
         $this->article_id = $array['article_id'];
         $this->description = $array['description'];
         $this->quantity = $array['quantity'];
-        $this->saldo = $array['saldo'] ?? 0.0;
+        $this->saldo = $array['saldo'] ?? $array['quantity'];
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Modules\ScVoucher\Infrastructure\Resource;
 
+use App\Modules\DetVoucherPurchase\Infrastructure\Resource\DetVoucherPurchaseResource;
+use App\Modules\ScVoucherdet\Infrastructure\Resource\ScVoucherdetResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ScVoucherResource extends JsonResource
@@ -9,42 +11,44 @@ class ScVoucherResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'id' => $this->getId(),
-            'cia' => $this->getCia(),
-            'anopr' => $this->getAnopr(),
-            'correlativo' => $this->getCorrelativo(),
-            'fecha' => $this->getFecha(),
+            'id' => $this->resource->getId(),
+            'cia' => $this->resource->getCia(),
+            'anopr' => $this->resource->getAnopr(),
+            'correlativo' => $this->resource->getCorrelativo(),
+            'fecha' => $this->resource->getFecha(),
             'codban' => [
-                'id' => $this->getCodban()?->getId(),
-                'name' => $this->getCodban()?->getName(),
+                'id' => $this->resource->getCodban()?->getId(),
+                'name' => $this->resource->getCodban()?->getName(),
             ],
             'codigo' => [
-                'id' => $this->getCodigo()?->getId(),
-                'name' => $this->getCodigo()?->getName()?? $this->getCodigo()?->getCompanyName(),
+                'id' => $this->resource->getCodigo()?->getId(),
+                'name' => $this->resource->getCodigo()?->getName() ?? $this->resource->getCodigo()?->getCompanyName(),
             ],
-            'nroope' => $this->getNroope(),
-            'glosa' => $this->getGlosa(),
-            'orden' => $this->getOrden(),
+            'nroope' => $this->resource->getNroope(),
+            'glosa' => $this->resource->getGlosa(),
+            'orden' => $this->resource->getOrden(),
             'tipmon' => [
-                'id' => $this->getTipmon()?->getId(),
-                'name' => $this->getTipmon()?->getName(),
+                'id' => $this->resource->getTipmon()?->getId(),
+                'name' => $this->resource->getTipmon()?->getName(),
             ],
-            'tipcam' => $this->getTipcam(),
-            'total' => $this->getTotal(),
+            'tipcam' => $this->resource->getTipcam(),
+            'total' => $this->resource->getTotal(),
             'medpag' => [
-                'id' => $this->getMedpag()?->getCod(),
-                'name' => $this->getMedpag()?->getDes(),
+                'id' => $this->resource->getMedpag()?->getCod(),
+                'name' => $this->resource->getMedpag()?->getDes(),
             ],
             'tipopago' => [
-                'id' => $this->getTipopago()?->getId(),
-                'name' => $this->getTipopago()?->getName(),
+                'id' => $this->resource->getTipopago()?->getId(),
+                'name' => $this->resource->getTipopago()?->getName(),
             ],
-            'status' => $this->getStatus(),
-            'usradi' => $this->getUsradi(),
-            'fecadi' => $this->getFecadi(),
-            'usrmod' => $this->getUsrmod(),
-            'total_soles' =>(float) number_format($this->getTotal() / $this->getTipcam(),4),
-            'total_dolares' => (float)number_format($this->getTotal() * $this->getTipcam(),4),
+            'status' => $this->resource->getStatus(),
+            'usradi' => $this->resource->getUsradi(),
+            'fecadi' => $this->resource->getFecadi(),
+            'usrmod' => $this->resource->getUsrmod(),
+            'total_soles' => (float) number_format($this->resource->getTotal() / $this->resource->getTipcam(), 4),
+            'total_dolares' => (float)number_format($this->resource->getTotal() * $this->resource->getTipcam(), 4),
+            'detail_sc_voucher' => ScVoucherdetResource::collection($this->resource->getDetails()),
+            'detail_voucher_purchase'=>DetVoucherPurchaseResource::collection($this->resource->getDetailVoucherpurchase()),
         ];
     }
 }

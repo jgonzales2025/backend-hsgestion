@@ -18,7 +18,7 @@ class ScVoucherdetDTO
 
     public function __construct(array $data)
     {
-        $this->cia = $data['cia'];
+        $this->cia = $data['cia']??0;
         $this->codcon = $data['codcon'];
         $this->tipdoc = $data['tipdoc'];
         $this->glosa = $data['glosa'];

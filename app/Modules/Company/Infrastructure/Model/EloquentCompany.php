@@ -15,7 +15,7 @@ class EloquentCompany extends Model
 {
 
      protected $table = 'companies';
-    protected $fillable = ['ruc', 'company_name', 'address', 'ubigeo', 'start_date', 'default_currency_type_id', 'min_profit', 'max_profit', 'status'];
+    protected $fillable = ['ruc', 'company_name', 'address', 'ubigeo', 'start_date', 'default_currency_type_id', 'min_profit', 'max_profit', 'status', 'usuario_sol', 'clave_sol'];
 
     protected $hidden = ['created_at', 'updated_at'];
 

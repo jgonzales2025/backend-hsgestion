@@ -8,6 +8,7 @@ use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Collections\Infrastructure\Models\EloquentCollection;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
+use App\Modules\Customer\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
@@ -36,6 +37,7 @@ use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindCreditNoteByIdUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateCreditNoteUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateSaleUseCase;
+use App\Modules\Sale\Application\UseCases\UpdateStatusSalesUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleCreditNoteRequest;
@@ -229,7 +231,7 @@ class SaleController extends Controller
             ]
         );
     }
-    
+
     public function update(UpdateSaleRequest $request, $id): JsonResponse
     {
         return DB::transaction(function () use ($request, $id) {
@@ -531,12 +533,30 @@ class SaleController extends Controller
     {
         $startDate = $request->query('start_date');
         $endDate = $request->query('end_date');
+        $status = $request->query('status') !== null ? $request->query('status') : null;
+        $description = $request->query('description');
 
         $saleUseCase = new FindAllProformasUseCase($this->saleRepository);
-        $sales = $saleUseCase->execute($startDate, $endDate);
+        $sales = $saleUseCase->execute($startDate, $endDate, $status, $description);
+
+        $result = [];
+        foreach ($sales as $sale) {
+            $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
+            $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
+
+            $articlesWithSerials = array_map(function ($article) use ($serialsByArticle) {
+                $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
+                return $article;
+            }, $articles);
+
+            $result[] = [
+                'sale' => (new SaleResource($sale))->resolve(),
+                'articles' => SaleArticleResource::collection($articlesWithSerials)->resolve(),
+            ];
+        }
 
         return new JsonResponse([
-            'data' => SaleResource::collection($sales)->resolve(),
+            'data' => $result,
             'current_page' => $sales->currentPage(),
             'per_page' => $sales->perPage(),
             'total' => $sales->total(),
@@ -654,6 +674,20 @@ class SaleController extends Controller
 
         $documentTypeName = $sale->getDocumentType()->getDescription();
         return $pdf->stream($documentTypeName . '_' . $sale->getSerie() . '-' . $sale->getDocumentNumber() . '.pdf');
+    }
+
+    public function updateStatus(Request $request, int $id)
+    {
+        $status = $request->input('status', [
+            'status' => 'required|integer|in:0,1',
+        ]);
+
+        $updateStatusUseCase = new UpdateStatusSalesUseCase($this->saleRepository);
+        $updateStatusUseCase->execute($id, $status);
+
+        return response()->json([
+            'message' => 'Estado de la venta actualizado correctamente'
+        ], 200);
     }
 
 }

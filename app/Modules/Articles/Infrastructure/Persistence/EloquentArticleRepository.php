@@ -208,7 +208,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId)
+    public function findAllArticlePriceConvertion(string $date, ?string $description, ?int $articleId, ?int $branchId, ?int $priceArticleId)
     {
         $companyId = request()->get('company_id');
         $exchangeRate = EloquentExchangeRate::select('parallel_rate')->where('date', $date)->first();
@@ -220,6 +220,15 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                     ->toArray();
                 // Filtrar artículos cuyos IDs estén en la lista de accesorios
                 return $query->whereIn('id', $accessoryIds);
+            })
+            ->when($priceArticleId, function ($query, $id) use ($branchId) {
+                $query->where('id', $id);
+                if ($branchId) {
+                    $query->whereHas('visibleArticles', function ($v) use ($branchId) {
+                        $v->where('branch_id', $branchId)
+                            ->where('status', 1);
+                    });
+                }
             })
             ->when($description, function ($query, $name) use ($branchId) {
                 return $query->where(function ($mainGroup) use ($name, $branchId) {
@@ -258,14 +267,13 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             })
             // Si NO hay descripción, mantener el filtro original (solo lo que tiene stock/series en la sucursal)
             // PERO: si se proporciona articleId, no aplicar este filtro para permitir mostrar accesorios compatibles
-            ->when(!$description && $branchId && !$articleId, function ($query) use ($branchId) {
+            ->when(!$description && $branchId && !$articleId && !$priceArticleId, function ($query) use ($branchId) {
                 return $query->whereHas('entryItemSerials', function ($q) use ($branchId) {
                     $q->where('branch_id', $branchId);
                 });
             })
             ->orderByDesc('created_at')
             ->paginate(10);
-
         // Transform the items in the paginator
         $articles->getCollection()->transform(function ($article) use ($exchangeRate) {
             // Función para convertir precios

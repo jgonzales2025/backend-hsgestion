@@ -14,11 +14,12 @@ interface SaleRepositoryInterface
     public function findById(int $id): ?Sale;
     public function update(Sale $sale): ?Sale;
     public function findByDocumentSale(int $documentTypeId, string $serie, string $correlative): ?Sale;
-    public function findAllProformas(?string $start_date, ?string $end_date);
+    public function findAllProformas(?string $start_date, ?string $end_date, ?int $status, ?string $description);
     public function findSaleWithUpdatedQuantities(int $referenceDocumentTypeId, string $referenceSerie, string $referenceCorrelative): ?array;
     public function findAllCreditNotesByCustomerId(int $customerId): array;
     public function findCreditNoteById(int $id): ?SaleCreditNote;
     public function updateCreditNote(SaleCreditNote $saleCreditNote): ?SaleCreditNote;
     public function findAllPendingSalesByCustomerId(int $customerId): ?array;
     public function findAllDocumentsByCustomerId(int $customerId, ?int $payment_status, ?int $user_sale_id, ?string $start_date, ?string $end_date, ?int $document_type_id);
+    public function updateStatus(int $id, int $status): void;
 }

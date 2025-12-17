@@ -17,39 +17,21 @@ class BranchSeeder extends Seeder
             [
                 'cia_id' => 1,
                 'name' => 'PRINCIPAL',
-                'address' => 'AV. GARCILAZO DE LA VEGA NRO. 1348 TDA 1A-178-179 LIMA - LIMA - LIMA',
+                'address' => 'AV. INCA GARCILASO DE LA VEGA NRO. 1348(INT 1049-1053 PISO 1 REF. TDA 1A 164-141) LIMA - LIMA -LIMA',
                 'email' => 'ventas@grupocomputel.com',
-                'start_date' => '2021-11-07',
+                'start_date' => '2025-11-01',
                 'serie' => '0001',
                 'status' => 1
             ],
             [
                 'cia_id' => 1,
-                'name' => 'CARABAYLLO',
-                'address' => 'AV. CHIMPU OCLLO S/N. MZ. R LOTE 09 URB. VILLA CORPAC.CARABAYLLO',
+                'name' => 'GARANTIAS',
+                'address' => 'AV. INCA GARCILASO DE LA VEGA NRO. 1348(INT 1049-1053 PISO 1 REF. TDA 1A 164-141) LIMA - LIMA -LIMA',
                 'email' => 'ventas@grupocomputel.com',
-                'start_date' => '2021-11-07',
+                'start_date' => '2025-11-01',
                 'serie' => '0002',
                 'status' => 1
-            ],
-            [
-                'cia_id' => 2,
-                'name' => 'PRINCIPAL',
-                'address' => 'AV. GARCILAZO DE LA VEGA N° 1348 TDA. 1A-178/179 LIMA-LIMA-LIMA',
-                'email' => 'ventas@grupocomputel.com',
-                'start_date' => '2021-11-07',
-                'serie' => '0001',
-                'status' => 1
-            ],
-            [
-                'cia_id' => 2,
-                'name' => 'SUCURSAL 1B-123',
-                'address' => 'AV. GARCILAZO DE LA VEGA NRO. 1348 INT. 1035 TDA 1B-123 LIMA-LIMA-LIMA',
-                'email' => 'ventas@grupocomputel.com',
-                'start_date' => '2021-11-07',
-                'serie' => '0002',
-                'status' => 1
-            ],
+            ]
         ];
 
         $branchephones = [
@@ -68,24 +50,7 @@ class BranchSeeder extends Seeder
             [
                 'branch_id' => 2,
                 'phone' => 968574120
-            ],
-              [
-                'branch_id' => 3,
-                'phone' => 963852741
-            ],
-            [
-                'branch_id' => 3,
-                'phone' => 968574120
-            ],
-              [
-                'branch_id' => 4,
-                'phone' => 963852741
-            ],
-            [
-                'branch_id' => 4,
-                'phone' => 968574120
-            ],
-
+            ]
         ];
 
         DB::table('branches')->insert($branches);

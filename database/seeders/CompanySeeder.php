@@ -15,19 +15,16 @@ class CompanySeeder extends Seeder
     {
         $companies = [
             [
-                'ruc' => '20537005514',
-                'company_name' => 'GRUPO COMPUTEL S.A.C.',
-                'address' => 'AV. GARCILAZO DE LA VEGA NRO. 1348 TDA 1A-178-179 LIMA - LIMA - LIMA',
+                'ruc' => '20614604825',
+                'company_name' => 'CYBERHOUSE TEC S.A.C.',
+                'address' => 'AV. INCA GARCILASO DE LA VEGA NRO. 1348(INT 1049-1053 PISO 1 REF. TDA 1A 164-141) LIMA - LIMA -LIMA',
                 'ubigeo' => '150115',
-                'start_date' => '2018-08-20',
-                'status' => 1
-            ],
-            [
-                'ruc' => '20608449320',
-                'company_name' => 'CORPORACION COMPUTEL E.I.R.L.',
-                'address' => 'AV. GARCILAZO DE LA VEGA NRO. 1348 TDA 1A-178-179 LIMA - LIMA - LIMA',
-                'ubigeo' => '150115',
-                'start_date' => '2021-09-10',
+                'start_date' => '2025-11-01',
+                'default_currency_type_id' => 1,
+                'min_profit' => 5,
+                'max_profit' => 15,
+                'usuario_sol' => 'RTHEDSTA',
+                'clave_sol' => 'siousketr',
                 'status' => 1
             ]
         ];

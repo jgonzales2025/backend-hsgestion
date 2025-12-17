@@ -12,7 +12,7 @@ class SaleArticleCreditNoteResource extends JsonResource
             'id' => $this->resource->getId(),
             'sale_id' => $this->resource->getSaleId(),
             'sku' => $this->resource->getSku(),
-            'article_id' => $this->resource->getArticleId(),
+            'article_id' => $this->resource->getArticle()->getId(),
             'description' => $this->resource->getDescription(),
             'updated_quantity' => $this->resource->getQuantity(),
             'unit_price' => $this->resource->getUnitPrice(),

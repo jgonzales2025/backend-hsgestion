@@ -12,14 +12,28 @@ use Illuminate\Support\Facades\Log;
 
 class EloquentSaleRepository implements SaleRepositoryInterface
 {
-    public function findAll(int $companyId): array
+    public function findAll(int $companyId, ?string $start_date, ?string $end_date, ?string $description, ?int $status, ?int $payment_status)
     {
-        $eloquentSale = EloquentSale::all()->where('company_id', $companyId)->sortByDesc('created_at');
-        if ($eloquentSale->isEmpty()) {
-            return [];
-        }
+        $eloquentSale = EloquentSale::query()
+            ->where('company_id', $companyId)
+            ->when($start_date && $end_date, fn($query) => $query->whereBetween('created_at', [$start_date, $end_date]))
+            ->when($description, fn($query) => $query->where('serie', 'like', "%{$description}%")
+                ->orWhere('document_number', 'like', "%{$description}%")
+                ->orWhereHas('documentType', fn($query) => $query->where('description', 'like', "%{$description}%"))
+                ->orWhereHas('paymentType', fn($query) => $query->where('name', 'like', "%{$description}%"))
+                ->orWhereHas('customer', fn($query) => $query->where('name', 'like', "%{$description}%")
+                    ->orWhere('lastname', 'like', "%{$description}%")
+                    ->orWhere('company_name', 'like', "%{$description}%"))
+                ->orWhereHas('user', fn($query) => $query->where('firstname', 'like', "%{$description}%")
+                    ->orWhere('lastname', 'like', "%{$description}%")))
+            ->when($status !== null, fn($query) => $query->where('status', $status))
+            ->when($payment_status !== null, fn($query) => $query->where('payment_status', $payment_status))
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
 
-        return $eloquentSale->map(fn($sale) => $this->mapToDomain($sale))->toArray();
+        $eloquentSale->getCollection()->transform(fn($sale) => $this->mapToDomain($sale));
+
+        return $eloquentSale;
     }
 
     public function save(Sale $sale): ?Sale
@@ -90,15 +104,16 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         return $this->mapToDomain($eloquentSale);
     }
 
-    public function findAllProformas(): array
+    public function findAllProformas(?string $start_date, ?string $end_date)
     {
-        $eloquentSalesProformas = EloquentSale::where('document_type_id', 16)->orderBy('created_at', 'desc')->get();
+        $eloquentSalesProformas = EloquentSale::where('document_type_id', 16)
+            ->orderBy('created_at', 'desc')
+            ->when($start_date && $end_date, fn($query) => $query->whereBetween('date', [$start_date, $end_date]))
+            ->paginate(10);
 
-        if ($eloquentSalesProformas->isEmpty()) {
-            return [];
-        }
+        $eloquentSalesProformas->getCollection()->transform(fn($sale) => $this->mapToDomain($sale));
 
-        return $eloquentSalesProformas->map(fn($sale) => $this->mapToDomain($sale))->toArray();
+        return $eloquentSalesProformas;
     }
 
     public function findSaleWithUpdatedQuantities(int $referenceDocumentTypeId, string $referenceSerie, string $referenceCorrelative): ?array
@@ -179,6 +194,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 'updated_quantity' => $updatedQuantity,
                 'unit_price' => (float) $saleArticle->unit_price,
                 'public_price' => (float) $saleArticle->public_price ?? null,
+                'purchase_price' => (float) $saleArticle->purchase_price,
                 'subtotal' => round($articleSubtotal, 2),
             ];
         }

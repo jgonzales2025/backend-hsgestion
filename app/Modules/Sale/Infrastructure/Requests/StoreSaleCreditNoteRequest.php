@@ -48,6 +48,7 @@ class StoreSaleCreditNoteRequest extends FormRequest
             'sale_articles.*.quantity' => 'required|integer|min:1',
             'sale_articles.*.unit_price' => 'required|numeric|min:0',
             'sale_articles.*.public_price' => 'required|numeric|min:0',
+            'sale_articles.*.purchase_price' => 'required|numeric|min:0',
             'sale_articles.*.subtotal' => 'required|numeric|min:0',
         ];
     }
@@ -154,6 +155,8 @@ class StoreSaleCreditNoteRequest extends FormRequest
             'sale_articles.*.unit_price.required' => 'El precio unitario es obligatorio.',
             'sale_articles.*.unit_price.min' => 'El precio unitario debe ser mayor o igual a 0.',
             'sale_articles.*.public_price.required' => 'El precio público es obligatorio.',
+            'sale_articles.*.purchase_price.required' => 'El precio de compra es obligatorio.',
+            'sale_articles.*.purchase_price.min' => 'El precio de compra debe ser mayor o igual a 0.',
             'sale_articles.*.public_price.min' => 'El precio público debe ser mayor o igual a 0.',
             'sale_articles.*.subtotal.required' => 'El subtotal del artículo es obligatorio.',
             'sale_articles.*.subtotal.min' => 'El subtotal del artículo debe ser mayor o igual a 0.',

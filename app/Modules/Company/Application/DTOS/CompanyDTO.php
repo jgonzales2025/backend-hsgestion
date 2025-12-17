@@ -10,4 +10,7 @@ class CompanyDTO{
     public $ubigeo;
     public $status;
     public $password_item;
+    public $default_currency_type_id;
+    public $min_profit;
+    public $max_profit;
 }

@@ -2,6 +2,8 @@
 
 namespace App\Modules\Company\Domain\Entities;
 
+use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
+
 class Company {
     private int $id;
     private string $ruc;
@@ -10,20 +12,14 @@ class Company {
     private string $start_date;
     private string $ubigeo;
     private int $status;
-
-    /**
-     * @param int $id
-     * @param string $ruc
-     * @param string $company_name
-     * @param string $address
-     * @param string $start_date
-     * @param string $ubigeo
-     * @param int $status
-     */
+    private CurrencyType $default_currency_type;
+    private float $min_profit;
+    private float $max_profit;
 
     public function __construct(int $id, string $ruc,
     string $company_name, string $address, string $start_date,
      string $ubigeo, int $status,
+     CurrencyType $default_currency_type, float $min_profit, float $max_profit
     ){
     $this->id = $id;
     $this->ruc = $ruc;
@@ -32,6 +28,9 @@ class Company {
     $this->start_date = $start_date;
     $this->ubigeo = $ubigeo;
     $this->status = $status;
+    $this->default_currency_type = $default_currency_type;
+    $this->min_profit = $min_profit;
+    $this->max_profit = $max_profit;
     }
         public function getId(): int
     {
@@ -64,6 +63,18 @@ class Company {
       public function getStatus(): int
     {
         return $this->status;
+    }
+    public function getDefaultCurrencyType(): CurrencyType
+    {
+        return $this->default_currency_type;
+    }
+    public function getMinProfit(): float
+    {
+        return $this->min_profit;
+    }
+    public function getMaxProfit(): float
+    {
+        return $this->max_profit;
     }
 
 }

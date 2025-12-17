@@ -11,6 +11,7 @@ use App\Modules\NoteReason\Infrastructure\Models\EloquentNoteReason;
 use App\Modules\PaymentType\Infrastructure\Models\EloquentPaymentType;
 use App\Modules\SaleArticle\Infrastructure\Models\EloquentSaleArticle;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -62,6 +63,16 @@ class EloquentSale extends Model
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
+
+    /* public function getDateAttribute($value)
+    {
+        return Carbon::parse($value)->format('d/m/Y');
+    }
+
+    public function getDueDateAttribute($value)
+    {
+        return Carbon::parse($value)->format('d/m/Y');
+    } */
 
     public function company(): BelongsTo
     {

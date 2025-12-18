@@ -6,7 +6,7 @@ use App\Modules\Branch\Application\UseCases\FindByIdBranchUseCase;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Application\UseCases\FindByIdCompanyUseCase;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
-use App\Modules\DispatchNotes\application\DTOS\TransferOrderDTO;
+use App\Modules\DispatchNotes\Application\DTOs\TransferOrderDTO;
 use App\Modules\DispatchNotes\Domain\Interfaces\TransferOrderRepositoryInterface;
 use App\Modules\EmissionReason\Application\UseCases\FindByIdEmissionReasonUseCase;
 use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterface;
@@ -21,7 +21,8 @@ class CreateTransferOrderUseCase
         private BranchRepositoryInterface $branchRepository,
         private CompanyRepositoryInterface $companyRepository,
         private DocumentNumberGeneratorService $documentNumberGeneratorService,
-    ) {}
+    ) {
+    }
 
     public function execute(TransferOrderDTO $dto): TransferOrder
     {
@@ -51,6 +52,6 @@ class CreateTransferOrderUseCase
             observations: $dto->observations
         );
         return $this->transferOrderRepository->save($transferOrder);
-        
+
     }
 }

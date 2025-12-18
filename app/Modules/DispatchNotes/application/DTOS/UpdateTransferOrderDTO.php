@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\DispatchNotes\Application\DTOs;
+namespace App\Modules\DispatchNotes\Application\DTOS;
 
 class UpdateTransferOrderDTO
 {

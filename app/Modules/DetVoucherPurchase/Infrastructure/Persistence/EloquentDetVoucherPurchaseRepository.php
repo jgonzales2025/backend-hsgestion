@@ -22,7 +22,6 @@ class EloquentDetVoucherPurchaseRepository implements DetVoucherPurchaseReposito
             $detVoucherPurchase->purchase_id,
             $detVoucherPurchase->amount
         );
-       
     }
 
     public function findById(int $id): DetVoucherPurchase
@@ -47,12 +46,11 @@ class EloquentDetVoucherPurchaseRepository implements DetVoucherPurchaseReposito
                 $eloquentDetVoucherPurchase->amount
             );
         })->toArray();
-        
     }
 
-     public function findByIdVoucher(int $id): array
+    public function findByIdVoucher(int $id): array
     {
-        $eloquentDetVoucherPurchases = EloquentDetVoucherPurchase::where('voucher_id',$id)->get();
+        $eloquentDetVoucherPurchases = EloquentDetVoucherPurchase::where('voucher_id', $id)->get();
         return $eloquentDetVoucherPurchases->map(function ($eloquentDetVoucherPurchase) {
             return new DetVoucherPurchase(
                 $eloquentDetVoucherPurchase->id,
@@ -61,6 +59,18 @@ class EloquentDetVoucherPurchaseRepository implements DetVoucherPurchaseReposito
                 $eloquentDetVoucherPurchase->amount
             );
         })->toArray();
-        
+    }
+
+    public function findByPurchaseId(int $purchaseId): array
+    {
+        $eloquentDetVoucherPurchases = EloquentDetVoucherPurchase::where('purchase_id', $purchaseId)->get();
+        return $eloquentDetVoucherPurchases->map(function ($eloquentDetVoucherPurchase) {
+            return new DetVoucherPurchase(
+                $eloquentDetVoucherPurchase->id,
+                $eloquentDetVoucherPurchase->voucher_id,
+                $eloquentDetVoucherPurchase->purchase_id,
+                $eloquentDetVoucherPurchase->amount
+            );
+        })->toArray();
     }
 }

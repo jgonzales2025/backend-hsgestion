@@ -144,4 +144,50 @@ class EloquentScVoucherdetRepository implements ScVoucherdetRepositoryInterface
     {
         EloquentScVoucherdet::where('id_sc_voucher', $voucherId)->delete();
     }
+    public function getvoucherPurchase(int $id): array
+    {
+        $voucherPurchase = EloquentScVoucherdet::where('id_purchase', $id)->get();
+
+        return  $voucherPurchase->map(function ($voucherPurchase) {
+            return new ScVoucherdet(
+                id: $voucherPurchase->id,
+                cia: $voucherPurchase->cia,
+                codcon: $voucherPurchase->codcon,
+                tipdoc: $voucherPurchase->tipdoc,
+                glosa: $voucherPurchase->glosa,
+                impsol: $voucherPurchase->impsol,
+                impdol: $voucherPurchase->impdol,
+                id_purchase: $voucherPurchase->id_purchase,
+                id_sc_voucher: $voucherPurchase->id_sc_voucher,
+                numdoc: $voucherPurchase->numdoc,
+                correlativo: $voucherPurchase->correlativo,
+                serie: $voucherPurchase->serie,
+            );
+        })->toArray();
+    }
+    public function findDetailByVoucherAndPurchase(int $voucherId, int $purchaseId): ?ScVoucherdet
+    {
+        $scVoucherdet = EloquentScVoucherdet::where('id_sc_voucher', $voucherId)
+            ->where('id_purchase', $purchaseId)
+            ->first();
+
+        if (!$scVoucherdet) {
+            return null;
+        }
+
+        return new ScVoucherdet(
+            id: $scVoucherdet->id,
+            cia: $scVoucherdet->cia,
+            codcon: $scVoucherdet->codcon,
+            tipdoc: $scVoucherdet->tipdoc,
+            glosa: $scVoucherdet->glosa,
+            impsol: $scVoucherdet->impsol,
+            impdol: $scVoucherdet->impdol,
+            id_purchase: $scVoucherdet->id_purchase,
+            id_sc_voucher: $scVoucherdet->id_sc_voucher,
+            numdoc: $scVoucherdet->numdoc,
+            correlativo: $scVoucherdet->correlativo,
+            serie: $scVoucherdet->serie,
+        );
+    }
 }

@@ -94,7 +94,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 reference_serie: $purchase->reference_serie,
                 reference_correlative: $purchase->reference_correlative,
                 saldo: $purchase->saldo,
-            ); 
+            );
         });
 
         return $eloquentpurchase;
@@ -268,35 +268,75 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'company_id' => $purchase->getCompanyId(),
             'saldo' => $purchase->getTotal(),
         ]);
-            return new Purchase(
-                id: $purchaseUpdtate->id,
-                company_id: $purchaseUpdtate->company_id,
-                branch: $purchaseUpdtate->branches->toDomain($purchaseUpdtate->branches),
-                supplier: $purchaseUpdtate->customers->toDomain($purchaseUpdtate->customers),
-                serie: $purchaseUpdtate->serie,
-                correlative: $purchaseUpdtate->correlative,
-                exchange_type: $purchaseUpdtate->exchange_type,
-                payment_type: $purchaseUpdtate->paymentType->toDomain($purchaseUpdtate->paymentType),
-                currency: $purchaseUpdtate->currencyType->toDomain($purchaseUpdtate->currencyType),
-                date: $purchaseUpdtate->date,
-                date_ven: $purchaseUpdtate->date_ven,
-                days: $purchaseUpdtate->days,
-                observation: $purchaseUpdtate->observation,
-                detraccion: $purchaseUpdtate->detraccion,
-                fech_detraccion: $purchaseUpdtate->fech_detraccion,
-                amount_detraccion: $purchaseUpdtate->amount_detraccion,
-                is_detracion: $purchaseUpdtate->is_detracion,
-                subtotal: $purchaseUpdtate->subtotal,
-                total_desc: $purchaseUpdtate->total_desc,
-                inafecto: $purchaseUpdtate->inafecto,
-                igv: $purchaseUpdtate->igv,
-                total: $purchaseUpdtate->total,
-                is_igv: $purchaseUpdtate->is_igv,
-                type_document_id: $purchaseUpdtate->documentType->toDomain($purchaseUpdtate->documentType),
-                reference_serie: $purchaseUpdtate->reference_serie,
-                reference_correlative: $purchaseUpdtate->reference_correlative,
-                saldo: $purchaseUpdtate->saldo,
+        return new Purchase(
+            id: $purchaseUpdtate->id,
+            company_id: $purchaseUpdtate->company_id,
+            branch: $purchaseUpdtate->branches->toDomain($purchaseUpdtate->branches),
+            supplier: $purchaseUpdtate->customers->toDomain($purchaseUpdtate->customers),
+            serie: $purchaseUpdtate->serie,
+            correlative: $purchaseUpdtate->correlative,
+            exchange_type: $purchaseUpdtate->exchange_type,
+            payment_type: $purchaseUpdtate->paymentType->toDomain($purchaseUpdtate->paymentType),
+            currency: $purchaseUpdtate->currencyType->toDomain($purchaseUpdtate->currencyType),
+            date: $purchaseUpdtate->date,
+            date_ven: $purchaseUpdtate->date_ven,
+            days: $purchaseUpdtate->days,
+            observation: $purchaseUpdtate->observation,
+            detraccion: $purchaseUpdtate->detraccion,
+            fech_detraccion: $purchaseUpdtate->fech_detraccion,
+            amount_detraccion: $purchaseUpdtate->amount_detraccion,
+            is_detracion: $purchaseUpdtate->is_detracion,
+            subtotal: $purchaseUpdtate->subtotal,
+            total_desc: $purchaseUpdtate->total_desc,
+            inafecto: $purchaseUpdtate->inafecto,
+            igv: $purchaseUpdtate->igv,
+            total: $purchaseUpdtate->total,
+            is_igv: $purchaseUpdtate->is_igv,
+            type_document_id: $purchaseUpdtate->documentType->toDomain($purchaseUpdtate->documentType),
+            reference_serie: $purchaseUpdtate->reference_serie,
+            reference_correlative: $purchaseUpdtate->reference_correlative,
+            saldo: $purchaseUpdtate->saldo,
 
-            );
+        );
+    }
+    public function findBySerieAndCorrelative(string $serie, string $correlative): ?Purchase
+    {
+        $eloquentpurchase = EloquentPurchase::where('reference_serie', $serie)
+            ->where('reference_correlative', $correlative)
+            ->first();
+
+        if (!$eloquentpurchase) {
+            return null;
+        }
+
+        return new Purchase(
+            id: $eloquentpurchase->id,
+            company_id: $eloquentpurchase->company_id,
+            branch: $eloquentpurchase->branches->toDomain($eloquentpurchase->branches),
+            supplier: $eloquentpurchase->customers->toDomain($eloquentpurchase->customers),
+            serie: $eloquentpurchase->serie,
+            correlative: $eloquentpurchase->correlative,
+            exchange_type: $eloquentpurchase->exchange_type,
+            payment_type: $eloquentpurchase->paymentType->toDomain($eloquentpurchase->paymentType),
+            currency: $eloquentpurchase->currencyType->toDomain($eloquentpurchase->currencyType),
+            date: $eloquentpurchase->date,
+            date_ven: $eloquentpurchase->date_ven,
+            days: $eloquentpurchase->days,
+            observation: $eloquentpurchase->observation,
+            detraccion: $eloquentpurchase->detraccion,
+            fech_detraccion: $eloquentpurchase->fech_detraccion,
+            amount_detraccion: $eloquentpurchase->amount_detraccion,
+            is_detracion: $eloquentpurchase->is_detracion,
+            subtotal: $eloquentpurchase->subtotal,
+            total_desc: $eloquentpurchase->total_desc,
+            inafecto: $eloquentpurchase->inafecto,
+            igv: $eloquentpurchase->igv,
+            total: $eloquentpurchase->total,
+            is_igv: $eloquentpurchase->is_igv,
+            type_document_id: $eloquentpurchase->documentType->toDomain($eloquentpurchase->documentType),
+            reference_serie: $eloquentpurchase->reference_serie,
+            reference_correlative: $eloquentpurchase->reference_correlative,
+            saldo: $eloquentpurchase->saldo,
+        );
     }
 }

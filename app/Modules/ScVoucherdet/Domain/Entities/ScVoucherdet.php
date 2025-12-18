@@ -5,7 +5,7 @@ namespace App\Modules\ScVoucherdet\Domain\Entities;
 class ScVoucherdet
 {
     private ?int $id;
-    private int $cia;
+    private ?int $cia;
     private int $codcon;
     private int $tipdoc;
     private string $glosa;
@@ -19,7 +19,7 @@ class ScVoucherdet
 
     public function __construct(
         ?int $id,
-        int $cia,
+        ?int $cia,
         int $codcon,
         int $tipdoc,
         string $glosa,
@@ -51,7 +51,7 @@ class ScVoucherdet
         return $this->id;
     }
 
-    public function getCia(): int
+    public function getCia(): ?int
     {
         return $this->cia;
     }

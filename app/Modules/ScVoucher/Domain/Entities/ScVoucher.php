@@ -29,6 +29,8 @@ class ScVoucher
     private int $usradi;
     private string $fecadi;
     private int $usrmod;
+    private ?array $details;
+    private ?array $detailVoucherpurchase;
 
     public function __construct(
         ?int $id,
@@ -50,6 +52,8 @@ class ScVoucher
         int $usradi,
         string $fecadi,
         int $usrmod,
+        ?array $details,
+        ?array $detailVoucherpurchase,
     ) {
         $this->id = $id;
         $this->cia = $cia;
@@ -70,6 +74,8 @@ class ScVoucher
         $this->usradi = $usradi;
         $this->fecadi = $fecadi;
         $this->usrmod = $usrmod;
+        $this->details = $details;
+        $this->detailVoucherpurchase = $detailVoucherpurchase;
     }
     public function getId(): ?int
     {
@@ -146,5 +152,13 @@ class ScVoucher
     public function getUsrmod(): int
     {
         return $this->usrmod;
+    }
+    public function getDetails(): ?array
+    {
+        return $this->details;
+    }
+    public function getDetailVoucherpurchase(): ?array
+    {
+        return $this->detailVoucherpurchase;
     }
 }

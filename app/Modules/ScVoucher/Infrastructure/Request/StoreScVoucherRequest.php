@@ -49,11 +49,11 @@ class StoreScVoucherRequest extends FormRequest
             'detail_sc_voucher.*.tipdoc' => 'required|integer',
             'detail_sc_voucher.*.numdoc' => 'required|string',
             'detail_sc_voucher.*.correlativo' => 'required|string',
-            'detail_sc_voucher.*.serie' => 'required|string',
-            
-            'detail_sc_voucher.*.id_purchase' => 'nullable|integer',
+            // 'detail_sc_voucher.*.serie' => 'nullable|string|',
+
+            'detail_sc_voucher.*.id_purchase' => 'nullable|integer|exists:purchase,id',
             'detail_voucher_purchase' => 'nullable|array',
-            'detail_voucher_purchase.*.purchase_id' => 'nullable|integer',
+            'detail_voucher_purchase.*.purchase_id' => 'nullable|integer|exists:purchase,id',
             'detail_voucher_purchase.*.amount' => 'nullable|numeric',
 
         ];
@@ -97,11 +97,15 @@ class StoreScVoucherRequest extends FormRequest
             'detail_sc_voucher.*.impsol.numeric' => 'El importe sol debe ser un numero.',
             'detail_sc_voucher.*.impdol.required' => 'Debe ingresar el importe dol.',
             'detail_sc_voucher.*.impdol.numeric' => 'El importe dol debe ser un numero.',
+            'detail_sc_voucher.*.serie.max' => 'La serie no puede tener mas de 4 caracteres.',
             'detail_voucher_purchase.array' => 'Los detalles de la compra deben ser un array.',
             'detail_voucher_purchase.*.purchase_id.required' => 'Debe seleccionar una compra.',
             'detail_voucher_purchase.*.purchase_id.exists' => 'Selecciona una compra',
             'detail_voucher_purchase.*.amount.required' => 'Debe ingresar el monto.',
             'detail_voucher_purchase.*.amount.numeric' => 'El monto debe ser un numero.',
+            'detail_sc_voucher.*.id_purchase.exists' => 'la compra que deseas crear no existe',
+            'detail_voucher_purchase.*.purchase_id.exists' => 'la compra que deseas crear no existe',
         ];
-    }
+        }
+    
 }

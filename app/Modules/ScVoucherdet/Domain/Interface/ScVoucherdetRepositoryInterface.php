@@ -12,4 +12,6 @@ interface ScVoucherdetRepositoryInterface
     public function findAll(): array;
     public function findByVoucherId(int $voucherId): array;
     public function deleteByVoucherId(int $voucherId): void;
+    public function getvoucherPurchase(int $id): array;
+    public function findDetailByVoucherAndPurchase(int $voucherId, int $purchaseId): ?ScVoucherdet;
 }

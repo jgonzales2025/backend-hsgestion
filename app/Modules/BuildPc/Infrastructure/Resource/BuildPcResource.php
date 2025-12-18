@@ -14,9 +14,7 @@ class BuildPcResource extends JsonResource
             'name' => $this->resource->getName(),
             'description' => $this->resource->getDescription(),
             'user_id' => $this->resource->getUserId(),
-            'status' => $this->resource->getStatus(),
-            'min' => $this->resource->getMin(),
-            'max' => $this->resource->getMax(),
+            'status' => $this->resource->getStatus()
 
         ];
     }

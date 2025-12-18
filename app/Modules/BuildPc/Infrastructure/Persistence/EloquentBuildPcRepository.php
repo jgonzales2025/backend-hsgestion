@@ -17,9 +17,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             'description' => $data->getDescription(),
             'total_price' => 0, // Se establece en 0 por defecto
             'user_id' => $data->getUserId(),
-            'status' => $data->getStatus(),
-            'min' => $data->getMin(),
-            'max' => $data->getMax(),
+            'status' => $data->getStatus()
         ]);
         return new BuildPc(
             id: $buildPc->id,
@@ -27,9 +25,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             name: $buildPc->name,
             description: $buildPc->description,
             user_id: $buildPc->user_id,
-            status: $buildPc->status,
-            min: $buildPc->min,
-            max: $buildPc->max,
+            status: $buildPc->status
 
         );
     }
@@ -44,9 +40,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
                 name: $buildPc->name,
                 description: $buildPc->description,
                 user_id: $buildPc->user_id,
-                status: $buildPc->status,
-                min: $buildPc->min,
-                max: $buildPc->max,
+                status: $buildPc->status
             );
         }
         return null;
@@ -75,9 +69,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
                 name: $buildPc->name,
                 description: $buildPc->description,
                 user_id: $buildPc->user_id,
-                status: $buildPc->status,
-                min: $buildPc->min,
-                max: $buildPc->max,
+                status: $buildPc->status
             );
         });
 
@@ -94,9 +86,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             'name' => $data->getName(),
             'description' => $data->getDescription(),
             'user_id' => $data->getUserId(),
-            'status' => $data->getStatus(),
-            'min' => $data->getMin(),
-            'max' => $data->getMax(),
+            'status' => $data->getStatus()
         ]);
         return new BuildPc(
             id: $buildPc->id,
@@ -104,9 +94,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             name: $buildPc->name,
             description: $buildPc->description,
             user_id: $buildPc->user_id,
-            status: $buildPc->status,
-            min: $buildPc->min,
-            max: $buildPc->max,
+            status: $buildPc->status
         );
     }
     public function updateSstatus(int $id, int $status): ?BuildPc
@@ -124,9 +112,7 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             name: $buildPc->name,
             description: $buildPc->description,
             user_id: $buildPc->user_id,
-            status: $buildPc->status,
-            min: $buildPc->min,
-            max: $buildPc->max,
+            status: $buildPc->status
         );
     }
 }

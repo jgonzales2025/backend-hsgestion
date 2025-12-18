@@ -10,7 +10,7 @@ class FindByCategoryIdUseCase
     {
     }
 
-    public function execute($id): array
+    public function execute(int $id): array
     {
         return $this->subCategoryRepository->findByCategoryId($id);
     }

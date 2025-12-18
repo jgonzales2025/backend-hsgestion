@@ -77,7 +77,7 @@ class UpdateArticleRequest extends FormRequest
             'distributor_price' => 'required|numeric|min:0',
             'authorized_price' => 'required|numeric|min:0',
             'user_id' => 'required|integer|exists:users,id',
-            'sub_category_id' => 'required|integer|exists:sub_categories,id',
+            'sub_category_id' => 'nullable|integer|exists:sub_categories,id',
             'venta' => 'required|boolean',
             'company_type_id' => 'required|integer|exists:companies,id',
             'state_modify_article' => 'nullable|integer',

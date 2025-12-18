@@ -199,9 +199,9 @@ class ArticleController extends Controller
 
       // Eliminar imagen anterior si existía
       if ($article->getImageURL()) {
-        $oldImagePath = str_replace('/storage', 'public', $article->getImageURL());
-        if (Storage::disk('public')->exists($oldImagePath)) {
-          Storage::disk('public')->delete($oldImagePath);
+        $relativeOldPath = ltrim(str_replace('/storage/', '', $article->getImageURL()), '/');
+        if (Storage::disk('public')->exists($relativeOldPath)) {
+          Storage::disk('public')->delete($relativeOldPath);
         }
       }
     } else {

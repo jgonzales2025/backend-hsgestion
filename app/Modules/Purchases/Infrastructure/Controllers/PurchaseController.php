@@ -112,7 +112,7 @@ class PurchaseController extends Controller
                 ]
             ),
             200
-        );
+        )->header('process_status', $processStatus);
     }
 
     public function store(CreatePurchaseRequest $request): JsonResponse
@@ -161,7 +161,7 @@ class PurchaseController extends Controller
                 ]
             ),
             201
-        );
+        )->header('process_status', $processStatus);
     }
     public function update(UpdatePurchaseRequest $request, int $id): JsonResponse
     {
@@ -201,7 +201,7 @@ class PurchaseController extends Controller
                 ]
             ),
             201
-        );
+        )->header('process_status', $processStatus);
     }
     public function downloadPdf(int $id): Response
     {
@@ -230,8 +230,8 @@ class PurchaseController extends Controller
                 'descuento' => $item['descuento'],
                 'sub_total' => $item['sub_total'],
                 'total' => $item['total'],
-                'cantidad_update' =>  $item['cantidad'],
-                'process_status' => $item['cantidad'] == 0 ? 'Facturado' : ($item['cantidad'] > 0 ? 'Pendiente' : 'En proceso'),
+                'cantidad_update' =>  0,
+                'process_status' => 'Pendiente',
             ]);
 
             $shoppingGuide = $createGuideUseCase->execute($detailDTO);
@@ -287,7 +287,8 @@ class PurchaseController extends Controller
 
             // Calculate new cantidad: original - cantidad_update
             $cantidadUpdate = $purchase['cantidad_update'] ?? 0;
-            $nuevaCantidad = $cantidadUpdateOriginal - $cantidadUpdate;
+            $consumidoTotal = $cantidadUpdateOriginal + $cantidadUpdate;
+            $nuevaCantidad = $cantidadOriginal - $consumidoTotal;
 
             // Ensure cantidad doesn't go negative
             if ($nuevaCantidad < 0) {
@@ -297,7 +298,7 @@ class PurchaseController extends Controller
             $status = 'Pendiente';
             if ($nuevaCantidad == 0) {
                 $status = 'Facturado';
-            } elseif ($nuevaCantidad < $cantidadOriginal) {
+            } elseif ($consumidoTotal > 0 && $nuevaCantidad < $cantidadOriginal) {
                 $status = 'En proceso';
             }
 
@@ -309,8 +310,7 @@ class PurchaseController extends Controller
                 'precio_costo' => $purchase['precio_costo'],
                 'descuento' => $purchase['descuento'],
                 'sub_total' => $purchase['sub_total'],
-                // 'total' => $purchase['total'],  
-                'cantidad_update' => $purchase['cantidad'],
+                'cantidad_update' => $consumidoTotal,
                 'process_status' => $status,
             ]);
 
@@ -339,7 +339,7 @@ class PurchaseController extends Controller
                 'shopping' => ShoppingIncomeGuideResource::collection($shopping)->resolve()
             ],
             200
-        );
+        )->header('process_status', $processStatus);
     }
 
     /**

@@ -163,6 +163,7 @@ use App\Modules\Withholding\Domain\Interface\WithholdingRepositoryInterface;
 use App\Modules\Withholding\Infrastructure\Persistence\EloquentWithholdingRepository;
 use App\Modules\PaymentMethodsSunat\Domain\Interface\PaymentMethodSunatRepositoryInterface;
 use App\Modules\PaymentMethodsSunat\Infrastructure\Persistence\EloquentPaymentMethodSunatRepository;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -263,6 +264,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
     }
 }

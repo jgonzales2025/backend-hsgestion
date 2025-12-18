@@ -113,15 +113,10 @@ class ScVoucherController extends Controller
         );
         $scVoucher = $createUseCase->execute($scVoucherDTO);
 
-        // $createdetailvoucher = $this->createScVoucherdet($scVoucher, $request->validated()['detail_sc_voucher']);
-        // $createdetailvoucherpurchase = $this->createDetVoucherPurchase($scVoucher, $request->validated()['detail_voucher_purchase'] ?? []);
-        return response()->json(
+        return response()->json( 
             array_merge(
                 (new ScVoucherResource($scVoucher))->resolve(),
-                [
-                    // 'detail_sc_voucher' => ScVoucherdetResource::collection($createdetailvoucher)->resolve(),
-                    // 'detail_voucher_purchase' => DetVoucherPurchaseResource::collection($createdetailvoucherpurchase)->resolve(),
-                ]
+                []
             ),
             201
         );

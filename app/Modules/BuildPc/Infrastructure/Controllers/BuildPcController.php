@@ -9,7 +9,7 @@ use App\Modules\BuildDetailPc\Infrastructure\Resource\BuildDetailPcResource;
 use App\Modules\BuildPc\Application\DTOS\BuildPcDTO;
 use App\Modules\BuildPc\Application\UseCases\CreateBuildPcUseCase;
 use App\Modules\BuildPc\Application\UseCases\FindAllBuildPcUseCase;
-use App\Modules\BuildPc\application\UseCases\FindByIdBuildPcUseCase;
+use App\Modules\BuildPc\Application\UseCases\FindByIdBuildPcUseCase;
 use App\Modules\BuildPc\Application\UseCases\UpdateBuildPcUseCase;
 use App\Modules\BuildPc\Domain\Interface\BuildPcRepositoryInterface;
 use App\Modules\BuildPc\Infrastructure\Request\CreateBuildPcRequest;

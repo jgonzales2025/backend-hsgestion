@@ -10,18 +10,26 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class EloquentPurchaseOrderRepository implements PurchaseOrderRepositoryInterface
 {
 
-    public function findAll(string $role, array $branches, int $companyId): LengthAwarePaginator
+    public function findAll(string $role, array $branches, int $companyId, ?string $description, ?int $status): LengthAwarePaginator
     {
         if ($role === 'admin') {
             $purchaseOrders = EloquentPurchaseOrder::orderBy('created_at', 'desc')->get();
         } else {
             $purchaseOrders = EloquentPurchaseOrder::where('company_id', $companyId)
                 ->whereIn('branch_id', $branches)
+                ->when($description, fn($query) => $query->where('order_number_supplier', 'like', "%{$description}%")
+                        ->orWhereHas('supplier', fn($query) => $query->where('company_name', 'like', "%{$description}%")
+                            ->orWhere('name', 'like', "%{$description}%")
+                            ->orWhere('lastname', 'like', "%{$description}%")
+                            ->orWhere('second_lastname', 'like', "%{$description}%"))
+                        ->orWhereHas('branch', fn($query) => $query->where('name', 'like', "%{$description}%"))
+                )
+                ->when($status !== null, fn($query) => $query->where('status', $status))
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
         }
 
-    $purchaseOrders->getCollection()->transform(function ($purchaseOrder) {
+        $purchaseOrders->getCollection()->transform(function ($purchaseOrder) {
             return new PurchaseOrder(
                 id: $purchaseOrder->id,
                 company_id: $purchaseOrder->company_id,

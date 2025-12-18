@@ -23,7 +23,8 @@ class AuthController extends Controller
     public function __construct(
         private readonly LoginAttemptRepositoryInterface $loginAttemptRepository,
         private readonly CompanyRepositoryInterface $companyRepository,
-    ){}
+    ) {
+    }
 
     public function login(LoginRequest $request)
     {
@@ -48,8 +49,7 @@ class AuthController extends Controller
             return response()->json(['error' => 'Usuario no existe'], 401);
         }
 
-        if ($eloquentUser->st_login == 0)
-        {
+        if ($eloquentUser->st_login == 0) {
             $loginAttemptDTO = new LoginAttemptDTO([
                 'userName' => $eloquentUser->username,
                 'successful' => false,
@@ -318,7 +318,7 @@ class AuthController extends Controller
 
         // Obtener menús
         $allMenus = \App\Models\Menu::whereIn('id', $userMenuIds)
-            ->orWhereIn('id', function($query) use ($userMenuIds) {
+            ->orWhereIn('id', function ($query) use ($userMenuIds) {
                 $query->select('parent_id')
                     ->from('menus')
                     ->whereIn('id', $userMenuIds)
@@ -355,12 +355,15 @@ class AuthController extends Controller
             }
 
             return $menuArray;
+        })->reject(function ($menu) {
+            $hiddenLabels = ['Garantías', 'Actualizaciones', 'SFS-SUNAT'];
+            return in_array($menu['label'], $hiddenLabels);
         })->values();
 
         return response()->json([
             'access_token' => $token,
-            'token_type'   => 'bearer',
-            'expires_in'   => Auth::guard('api')->factory()->getTTL() * 60,
+            'token_type' => 'bearer',
+            'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
             'user' => new AuthUserResource($user),
             'menus' => $formattedMenus
         ]);

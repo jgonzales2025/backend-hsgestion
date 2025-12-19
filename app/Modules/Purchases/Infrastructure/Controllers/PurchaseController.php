@@ -32,6 +32,10 @@ use App\Modules\Purchases\Domain\Interface\GeneratepdfRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use App\Modules\DetailPurchaseGuides\Domain\Entities\DetailPurchaseGuide;
+use App\Modules\EntryGuides\Application\UseCases\FindByIdEntryGuideUseCase;
+use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
 
 class PurchaseController extends Controller
 {
@@ -44,7 +48,8 @@ class PurchaseController extends Controller
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
-        private readonly DocumentTypeRepositoryInterface $documentTypeRepository
+        private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
+        private readonly EntryGuideRepositoryInterface $entryGuideRepositoryInterface
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -117,12 +122,7 @@ class PurchaseController extends Controller
 
     public function store(CreatePurchaseRequest $request): JsonResponse
     {
-        $serie = request('reference_serie');
-        $correlative = request('reference_correlative');
-        $purchaseOrder = $this->purchaseRepository->findBySerieAndCorrelative($serie, $correlative);
-        if ($purchaseOrder) {
-            return response()->json(['message' => 'El correlativo y la serie de la orden de compra referenciada ya existen'], 409);
-        }
+  
 
         $purchaseDTO = new PurchaseDTO($request->validated());
         $cretaePurchaseUseCase = new CreatePurchaseUseCase(
@@ -139,14 +139,31 @@ class PurchaseController extends Controller
 
         $existingDetails = $this->detailPurchaseGuideRepository->findById($purchase->getId());
 
-        $this->detailPurchaseGuideRepository->deletedBy($purchase->getId());
-
-        $det_compras_guia_ingreso = $this->updateDetailCompra($purchase, $request->validated()['det_compras_guia_ingreso'], $existingDetails);
+        $det_compras_guia_ingreso = $this->editDetailCompra($purchase, $request->validated()['det_compras_guia_ingreso'], $existingDetails);
 
 
         $shopping_income_guide = $this->updateShopping($purchase,  $request->validated()['entry_guide']);
 
         $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping_income_guide);
+       
+        try {
+            $entryGuideCustomerId = null;
+            if (!empty($entryGuideIds)) {
+                $findEntryGuide = new FindByIdEntryGuideUseCase($this->entryGuideRepositoryInterface);
+                $firstEntryGuide = $findEntryGuide->execute((int) $entryGuideIds[0]);
+                $entryGuideCustomerId = $firstEntryGuide?->getCustomer()?->getId();
+            }
+       
+            DB::statement('CALL update_entry_guides_from_purchase(?,?,?,?,?)', [
+                $purchase->getCompanyId(),
+                $purchase->getSupplier()?->getId(),
+                $purchase->getTypeDocumentId()?->getId(),
+                $purchase->getReferenceSerie(),
+                $purchase->getReferenceCorrelative(),
+            ]);
+     
+        } catch (\Throwable $e) {
+        }
 
         $processStatus = $this->calculateGlobalStatus($det_compras_guia_ingreso);
 
@@ -173,21 +190,39 @@ class PurchaseController extends Controller
             $this->branchRepository,
             $this->customerRepository,
             $this->currencyRepository,
+            $this->documentNumberGeneratorService,
+            $this->documentTypeRepository
         );
         $purchase = $updatePurchaseUseCase->execute($purchaseDTO, $id);
+
+        if (!$purchase) {
+            return response()->json(['message' => 'Compra no encontrada'], 404);
+        }
 
         // Get existing details BEFORE deleting to preserve original cantidad
         $existingDetails = $this->detailPurchaseGuideRepository->findById($purchase->getId());
 
-        $this->detailPurchaseGuideRepository->deletedBy($purchase->getId());
-
-        $this->shoppingIncomeGuideRepository->deletedBy($purchase->getId());
-
-
-        $detailcompras = $this->updateDetailCompra($purchase, $request->validated()['det_compras_guia_ingreso'], $existingDetails);
+        $detailcompras = $this->editDetailCompra($purchase, $request->validated()['det_compras_guia_ingreso'], $existingDetails);
         $shopping_income_guide = $this->updateShopping($purchase,  $request->validated()['entry_guide']);
 
         $entryGuideIds = array_map(fn($item) => $item->getEntryGuideId(), $shopping_income_guide);
+
+        try {
+            $entryGuideCustomerId = null;
+            if (!empty($entryGuideIds)) {
+                $findEntryGuide = new FindByIdEntryGuideUseCase($this->entryGuideRepositoryInterface);
+                $firstEntryGuide = $findEntryGuide->execute((int) $entryGuideIds[0]);
+                $entryGuideCustomerId = $firstEntryGuide?->getCustomer()?->getId();
+            }
+            DB::statement('CALL update_entry_guides_from_purchase(?,?,?,?,?)', [
+                $purchase->getCompanyId(),
+                $entryGuideCustomerId ?? $purchase->getSupplier()?->getId(),
+                $purchase->getTypeDocumentId()?->getId(),
+                $purchase->getReferenceSerie(),
+                $purchase->getReferenceCorrelative(),
+            ]);
+        } catch (\Throwable $e) {
+        }
 
         $processStatus = $this->calculateGlobalStatus($detailcompras);
 
@@ -319,6 +354,53 @@ class PurchaseController extends Controller
             return $createDetail;
         }, $data);
     }
+    private function editDetailCompra($purchaseHeader, array $data, array $existingDetails = []): array
+    {
+        $detailsByArticle = [];
+        foreach ($existingDetails as $existingDetail) {
+            $detailsByArticle[$existingDetail->getArticleId()] = $existingDetail;
+        }
+        $updated = [];
+        foreach ($data as $item) {
+            $articleId = $item['article_id'];
+            if (!isset($detailsByArticle[$articleId])) {
+                continue;
+            }
+            $existing = $detailsByArticle[$articleId];
+            $cantidadOriginal = $existing->getCantidad();
+            $consumidoOriginal = $existing->getCantidadUpdate();
+            $consumoNuevo = $item['cantidad_update'] ?? 0;
+            $consumidoTotal = $consumidoOriginal + $consumoNuevo;
+            if ($consumidoTotal < 0) {
+                $consumidoTotal = 0;
+            }
+            if ($consumidoTotal > $cantidadOriginal) {
+                $consumidoTotal = $cantidadOriginal;
+            }
+            $saldo = max(0, $cantidadOriginal - $consumidoTotal);
+            $status = 'Pendiente';
+            if ($saldo === 0 && $cantidadOriginal > 0) {
+                $status = 'Facturado';
+            } elseif ($consumidoTotal > 0 && $saldo > 0) {
+                $status = 'En proceso';
+            }
+            $entity = new DetailPurchaseGuide(
+                id: $existing->getId(),
+                article_id: $articleId,
+                purchase_id: $purchaseHeader->getId(),
+                description: $item['description'],
+                cantidad: $item['cantidad'],
+                precio_costo: $item['precio_costo'],
+                descuento: $item['descuento'],
+                sub_total: $item['sub_total'],
+                total: $item['total'],
+                cantidad_update: $consumidoTotal,
+                process_status: $status,
+            );
+            $updated[] = $this->detailPurchaseGuideRepository->save($entity);
+        }
+        return $updated;
+    }
     public function proovedor(int $id): JsonResponse
     {
         $findByIdPurchaseUseCase = new FindByIdPurchaseUseCase($this->purchaseRepository);
@@ -358,7 +440,7 @@ class PurchaseController extends Controller
             'cantidad_update.min' => 'La cantidad a actualizar debe ser mayor o igual a 0',
         ]);
 
-        $cantidadUpdate = $validated['cantidad_update'];
+        $cantidadUpdate = (float) $validated['cantidad_update'];
 
         // Find detail by ID
         $detail = $this->detailPurchaseGuideRepository->findByDetailId($id);
@@ -370,22 +452,24 @@ class PurchaseController extends Controller
             ], 404);
         }
 
-        // Validate that cantidad_update does not exceed cantidad
-        if ($cantidadUpdate > $detail->getCantidad()) {
+        // Validate against remaining saldo
+        $cantidadOriginal = (float) $detail->getCantidad();
+        $consumidoActual = (float) $detail->getCantidadUpdate();
+        $saldoDisponible = max(0, $cantidadOriginal - $consumidoActual);
+        if ($cantidadUpdate > $saldoDisponible) {
             return response()->json([
                 'success' => false,
                 'message' => 'La cantidad a actualizar no puede ser mayor que la cantidad disponible',
-                'cantidad_disponible' => $detail->getCantidad(),
+                'cantidad_disponible' => $saldoDisponible,
                 'cantidad_solicitada' => $cantidadUpdate
             ], 422);
         }
 
-        // Calculate new cantidad
-        $nuevaCantidad = $detail->getCantidad() - $cantidadUpdate;
+        // Calculate new total consumed
+        $nuevoConsumidoTotal = $consumidoActual + $cantidadUpdate;
 
-        // Update entity
-        $detail->setCantidad($nuevaCantidad);
-        $detail->setCantidadUpdate($cantidadUpdate);
+        // Update entity: keep original cantidad, update total consumido
+        $detail->setCantidadUpdate($nuevoConsumidoTotal);
 
         // Save to database
         $updatedDetail = $this->detailPurchaseGuideRepository->save($detail);
@@ -395,6 +479,23 @@ class PurchaseController extends Controller
                 'success' => false,
                 'message' => 'Error al actualizar el detalle de compra'
             ], 500);
+        }
+
+        // Update entry guide articles saldo via stored procedure
+        try {
+            $findByIdPurchaseUseCase = new FindByIdPurchaseUseCase($this->purchaseRepository);
+            $purchase = $findByIdPurchaseUseCase->execute($detail->getPurchaseId());
+            if ($purchase) {
+                DB::statement('CALL update_entry_guides_from_purchase(?,?,?,?,?)', [
+                    $purchase->getCompanyId(),
+                    $purchase->getSupplier()?->getId(),
+                    $purchase->getTypeDocumentId()?->getId(),
+                    $purchase->getReferenceSerie(),
+                    $purchase->getReferenceCorrelative(),
+                ]);
+            }
+        } catch (\Throwable $e) {
+            // swallow and still return success; saldo update can be retried
         }
 
         // Return success response
@@ -415,8 +516,15 @@ class PurchaseController extends Controller
         $allPendiente = true;
 
         foreach ($details as $detail) {
-            // Support both array and object access if necessary
-            $status = method_exists($detail, 'getProcessStatus') ? $detail->getProcessStatus() : ($detail['process_status'] ?? 'Pendiente');
+            $cantidad = method_exists($detail, 'getCantidad') ? $detail->getCantidad() : ($detail['cantidad'] ?? 0);
+            $consumido = method_exists($detail, 'getCantidadUpdate') ? $detail->getCantidadUpdate() : ($detail['cantidad_update'] ?? 0);
+            $saldo = max(0, $cantidad - $consumido);
+            $status = 'Pendiente';
+            if ($saldo === 0 && $cantidad > 0) {
+                $status = 'Facturado';
+            } elseif ($consumido > 0 && $saldo > 0) {
+                $status = 'En proceso';
+            }
 
             if ($status !== 'Facturado') {
                 $allFacturado = false;

@@ -234,6 +234,7 @@ Route::get('document-types', [DocumentTypeController::class, 'index']);
 Route::get('document-types/sales', [DocumentTypeController::class, 'indexSales']);
 Route::get('document-types/invoices', [DocumentTypeController::class, 'indexInvoices']);
 Route::get('document-types/petty-cash', [DocumentTypeController::class, 'indexPettyCash']);
+Route::get('document-types/petty-cash-infinite', [DocumentTypeController::class, 'indexPettyCashInfinite']);
 Route::get('document-types/document-sales', [DocumentTypeController::class, 'indexDocumentSales']);
 Route::get('document-types/purchases', [DocumentTypeController::class, 'indexPurchases']);
 
@@ -376,6 +377,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/pettyCashReceipt/export-excel', [PettyCashReceiptController::class, 'exportExcel']);
     //PettyCashReceiptMotive
     Route::get('/pettyCashMotive', [PettyCashMotiveController::class, 'index']);
+    Route::get('/pettyCashMotive-by-receipt-type-infinite/{id}', [PettyCashMotiveController::class, 'indexByReceiptTypeInfinite']);
     Route::post('/pettyCashMotive', [PettyCashMotiveController::class, 'store']);
     Route::put('/pettyCashMotive/{id}', [PettyCashMotiveController::class, 'update']);
     Route::get('/pettyCashMotive/{id}', [PettyCashMotiveController::class, 'show']);

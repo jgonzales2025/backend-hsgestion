@@ -11,6 +11,8 @@ use App\Modules\DocumentType\Application\UseCases\FindAllForPurchasesUseCases;
 use App\Modules\DocumentType\Application\UseCases\FindAllForSalesUseCase;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\DocumentType\Infrastructure\Resources\DocumentTypeResource;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class DocumentTypeController extends Controller
 {
@@ -63,5 +65,27 @@ class DocumentTypeController extends Controller
         $documentTypes = $documentTypeUseCase->execute();
 
         return DocumentTypeResource::collection($documentTypes)->resolve();
+    }
+    public function indexPettyCashInfinite(Request $request): JsonResponse
+    {
+        $cursor = $request->query('cursor');
+        $paginator = $this->documentTypeRepository->findAllForPettyCashInfinite();
+
+        $data = collect($paginator->items())->map(function ($doc) {
+            return [
+                'id' => $doc->id,
+                'status' => ($doc->status) == 1 ? 'Activo' : 'Inactivo',
+                'description' => $doc->description,
+            ];
+        })->all();
+
+        return new JsonResponse([
+            'data' => $data,
+            'next_cursor' => $paginator->nextCursor()?->encode(),
+            'prev_cursor' => $paginator->previousCursor()?->encode(),
+            'next_page_url' => $paginator->nextPageUrl(),
+            'prev_page_url' => $paginator->previousPageUrl(),
+            'per_page' => $paginator->perPage()
+        ]);
     }
 }

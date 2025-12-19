@@ -121,6 +121,13 @@ class EloquentDocumentTypeRepository implements DocumentTypeRepositoryInterface
             );
         })->toArray();
     }
+    public function findAllForPettyCashInfinite()
+    {
+        return EloquentDocumentType::query()
+            ->where('st_petty_cash', true)
+            ->orderBy('id', 'asc')
+            ->cursorPaginate(10);
+    }
 
     public function findAllForDocumentSales(): array
     {

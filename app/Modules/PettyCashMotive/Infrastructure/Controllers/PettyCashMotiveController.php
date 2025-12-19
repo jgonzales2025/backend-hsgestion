@@ -16,8 +16,6 @@ use App\Modules\PettyCashMotive\Infrastructure\Request\UpdatePettyCashMotiveRequ
 use App\Modules\PettyCashMotive\Infrastructure\Resource\PettyCashMotiveResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpKernel\Log\Logger;
 
 class PettyCashMotiveController extends Controller
 {
@@ -47,8 +45,32 @@ class PettyCashMotiveController extends Controller
             'first_page_url' => $pettyCashMotives->url(1),
             'last_page_url' => $pettyCashMotives->url($pettyCashMotives->lastPage()),
         ]);
-
     }
+
+    public function indexByReceiptTypeInfinite(int $id): JsonResponse
+    {
+        $paginator = $this->pettyCashMotiveInterfaceRepository->findByReceiptTypeInfinite($id);
+
+        $data = collect($paginator->items())->map(function ($motive) {
+            return [
+                'id' => $motive->id,
+                'name' => $motive->description,
+                'receipt_type_id' => $motive->receipt_type,
+                'receipt_type_name' => $motive->documentType?->description,
+                'status' => ($motive->status) == 1 ? 'Activo' : 'Inactivo',
+            ];
+        })->all();
+
+        return new JsonResponse([
+            'data' => $data,
+            'next_cursor' => $paginator->nextCursor()?->encode(),
+            'prev_cursor' => $paginator->previousCursor()?->encode(),
+            'next_page_url' => $paginator->nextPageUrl(),
+            'prev_page_url' => $paginator->previousPageUrl(),
+            'per_page' => $paginator->perPage()
+        ]);
+    }
+
     public function store(CreatePettyCashMotiveRequest $request): JsonResponse
     {
         $pettyCashMotiveDTO = new PettyCashMotiveDTO($request->validated());
@@ -60,9 +82,9 @@ class PettyCashMotiveController extends Controller
             201
         );
     }
+
     public function show(int $id)
     {
-
         $findByIdPettyCashMotive = new FindByIdPettyCashMotive($this->pettyCashMotiveInterfaceRepository);
         $pettyCashMotive = $findByIdPettyCashMotive->execute($id);
         if (!$pettyCashMotive) {
@@ -74,6 +96,7 @@ class PettyCashMotiveController extends Controller
             200
         );
     }
+
     public function update(int $id, UpdatePettyCashMotiveRequest $request): JsonResponse
     {
         $pettyCashMotiveDTO = new PettyCashMotiveDTO($request->validated());

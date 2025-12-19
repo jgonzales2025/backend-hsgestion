@@ -12,7 +12,7 @@ use App\Modules\PettyCashReceipt\Application\UseCases\CreatePettyCashReceiptUseC
 use App\Modules\PettyCashReceipt\Application\UseCases\ExportPettyCashToExcelUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\FindAllPettyCashReceiptUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\FindByIdPettyCashReceiptUseCase;
-use App\Modules\PettyCashReceipt\application\UseCases\SelectProcedureUseCase;
+use App\Modules\PettyCashReceipt\Application\UseCases\SelectProcedureUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\UpdatePettyCashReceiptStatusUseCase;
 use App\Modules\PettyCashReceipt\Application\UseCases\UpdatePettyCashReceiptUseCase;
 use App\Modules\PettyCashReceipt\Domain\Interface\PettyCashReceiptRepositoryInterface;

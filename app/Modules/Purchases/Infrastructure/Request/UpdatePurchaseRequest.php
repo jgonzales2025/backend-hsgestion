@@ -42,6 +42,7 @@ class UpdatePurchaseRequest extends FormRequest
       'inafecto' => 'required|numeric',
       'igv' => 'required|numeric',
       'total' => 'required|numeric',
+      'reference_document_type_id' => 'nullable|integer',
       'det_compras_guia_ingreso' => 'required|array',
       'det_compras_guia_ingreso.*.article_id' => 'required|integer|exists:articles,id',
       'det_compras_guia_ingreso.*.description' => 'required|string',
@@ -55,7 +56,7 @@ class UpdatePurchaseRequest extends FormRequest
       'entry_guide' => 'required|array',
       'entry_guide.*' => 'required|integer|exists:entry_guides,id',
       'is_igv' => 'required|boolean',
-      'type_document_id' => 'required|integer',
+      'type_document_id' => 'nullable|integer',
       'reference_serie' => 'required|string',
       'reference_correlative' => 'required|string',
 

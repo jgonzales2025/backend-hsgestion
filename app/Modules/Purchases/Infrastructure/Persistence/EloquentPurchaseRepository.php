@@ -139,7 +139,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
     }
     public function save(Purchase $purchase): ?Purchase
     {
-        DB::beginTransaction();
+        // DB::beginTransaction();
 
         try {
 
@@ -173,19 +173,19 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             ]);
 
 
-            DB::statement(
-                "CALL update_entry_guides_from_purchase(?, ?, ?, ?, ?)",
-                [
-                    $purchase->getCompanyId(),
-                    $purchase->getSupplier()->getId(),
-                    $purchase->getTypeDocumentId()->getId(),
-                    $purchase->getReferenceSerie(),
-                    $purchase->getReferenceCorrelative()
-                ]
-            );
+            // DB::statement(
+            //     "CALL update_entry_guides_from_purchase(?, ?, ?, ?, ?)",
+            //     [
+            //         $purchase->getCompanyId(),
+            //         $purchase->getSupplier()->getId(),
+            //         $purchase->getTypeDocumentId()->getId(),
+            //         $purchase->getReferenceSerie(),
+            //         $purchase->getReferenceCorrelative()
+            //     ]
+            // );
 
-            // 3. Confirmar transacción
-            DB::commit();
+            // // 3. Confirmar transacción
+            // DB::commit();
 
 
             return new Purchase(

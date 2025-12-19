@@ -13,7 +13,7 @@ class PettyCashMotiveResource extends JsonResource
         return [
             'id' => $this->resource->getId(),
             'description' => $this->resource->getDescription(),
-            'receipt_type' =>[
+            'receipt_type' => [
                 'id' => $this->resource->getReceiptType()->getId(),
                 'status' => $this->resource->getReceiptType()->getStatus() == 1 ? 'Activo' : 'Inactivo',
                 'description' => $this->resource->getReceiptType()->getDescription(),

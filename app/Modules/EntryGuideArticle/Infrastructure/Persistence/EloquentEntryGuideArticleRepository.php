@@ -17,7 +17,7 @@ class EloquentEntryGuideArticleRepository implements EntryGuideArticleRepository
             'article_id' => $entryGuideArticle->getArticle()->getId(),
             'description' => $entryGuideArticle->getDescription(),
             'quantity' => $entryGuideArticle->getQuantity(),
-            'saldo' => $entryGuideArticle->getSaldo(),
+            'saldo' => $entryGuideArticle->getQuantity(),
 
         ]);
         return new EntryGuideArticle(

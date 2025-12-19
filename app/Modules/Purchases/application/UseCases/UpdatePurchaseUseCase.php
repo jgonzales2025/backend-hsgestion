@@ -8,6 +8,9 @@ use App\Modules\CurrencyType\Application\UseCases\FindByIdCurrencyTypeUseCase;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
+use App\Modules\DocumentType\Application\UseCases\FindByIdDocumentTypeUseCase;
+use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PaymentMethod\Application\UseCases\FindByIdPaymentMethodUseCase;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
 use App\Modules\PaymentType\Application\UseCases\FindByIdPaymentTypeUseCase;
@@ -15,22 +18,29 @@ use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
 use App\Modules\Purchases\Domain\Entities\Purchase;
 use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
+use App\Services\DocumentNumberGeneratorService;
 
-class UpdatePurchaseUseCase{
+class UpdatePurchaseUseCase
+{
     public function __construct(
         private readonly PurchaseRepositoryInterface $purchaseRepository,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
-    )
-    {
-    }
+        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
+        private readonly DocumentTypeRepositoryInterface $documentTypeRepository
 
-    public function execute(PurchaseDTO $purchaseDTO ,int $id): ?Purchase
+    ) {}
+
+    public function execute(PurchaseDTO $purchaseDTO , int $id): ?Purchase
     {
+        $lastDocumentNumber = $this->purchaseRepository->getLastDocumentNumber($purchaseDTO->company_id, $purchaseDTO->branch_id, $purchaseDTO->serie);
+
+        $purchaseDTO->correlative = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
+
         $paymentTypeUseCase =  new FindByIdPaymentTypeUseCase($this->paymentTypeRepository);
-        $paymentType = $paymentTypeUseCase->execute($purchaseDTO->methodpayment);
+        $paymentType = $paymentTypeUseCase->execute($purchaseDTO->payment_type_id);
 
         $branch = new FindByIdBranchUseCase($this->branchRepository);
         $branch = $branch->execute($purchaseDTO->branch_id);
@@ -41,7 +51,10 @@ class UpdatePurchaseUseCase{
         $currency = new FindByIdCurrencyTypeUseCase($this->currencyRepository);
         $currency = $currency->execute($purchaseDTO->currency);
 
-       $updatePurchase = new Purchase(
+        $documentType = new FindByIdDocumentTypeUseCase($this->documentTypeRepository);
+        $documentType = $documentType->execute($purchaseDTO->type_document_id);
+
+        $puchaseCreate = new Purchase(
             id: $id,
             company_id: $purchaseDTO->company_id,
             branch: $branch,
@@ -65,10 +78,11 @@ class UpdatePurchaseUseCase{
             igv: $purchaseDTO->igv,
             total: $purchaseDTO->total,
             is_igv: $purchaseDTO->is_igv,
-            type_document_id: $purchaseDTO->type_document_id,
+            type_document_id: $documentType,
             reference_serie: $purchaseDTO->reference_serie,
-            reference_correlative: $purchaseDTO->reference_correlative
+            reference_correlative: $purchaseDTO->reference_correlative,
+            saldo: $purchaseDTO->total,
         );
-        return $this->purchaseRepository->update($updatePurchase);
+        return $this->purchaseRepository->update($puchaseCreate);
     }
 }

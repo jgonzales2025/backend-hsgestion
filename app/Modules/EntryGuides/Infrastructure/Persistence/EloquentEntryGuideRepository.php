@@ -71,8 +71,8 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide
     {
         $entryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])
-            ->where('reference_po_serie', $serie)
-            ->where('reference_po_correlative', $correlative)
+            ->where('reference_serie', $serie)
+            ->where('reference_correlative', $correlative)
             ->first();
 
         if (!$entryGuide) {
@@ -105,8 +105,8 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'customer_id' => $entryGuide->getCustomer()->getId(),
             'observations' => $entryGuide->getObservations(),
             'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
-            'reference_po_serie' => $entryGuide->getReferenceCorrelative(),
-            'reference_po_correlative' => $entryGuide->getReferenceCorrelative(),
+            'reference_serie' => $entryGuide->getSerie(),
+            'reference_correlative' => $entryGuide->getCorrelativo() ,
         ]);
         $eloquentEntryGuide->refresh();
         return new EntryGuide(
@@ -161,8 +161,8 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'customer_id' => $entryGuide->getCustomer()->getId(),
             'observations' => $entryGuide->getObservations(),
             'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
-            'reference_po_serie' => $entryGuide->getReferenceCorrelative(),
-            'reference_po_correlative' => $entryGuide->getReferenceCorrelative(),
+            'reference_serie' => $entryGuide->getSerie(),
+            'reference_correlative' => $entryGuide->getCorrelativo(),
             'status' => 1,
         ]);
 

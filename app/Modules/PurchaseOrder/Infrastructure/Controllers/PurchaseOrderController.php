@@ -59,14 +59,17 @@ class PurchaseOrderController extends Controller
         private readonly DetEntryguidePurchaseOrderRepositoryInterface $detEntryguidePurchaseOrderRepository
     ) {}
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $role = request()->get('role');
         $branches = request()->get('branches');
         $companyId = request()->get('company_id');
 
+        $description = $request->query('description');
+        $status = $request->query('status') !== null ? $request->query('status') : null;
+
         $purchaseOrderUseCase = new FindAllPurchaseOrdersUseCase($this->purchaseOrderRepository);
-        $purchaseOrders = $purchaseOrderUseCase->execute($role, $branches, $companyId);
+        $purchaseOrders = $purchaseOrderUseCase->execute($role, $branches, $companyId, $description, $status);
 
         $result = [];
         foreach ($purchaseOrders as $purchaseOrder) {

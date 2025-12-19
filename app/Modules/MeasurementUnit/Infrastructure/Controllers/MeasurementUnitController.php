@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\MeasurementUnit\Application\DTOs\MeasurementUnitDTO;
 use App\Modules\MeasurementUnit\Application\UseCases\CreateMeasurementUnitUseCase;
 use App\Modules\MeasurementUnit\Application\UseCases\FindAllMeasurementUnitUseCase;
+use App\Modules\MeasurementUnit\Application\UseCases\FindAllPaginateInfiniteMeasurementUnitUseCase;
 use App\Modules\MeasurementUnit\Application\UseCases\FindByIdMeasurementUnit;
 use App\Modules\MeasurementUnit\Application\UseCases\UpdateMeasurementUnitUseCase;
 use App\Modules\MeasurementUnit\Application\UseCases\UpdateStatusMeasurementUnitUseCase;
@@ -24,6 +25,21 @@ class MeasurementUnitController extends Controller
     public function __construct(MeasurementUnitRepositoryInterface $measurementUnitRepository)
     {
         $this->measurementUnitRepository = $measurementUnitRepository;
+    }
+
+    public function indexPaginateInfinite()
+    {
+        $measurementUnitUseCase = new FindAllPaginateInfiniteMeasurementUnitUseCase($this->measurementUnitRepository);
+        $measurementUnits = $measurementUnitUseCase->execute();
+
+        return new JsonResponse([
+            'data' => MeasurementUnitResource::collection($measurementUnits)->resolve(),
+            'next_cursor' => $measurementUnits->nextCursor()?->encode(),
+            'prev_cursor' => $measurementUnits->previousCursor()?->encode(),
+            'next_page_url' => $measurementUnits->nextPageUrl(),
+            'prev_page_url' => $measurementUnits->previousPageUrl(),
+            'per_page' => $measurementUnits->perPage()
+        ]);
     }
 
     public function index(Request $request): JsonResponse

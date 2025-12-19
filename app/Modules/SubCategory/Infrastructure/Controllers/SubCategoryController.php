@@ -28,10 +28,9 @@ class SubCategoryController extends Controller
         $this->subCategoryRepository = $subCategoryRepository;
     }
 
-    public function indexPaginateInfinite(Request $request): JsonResponse
+    public function indexPaginateInfinite(Request $request, int $category_id): JsonResponse
     {
         $description = $request->query('description');
-        $category_id = $request->query('category_id');
         $subCategoriesUseCases = new FindAllPaginateInfiniteSubCategoryUseCase($this->subCategoryRepository);
         $subCategories = $subCategoriesUseCases->execute($description, $category_id);
 

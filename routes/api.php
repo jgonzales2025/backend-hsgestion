@@ -153,7 +153,7 @@ Route::post('sub-categories', [SubCategoryController::class, 'store']);
 Route::get('sub-categories/{id}', [SubCategoryController::class, 'show']);
 Route::put('sub-categories/{id}', [SubCategoryController::class, 'update']);
 Route::put('sub-categories-status/{id}', [SubCategoryController::class, 'updateStatus']);
-Route::get('sub-categories-infinite', [SubCategoryController::class, 'indexPaginateInfinite']);
+Route::get('sub-categories-infinite/{id}', [SubCategoryController::class, 'indexPaginateInfinite']);
 
 // TransportCompanies - Empresa de transportes
 Route::get('transport-companies', [TransportCompanyController::class, 'index']);
@@ -172,6 +172,7 @@ Route::put('percentage-igv/{id}', [PercentageIGVController::class, 'update']);
 
 // MeasurementUnits - Unidades de medida
 Route::get('measurement-units', [MeasurementUnitController::class, 'index']);
+Route::get('measurement-units-infinite', [MeasurementUnitController::class, 'indexPaginateInfinite']);
 Route::post('measurement-units', [MeasurementUnitController::class, 'store']);
 Route::get('measurement-units/{id}', [MeasurementUnitController::class, 'show']);
 Route::put('measurement-units/{id}', [MeasurementUnitController::class, 'update']);

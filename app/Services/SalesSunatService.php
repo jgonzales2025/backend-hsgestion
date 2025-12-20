@@ -12,6 +12,7 @@ use App\Modules\Ubigeo\Districts\Domain\Interfaces\DistrictRepositoryInterface;
 use App\Modules\Ubigeo\Provinces\Application\UseCases\FindByIdProvinceUseCase;
 use App\Modules\Ubigeo\Provinces\Domain\Interfaces\ProvinceRepositoryInterface;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SalesSunatService
 {
@@ -39,7 +40,7 @@ class SalesSunatService
 
         $data = [
             "client" => [
-                "tipoDoc" => $sale->getCustomer()->getCustomerDocumentType()->getId(),
+                "tipoDoc" => (string) $sale->getCustomer()->getCustomerDocumentType()->getCodSunat(),
                 "numDoc" => $sale->getCustomer()->getDocumentNumber(),
                 "rznSocial" => $sale->getCustomer()->getCompanyName()
             ],
@@ -63,12 +64,12 @@ class SalesSunatService
                     "unidad" => "NIU",
                     "cantidad" => $article->getQuantity(),
                     "descripcion" => $article->getArticle()->getDescription(),
-                    "mtoBaseIgv" => $article->getSubtotal(),
+                    "mtoBaseIgv" => round($article->getSubtotal() / 1.18, 2),
                     "porcentajeIgv" => 18,
                     "igv" => round($article->getSubTotal() - ($article->getSubTotal() / 1.18), 2),
                     "tipAfeIgv" => "10",
                     "totalImpuestos" => round($article->getSubTotal() - ($article->getSubTotal() / 1.18), 2),
-                    "mtoValorVenta" => $article->getSubtotal(),
+                    "mtoValorVenta" => round($article->getSubtotal() / 1.18, 2),
                     "mtoValorUnitario" => round($article->getUnitPrice() / 1.18, 2),
                     "mtoPrecioUnitario" => $article->getUnitPrice()
                 ];
@@ -82,7 +83,7 @@ class SalesSunatService
             "ublVersion" => "2.1",
             "forma_pago_tipo" => $sale->getPaymentType()->getName(),
             "tipoOperacion" => "0101",
-            "tipoDoc" => $sale->getDocumentType()->getId(),
+            "tipoDoc" => "0".(string) $sale->getDocumentType()->getId(),
             "serie" => $sale->getSerie(),
             "correlativo" => $sale->getDocumentNumber(),
             "fechaEmision" => $sale->getDate(),
@@ -95,8 +96,8 @@ class SalesSunatService
             "mtoImpVenta" => $sale->getTotal()
         ];
 
-        $response = Http::withToken("P1KQbNw1S3zzdD4lEoPpWs3qf7GpEPJTRIPCgHDJDY9HeLOriN7ETiIRJcQu")->post("http://192.168.18.27:8001/api/v2/factura/send", $data);
+        $response = Http::withToken(config('services.external_api.sale_sunat_api_token'))->post("http://192.168.18.27:8001/api/v2/factura/send", $data);
 
-        return $response;
+        return $response->json();
     }
 }

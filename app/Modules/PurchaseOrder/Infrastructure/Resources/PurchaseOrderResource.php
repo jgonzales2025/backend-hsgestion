@@ -10,7 +10,7 @@ class PurchaseOrderResource extends JsonResource
     public function toArray(Request $request): array
     {
         $supplier = $this->resource->getSupplier();
-        $isCompany = $supplier->getCustomerDocumentTypeId() == 2;
+        $isCompany = $supplier->getCustomerDocumentType()->getId() == 2;
         
         return [
             'id' => $this->resource->getId(),

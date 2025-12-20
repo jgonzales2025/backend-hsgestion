@@ -16,11 +16,15 @@ use Illuminate\Support\Facades\Log;
 
 class SalesSunatService
 {
+    protected $baseUrl;
+    protected $token;
     public function __construct(
         private DepartmentRepositoryInterface $departmentRepository,
         private ProvinceRepositoryInterface $provinceRepository,
         private DistrictRepositoryInterface $districtRepository
     ) {
+        $this->baseUrl = config('services.external_api.sale_sunat_api_url');
+        $this->token = config('services.external_api.sale_sunat_api_token');
     }
     public function saleGravada(Sale $sale, array $saleArticles)
     {
@@ -96,7 +100,7 @@ class SalesSunatService
             "mtoImpVenta" => $sale->getTotal()
         ];
 
-        $response = Http::withToken(config('services.external_api.sale_sunat_api_token'))->post("http://192.168.18.27:8001/api/v2/factura/send", $data);
+        $response = Http::withToken($this->token)->post("{$this->baseUrl}/factura/send", $data);
 
         return $response->json();
     }

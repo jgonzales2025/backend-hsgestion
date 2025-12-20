@@ -41,4 +41,18 @@ class EloquentCustomerDocumentTypeRepository implements CustomerDocumentTypeRepo
 
         
     }
+
+    public function findById(int $id): CustomerDocumentType
+    {
+        $eloquentCustomerDocumentType = EloquentCustomerDocumentType::find($id);
+
+        return new CustomerDocumentType(
+            id: $eloquentCustomerDocumentType->id,
+            cod_sunat: $eloquentCustomerDocumentType->cod_sunat,
+            description: $eloquentCustomerDocumentType->description,
+            abbreviation: $eloquentCustomerDocumentType->abbreviation,
+            st_driver: $eloquentCustomerDocumentType->st_driver,
+            status: $eloquentCustomerDocumentType->status,
+        );
+    }
 }

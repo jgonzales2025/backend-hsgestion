@@ -4,6 +4,7 @@
 use App\Http\Controllers\MenuController;
 use App\Modules\Articles\Infrastructure\Controllers\ArticleController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SaleSunatController;
 use App\Modules\Advance\Infrastructure\Controllers\AdvanceController;
 use App\Modules\Auth\Infrastructure\Controllers\AuthController;
 use App\Modules\Bank\Infrastructure\Controllers\BankController;
@@ -478,6 +479,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/statistics/article-id-sold/{id}', [StatisticsController::class, 'getArticleIdSold']);
     Route::get('/statistics/article-id-purchase/{id}', [StatisticsController::class, 'getArticleIdPurchase']);
     Route::get('/statistics/article-id-purchase/{id}/export', [StatisticsController::class, 'exportArticleIdPurchase']);
+
+    // Ruta para envío sunat de venta
+    Route::post('/sale-sunat-send/{id}', [SaleSunatController::class, 'store']);
 
 });
 

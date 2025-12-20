@@ -18,9 +18,9 @@ class CustomerResource extends JsonResource
                 'name' => $this->resource->getRecordTypeName()
             ],
             'customer_document_type' => [
-                'id' => $this->resource->getCustomerDocumentTypeId(),
-                'name' => $this->resource->getCustomerDocumentTypeName(),
-                'abbreviation' => $this->resource->getCustomerDocumentTypeAbbreviation(),
+                'id' => $this->resource->getCustomerDocumentType()->getId(),
+                'name' => $this->resource->getCustomerDocumentType()->getDescription(),
+                'abbreviation' => $this->resource->getCustomerDocumentType()->getAbbreviation(),
             ],
             'document_number' => $this->resource->getDocumentNumber(),
             'company_name' => $this->resource->getCompanyName(),

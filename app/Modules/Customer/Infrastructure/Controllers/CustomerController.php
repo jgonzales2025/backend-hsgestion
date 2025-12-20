@@ -54,6 +54,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Modules\Customer\Application\UseCases\UpdateStatusUseCase;
+use App\Modules\CustomerDocumentType\Domain\Interfaces\CustomerDocumentTypeRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
@@ -69,7 +70,8 @@ class CustomerController extends Controller
         private readonly DistrictRepositoryInterface $districtRepository,
         private readonly CustomerPortfolioRepositoryInterface $customerPortfolioRepository,
         private readonly UserRepositoryInterface $userRepository,
-        private readonly ApiSunatService $apiSunatService
+        private readonly ApiSunatService $apiSunatService,
+        private readonly CustomerDocumentTypeRepositoryInterface $customerDocumentTypeRepository
     ) {
     }
 
@@ -90,7 +92,7 @@ class CustomerController extends Controller
             $role = request()->get('role');
 
             $customerDTO = new CustomerDTO($validatedData);
-            $customerUseCase = new CreateCustomerUseCase($this->customerRepository);
+            $customerUseCase = new CreateCustomerUseCase($this->customerRepository, $this->customerDocumentTypeRepository);
             $customer = $customerUseCase->execute($customerDTO);
 
             if ($role == 'Vendedor') {
@@ -179,7 +181,7 @@ class CustomerController extends Controller
             $validatedData = $request->validated();
 
             $customerDTO = new CustomerDTO($validatedData);
-            $customerUseCase = new UpdateCustomerUseCase($this->customerRepository);
+            $customerUseCase = new UpdateCustomerUseCase($this->customerRepository, $this->customerDocumentTypeRepository);
             $customer = $customerUseCase->execute($id, $customerDTO);
 
             EloquentCustomerPhone::where('customer_id', $id)->delete();
@@ -311,7 +313,7 @@ class CustomerController extends Controller
                 'is_withholding_applicable' => $data['data']['es_agente_retencion'] ?? null,
             ]);
 
-            $customerUseCase = new CreateCustomerSunatApiUseCase($this->customerRepository);
+            $customerUseCase = new CreateCustomerSunatApiUseCase($this->customerRepository, $this->customerDocumentTypeRepository);
             $customer = $customerUseCase->execute($customerDTO);
 
             $address = null;

@@ -12,7 +12,7 @@ class CustomerCompanyResource extends JsonResource
     {
         return [
             'id' => $this->resource->getId(),
-            'ruc' => $this->resource->getCustomerDocumentTypeAbbreviation(),
+            'ruc' => $this->resource->getCustomerDocumentType()->getAbbreviation(),
             'company_name' => $this->resource->getCompanyName()
         ];
     }

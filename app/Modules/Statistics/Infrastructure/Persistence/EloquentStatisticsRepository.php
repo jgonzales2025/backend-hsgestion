@@ -135,7 +135,7 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
         return $query->paginate($perPage);
     }
 
-    public function getArticlesSold(int $company_id, ?int $branch_id, ?string $start_date, ?string $end_date, ?int $category_id, ?int $brand_id)
+    public function getArticlesSold(int $company_id, ?int $branch_id, ?string $start_date, ?string $end_date, ?int $category_id, ?int $brand_id, ?int $article_id, int $perPage = 15)
     {
         $query = DB::table('sales as s')
             ->join('sale_article as sa', 's.id', '=', 'sa.sale_id')
@@ -180,11 +180,15 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
             $query->where('a.brand_id', $brand_id);
         }
 
+        if ($article_id !== null) {
+            $query->where('sa.article_id', $article_id);
+        }
+
         // Order by article code
         $query->orderBy('a.cod_fab')
             ->orderBy('s.date');
 
-        return $query->get();
+        return $query->paginate($perPage);
     }
 
     public function getArticleIdSold(int $company_id, int $article_id, ?int $branch_id, ?string $start_date, ?string $end_date, ?int $category_id, ?int $brand_id)

@@ -127,7 +127,11 @@ class StatisticsController
             'end_date' => 'nullable|date',
             'category_id' => 'nullable|integer',
             'brand_id' => 'nullable|integer',
+            'article_id' => 'nullable|integer',
+            'per_page' => 'nullable|integer|min:1|max:100',
         ]);
+
+        $perPage = $request->input('per_page', 15);
 
         $articles = $this->getArticlesSoldUseCase->execute(
             company_id: $request->input('company_id'),
@@ -135,11 +139,21 @@ class StatisticsController
             start_date: $request->input('start_date'),
             end_date: $request->input('end_date'),
             category_id: $request->input('category_id'),
-            brand_id: $request->input('brand_id')
+            brand_id: $request->input('brand_id'),
+            article_id: $request->input('article_id'),
+            perPage: $perPage
         );
 
         return response()->json([
-            'data' => $articles
+            'data' => $articles->items(),
+            'current_page' => $articles->currentPage(),
+            'per_page' => $articles->perPage(),
+            'total' => $articles->total(),
+            'last_page' => $articles->lastPage(),
+            'next_page_url' => $articles->nextPageUrl(),
+            'prev_page_url' => $articles->previousPageUrl(),
+            'first_page_url' => $articles->url(1),
+            'last_page_url' => $articles->url($articles->lastPage()),
         ]);
     }
 

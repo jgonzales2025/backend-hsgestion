@@ -39,7 +39,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
     {
         $eloquentCustomer = EloquentCustomer::create([
             'record_type_id' => $customer->getRecordTypeId(),
-            'customer_document_type_id' => $customer->getCustomerDocumentTypeId(),
+            'customer_document_type_id' => $customer->getCustomerDocumentType()->getId(),
             'document_number' => $customer->getDocumentNumber(),
             'company_name' => $customer->getCompanyName(),
             'name' => $customer->getName(),
@@ -92,7 +92,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
 
         $eloquentCustomer->update([
             'record_type_id' => $customer->getRecordTypeId(),
-            'customer_document_type_id' => $customer->getCustomerDocumentTypeId(),
+            'customer_document_type_id' => $customer->getCustomerDocumentType()->getId(),
             'document_number' => $customer->getDocumentNumber(),
             'company_name' => $customer->getCompanyName(),
             'name' => $customer->getName(),
@@ -171,7 +171,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
     public function saveCustomerBySunatApi(Customer $customer): ?Customer
     {
         $eloquentCustomer = EloquentCustomer::create([
-            'customer_document_type_id' => $customer->getCustomerDocumentTypeId(),
+            'customer_document_type_id' => $customer->getCustomerDocumentType()->getId(),
             'document_number' => $customer->getDocumentNumber(),
             'company_name' => $customer->getCompanyName(),
             'name' => $customer->getName(),
@@ -195,9 +195,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             id: $customer->id,
             record_type_id: $customer->record_type_id,
             record_type_name: $customer->recordType?->name,
-            customer_document_type_id: $customer->customer_document_type_id,
-            customer_document_type_name: $customer->customerDocumentType->description,
-            customer_document_type_abbreviation: $customer->customerDocumentType->abbreviation,
+            customer_document_type: $customer->customerDocumentType->toDomain($customer->customerDocumentType),
             document_number: $customer->document_number,
             company_name: $customer->company_name,
             name: $customer->name,

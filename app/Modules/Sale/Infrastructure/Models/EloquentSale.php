@@ -59,7 +59,10 @@ class EloquentSale extends Model
         'porretencion',
         'impretens',
         'impretend',
-        'total_costo_neto'
+        'total_costo_neto',
+        'estado_sunat',
+        'fecha_aceptacion',
+        'respuesta_sunat'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

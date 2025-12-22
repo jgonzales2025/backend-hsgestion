@@ -2,7 +2,11 @@
 
 namespace App\Modules\Purchases\Application\DTOS;
 
-class PurchaseDTO{
+use App\Modules\DetailPurchaseGuides\Application\DTOS\DetailPurchaseGuideDTO;
+use App\Modules\ShoppingIncomeGuide\Application\DTOS\ShoppingIncomeGuideDTO;
+
+class PurchaseDTO
+{
     public int $company_id;
     public int $branch_id;
     public int $supplier_id;
@@ -28,8 +32,11 @@ class PurchaseDTO{
     public int $type_document_id;
     public string $reference_serie;
     public string $reference_correlative;
-   
-    public function __construct(array $array){
+    public array $det_compras_guia_ingreso;
+    public array $shopping_Income_Guide;
+
+    public function __construct(array $array)
+    {
         $this->company_id = $array['company_id'];
         $this->branch_id = $array['branch_id'];
         $this->supplier_id = $array['supplier_id'];
@@ -55,7 +62,13 @@ class PurchaseDTO{
         $this->type_document_id = $array['reference_document_type_id'];
         $this->reference_serie = $array['reference_serie'];
         $this->reference_correlative = $array['reference_correlative'];
-    
+
+        $this->det_compras_guia_ingreso = array_map(function ($item) {
+            return new DetailPurchaseGuideDTO($item);
+        }, $array['det_compras_guia_ingreso']) ?? [];
+
+        $this->shopping_Income_Guide = array_map(function ($item) {
+            return new ShoppingIncomeGuideDTO(['id' => $item]);
+        }, $array['entry_guide']);
     }
-    
 }

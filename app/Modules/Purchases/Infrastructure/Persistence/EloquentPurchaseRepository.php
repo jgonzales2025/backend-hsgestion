@@ -246,41 +246,6 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'company_id' => $purchase->getCompanyId(),
             'saldo' => $purchase->getTotal(),
         ]);
-        return new Purchase(
-            id: $purchaseUpdtate->id,
-            company_id: $purchaseUpdtate->company_id,
-            branch: $purchaseUpdtate->branches->toDomain($purchaseUpdtate->branches),
-            supplier: $purchaseUpdtate->customers->toDomain($purchaseUpdtate->customers),
-            serie: $purchaseUpdtate->serie,
-            correlative: $purchaseUpdtate->correlative,
-            exchange_type: $purchaseUpdtate->exchange_type,
-            payment_type: $purchaseUpdtate->paymentType->toDomain($purchaseUpdtate->paymentType),
-            currency: $purchaseUpdtate->currencyType->toDomain($purchaseUpdtate->currencyType),
-            date: $purchaseUpdtate->date,
-            date_ven: $purchaseUpdtate->date_ven,
-            days: $purchaseUpdtate->days,
-            observation: $purchaseUpdtate->observation,
-            detraccion: $purchaseUpdtate->detraccion,
-            fech_detraccion: $purchaseUpdtate->fech_detraccion,
-            amount_detraccion: $purchaseUpdtate->amount_detraccion,
-            is_detracion: $purchaseUpdtate->is_detracion,
-            subtotal: $purchaseUpdtate->subtotal,
-            total_desc: $purchaseUpdtate->total_desc,
-            inafecto: $purchaseUpdtate->inafecto,
-            igv: $purchaseUpdtate->igv,
-            total: $purchaseUpdtate->total,
-            is_igv: $purchaseUpdtate->is_igv,
-            type_document_id: $purchaseUpdtate->documentType->toDomain($purchaseUpdtate->documentType),
-            reference_serie: $purchaseUpdtate->reference_serie,
-            reference_correlative: $purchaseUpdtate->reference_correlative,
-            saldo: $purchaseUpdtate->saldo,
-            det_compras_guia_ingreso: $purchaseUpdtate->detComprasGuiaIngreso
-                ? $purchaseUpdtate->detComprasGuiaIngreso->map(fn($d) => $d->toDomain())->toArray()
-                : [],
-            shopping_Income_Guide: $purchaseUpdtate->shoppingIncomeGuide
-                ? $purchaseUpdtate->shoppingIncomeGuide->map(fn($d) => $d->toDomain())->toArray()
-                : [],
-        );
 
         return $this->findWithRelations($purchaseUpdtate->id);
     }

@@ -238,6 +238,7 @@ Route::get('document-types/petty-cash', [DocumentTypeController::class, 'indexPe
 Route::get('document-types/petty-cash-infinite', [DocumentTypeController::class, 'indexPettyCashInfinite']);
 Route::get('document-types/document-sales', [DocumentTypeController::class, 'indexDocumentSales']);
 Route::get('document-types/purchases', [DocumentTypeController::class, 'indexPurchases']);
+Route::get('document-types/entry-guides', [DocumentTypeController::class, 'indexEntryGuides']);
 
 // Banks - Bancos
 Route::get('banks', [BankController::class, 'index']);

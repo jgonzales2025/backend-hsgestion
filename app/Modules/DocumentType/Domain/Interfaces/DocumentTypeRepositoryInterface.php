@@ -20,4 +20,6 @@ interface DocumentTypeRepositoryInterface
     public function findAllForDocumentSales(): array;
     
     public function findAllForPurchases(): array;
+
+    public function findAllForEntryGuides(): array;
 }

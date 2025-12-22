@@ -184,7 +184,7 @@
         <table class="info-table">
             @php
                 $customer = $sale->getCustomer();
-                $isCompany = $customer->getCustomerDocumentTypeId() == 2;
+                $isCompany = $customer->getCustomerDocumentType()->getId() == 2;
             @endphp
 
             @if($isCompany)

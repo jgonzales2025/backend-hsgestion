@@ -38,6 +38,8 @@ class Purchase
     private string $reference_serie;
     private string $reference_correlative;
     private float $saldo;
+    private array $det_compras_guia_ingreso; 
+    private array $shopping_Income_Guide;
 
     public function __construct(
         ?int $id,
@@ -66,7 +68,9 @@ class Purchase
         string $reference_serie,
         string $reference_correlative,
         int $company_id,
-        float $saldo = 0
+        float $saldo = 0,
+        array $det_compras_guia_ingreso = [],
+        array $shopping_Income_Guide = []
     ) {
         $this->id = $id;
         $this->branch = $branch;
@@ -95,6 +99,8 @@ class Purchase
         $this->reference_correlative = $reference_correlative;
         $this->company_id = $company_id;
         $this->saldo = $saldo;
+        $this->det_compras_guia_ingreso = $det_compras_guia_ingreso;
+        $this->shopping_Income_Guide = $shopping_Income_Guide;
     }
 
     public function getId(): int|null
@@ -204,5 +210,13 @@ class Purchase
     public function getSaldo(): float
     {
         return $this->saldo;
+    }
+    public function getDetComprasGuiaIngreso(): array
+    {
+        return $this->det_compras_guia_ingreso;
+    }
+    public function getShoppingIncomeGuide(): array
+    {
+        return $this->shopping_Income_Guide;
     }
 }

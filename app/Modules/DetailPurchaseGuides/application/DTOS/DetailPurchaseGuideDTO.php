@@ -17,8 +17,8 @@ class DetailPurchaseGuideDTO
 
   public function __construct(array $array)
   {
-    $this->article_id = $array['article_id'];
-    $this->purchase_id = $array['purchase_id'];
+    $this->article_id = $array['article_id'] ;
+    $this->purchase_id = $array['purchase_id'] ?? 1;
     $this->description = $array['description'];
     $this->cantidad = $array['cantidad'];
     $this->precio_costo = $array['precio_costo'];

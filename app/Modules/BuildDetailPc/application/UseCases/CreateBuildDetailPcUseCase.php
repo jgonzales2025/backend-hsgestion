@@ -2,7 +2,7 @@
 
 namespace App\Modules\BuildDetailPc\application\UseCases;
 
-use App\Modules\BuildDetailPc\application\DTOS\BuildDetailPcdto;
+use App\Modules\BuildDetailPc\Application\DTOS\BuildDetailPcdto;
 use App\Modules\BuildDetailPc\Domain\Entities\BuildDetailPc;
 use App\Modules\BuildDetailPc\Domain\Interface\BuildDetailPcRepositoryInterface;
 

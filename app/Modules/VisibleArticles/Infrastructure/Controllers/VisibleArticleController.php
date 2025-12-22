@@ -25,6 +25,9 @@ class VisibleArticleController extends Controller
         $visibleArticleUseCase = new FindByVisibleArticleUseCase($this->visibleArticleRepository);
         $visible = $visibleArticleUseCase->execute($id);
 
+        if (!$visible) {
+            return response()->json(['message' => 'Registro de artículo visible no encontrado'], 404);
+        }
         return response()->json(new VisibleArticleResource($visible), 200);
 
     }

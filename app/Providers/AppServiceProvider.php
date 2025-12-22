@@ -107,6 +107,8 @@ use App\Modules\PercentageIGV\Infrastructure\Persistence\EloquentPercentageIGVRe
 use App\Modules\EntryGuideArticle\Domain\Interface\EntryGuideArticleRepositoryInterface;
 use App\Modules\Installment\Domain\Interface\InstallmentRepositoryInterface;
 use App\Modules\Installment\Infrastructure\Persistence\EloquentInstallmentRepository;
+use App\Modules\Kardex\Domain\Interface\KardexRepositoryInterface;
+use App\Modules\Kardex\Infrastructure\Persistence\EloquenKardexRepository;
 use App\Modules\PaymentConcept\Domain\Interfaces\PaymentConceptRepositoryInterface;
 use App\Modules\PaymentConcept\Infrastructure\Persistence\EloquentPaymentConceptRepository;
 use App\Modules\PettyCashMotive\Domain\Interface\PettyCashMotiveInterfaceRepository;
@@ -163,6 +165,7 @@ use App\Modules\Withholding\Domain\Interface\WithholdingRepositoryInterface;
 use App\Modules\Withholding\Infrastructure\Persistence\EloquentWithholdingRepository;
 use App\Modules\PaymentMethodsSunat\Domain\Interface\PaymentMethodSunatRepositoryInterface;
 use App\Modules\PaymentMethodsSunat\Infrastructure\Persistence\EloquentPaymentMethodSunatRepository;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -256,6 +259,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DetVoucherPurchaseRepositoryInterface::class, EloquentDetVoucherPurchaseRepository::class);
         $this->app->bind(PaymentConceptRepositoryInterface::class, EloquentPaymentConceptRepository::class);
         $this->app->bind(\App\Modules\ScVoucher\Domain\Interface\PdfGeneratorInterface::class, \App\Modules\ScVoucher\Infrastructure\Pdf\DomPdfScVoucherGenerator::class);
+       $this->app->bind(KardexRepositoryInterface::class, EloquenKardexRepository::class);
     }
 
     /**
@@ -263,6 +267,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
     }
 }

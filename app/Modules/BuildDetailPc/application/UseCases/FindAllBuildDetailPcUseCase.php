@@ -1,5 +1,5 @@
 <?php
-namespace App\Modules\BuildDetailPc\application\UseCases;
+namespace App\Modules\BuildDetailPc\Application\UseCases;
 
 use App\Modules\BuildDetailPc\Domain\Interface\BuildDetailPcRepositoryInterface;
 

@@ -84,25 +84,26 @@ class EloquentCustomer extends Model
         $addresses = $addressUseCase->execute($eloquentCustomer->id);
 
         return new Customer(
-            id: $eloquentCustomer->id,
-            record_type_id: $eloquentCustomer->record_type_id,
-            record_type_name: $eloquentCustomer->recordType?->name,
-            customer_document_type_id: $eloquentCustomer->customer_document_type_id,
-            customer_document_type_name: $eloquentCustomer->customerDocumentType->description,
-            customer_document_type_abbreviation: $eloquentCustomer->customerDocumentType->abbreviation,
-            document_number: $eloquentCustomer->document_number,
-            company_name: $eloquentCustomer->company_name,
-            name: $eloquentCustomer->name,
-            lastname: $eloquentCustomer->lastname,
-            second_lastname: $eloquentCustomer->second_lastname,
-            customer_type_id: $eloquentCustomer->customer_type_id,
-            customer_type_name: $eloquentCustomer->customerType?->description,
-            contact: $eloquentCustomer->contact,
-            is_withholding_applicable: $eloquentCustomer->is_withholding_applicable,
-            status: $eloquentCustomer->status,
-            phones: $phones,
-            emails: $emails,
-            addresses: $addresses
+            $eloquentCustomer->id,
+            $eloquentCustomer->record_type_id,
+            $eloquentCustomer->recordType?->name,
+            $eloquentCustomer->customer_document_type_id,
+            $eloquentCustomer->customerDocumentType?->description,
+            $eloquentCustomer->customerDocumentType?->abbreviation,
+            $eloquentCustomer->document_number,
+            $eloquentCustomer->company_name,
+            $eloquentCustomer->name,
+            $eloquentCustomer->lastname,
+            $eloquentCustomer->second_lastname,
+            $eloquentCustomer->customer_type_id,
+            $eloquentCustomer->customerType?->description,
+            $eloquentCustomer->contact,
+            $eloquentCustomer->is_withholding_applicable,
+            $eloquentCustomer->status,
+            $eloquentCustomer->st_assigned ?? 0,
+            $phones,
+            $emails,
+            $addresses
         );
     }
 }

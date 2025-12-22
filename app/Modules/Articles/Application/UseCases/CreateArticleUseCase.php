@@ -122,7 +122,7 @@ readonly class CreateArticleUseCase
             state_modify_article: $articleDTO->state_modify_article,
             filtNameEsp: $articleDTO->filtNameEsp,
             statusEsp: $articleDTO->statusEsp,
-            is_combo: $articleDTO->is_combo,
+            url_supplier: $articleDTO->url_supplier,
 
 
         );

@@ -2,14 +2,14 @@
 
 namespace App\Modules\BuildPc\Infrastructure\Controllers;
 
-use App\Modules\BuildDetailPc\application\DTOS\BuildDetailPcdto;
-use App\Modules\BuildDetailPc\application\UseCases\CreateBuildDetailPcUseCase;
+use App\Modules\BuildDetailPc\Application\DTOS\BuildDetailPcdto;
+use App\Modules\BuildDetailPc\Application\UseCases\CreateBuildDetailPcUseCase;
 use App\Modules\BuildDetailPc\Domain\Interface\BuildDetailPcRepositoryInterface;
 use App\Modules\BuildDetailPc\Infrastructure\Resource\BuildDetailPcResource;
 use App\Modules\BuildPc\Application\DTOS\BuildPcDTO;
 use App\Modules\BuildPc\Application\UseCases\CreateBuildPcUseCase;
 use App\Modules\BuildPc\Application\UseCases\FindAllBuildPcUseCase;
-use App\Modules\BuildPc\application\UseCases\FindByIdBuildPcUseCase;
+use App\Modules\BuildPc\Application\UseCases\FindByIdBuildPcUseCase;
 use App\Modules\BuildPc\Application\UseCases\UpdateBuildPcUseCase;
 use App\Modules\BuildPc\Domain\Interface\BuildPcRepositoryInterface;
 use App\Modules\BuildPc\Infrastructure\Request\CreateBuildPcRequest;

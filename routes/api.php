@@ -55,6 +55,7 @@ use App\Modules\Detraction\Infrastructure\Controller\DetractionController;
 use App\Modules\DispatchArticleSerial\Infrastructure\Controllers\DispatchArticleSerialController;
 use App\Modules\DispatchNotes\Infrastructure\Controllers\TransferOrderController;
 use App\Modules\EntryItemSerial\Infrastructure\Controllers\EntryItemSerialController;
+use App\Modules\Kardex\Infrastructure\Controllers\KardexController;
 use App\Modules\Serie\Infrastructure\Controllers\SerieController;
 use App\Modules\UserAssignment\Infrastructure\Controllers\UserAssignmentController;
 use App\Modules\TransactionLog\Infrastructure\Controllers\TransactionLogController;
@@ -394,8 +395,13 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/paymentMethodSunat', [PaymentMethoddSunatController::class, 'store']);
     Route::put('/paymentMethodSunat/{id}', [PaymentMethoddSunatController::class, 'update']);
     Route::get('/paymentMethodSunat/{id}', [PaymentMethoddSunatController::class, 'show']);
-
-
+   //kardex
+    Route::get('/kardex', [KardexController::class, 'index']);
+     Route::post('/kardex', [KardexController::class, 'store']);
+      Route::put('/kardex/{id}', [KardexController::class, 'update']);
+      Route::get('/kardex/{id}', [KardexController::class, 'show']);
+      Route::post('/kardex/by-product', [KardexController::class, 'getKardexByProduct']);
+      Route::post('/kardex/excel', [KardexController::class, 'generateExcel']);
     //SCvaucher
     Route::get('/sc-voucher', [ScVoucherController::class, 'index']);
     Route::post('/sc-voucher', [ScVoucherController::class, 'store']);

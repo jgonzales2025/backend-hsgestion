@@ -52,7 +52,7 @@ class EloquentArticle extends Model
         'filt_NameEsp',
         'status_Esp',
         'state_modify_article',
-        'is_combo'
+        'url_supplier'
     ];
     protected $hidden = ['created_at', 'updated_at'];
 

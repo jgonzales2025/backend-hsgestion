@@ -52,6 +52,7 @@ return new class extends Migration
             $table->boolean('status_Esp')->default(false);
 
             $table->boolean('is_combo')->default(false);
+            $table->string('url_supplier')->nullable();
             
             $table->timestamp('date_at')->useCurrent();
             $table->timestamps();

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\DispatchNotes\application\UseCases;
+namespace App\Modules\DispatchNotes\Application\UseCases;
 
 use App\Modules\Branch\Application\UseCases\FindByIdBranchUseCase;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
@@ -8,7 +8,7 @@ use App\Modules\Company\Application\UseCases\FindByIdCompanyUseCase;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
-use App\Modules\DispatchNotes\application\DTOS\DispatchNoteDTO;
+use App\Modules\DispatchNotes\Application\DTOs\DispatchNoteDTO;
 use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DocumentType\Application\UseCases\FindByIdDocumentTypeUseCase;
@@ -20,7 +20,7 @@ use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterfa
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\TransportCompany\Application\UseCases\FindByIdTransportCompanyUseCase;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
- 
+
 class CreateDispatchNoteUseCase
 {
   public function __construct(
@@ -38,17 +38,17 @@ class CreateDispatchNoteUseCase
 
   public function execute(DispatchNoteDTO $data): DispatchNote
   {
-         $lastDocumentNumber = $this->dispatchNoteRepository->getLastDocumentNumber();
+    $lastDocumentNumber = $this->dispatchNoteRepository->getLastDocumentNumber();
 
-        if ($lastDocumentNumber === null) {
-            $documentNumber = '00001';
-        } else {
-            $nextNumber = intval($lastDocumentNumber) + 1;
-            $documentNumber = str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
-        }
+    if ($lastDocumentNumber === null) {
+      $documentNumber = '00001';
+    } else {
+      $nextNumber = intval($lastDocumentNumber) + 1;
+      $documentNumber = str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+    }
 
     $data->correlativo = $documentNumber;
- 
+
     $companyUseCase = new FindByIdCompanyUseCase($this->companyRepositoryInterface);
     $company = $companyUseCase->execute($data->cia_id);
 
@@ -57,15 +57,15 @@ class CreateDispatchNoteUseCase
 
     $emissionReasonUseCase = new FindByIdEmissionReasonUseCase($this->emissionReasonRepositoryInterface);
     $emissionReason = $emissionReasonUseCase->execute($data->emission_reason_id);
-    
-    if ($data->destination_branch_id !=null) {
+
+    if ($data->destination_branch_id != null) {
 
       $destinationUseCase = new FindByIdBranchUseCase($this->branchRepository);
-     $destination = $destinationUseCase->execute($data->destination_branch_id);
-    }else{
-     $destination = null;
+      $destination = $destinationUseCase->execute($data->destination_branch_id);
+    } else {
+      $destination = null;
     }
-    
+
     $driverUseCase = new FindByIdDriverUseCase($this->driverRepositoryInterface);
     $driver = $driverUseCase->execute($data->cod_conductor);
 
@@ -75,21 +75,21 @@ class CreateDispatchNoteUseCase
 
     $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepositoryInterface);
     $referenceDocumentType = $documentTypeUseCase->execute($data->reference_document_type_id);
-    if ($data->supplier_id !=null) {
-    
+    if ($data->supplier_id != null) {
+
       $supplierUseCase = new FindByIdCustomerUseCase($this->customerRepositoryInterface);
       $supplier = $supplierUseCase->execute($data->supplier_id);
-    }else{
+    } else {
       $supplier = null;
     }
-        if ($data->address_supplier_id !=null) {
-    
+    if ($data->address_supplier_id != null) {
+
       $supplierUseCase = new FindByIdCustomerUseCase($this->customerRepositoryInterface);
       $supplierAddress = $supplierUseCase->execute($data->address_supplier_id);
-    }else{
+    } else {
       $supplierAddress = null;
     }
-    
+
 
 
     $dispatchNote = new DispatchNote(

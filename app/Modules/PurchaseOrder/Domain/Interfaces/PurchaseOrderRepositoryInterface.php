@@ -7,7 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 interface PurchaseOrderRepositoryInterface
 {
-    public function findAll(string $role, array $branches, int $companyId): LengthAwarePaginator;
+    public function findAll(string $role, array $branches, int $companyId, ?string $description, ?int $status): LengthAwarePaginator;
     public function save(PurchaseOrder $purchaseOrder): ?PurchaseOrder;
     public function getLastDocumentNumber(string $serie): ?string;
     public function findById(int $id): ?PurchaseOrder;

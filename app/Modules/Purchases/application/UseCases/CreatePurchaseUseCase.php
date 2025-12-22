@@ -33,7 +33,7 @@ class CreatePurchaseUseCase
 
     ) {}
 
-    public function execute(PurchaseDTO $purchaseDTO): ?Purchase
+    public function execute(PurchaseDTO $purchaseDTO)
     {
         $lastDocumentNumber = $this->purchaseRepository->getLastDocumentNumber($purchaseDTO->company_id, $purchaseDTO->branch_id, $purchaseDTO->serie);
 

@@ -4,6 +4,7 @@
 use App\Http\Controllers\MenuController;
 use App\Modules\Articles\Infrastructure\Controllers\ArticleController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SaleSunatController;
 use App\Modules\Advance\Infrastructure\Controllers\AdvanceController;
 use App\Modules\Auth\Infrastructure\Controllers\AuthController;
 use App\Modules\Bank\Infrastructure\Controllers\BankController;
@@ -154,7 +155,7 @@ Route::post('sub-categories', [SubCategoryController::class, 'store']);
 Route::get('sub-categories/{id}', [SubCategoryController::class, 'show']);
 Route::put('sub-categories/{id}', [SubCategoryController::class, 'update']);
 Route::put('sub-categories-status/{id}', [SubCategoryController::class, 'updateStatus']);
-Route::get('sub-categories-infinite', [SubCategoryController::class, 'indexPaginateInfinite']);
+Route::get('sub-categories-infinite/{id}', [SubCategoryController::class, 'indexPaginateInfinite']);
 
 // TransportCompanies - Empresa de transportes
 Route::get('transport-companies', [TransportCompanyController::class, 'index']);
@@ -173,6 +174,7 @@ Route::put('percentage-igv/{id}', [PercentageIGVController::class, 'update']);
 
 // MeasurementUnits - Unidades de medida
 Route::get('measurement-units', [MeasurementUnitController::class, 'index']);
+Route::get('measurement-units-infinite', [MeasurementUnitController::class, 'indexPaginateInfinite']);
 Route::post('measurement-units', [MeasurementUnitController::class, 'store']);
 Route::get('measurement-units/{id}', [MeasurementUnitController::class, 'show']);
 Route::put('measurement-units/{id}', [MeasurementUnitController::class, 'update']);
@@ -483,6 +485,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/statistics/article-id-sold/{id}', [StatisticsController::class, 'getArticleIdSold']);
     Route::get('/statistics/article-id-purchase/{id}', [StatisticsController::class, 'getArticleIdPurchase']);
     Route::get('/statistics/article-id-purchase/{id}/export', [StatisticsController::class, 'exportArticleIdPurchase']);
+
+    // Ruta para envío sunat de venta
+    Route::post('/sale-sunat-send/{id}', [SaleSunatController::class, 'store']);
 
 });
 

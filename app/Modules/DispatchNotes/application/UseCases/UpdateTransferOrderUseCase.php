@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Modules\DispatchNotes\application\UseCases;
+namespace App\Modules\DispatchNotes\Application\UseCases;
 
 use App\Modules\Branch\Application\UseCases\FindByIdBranchUseCase;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
-use App\Modules\DispatchNotes\application\DTOS\UpdateTransferOrderDTO;
+use App\Modules\DispatchNotes\Application\DTOs\UpdateTransferOrderDTO;
 use App\Modules\DispatchNotes\Domain\Entities\TransferOrder;
 use App\Modules\DispatchNotes\Domain\Interfaces\TransferOrderRepositoryInterface;
 use App\Modules\EmissionReason\Application\UseCases\FindByIdEmissionReasonUseCase;
@@ -29,7 +29,7 @@ class UpdateTransferOrderUseCase
 
         $destinationBranchUseCase = new FindByIdBranchUseCase($this->branchRepository);
         $destinationBranch = $destinationBranchUseCase->execute($updateTransferOrderDTO->destination_branch_id);
-        
+
         $transferOrder = new TransferOrder(
             id: $id,
             company: null,
@@ -40,7 +40,7 @@ class UpdateTransferOrderUseCase
             destination_branch: $destinationBranch,
             observations: $updateTransferOrderDTO->observations
         );
-        
+
         $this->transferOrderRepository->update($id, $transferOrder);
     }
 }

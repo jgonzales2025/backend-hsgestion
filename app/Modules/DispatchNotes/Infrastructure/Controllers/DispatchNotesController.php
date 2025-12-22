@@ -22,13 +22,13 @@ use App\Modules\DispatchArticleSerial\Application\DTOs\DispatchArticleSerialDTO;
 use App\Modules\DispatchArticleSerial\Application\UseCases\CreateDispatchArticleSerialUseCase;
 use App\Modules\DispatchArticleSerial\Application\UseCases\UpdateStatusSerialEntryUseCase;
 use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface;
-use App\Modules\DispatchNotes\application\DTOS\DispatchNoteDTO;
-use App\Modules\DispatchNotes\application\UseCases\CreateDispatchNoteUseCase;
+use App\Modules\DispatchNotes\Application\DTOs\DispatchNoteDTO;
+use App\Modules\DispatchNotes\Application\UseCases\CreateDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindAllDispatchNotesUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindByDocumentSale;
 use App\Modules\DispatchNotes\Application\UseCases\FindByIdDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\GenerateDispatchNotePdfUseCase;
-use App\Modules\DispatchNotes\application\UseCases\UpdateDispatchNoteUseCase;
+use App\Modules\DispatchNotes\Application\UseCases\UpdateDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\UpdateStatusDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\UpdateStatusDispatchUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
@@ -47,6 +47,7 @@ use App\Modules\User\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class DispatchNotesController extends Controller
@@ -105,85 +106,88 @@ class DispatchNotesController extends Controller
 
     public function store(RequestStore $store): JsonResponse
     {
-        // Solo verificar duplicados si tanto doc_referencia como num_referencia están presentes
-        if (!empty($store->validated()['doc_referencia']) && !empty($store->validated()['num_referencia'])) {
-            $dispatchUseCase = new FindByDocumentSale($this->dispatchNoteRepository);
-            $dispatchNote = $dispatchUseCase->execute($store->validated()['doc_referencia'], $store->validated()['num_referencia']);
+        return DB::transaction(function () use ($store) {
+            // Solo verificar duplicados si tanto doc_referencia como num_referencia están presentes
+            if (!empty($store->validated()['doc_referencia']) && !empty($store->validated()['num_referencia'])) {
+                $dispatchUseCase = new FindByDocumentSale($this->dispatchNoteRepository);
+                $dispatchNote = $dispatchUseCase->execute($store->validated()['doc_referencia'], $store->validated()['num_referencia']);
 
-            if ($dispatchNote) {
-                return response()->json([
-                    'message' => 'Esta venta ya tiene una guía de remisión asignada.'
-                ], 400);
-            }
-        }
-
-        $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
-        $dispatchNoteUseCase = new CreateDispatchNoteUseCase(
-            $this->dispatchNoteRepository,
-            $this->companyRepositoryInterface,
-            $this->branchRepository,
-            $this->serieRepositoryInterface,
-            $this->emissionReasonRepositoryInterface,
-            $this->transportCompany,
-            $this->documentTypeRepositoryInterface,
-            $this->driverRepositoryInterface,
-            $this->customerRepositoryInterface,
-        );
-
-
-
-        $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO);
-
-        $status = $dispatchNotes->getEmissionReason()->getId() == 1 ? 0 : 2;
-        $createDispatchArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
-        $dispatchArticles = array_map(function ($article) use ($dispatchNotes, $createDispatchArticleUseCase, $status) {
-            $dispatchArticleDTO = new DispatchArticleDTO([
-                'dispatch_id' => $dispatchNotes->getId(),
-                'article_id' => $article['article_id'],
-                'quantity' => $article['quantity'],
-                'weight' => $article['weight'],
-                'saldo' => $article['saldo'],
-                'name' => $article['name'],
-                'subtotal_weight' => $article['subtotal_weight']
-            ]);
-
-            $dispatchArticle = $createDispatchArticleUseCase->execute($dispatchArticleDTO);
-
-            // Array para almacenar los seriales
-            $serials = [];
-
-            if (!empty($article['serials'])) {
-                foreach ($article['serials'] as $serial) {
-                    $dispatchArticleSerialDTO = new DispatchArticleSerialDTO([
-                        'dispatch_note_id' => $dispatchNotes->getId(),
-                        'article_id' => $dispatchArticle->getArticleID(),
-                        'serial' => $serial,
-                        'emission_reasons_id' => $dispatchNotes->getEmissionReason()->getId(),
-                        'status' => $status,
-                        'origin_branch' => $dispatchNotes->getBranch(),
-                        'destination_branch' => $dispatchNotes->getDestinationBranch(),
-                    ]);
-                    $dispatchArticleSerialUseCase = new CreateDispatchArticleSerialUseCase($this->dispatchArticleSerialRepository, $this->articleRepository, $this->branchRepository, $this->dispatchNoteRepository);
-                    $dispatchArticleSerial = $dispatchArticleSerialUseCase->execute($dispatchArticleSerialDTO);
-                    $serials[] = $dispatchArticleSerial;
+                if ($dispatchNote) {
+                    return response()->json([
+                        'message' => 'Esta venta ya tiene una guía de remisión asignada.'
+                    ], 400);
                 }
             }
 
-            //Agregar los seriales al objeto dispatchArticle
-            $dispatchArticle->serials = $serials;
+            $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
+            $dispatchNoteUseCase = new CreateDispatchNoteUseCase(
+                $this->dispatchNoteRepository,
+                $this->companyRepositoryInterface,
+                $this->branchRepository,
+                $this->serieRepositoryInterface,
+                $this->emissionReasonRepositoryInterface,
+                $this->transportCompany,
+                $this->documentTypeRepositoryInterface,
+                $this->driverRepositoryInterface,
+                $this->customerRepositoryInterface,
+            );
 
-            return $dispatchArticle;
-        }, array: $store->validated()['dispatch_articles']);
 
-        $this->logTransaction($store, $dispatchNotes);
 
-        return response()->json(
-            [
-                'dispatchNote' => (new DispatchNoteResource($dispatchNotes))->resolve(),
-                'articles' => DispatchArticleResource::collection($dispatchArticles)->resolve()
-            ],
-            201
-        );
+            $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO);
+
+            $status = $dispatchNotes->getEmissionReason()->getId() == 1 ? 0 : 2;
+            $createDispatchArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
+            $dispatchArticles = array_map(function ($article) use ($dispatchNotes, $createDispatchArticleUseCase, $status) {
+                $dispatchArticleDTO = new DispatchArticleDTO([
+                    'dispatch_id' => $dispatchNotes->getId(),
+                    'article_id' => $article['article_id'],
+                    'quantity' => $article['quantity'],
+                    'weight' => $article['weight'],
+                    'saldo' => $article['saldo'],
+                    'name' => $article['name'],
+                    'subtotal_weight' => $article['subtotal_weight']
+                ]);
+
+                $dispatchArticle = $createDispatchArticleUseCase->execute($dispatchArticleDTO);
+
+                // Array para almacenar los seriales
+                $serials = [];
+
+                if (!empty($article['serials'])) {
+                    foreach ($article['serials'] as $serial) {
+                        $dispatchArticleSerialDTO = new DispatchArticleSerialDTO([
+                            'dispatch_note_id' => $dispatchNotes->getId(),
+                            'article_id' => $dispatchArticle->getArticleID(),
+                            'serial' => $serial,
+                            'emission_reasons_id' => $dispatchNotes->getEmissionReason()->getId(),
+                            'status' => $status,
+                            'origin_branch' => $dispatchNotes->getBranch(),
+                            'destination_branch' => $dispatchNotes->getDestinationBranch(),
+                        ]);
+                        $dispatchArticleSerialUseCase = new CreateDispatchArticleSerialUseCase($this->dispatchArticleSerialRepository, $this->articleRepository, $this->branchRepository, $this->dispatchNoteRepository);
+                        $dispatchArticleSerial = $dispatchArticleSerialUseCase->execute($dispatchArticleSerialDTO);
+                        $serials[] = $dispatchArticleSerial;
+                    }
+                }
+
+                //Agregar los seriales al objeto dispatchArticle
+                $dispatchArticle->serials = $serials;
+
+                return $dispatchArticle;
+            }, array: $store->validated()['dispatch_articles']);
+
+            $this->logTransaction($store, $dispatchNotes);
+
+            return response()->json(
+                [
+                    'dispatchNote' => (new DispatchNoteResource($dispatchNotes))->resolve(),
+                    'articles' => DispatchArticleResource::collection($dispatchArticles)->resolve()
+                ],
+                201
+            );
+        });
+        
     }
     public function generate(int $id)
     {
@@ -230,49 +234,52 @@ class DispatchNotesController extends Controller
 
     public function update(RequestUpdate $store, $id): JsonResponse
     {
-        if ($store->validated()['emission_reason_id'] == 1) {
-            return response()->json(['message' => 'No se puede modificar una nota de despacho emitida con motivo de venta.'], 400);
-        }
+        return DB::transaction(function () use ($store, $id) {
+            if ($store->validated()['emission_reason_id'] == 1) {
+                return response()->json(['message' => 'No se puede modificar una nota de despacho emitida con motivo de venta.'], 400);
+            }
 
-        $saleUseCase = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
-        $dispatchNote = $saleUseCase->execute($id);
+            $saleUseCase = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
+            $dispatchNote = $saleUseCase->execute($id);
 
-        if (!$dispatchNote) {
-            return response()->json(['message' => 'Guía de remisión no encontrada'], 404);
-        }
+            if (!$dispatchNote) {
+                return response()->json(['message' => 'Guía de remisión no encontrada'], 404);
+            }
 
-        if ($dispatchNote->getEmissionReason()->getId() == 1) {
-            return response()->json(['message' => 'No se puede modificar una nota de despacho emitida con motivo de venta.'], 400);
-        }
+            if ($dispatchNote->getEmissionReason()->getId() == 1) {
+                return response()->json(['message' => 'No se puede modificar una nota de despacho emitida con motivo de venta.'], 400);
+            }
 
-        $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
-        $dispatchNoteUseCase = new UpdateDispatchNoteUseCase(
-            $this->dispatchNoteRepository,
-            $this->companyRepositoryInterface,
-            $this->branchRepository,
-            $this->serieRepositoryInterface,
-            $this->emissionReasonRepositoryInterface,
-            $this->transportCompany,
-            $this->documentTypeRepositoryInterface,
-            $this->driverRepositoryInterface,
-            $this->customerRepositoryInterface,
-        );
-        $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO, $dispatchNote);
+            $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
+            $dispatchNoteUseCase = new UpdateDispatchNoteUseCase(
+                $this->dispatchNoteRepository,
+                $this->companyRepositoryInterface,
+                $this->branchRepository,
+                $this->serieRepositoryInterface,
+                $this->emissionReasonRepositoryInterface,
+                $this->transportCompany,
+                $this->documentTypeRepositoryInterface,
+                $this->driverRepositoryInterface,
+                $this->customerRepositoryInterface,
+            );
+            $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO, $dispatchNote);
 
 
-        $this->dispatchArticleRepositoryInterface->deleteBySaleId($dispatchNotes->getId());
+            $this->dispatchArticleRepositoryInterface->deleteBySaleId($dispatchNotes->getId());
 
-        $dispatchArticle = $this->createDispatchArticles($dispatchNotes, $store->validated()['dispatch_articles']);
+            $dispatchArticle = $this->createDispatchArticles($dispatchNotes, $store->validated()['dispatch_articles']);
 
-        $this->logTransaction($store, $dispatchNotes);
+            $this->logTransaction($store, $dispatchNotes);
 
-        return response()->json(
-            [
-                'sale' => (new DispatchNoteResource($dispatchNotes))->resolve(),
-                'articles' => DispatchArticleResource::collection($dispatchArticle)->resolve()
-            ],
-            201
-        );
+            return response()->json(
+                [
+                    'sale' => (new DispatchNoteResource($dispatchNotes))->resolve(),
+                    'articles' => DispatchArticleResource::collection($dispatchArticle)->resolve()
+                ],
+                201
+            );
+        });
+        
     }
 
     public function traerProovedores()

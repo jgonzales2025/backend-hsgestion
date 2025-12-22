@@ -10,8 +10,6 @@ class BuildPc
     private string $description;
     private int $user_id;
     private bool $status;
-    private float $min;
-    private float $max;
 
 
     public function __construct(
@@ -21,8 +19,6 @@ class BuildPc
         string $description,
         int $user_id,
         bool $status,
-        float $min,
-        float $max,
     ) {
         $this->id = $id;
         $this->company_id = $company_id;
@@ -30,8 +26,6 @@ class BuildPc
         $this->description = $description;
         $this->user_id = $user_id;
         $this->status = $status;
-        $this->min = $min;
-        $this->max = $max;
     }
 
     public function getId(): int|null
@@ -61,13 +55,5 @@ class BuildPc
     public function getStatus(): bool
     {
         return $this->status;
-    } 
-    public function getMin(): float
-    {
-        return $this->min;
-    }
-    public function getMax(): float
-    {
-        return $this->max;
     }
 }

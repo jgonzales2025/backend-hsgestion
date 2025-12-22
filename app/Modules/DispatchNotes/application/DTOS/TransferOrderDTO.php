@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\DispatchNotes\application\DTOS;
+namespace App\Modules\DispatchNotes\Application\DTOs;
 
 class TransferOrderDTO
 {
@@ -13,11 +13,11 @@ class TransferOrderDTO
 
   public function __construct(array $data)
   {
-        $this->company_id = $data['company_id'];
-        $this->branch_id = $data['branch_id'];
-        $this->serie = $data['serie'];
-        $this->emission_reason_id = $data['emission_reason_id'];
-        $this->destination_branch_id = $data['destination_branch_id'];
-        $this->observations = $data['observations'];
+    $this->company_id = $data['company_id'];
+    $this->branch_id = $data['branch_id'];
+    $this->serie = $data['serie'];
+    $this->emission_reason_id = $data['emission_reason_id'];
+    $this->destination_branch_id = $data['destination_branch_id'];
+    $this->observations = $data['observations'];
   }
 }

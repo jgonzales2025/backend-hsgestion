@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\DispatchNotes\application\UseCases;
+namespace App\Modules\DispatchNotes\Application\UseCases;
 
 use App\Modules\DispatchNotes\Domain\Interfaces\TransferOrderRepositoryInterface;
 

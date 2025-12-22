@@ -167,6 +167,34 @@ class PurchaseController extends Controller
             return $shoppingGuide;
         }, $data);
     }
+    public function createShoppingIncomeGuide($purchase,  $data)
+    {
+        $createGuideUseCase = new CreateShoppingIncomeGuideUseCase($this->shoppingIncomeGuideRepository);
+
+        // Crear relación purchase - entry_guide
+        $detailDTO = new ShoppingIncomeGuideDTO([
+            'purchase_id' => $purchase->getId(),
+            'entry_guide_id' => $data,
+        ]);
+        $shoppingGuide = $createGuideUseCase->execute($detailDTO);
+
+        return $shoppingGuide;
+    }
+
+    private function updateShopping($shooping, array $data): array
+    {
+        $createShooping = new CreateShoppingIncomeGuideUseCase($this->shoppingIncomeGuideRepository);
+
+        return array_map(function ($entryGuideId) use ($shooping, $createShooping) {
+            $shoopingDTO = new ShoppingIncomeGuideDTO([
+                'purchase_id' => $shooping->getId(),
+                'entry_guide_id' => (int) $entryGuideId,
+            ]);
+
+            $result = $createShooping->execute($shoopingDTO);
+            return $result;
+        }, $data);
+    }
 
     public function proovedor(int $id): JsonResponse
     {

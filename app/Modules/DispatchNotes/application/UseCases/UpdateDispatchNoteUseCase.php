@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\DispatchNotes\application\UseCases;
+namespace App\Modules\DispatchNotes\Application\UseCases;
 
 use App\Modules\Branch\Application\UseCases\FindByIdBranchUseCase;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
@@ -8,7 +8,7 @@ use App\Modules\Company\Application\UseCases\FindByIdCompanyUseCase;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
-use App\Modules\DispatchNotes\application\DTOS\DispatchNoteDTO;
+use App\Modules\DispatchNotes\Application\DTOs\DispatchNoteDTO;
 use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DocumentType\Application\UseCases\FindByIdDocumentTypeUseCase;
@@ -40,22 +40,22 @@ class UpdateDispatchNoteUseCase
   {
     $companyUseCase = new FindByIdCompanyUseCase($this->companyRepositoryInterface);
     $company = $companyUseCase->execute($data->cia_id);
-    
+
     $branchUseCase = new FindByIdBranchUseCase($this->branchRepository);
-    $branch = $branchUseCase->execute($data->branch_id) ;
+    $branch = $branchUseCase->execute($data->branch_id);
 
     $emissionReasonUseCase = new FindByIdEmissionReasonUseCase($this->emissionReasonRepositoryInterface);
     $emissionReason = $emissionReasonUseCase->execute($data->emission_reason_id);
 
-       if ($data->destination_branch_id != null) {
-    $destinationUseCase = new FindByIdBranchUseCase($this->branchRepository);
-    $destination = $destinationUseCase->execute($data->destination_branch_id);
-} else {
-    $destination = null;
-}
+    if ($data->destination_branch_id != null) {
+      $destinationUseCase = new FindByIdBranchUseCase($this->branchRepository);
+      $destination = $destinationUseCase->execute($data->destination_branch_id);
+    } else {
+      $destination = null;
+    }
 
 
-$data->destination_branch_id = $destination?->getId();  
+    $data->destination_branch_id = $destination?->getId();
 
     $driverUseCase = new FindByIdDriverUseCase($this->driverRepositoryInterface);
     $driver = $driverUseCase->execute($data->cod_conductor);
@@ -67,18 +67,18 @@ $data->destination_branch_id = $destination?->getId();
     $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepositoryInterface);
     $referenceDocumentType = $documentTypeUseCase->execute($data->reference_document_type_id);
 
-        if ($data->supplier_id !=null) {
-    
+    if ($data->supplier_id != null) {
+
       $supplierUseCase = new FindByIdCustomerUseCase($this->customerRepositoryInterface);
       $supplier = $supplierUseCase->execute($data->supplier_id);
-    }else{
+    } else {
       $supplier = null;
     }
-       if ($data->address_supplier_id !=null) {
-    
+    if ($data->address_supplier_id != null) {
+
       $supplierUseCase = new FindByIdCustomerUseCase($this->customerRepositoryInterface);
       $supplierAddress = $supplierUseCase->execute($data->address_supplier_id);
-    }else{
+    } else {
       $supplierAddress = null;
     }
 

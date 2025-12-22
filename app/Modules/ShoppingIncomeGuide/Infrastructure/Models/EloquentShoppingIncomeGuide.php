@@ -15,8 +15,7 @@ class EloquentShoppingIncomeGuide extends Model{
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
-  
-
+   
     public function toDomain(): ?ShoppingIncomeGuide
     {
         return new ShoppingIncomeGuide(

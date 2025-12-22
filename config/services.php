@@ -39,6 +39,8 @@ return [
         'sunat_api_token' => env('SUNAT_API_TOKEN'),
         'document_api_url' => env('DOCUMENT_API_URL'),
         'exchange_rate_api_url' => env('EXCHANGE_RATE_API_URL'),
+        'sale_sunat_api_token' => env('SALE_SUNAT_API_TOKEN'),
+        'sale_sunat_api_url' => env('SALE_SUNAT_API_URL')
     ]
 
 ];

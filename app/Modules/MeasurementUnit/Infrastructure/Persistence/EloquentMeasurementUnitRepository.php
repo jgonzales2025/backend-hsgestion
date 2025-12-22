@@ -9,6 +9,14 @@ use App\Modules\MeasurementUnit\Infrastructure\Models\EloquentMeasurementUnit;
 class EloquentMeasurementUnitRepository implements MeasurementUnitRepositoryInterface
 {
 
+    public function findAllPaginateInfinite()
+    {
+        return EloquentMeasurementUnit::query()
+            ->where('status', 1)
+            ->orderBy('id', 'asc')
+            ->cursorPaginate(10);
+    }
+
     public function findAll(?string $description, ?int $status)
     {
         $measurementUnits = EloquentMeasurementUnit::query()

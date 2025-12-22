@@ -19,9 +19,7 @@ class UpdateBuildPcUseCase
           name:$data->name,
           description:$data->description,
           user_id:$data->user_id,
-          status:$data->status,
-          min:$data->min,
-          max:$data->max,
+          status:$data->status
       );
 
       return $this->buildPcRepository->update($buildPc);   

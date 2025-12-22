@@ -10,7 +10,7 @@ class SaleCreditNoteResource extends JsonResource
     public function toArray(Request $request): array
     {
         $customer = $this->resource->getCustomer();
-        $isCompany = $customer->getCustomerDocumentTypeId() == 2;
+        $isCompany = $customer->getCustomerDocumentType()->getId() == 2;
         $isNegative = $this->resource->getDocumentType()->getId() == 7;
 
         return [

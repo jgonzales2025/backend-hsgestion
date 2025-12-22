@@ -653,7 +653,7 @@ class SaleController extends Controller
             number_format($sale->getIgv(), 2, '.', ''),
             number_format($sale->getTotal(), 2, '.', ''),
             $sale->getDate(),
-            $sale->getCustomer()->getCustomerDocumentTypeId(),
+            $sale->getCustomer()->getCustomerDocumentType()->getId(),
             $sale->getCustomer()->getDocumentNumber()
         );
 

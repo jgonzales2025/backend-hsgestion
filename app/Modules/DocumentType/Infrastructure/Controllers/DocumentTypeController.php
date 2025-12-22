@@ -5,6 +5,7 @@ namespace App\Modules\DocumentType\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\DocumentType\Application\UseCases\FindAllDocumentTypesUseCase;
 use App\Modules\DocumentType\Application\UseCases\FindAllForDocumentSalesUseCase;
+use App\Modules\DocumentType\Application\UseCases\FindAllForEntryGuidesUseCase;
 use App\Modules\DocumentType\Application\UseCases\FindAllForInvoicesUseCase;
 use App\Modules\DocumentType\Application\UseCases\FindAllForPettyCashUseCase;
 use App\Modules\DocumentType\Application\UseCases\FindAllForPurchasesUseCases;
@@ -87,5 +88,13 @@ class DocumentTypeController extends Controller
             'prev_page_url' => $paginator->previousPageUrl(),
             'per_page' => $paginator->perPage()
         ]);
+    }
+
+    public function indexEntryGuides(): array
+    {
+        $documentTypeUseCase = new FindAllForEntryGuidesUseCase($this->documentTypeRepository);
+        $documentTypes = $documentTypeUseCase->execute();
+
+        return DocumentTypeResource::collection($documentTypes)->resolve();
     }
 }

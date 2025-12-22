@@ -44,7 +44,7 @@ class VisibleArticle
   }
   public function getUser_id(): int|null
   {
-    return $this->company_id;
+    return $this->user_id;
   }
   public function getStatus(): bool
   {

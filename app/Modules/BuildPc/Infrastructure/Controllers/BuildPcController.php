@@ -2,8 +2,8 @@
 
 namespace App\Modules\BuildPc\Infrastructure\Controllers;
 
-use App\Modules\BuildDetailPc\application\DTOS\BuildDetailPcdto;
-use App\Modules\BuildDetailPc\application\UseCases\CreateBuildDetailPcUseCase;
+use App\Modules\BuildDetailPc\Application\DTOS\BuildDetailPcdto;
+use App\Modules\BuildDetailPc\Application\UseCases\CreateBuildDetailPcUseCase;
 use App\Modules\BuildDetailPc\Domain\Interface\BuildDetailPcRepositoryInterface;
 use App\Modules\BuildDetailPc\Infrastructure\Resource\BuildDetailPcResource;
 use App\Modules\BuildPc\Application\DTOS\BuildPcDTO;

@@ -28,9 +28,9 @@ class EloquentDetailPurchaseGuide extends Model
     public function toDomain(): ?DetailPurchaseGuide
     {
         return new DetailPurchaseGuide(
-            id: $this->id,
-            purchase_id: $this->purchase_id,
+           id: $this->id,
             article_id: $this->article_id,
+            purchase_id: $this->purchase_id,
             description: $this->description,
             cantidad: $this->cantidad,
             precio_costo: $this->precio_costo,
@@ -38,7 +38,7 @@ class EloquentDetailPurchaseGuide extends Model
             sub_total: $this->sub_total,
             total: $this->total,
             cantidad_update: $this->cantidad_update,
-            process_status: $this->process_status
+            process_status: $this->process_status,
         );
     }
 }

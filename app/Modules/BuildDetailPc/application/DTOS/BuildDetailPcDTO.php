@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\BuildDetailPc\application\DTOS;
+namespace App\Modules\BuildDetailPc\Application\DTOS;
 
 class BuildDetailPcdto
 {

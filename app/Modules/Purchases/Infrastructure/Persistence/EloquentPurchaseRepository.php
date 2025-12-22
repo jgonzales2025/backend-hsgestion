@@ -112,7 +112,15 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
 
     public function findById(int $id): ?Purchase
     {
-        $eloquentpurchase = EloquentPurchase::with(['paymentType', 'branches', 'customers', 'currencyType', 'documentType'])->find($id);
+        $eloquentpurchase = EloquentPurchase::with([
+            'paymentType',
+            'branches',
+            'customers',
+            'currencyType',
+            'documentType',
+            'detComprasGuiaIngreso',
+            'shoppingIncomeGuide'
+        ])->find($id);
 
         if (!$eloquentpurchase) {
             return null;
@@ -145,19 +153,14 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             reference_serie: $eloquentpurchase->reference_serie,
             reference_correlative: $eloquentpurchase->reference_correlative,
             saldo: $eloquentpurchase->saldo,
-            det_compras_guia_ingreso: $eloquentpurchase->detComprasGuiaIngreso
-                ? $eloquentpurchase->detComprasGuiaIngreso->map(fn($d) => $d->toDomain())->toArray()
-                : [],
-            shopping_Income_Guide: $eloquentpurchase->shoppingIncomeGuide
-                ? $eloquentpurchase->shoppingIncomeGuide->map(fn($d) => $d->toDomain())->toArray()
-                : [],
+            det_compras_guia_ingreso: $eloquentpurchase->detComprasGuiaIngreso->map(fn($d) => $d->toDomain())->all(),
+            shopping_Income_Guide:$eloquentpurchase->shoppingIncomeGuide->map(fn($d) => $d->toDomain())->all(),
         );
     }
-    public function save(Purchase $purchase): ?Purchase
-    {
-
-
-
+    
+public function save(Purchase $purchase): ?Purchase
+{
+    return DB::transaction(function () use ($purchase) {
         $eloquentpurchase = EloquentPurchase::create([
             'company_id' => $purchase->getCompanyId(),
             'branch_id' => $purchase->getBranch()->getId(),
@@ -204,13 +207,24 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
 
         foreach ($purchase->getShoppingIncomeGuide() as $shopping_Income_Guide) {
             EloquentShoppingIncomeGuide::create([
-                'purchase_id' => $eloquentpurchase->id,
-                'entry_guide_id' => $shopping_Income_Guide->entry_guide_id,
+                'purchase_id'   => $eloquentpurchase->id,
+                'entry_guide_id'=> $shopping_Income_Guide->entry_guide_id,
             ]);
         }
 
+        DB::statement('CALL update_entry_guides_from_purchase(?,?,?,?,?)', [
+            $purchase->getCompanyId(),
+            $purchase->getSupplier()?->getId(),
+            $purchase->getTypeDocumentId()?->getId(),
+            $purchase->getReferenceSerie(),
+            $purchase->getReferenceCorrelative(),
+        ]);
+
         return $this->findWithRelations($eloquentpurchase->id);
-    }
+    });
+}
+
+
     public function update(Purchase $purchase): ?Purchase
     {
         $purchaseUpdtate = EloquentPurchase::find($purchase->getId());
@@ -246,43 +260,10 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'company_id' => $purchase->getCompanyId(),
             'saldo' => $purchase->getTotal(),
         ]);
-        return new Purchase(
-            id: $purchaseUpdtate->id,
-            company_id: $purchaseUpdtate->company_id,
-            branch: $purchaseUpdtate->branches->toDomain($purchaseUpdtate->branches),
-            supplier: $purchaseUpdtate->customers->toDomain($purchaseUpdtate->customers),
-            serie: $purchaseUpdtate->serie,
-            correlative: $purchaseUpdtate->correlative,
-            exchange_type: $purchaseUpdtate->exchange_type,
-            payment_type: $purchaseUpdtate->paymentType->toDomain($purchaseUpdtate->paymentType),
-            currency: $purchaseUpdtate->currencyType->toDomain($purchaseUpdtate->currencyType),
-            date: $purchaseUpdtate->date,
-            date_ven: $purchaseUpdtate->date_ven,
-            days: $purchaseUpdtate->days,
-            observation: $purchaseUpdtate->observation,
-            detraccion: $purchaseUpdtate->detraccion,
-            fech_detraccion: $purchaseUpdtate->fech_detraccion,
-            amount_detraccion: $purchaseUpdtate->amount_detraccion,
-            is_detracion: $purchaseUpdtate->is_detracion,
-            subtotal: $purchaseUpdtate->subtotal,
-            total_desc: $purchaseUpdtate->total_desc,
-            inafecto: $purchaseUpdtate->inafecto,
-            igv: $purchaseUpdtate->igv,
-            total: $purchaseUpdtate->total,
-            is_igv: $purchaseUpdtate->is_igv,
-            type_document_id: $purchaseUpdtate->documentType->toDomain($purchaseUpdtate->documentType),
-            reference_serie: $purchaseUpdtate->reference_serie,
-            reference_correlative: $purchaseUpdtate->reference_correlative,
-            saldo: $purchaseUpdtate->saldo,
-            det_compras_guia_ingreso: $purchaseUpdtate->detComprasGuiaIngreso
-                ? $purchaseUpdtate->detComprasGuiaIngreso->map(fn($d) => $d->toDomain())->toArray()
-                : [],
-            shopping_Income_Guide: $purchaseUpdtate->shoppingIncomeGuide
-                ? $purchaseUpdtate->shoppingIncomeGuide->map(fn($d) => $d->toDomain())->toArray()
-                : [],
-        );
 
-        return $this->findWithRelations($purchaseUpdtate->id);
+
+   return $this->findWithRelations($purchaseUpdtate->id);
+
     }
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?Purchase
     {

@@ -397,7 +397,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
 
     public function findAllCombos(?string $name): array
     {
-        $articles = EloquentArticle::where('is_combo', true)
+        $articles = EloquentArticle::where('url_supplier', true)
             ->when($name, function ($query, $name) {
                 return $query->where(function ($q) use ($name) {
                     $q->where('description', 'like', "%{$name}%")
@@ -412,7 +412,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     public function findArticlesByPlacaMadre(?string $description, int $branchId)
     {
         return EloquentArticle::query()
-            //->where('is_combo', true)
+            //->where('url_supplier', true)
             ->where('category_id', 2)
             ->whereHas('visibleArticles', fn($query) =>
                 $query->where('branch_id', $branchId)
@@ -428,7 +428,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     private function mapToArray(Article $article): array
     {
         return [
-            'cod_fab' => $article->getCodFab(),
+            'cod_fab' => $article->getCodFab() ?? (string)$article->getId(),
             'description' => $article->getDescription(),
             'weight' => $article->getWeight(),
             'with_deduction' => $article->getWithDeduction(),
@@ -458,7 +458,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'state_modify_article' => $article->getstateModifyArticle(),
             'filtNameEsp' => $article->getFiltNameEsp(),
             'statusEsp' => $article->getStatusEsp(),
-            'is_combo' => $article->getIsCombo(),
+            'url_supplier' => $article->getIsCombo(),
         ];
     }
     private function buildDomainSale(EloquentArticle $Eloquentarticle, Article $article): Article
@@ -496,7 +496,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             state_modify_article: $Eloquentarticle->state_modify_article,
             filtNameEsp: $Eloquentarticle->filtNameEsp,
             statusEsp: $Eloquentarticle->statusEsp,
-            is_combo: $Eloquentarticle->is_combo,
+            url_supplier: $Eloquentarticle->url_supplier,
         );
     }
     private function mapToDomain(EloquentArticle $article): Article
@@ -534,7 +534,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             state_modify_article: $article->state_modify_article,
             filtNameEsp: $article->filtNameEsp,
             statusEsp: $article->statusEsp,
-            is_combo: $article->is_combo,
+            url_supplier: $article->url_supplier,
         );
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Http\UploadedFile;
 
 class ArticleDTO
 {
-    public string $cod_fab;
+    public ?string $cod_fab;
     public string $description;
     public float $weight;
     public bool $with_deduction;
@@ -37,13 +37,13 @@ class ArticleDTO
 
     public string $filtNameEsp;
     public bool $statusEsp;
-    public bool $is_combo;
+    public string $url_supplier;
 
 
 
     public function __construct(array $data)
     {
-        $this->cod_fab = $data['cod_fab'] ?? '';
+        $this->cod_fab = $data['cod_fab'] ?? null;
         $this->description = $data['description'] ?? '';
         $this->weight = isset($data['weight']) ? (float) $data['weight'] : 0;
         $this->with_deduction = isset($data['with_deduction']) ? filter_var($data['with_deduction'], FILTER_VALIDATE_BOOLEAN) : false;
@@ -73,6 +73,6 @@ class ArticleDTO
         $this->state_modify_article = $data['state_modify_article'] ?? 0;
         $this->filtNameEsp = $data['filtNameEsp'] ?? '';
         $this->statusEsp = isset($data['statusEsp']) ? filter_var($data['statusEsp'], FILTER_VALIDATE_BOOLEAN) : false;
-        $this->is_combo = isset($data['is_combo']) ? filter_var($data['is_combo'], FILTER_VALIDATE_BOOLEAN) : false;
+        $this->url_supplier = isset($data['is_combo']) ? filter_var($data['is_combo'], FILTER_VALIDATE_BOOLEAN) : false;
  }
 }

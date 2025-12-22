@@ -42,7 +42,7 @@ class EloquentVisibleArticleRepository implements VisibleArticleRepositoryInterf
             ->where('company_id', $companyId)
             ->get();
        if($visibleArticles->isEmpty()){
-            return ['message' => 'No se encontraron artículos visibles para este artículo.'];
+            return [];
        }
         return $visibleArticles->map(function ($visible) {
             return new VisibleArticle(

@@ -2,6 +2,8 @@
 
 namespace App\Modules\Purchases\Infrastructure\Resource;
 
+use App\Modules\DetailPurchaseGuides\Infrastructure\Resource\DetailPurchaseGuideResource;
+use App\Modules\ShoppingIncomeGuide\Infrastructure\Resource\ShoppingIncomeGuideResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -57,6 +59,10 @@ class PurchaseResource extends JsonResource
             'reference_correlative' => $this->resource->getReferenceCorrelative(),
             'saldo_soles' => $currencyId == 1 ? $this->resource->getSaldo() : (float)number_format($this->resource->getSaldo() * $this->resource->getExchangeType(), 4),
             'saldo_dolares' => $currencyId == 2 ? $this->resource->getSaldo() : (float)number_format($this->resource->getSaldo() / $this->resource->getExchangeType(), 4),
+           
+            'det_compras_guia_ingreso' =>  DetailPurchaseGuideResource::collection($this->resource->getDetComprasGuiaIngreso()),
+            'shopping_Income_Guide' => ShoppingIncomeGuideResource::collection($this->resource->getShoppingIncomeGuide()),
+
         ];
     }
 }

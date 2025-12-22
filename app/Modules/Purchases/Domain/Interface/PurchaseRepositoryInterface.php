@@ -12,4 +12,5 @@ interface PurchaseRepositoryInterface
     public function update(Purchase $purchase): ?Purchase;
     public function getLastDocumentNumber(int $company_id, int $branch_id, string $serie): ?string;
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?Purchase;
+    public function findWithRelations(int $id): ?Purchase;
 }

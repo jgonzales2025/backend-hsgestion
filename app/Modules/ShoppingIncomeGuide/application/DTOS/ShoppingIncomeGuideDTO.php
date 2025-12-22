@@ -8,7 +8,7 @@ class ShoppingIncomeGuideDTO
     public  $entry_guide_id;
 
     public function __construct(array $array) {
-        $this->purchase_id = $array['purchase_id'];
+        $this->purchase_id = $array['purchase_id'] ?? 1;
         $this->entry_guide_id = $array['entry_guide_id']??null;
     }
 }

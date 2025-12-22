@@ -33,7 +33,7 @@ class CreatePurchaseUseCase
 
     ) {}
 
-    public function execute(PurchaseDTO $purchaseDTO): ?Purchase
+    public function execute(PurchaseDTO $purchaseDTO)
     {
         $lastDocumentNumber = $this->purchaseRepository->getLastDocumentNumber($purchaseDTO->company_id, $purchaseDTO->branch_id, $purchaseDTO->serie);
 
@@ -82,6 +82,8 @@ class CreatePurchaseUseCase
             reference_serie: $purchaseDTO->reference_serie,
             reference_correlative: $purchaseDTO->reference_correlative,
             saldo: $purchaseDTO->total,
+            det_compras_guia_ingreso: $purchaseDTO->det_compras_guia_ingreso,
+            shopping_Income_Guide: $purchaseDTO->shopping_Income_Guide,
         );
         return $this->purchaseRepository->save($puchaseCreate);
     }

@@ -370,12 +370,49 @@ class AuthController extends Controller
             return in_array($menu['label'], $hiddenLabels);
         })->values();
 
+        // Accesos Directos
+        $potentialShortcuts = [
+            [
+                'label' => 'Ventas',
+                'link' => config('app.frontend_url') . '/mantenimiento/ventas-principal',
+                'icon' => 'DollarSign',
+                'permission' => 'mantenimiento.vista_principal_ventas'
+            ],
+            [
+                'label' => 'Clientes',
+                'link' => config('app.frontend_url') . '/clientes',
+                'icon' => 'Users',
+                'permission' => 'tablas.clientes'
+            ],
+            [
+                'label' => 'Articulos',
+                'link' => config('app.frontend_url') . '/tablas/articulos',
+                'icon' => 'Package',
+                'permission' => 'tablas.articulos'
+            ],
+            [
+                'label' => 'Series',
+                'link' => config('app.frontend_url') . '/series',
+                'icon' => 'BarChart3',
+                'permission' => 'reportes.reporte_series'
+            ]
+        ];
+
+        $shortcuts = [];
+        foreach ($potentialShortcuts as $shortcut) {
+            if ($eloquentUser->can($shortcut['permission'])) {
+                unset($shortcut['permission']);
+                $shortcuts[] = $shortcut;
+            }
+        }
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => Auth::guard('api')->factory()->getTTL() * 60,
             'user' => new AuthUserResource($user),
-            'menus' => $formattedMenus
+            'menus' => $formattedMenus,
+            'shortcuts' => $shortcuts
         ]);
     }
 

@@ -33,7 +33,7 @@ class Article
     private ?int $status;
     private ?User $user;
     private bool $venta;
-    private ?bool $url_supplier;
+    private ?string $url_supplier;
 
     // Relaciones opcionales
     private ?Brand $brand;
@@ -83,7 +83,7 @@ class Article
         ?string $filtNameEsp,
         ?bool $statusEsp,
         ?int $status = 1,
-        ?bool $url_supplier = false,
+        ?string $url_supplier = '',
 
 
     ) {
@@ -260,7 +260,7 @@ class Article
     {
         return $this->statusEsp;
     }
-    public function getIsCombo(): bool|null
+    public function getIsCombo(): string|null
     {
         return $this->url_supplier;
     }

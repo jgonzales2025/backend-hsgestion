@@ -103,7 +103,7 @@ class StoreArticleRequest extends FormRequest
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
             'filtNameEsp' => 'nullable|string|max:100',
             'statusEsp' => 'nullable|boolean',
-            'url_supplier' => 'nullable|boolean',
+            'url_supplier' => 'nullable|string',
         ];
     }
 }

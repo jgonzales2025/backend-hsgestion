@@ -17,6 +17,7 @@ class UpdateCompanyRequest extends FormRequest
             'default_currency_type_id' => 'required|exists:currency_types,id',
             'min_profit' => 'required|numeric',
             'max_profit' => 'required|numeric',
+            'detrac_cta_banco' => 'nullable|string',
         ];
     }
 }

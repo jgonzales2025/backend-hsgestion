@@ -15,7 +15,7 @@ class EloquentCompany extends Model
 {
 
      protected $table = 'companies';
-    protected $fillable = ['ruc', 'company_name', 'address', 'ubigeo', 'start_date', 'default_currency_type_id', 'min_profit', 'max_profit', 'status', 'usuario_sol', 'clave_sol'];
+    protected $fillable = ['ruc', 'company_name', 'address', 'ubigeo', 'start_date', 'default_currency_type_id', 'min_profit', 'max_profit', 'status', 'usuario_sol', 'clave_sol', 'detrac_cta_banco'];
 
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -52,6 +52,7 @@ class EloquentCompany extends Model
             default_currency_type: $eloquentCompany->defaultCurrencyType->toDomain($eloquentCompany->defaultCurrencyType),
             min_profit: $eloquentCompany->min_profit,
             max_profit: $eloquentCompany->max_profit,
+            detrac_cta_banco: $eloquentCompany->detrac_cta_banco
         );
     }
 }

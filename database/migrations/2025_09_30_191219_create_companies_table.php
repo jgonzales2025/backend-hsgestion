@@ -24,6 +24,7 @@ return new class extends Migration
             $table->integer('status')->default(1);
             $table->string('usuario_sol', 100);
             $table->string('clave_sol', 100);
+            $table->string('detrac_cta_banco', 100);
             $table->timestamps();
         });
     }

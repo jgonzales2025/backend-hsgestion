@@ -30,6 +30,7 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
                 default_currency_type:$company->defaultCurrencyType->toDomain($company->defaultCurrencyType),
                 min_profit:$company->min_profit,
                 max_profit:$company->max_profit,
+                detrac_cta_banco:$company->detrac_cta_banco,
             ));
         return $companys;
     }
@@ -51,6 +52,7 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
             default_currency_type:$company->defaultCurrencyType->toDomain($company->defaultCurrencyType),
             min_profit:$company->min_profit,
             max_profit:$company->max_profit,
+            detrac_cta_banco:$company->detrac_cta_banco,
         );
     }
    public function indexByUser(int $userId): array
@@ -76,6 +78,7 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
                 default_currency_type:$company->defaultCurrencyType->toDomain($company->defaultCurrencyType),
                 min_profit:$company->min_profit,
                 max_profit:$company->max_profit,
+                detrac_cta_banco:$company->detrac_cta_banco,
             );
         })->toArray();
     }
@@ -86,6 +89,7 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
             'default_currency_type_id' => $updateCompany->getDefaultCurrencyTypeId(),
             'min_profit' => $updateCompany->getMinProfit(),
             'max_profit' => $updateCompany->getMaxProfit(),
+            'detrac_cta_banco' => $updateCompany->getDetracCtaBanco(),
         ]);
     }
 

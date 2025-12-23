@@ -84,6 +84,8 @@ class ArticleForSalesResource extends JsonResource
                 ? url($this->resource->getImageURL())
                 : '',
             'state_modify_article' => $this->resource->getstateModifyArticle(),
+            'stock_by_branch' => $this->resource->getStockByBranch(),
+            'url_supplier' => $this->resource->getUrlSupplier(),
         ];
 
     }

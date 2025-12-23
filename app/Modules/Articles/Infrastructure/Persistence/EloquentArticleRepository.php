@@ -11,6 +11,7 @@ use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\ExchangeRate\Infrastructure\Models\EloquentExchangeRate;
 use App\Modules\VisibleArticles\Infrastructure\Models\EloquentVisibleArticle;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
 class EloquentArticleRepository implements ArticleRepositoryInterface
 {
@@ -153,7 +154,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     {
         $article = EloquentArticle::with(['measurementUnit', 'brand', 'category', 'currencyType', 'subCategory', 'company'])
             ->find($id);
-            
+
         if (!$article)
             return null;
 
@@ -275,7 +276,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             ->orderByDesc('created_at')
             ->paginate(10);
         // Transform the items in the paginator
-        $articles->getCollection()->transform(function ($article) use ($exchangeRate) {
+        $articles->getCollection()->transform(function ($article) use ($exchangeRate, $companyId) {
             // Función para convertir precios
             $convertToUsd = function ($price) use ($exchangeRate) {
                 if (!$exchangeRate || $exchangeRate->parallel_rate == 0)
@@ -349,8 +350,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 company: $article->company?->toDomain($article->company),
                 image_url: $article->image_url,
                 state_modify_article: $article->state_modify_article,
-
-
+                stock_by_branch: DB::select('CALL sp_stock_por_sucursal(?, ?, ?)', [$companyId, 0, $article->id]),
+                url_supplier: $article->url_supplier,
             );
         });
 
@@ -428,7 +429,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     private function mapToArray(Article $article): array
     {
         return [
-            'cod_fab' => $article->getCodFab() ?? (string)$article->getId(),
+            'cod_fab' => $article->getCodFab() ?? (string) $article->getId(),
             'description' => $article->getDescription(),
             'weight' => $article->getWeight(),
             'with_deduction' => $article->getWithDeduction(),

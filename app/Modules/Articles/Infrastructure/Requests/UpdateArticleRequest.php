@@ -35,7 +35,7 @@ class UpdateArticleRequest extends FormRequest
             'distributor_price' => isset($this->distributor_price) ? (float) $this->distributor_price : 0,
             'authorized_price' => isset($this->authorized_price) ? (float) $this->authorized_price : 0,
             'state_modify_article' => isset($this->state_modify_article) ? (int) $this->state_modify_article : 0,
-            'url_supplier' => isset($this->url_supplier) ? (int) $this->url_supplier : 0,
+            'url_supplier' => isset($this->url_supplier) ? (string) $this->url_supplier : 0,
         ]);
     }
 
@@ -63,7 +63,7 @@ class UpdateArticleRequest extends FormRequest
     {
         return [
             // Campos obligatorios
-            'cod_fab' => 'required|string|max:20',
+            'cod_fab' => 'nullable|string|max:20',
             'description' => 'required|string|max:255',
             'weight' => 'nullable|numeric|min:0',
             'with_deduction' => 'required|boolean',
@@ -93,7 +93,7 @@ class UpdateArticleRequest extends FormRequest
             'distributor_price_percent' => 'nullable|numeric|min:0',
             'authorized_price_percent' => 'nullable|numeric|min:0',
             'image_url' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp',
-            'url_supplier' => 'nullable|boolean',
+            'url_supplier' => 'nullable|string',
             'reference_code' => 'nullable|array',
             'detail_pc_compatible' => 'nullable|array',
         ];

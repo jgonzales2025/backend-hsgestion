@@ -55,6 +55,9 @@ class CreateEntryGuideUseCase{
             reference_po_serie: $entryGuideDTO->reference_po_serie,
             reference_po_correlative: $entryGuideDTO->reference_po_correlative,
             status: null,
+            subtotal: $entryGuideDTO->subtotal,
+            total_descuento: $entryGuideDTO->total_descuento,
+            total: $entryGuideDTO->total,
         );
 
         return $this->entryGuideRepositoryInterface->save($entryGuide);

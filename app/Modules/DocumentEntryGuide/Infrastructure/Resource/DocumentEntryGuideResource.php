@@ -11,10 +11,12 @@ class DocumentEntryGuideResource extends JsonResource
         return [
             'id' => $this->resource->getId(),
             'entry_guide_id' => $this->resource->getEntryGuideId(),
-            'guide_serie_supplier' => $this->resource->getGuideSerieSupplier(),
-            'guide_correlative_supplier' => $this->resource->getGuideCorrelativeSupplier(),
-            'invoice_serie_supplier' => $this->resource->getInvoiceSerieSupplier(),
-            'invoice_correlative_supplier' => $this->resource->getInvoiceCorrelativeSupplier(),
+            'reference_document' => [
+                'id' => $this->resource->getReferenceDocument()->getId(),
+                'name' => $this->resource->getReferenceDocument()->getDescription(),
+            ],
+            'reference_serie' => $this->resource->getReferenceSerie(),
+            'reference_correlative' => $this->resource->getReferenceCorrelative(),
         ];
-    }    
+    }
 }

@@ -2,24 +2,26 @@
 
 namespace App\Modules\DocumentEntryGuide\Domain\Entities;
 
+use App\Modules\DocumentType\Domain\Entities\DocumentType;
+
 class DocumentEntryGuide
 {
     private int $id;
     private int $entry_guide_id;
-    private int $reference_document_id;
+    private ?DocumentType $reference_document;
     private string $reference_serie;
     private string $reference_correlative;
 
     public function __construct(
          int $id,
          int $entry_guide_id,
-         int $reference_document_id,
+         ?DocumentType $reference_document,
          string $reference_serie,
          string $reference_correlative,
     ) {
         $this->id = $id;
         $this->entry_guide_id = $entry_guide_id;
-        $this->reference_document_id = $reference_document_id;
+        $this->reference_document = $reference_document;
         $this->reference_serie = $reference_serie;
         $this->reference_correlative = $reference_correlative;
     }
@@ -31,9 +33,9 @@ class DocumentEntryGuide
     {
         return $this->entry_guide_id;
     }
-    public function getReferenceDocumentId(): int
+    public function getReferenceDocument(): ?DocumentType
     {
-        return $this->reference_document_id;
+        return $this->reference_document;
     }
     public function getReferenceSerie(): string
     {

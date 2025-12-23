@@ -21,6 +21,10 @@ class   EntryGuideArticleResource extends JsonResource
                 fn($itemSerial) => method_exists($itemSerial, 'getSerial') ? $itemSerial->getSerial() : $itemSerial,
                 $this->resource->serials ?? []
             ),
+            'subtotal' => $this->resource->getSubtotal(),
+            'total' => $this->resource->getTotal(),
+            'precio_costo' => $this->resource->getTotalDescuento(),
+            'descuento' => $this->resource->getDescuento(),
         ];
     }
 }

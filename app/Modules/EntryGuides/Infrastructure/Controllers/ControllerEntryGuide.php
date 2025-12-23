@@ -75,17 +75,28 @@ class ControllerEntryGuide extends Controller
         $status = $request->query('status') !== null ? (int) $request->query('status') : null;
 
         $reference_document_id = $request->query('reference_document_id');
+        $reference_serie = $request->query('reference_serie');
+        $reference_correlative = $request->query('reference_correlative');
+
+         $supplier_id = $request->query('supplier_id');
       
 
         $entryGuideUseCase = new FindAllEntryGuideUseCase($this->entryGuideRepositoryInterface);
-        $entryGuides = $entryGuideUseCase->execute($description, $status, $reference_document_id);
+        $entryGuides = $entryGuideUseCase->execute(
+            $description, 
+            $status, 
+            $reference_document_id, 
+            $reference_serie, 
+            $reference_correlative,
+             $supplier_id,
+        );
 
         $result = [];
 
         foreach ($entryGuides as $entryGuide) {
             $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
             $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
-            $documentEntryGuide = $this->documentEntryGuideRepositoryInterface->findById($entryGuide->getId());
+            $documentEntryGuide = $this->documentEntryGuideRepositoryInterface->findByIdObj($entryGuide->getId());
             $detEntryguidePurchaseOrder = $this->detEntryguidePurchaseOrderRepository->findByIdEntryGuide($entryGuide->getId());
 
             $articlesWithSerials = array_map(function ($article) use ($serialsByArticle, $documentEntryGuide, $detEntryguidePurchaseOrder) {
@@ -99,7 +110,7 @@ class ControllerEntryGuide extends Controller
 
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
-            $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
+            $response['document_entry_guide'] =( new DocumentEntryGuideResource($documentEntryGuide))->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
             $response['process_status'] = $this->calculateProcessStatus($articlesWithSerials);
             $result[] = $response;
@@ -160,7 +171,7 @@ class ControllerEntryGuide extends Controller
 
         $entryArticles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
         $serialsByArticle = $this->entryItemSerialRepositoryInterface->findSerialsByEntryGuideId($entryGuide->getId());
-        $documentEntryGuide = $this->documentEntryGuideRepositoryInterface->findById($entryGuide->getId());
+        $documentEntryGuide = $this->documentEntryGuideRepositoryInterface->findByIdObj($entryGuide->getId());
         $detEntryguidePurchaseOrder = $this->detEntryguidePurchaseOrderRepository->findByIdEntryGuide($entryGuide->getId());
 
         $entryArticles = array_map(function ($article) use ($serialsByArticle, $documentEntryGuide, $detEntryguidePurchaseOrder) {
@@ -172,7 +183,7 @@ class ControllerEntryGuide extends Controller
 
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryArticles)->resolve();
-        $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
+        $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve();
         $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
         $response['process_status'] = $this->calculateProcessStatus($entryArticles);
 
@@ -206,7 +217,7 @@ class ControllerEntryGuide extends Controller
 
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
-            $response['document_entry_guide'] = DocumentEntryGuideResource::collection($documentEntryGuide)->resolve();
+            $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
             $response['process_status'] = $this->calculateProcessStatus($entryGuideArticle);
 
@@ -239,11 +250,15 @@ class ControllerEntryGuide extends Controller
 
         $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
         $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
+        $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
+
+
 
         $this->logTransaction($request, $entryGuide);
 
         $response = (new EntryGuideResource($entryGuide))->resolve();
         $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
+        $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve();
         $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
         $response['process_status'] = $this->calculateProcessStatus($entryGuideArticle);
 
@@ -259,6 +274,10 @@ class ControllerEntryGuide extends Controller
                 'article_id' => $q['article_id'],
                 'description' => $q['description'],
                 'quantity' => $q['quantity'],
+                'subtotal' => $q['subtotal'] ?? 0,
+                'total' => $q['total'] ?? 0,
+                'precio_costo' => $q['precio_costo'] ?? 0,
+                'descuento' => $q['descuento'] ?? 0,
             ]);
             $guideArticle = $createEntryGuideArticleUseCase->execute($entryGuideArticleDTO);
 
@@ -291,22 +310,21 @@ class ControllerEntryGuide extends Controller
             return $guideArticle;
         }, $articlesData);
     }
-    private function updateDocumentEntryGuide($shooping, array $data): array
+    private function updateDocumentEntryGuide($shooping, array $data)
     {
-        $createDocumentEntryGuideUseCase = new CreateDocumentEntryGuide($this->documentEntryGuideRepositoryInterface);
-
-        return array_map(function ($data) use ($shooping, $createDocumentEntryGuideUseCase) {
+        $createDocumentEntryGuideUseCase = new CreateDocumentEntryGuide($this->documentEntryGuideRepositoryInterface, $this->documentTypeRepository);
+ 
             $documentEntryGuide = new DocumentEntryGuideDTO([
                 'entry_guide_id' => $shooping->getId(),
  
-                'reference_document_id' => $data['reference_document_id'] ?? 0,
+                'reference_document_id' => $data['reference_document_id'],
                 'reference_serie' => $data['reference_serie'] ?? '',
                 'reference_correlative' => $data['reference_correlative'] ?? '',
             ]);
 
             $result = $createDocumentEntryGuideUseCase->execute($documentEntryGuide);
             return $result;
-        }, $data);
+    
     }
 
     private function calculateProcessStatus(array $articles): string
@@ -381,9 +399,13 @@ class ControllerEntryGuide extends Controller
 
         if (!$isValid) {
             return response()->json(['message' => 'Todos los documentos deben pertenecer al mismo proveedor'], 422);
-        }
-
-        $entryGuides = $this->entryGuideRepositoryInterface->findByIds($ids);
+        } 
+    
+       
+       
+        $entryGuides = $this->entryGuideRepositoryInterface->findByIds($ids); 
+        
+        dd($entryGuides);
 
         $customerHeader = null;
         foreach ($entryGuides as $entryGuide) {
@@ -395,22 +417,27 @@ class ControllerEntryGuide extends Controller
                         ->first()
                         ?->getAddress()
                         ?: 'no hay direccion'
-                    )
-
+                    ),
+                    // 'subtotal' => $entryGuide->getSubtotal() ??0,
+                    // 'total' => $entryGuide->getTotal() ?? 0,
+                    // 'total_descuento' => $entryGuide->getTotalDescuento() ??0,
                 ];
             }
             $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
-
+            
             foreach ($articles as $article) {
                 $key = $article->getArticle()->getId();
-                if (!isset($aggregated[$key])) {
+                if (!isset($aggregated[$key]) ) {
                     $aggregated[$key] = [
                         'article_id' => $key,
                         'description' => $article->getDescription(),
                         'quantity' => $article->getQuantity(),
                         'saldo' => $article->getSaldo(),
                         'cod_fab' => $article->getArticle()->getCodFab(),
-
+                        'subtotal' => $entryGuide->getSubtotal() ??0,
+                        'total' => $entryGuide->getTotal() ?? 0,
+                        'precio_costo' => $article->getTotalDescuento() ,
+                        'descuento' => $article->getDescuento() ?? 0,
                     ];
                 } else {
                     $aggregated[$key]['quantity'] += $article->getQuantity();

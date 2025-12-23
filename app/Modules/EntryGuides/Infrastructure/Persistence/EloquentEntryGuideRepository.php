@@ -12,24 +12,36 @@ use PhpParser\Node\NullableType;
 class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 {
 
-public function findAll(?string $description, ?int $status, ?int $reference_document_id): LengthAwarePaginator
+public function findAll(?string $description, ?int $status, ?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id): LengthAwarePaginator
 {
-    $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])
-        ->when($description, fn($query) =>
-            $query->whereHas('customer', fn($q) =>
-                $q->where('name', 'like', "%{$description}%")
-                  ->orWhere('lastname', 'like', "%{$description}%")
-                  ->orWhere('second_lastname', 'like', "%{$description}%")
-                  ->orWhere('company_name', 'like', "%{$description}%")
-            )
+$query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])
+    ->when($description, fn($query) =>
+        $query->whereHas('customer', fn($q) =>
+            $q->where('name', 'like', "%{$description}%")
+              ->orWhere('lastname', 'like', "%{$description}%")
+              ->orWhere('second_lastname', 'like', "%{$description}%")
+              ->orWhere('company_name', 'like', "%{$description}%")
         )
-        ->when($status !== null, fn($query) => $query->where('status', $status))
-        ->when($reference_document_id !== null, fn($query) =>
-            $query->whereHas('documentEntryGuides', fn($q) =>
-                $q->where('reference_document_id', $reference_document_id)
-            )
-        );
-
+    )
+    ->when($status !== null, fn($query) => $query->where('status', $status))
+    ->when($reference_document_id !== null, fn($query) =>
+        $query->whereHas('documentEntryGuides', fn($q) =>
+            $q->where('reference_document_id', $reference_document_id)
+        )
+    )
+    ->when($reference_serie !== null, fn($query) =>
+        $query->whereHas('documentEntryGuides', fn($q) =>
+            $q->where('reference_serie', $reference_serie)
+        )
+    )
+    ->when($reference_correlative !== null, fn($query) =>
+        $query->whereHas('documentEntryGuides', fn($q) =>
+            $q->where('reference_correlative', $reference_correlative)
+        )
+    ) 
+    ->when($supplier_id !== null, fn($query) =>
+    $query->where('customer_id', $supplier_id)
+    );
     $paginator = $query->orderByDesc('id')->paginate(10);
 
     $paginator->getCollection()->transform(function ($entryGuide) {
@@ -46,6 +58,9 @@ public function findAll(?string $description, ?int $status, ?int $reference_docu
             reference_po_serie: $entryGuide->reference_po_serie,
             reference_po_correlative: $entryGuide->reference_po_correlative,
             status: $entryGuide->status,
+            subtotal: $entryGuide->subtotal,
+            total_descuento: $entryGuide->total_descuento,
+            total: $entryGuide->total,
         );
     });
 
@@ -56,7 +71,7 @@ public function findAll(?string $description, ?int $status, ?int $reference_docu
     public function findByCorrelative(?string $correlativo): ?EntryGuide
     {
 
-        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason']);
+        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason','documentEntryGuides']);
         $query->where('correlative', $correlativo);
         $entryGuide = $query->first();
         if (!$entryGuide) {
@@ -74,7 +89,10 @@ public function findAll(?string $description, ?int $status, ?int $reference_docu
             ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
             reference_po_serie: $entryGuide->reference_serie,
             reference_po_correlative: $entryGuide->reference_correlative,
-            status: $entryGuide->status
+            status: $entryGuide->status,
+            subtotal: $entryGuide->subtotal,
+            total_descuento: $entryGuide->total_descuento,
+            total: $entryGuide->total,
         );
     }
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide
@@ -100,11 +118,15 @@ public function findAll(?string $description, ?int $status, ?int $reference_docu
             ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
             reference_po_serie: $entryGuide->reference_po_serie,
             reference_po_correlative: $entryGuide->reference_po_correlative,
-            status: $entryGuide->status
+            status: $entryGuide->status,
+            subtotal: $entryGuide->subtotal,
+            total_descuento: $entryGuide->total_descuento,
+            total: $entryGuide->total,
         );
     }
     public function save(EntryGuide $entryGuide): ?EntryGuide
     {
+        
         $eloquentEntryGuide = EloquentEntryGuide::create([
             'cia_id' => $entryGuide->getCompany()->getId(),
             'branch_id' => $entryGuide->getBranch()->getId(),
@@ -116,6 +138,9 @@ public function findAll(?string $description, ?int $status, ?int $reference_docu
             'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
             'reference_serie' => $entryGuide->getSerie(),
             'reference_correlative' => $entryGuide->getCorrelativo() ,
+            'subtotal' => $entryGuide->getSubtotal(),
+            'total_descuento' => $entryGuide->getTotalDescuento(),
+            'total' => $entryGuide->getTotal(),
         ]);
         $eloquentEntryGuide->refresh();
         return new EntryGuide(
@@ -130,12 +155,15 @@ public function findAll(?string $description, ?int $status, ?int $reference_docu
             ingressReason: $eloquentEntryGuide->ingressReason?->toDomain($eloquentEntryGuide->ingressReason),
             reference_po_serie: $eloquentEntryGuide->reference_serie,
             reference_po_correlative: $eloquentEntryGuide->reference_correlative,
-            status: $eloquentEntryGuide->status
+            status: $eloquentEntryGuide->status,
+            subtotal: $eloquentEntryGuide->subtotal,
+            total_descuento: $eloquentEntryGuide->total_descuento,
+            total: $eloquentEntryGuide->total,
         );
     }
     public function findById(int $id): ?EntryGuide
     {
-        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])->find($id);
+        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason','documentEntryGuides'])->find($id);
 
         if (!$eloquentEntryGuide) {
             return null;
@@ -153,11 +181,14 @@ public function findAll(?string $description, ?int $status, ?int $reference_docu
             reference_po_serie: $eloquentEntryGuide->reference_serie,
             reference_po_correlative: $eloquentEntryGuide->reference_correlative,
             status: $eloquentEntryGuide->status,
+            subtotal: $eloquentEntryGuide->subtotal,
+            total_descuento: $eloquentEntryGuide->total_descuento,
+            total: $eloquentEntryGuide->total,
         );
     }
     public function update(EntryGuide $entryGuide): EntryGuide|null
     {
-        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])->find($entryGuide->getId());
+        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason','documentEntryGuides'])->find($entryGuide->getId());
 
         if (!$eloquentEntryGuide) {
             return null;
@@ -173,6 +204,9 @@ public function findAll(?string $description, ?int $status, ?int $reference_docu
             'reference_serie' => $entryGuide->getSerie(),
             'reference_correlative' => $entryGuide->getCorrelativo(),
             'status' => 1,
+            'subtotal' => $entryGuide->getSubtotal(),
+            'total_descuento' => $entryGuide->getTotalDescuento(),
+            'total' => $entryGuide->getTotal(),
         ]);
 
         return new EntryGuide(
@@ -188,6 +222,9 @@ public function findAll(?string $description, ?int $status, ?int $reference_docu
             reference_po_serie: $eloquentEntryGuide->reference_serie,
             reference_po_correlative: $eloquentEntryGuide->reference_correlative,
             status: $eloquentEntryGuide->status,
+            subtotal: $eloquentEntryGuide->subtotal,
+            total_descuento: $eloquentEntryGuide->total_descuento,
+            total: $eloquentEntryGuide->total,
         );
     }
 
@@ -206,7 +243,7 @@ public function findAll(?string $description, ?int $status, ?int $reference_docu
             return [];
         }
 
-        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])
+        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason','documentEntryGuides'])
             ->whereIn('id', $ids)
             ->orderByDesc('id')
             ->get();
@@ -229,6 +266,9 @@ public function findAll(?string $description, ?int $status, ?int $reference_docu
                 reference_po_serie: $entryGuide->reference_po_serie,
                 reference_po_correlative: $entryGuide->reference_po_correlative,
                 status: 1,
+                subtotal: $entryGuide->subtotal,
+                total_descuento: $entryGuide->total_descuento,
+                total: $entryGuide->total,
             );
         })->toArray();
     }
@@ -238,7 +278,7 @@ public function findAll(?string $description, ?int $status, ?int $reference_docu
         if (empty($ids)) {
             return false;
         }
-
+        
         $distinctCustomers = EloquentEntryGuide::whereIn('id', $ids)
             ->select('customer_id')
             ->distinct()

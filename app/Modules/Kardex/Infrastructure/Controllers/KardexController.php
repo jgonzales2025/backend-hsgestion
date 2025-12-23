@@ -80,8 +80,8 @@ class KardexController extends Controller
     {
       
         $validated = $request->validate([
-            'product_id' => 'required|integer',
-            'company_id' => 'required|integer',
+            'product_id' => 'nullable|integer',
+            'company_id' => 'nullable|integer',
             'branch_id'  => 'required|integer',
             'fecha'      => 'required|date',
             'fecha1'     => 'required|date',
@@ -95,7 +95,7 @@ class KardexController extends Controller
 
     
         $kardex = $this->kardexRepository->getKardexByProductId(
-            productId: (int) $validated['product_id'],
+            productId: (int) $validated['product_id'] ?? 1,
             companyId: (int) $validated['company_id'],
             branchId: (int) $validated['branch_id'],
             fecha: $validated['fecha'],
@@ -112,14 +112,14 @@ class KardexController extends Controller
     public function generateExcel(Request $request)
     {
         $validated = $request->validate([
-            'product_id' => 'required|integer',
-            'company_id' => 'required|integer',
-            'branch_id'  => 'required|integer',
-            'fecha'      => 'required|date',
-            'fecha1'     => 'required|date',
-            'categoria'  => 'required|integer',
+            'product_id' => 'nullable|integer',
+            'company_id' => 'nullable|integer',
+            'branch_id'  => 'nullable|integer',
+            'fecha'      => 'nullable|date',
+            'fecha1'     => 'nullable|date',
+            'categoria'  => 'nullable|integer',
             'marca'      => 'nullable|integer',
-            'consulta'   => 'required|integer',
+            'consulta'   => 'nullable|integer',
         ]);
 
         $companyId = request()->get('company_id');

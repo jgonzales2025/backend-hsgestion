@@ -18,6 +18,10 @@ class EloquentEntryGuideArticleRepository implements EntryGuideArticleRepository
             'description' => $entryGuideArticle->getDescription(),
             'quantity' => $entryGuideArticle->getQuantity(),
             'saldo' => $entryGuideArticle->getQuantity(),
+            'subtotal' => $entryGuideArticle->getSubtotal(),
+            'total' => $entryGuideArticle->getTotal(),
+            'total_descuento' => $entryGuideArticle->getTotalDescuento(),
+            'descuento' => $entryGuideArticle->getDescuento(),
 
         ]);
         return new EntryGuideArticle(
@@ -27,6 +31,10 @@ class EloquentEntryGuideArticleRepository implements EntryGuideArticleRepository
             description: $eloquentEntryGuideArticle->description,
             quantity: $eloquentEntryGuideArticle->quantity,
             saldo: $eloquentEntryGuideArticle->saldo,
+            subtotal: $eloquentEntryGuideArticle->subtotal,
+            total: $eloquentEntryGuideArticle->total,
+            total_descuento: $eloquentEntryGuideArticle->total_descuento,
+            descuento: $eloquentEntryGuideArticle->descuento,
         );
     }
     public function findAll(): array
@@ -43,7 +51,11 @@ class EloquentEntryGuideArticleRepository implements EntryGuideArticleRepository
                 article: $entryGuideArticle->article->toDomain($entryGuideArticle->article),
                 description: $entryGuideArticle->description,
                 quantity: $entryGuideArticle->quantity,
-                saldo: (float) $entryGuideArticle->saldo
+                saldo: $entryGuideArticle->saldo,
+                subtotal: $entryGuideArticle->subtotal,
+                total: $entryGuideArticle->total,
+                total_descuento: $entryGuideArticle->total_descuento,
+                descuento: $entryGuideArticle->descuento,
             );
         })->toArray();
     }

@@ -17,6 +17,9 @@ return new class extends Migration
             $table->foreignId('article_id')->constrained('articles');
             $table->string('description');
             $table->float('quantity');
+            $table->float('subtotal')->default(0.0);
+            $table->float('total')->default(0.0);
+            $table->float('total_descuento')->default(0.0);
             $table->timestamps();
         });
     }

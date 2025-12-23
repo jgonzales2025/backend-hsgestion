@@ -51,7 +51,7 @@ class PurchaseController extends Controller
     {
         $description = $request->query('description');
         $num_doc = $request->query('num_doc');
-        $id_proveedr = $request->query('id_proveedr');
+        $id_proveedr = $request->query('supplier_id');
 
 
         $findAllPurchaseUseCase = new FindAllPurchaseUseCase($this->purchaseRepository);
@@ -179,22 +179,7 @@ class PurchaseController extends Controller
         $shoppingGuide = $createGuideUseCase->execute($detailDTO);
 
         return $shoppingGuide;
-    }
-
-    private function updateShopping($shooping, array $data): array
-    {
-        $createShooping = new CreateShoppingIncomeGuideUseCase($this->shoppingIncomeGuideRepository);
-
-        return array_map(function ($entryGuideId) use ($shooping, $createShooping) {
-            $shoopingDTO = new ShoppingIncomeGuideDTO([
-                'purchase_id' => $shooping->getId(),
-                'entry_guide_id' => (int) $entryGuideId,
-            ]);
-
-            $result = $createShooping->execute($shoopingDTO);
-            return $result;
-        }, $data);
-    }
+    } 
 
     public function proovedor(int $id): JsonResponse
     {

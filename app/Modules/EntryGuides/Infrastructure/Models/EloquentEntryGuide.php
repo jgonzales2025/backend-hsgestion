@@ -31,7 +31,10 @@ class EloquentEntryGuide extends Model
         'ingress_reason_id',
         'reference_serie',
         'reference_correlative',
-        'status'
+        'status',
+        'subtotal',
+        'total_descuento',
+        'total'
     ];
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -57,7 +60,7 @@ class EloquentEntryGuide extends Model
     {
         return $this->belongsTo(EloquentCompany::class, 'cia_id');
     }
-    public function documentEntryGuide(): hasMany
+    public function documentEntryGuides(): hasMany
     {
         return $this->hasMany(EloquentDocumentEntryGuide::class, 'entry_guide_id');
     }
@@ -76,7 +79,10 @@ class EloquentEntryGuide extends Model
             ingressReason: $eloquentEntryGuide->ingressReason->toDomain($eloquentEntryGuide->ingressReason),
             reference_po_serie: $eloquentEntryGuide->reference_serie,
             reference_po_correlative: $eloquentEntryGuide->reference_correlative,
-            status: $eloquentEntryGuide->status
+            status: $eloquentEntryGuide->status,
+            subtotal: $eloquentEntryGuide->subtotal,
+            total_descuento: $eloquentEntryGuide->total_descuento,
+            total: $eloquentEntryGuide->total,
         );
     }
 

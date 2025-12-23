@@ -29,6 +29,10 @@ class CreateEntryGuideArticle
             description: $entryGuideArticleDTO->description,
             quantity: $entryGuideArticleDTO->quantity,
             saldo: $entryGuideArticleDTO->saldo,
+            subtotal: $entryGuideArticleDTO->subtotal,
+            total: $entryGuideArticleDTO->total,
+            total_descuento: $entryGuideArticleDTO->total_descuento,
+            descuento: $entryGuideArticleDTO->descuento,
         );
 
         return $this->entryGuideArticleRepositoryInterface->save($entryGuideArticle);

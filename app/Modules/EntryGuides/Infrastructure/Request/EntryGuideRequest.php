@@ -35,9 +35,10 @@ class EntryGuideRequest extends FormRequest
             'order_purchase_id' => 'nullable|array',
 
 
-            'document_entry_guide'=> 'required|array|min:1',
-            'document_entry_guide.*.guide_serie_supplier' => 'nullable|string',
-            'document_entry_guide.*.guide_correlative_supplier' => 'nullable|string'
+            'document_entry_guide'=> 'required|array',
+            'document_entry_guide.reference_document_id' => 'required|integer|exists:reference_documents,id',
+            'document_entry_guide.reference_serie' => 'nullable|string',
+            'document_entry_guide.reference_correlative' => 'nullable|string'
         ];
     }
 

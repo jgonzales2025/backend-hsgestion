@@ -31,6 +31,10 @@ class UpdateGuideRequest extends FormRequest
             'entry_guide_articles.*.serials.*' => 'required|string|distinct',
             'order_purchase_id' => 'nullable|array',
             // 'order_purchase_id.*.entry_guide_id' => 'required|integer',
+            'document_entry_guide'=> 'required|array',
+            'document_entry_guide.reference_document_id' => 'required|integer|exists:reference_documents,id',
+            'document_entry_guide.reference_serie' => 'nullable|string',
+            'document_entry_guide.reference_correlative' => 'nullable|string'
         ];
     }
 

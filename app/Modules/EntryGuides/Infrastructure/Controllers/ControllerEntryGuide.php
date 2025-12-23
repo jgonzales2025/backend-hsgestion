@@ -74,10 +74,11 @@ class ControllerEntryGuide extends Controller
         $description = $request->query('description');
         $status = $request->query('status') !== null ? (int) $request->query('status') : null;
 
-
+        $reference_document_id = $request->query('reference_document_id');
+      
 
         $entryGuideUseCase = new FindAllEntryGuideUseCase($this->entryGuideRepositoryInterface);
-        $entryGuides = $entryGuideUseCase->execute($description, $status);
+        $entryGuides = $entryGuideUseCase->execute($description, $status, $reference_document_id);
 
         $result = [];
 
@@ -297,10 +298,10 @@ class ControllerEntryGuide extends Controller
         return array_map(function ($data) use ($shooping, $createDocumentEntryGuideUseCase) {
             $documentEntryGuide = new DocumentEntryGuideDTO([
                 'entry_guide_id' => $shooping->getId(),
-                'guide_serie_supplier' => $data['guide_serie_supplier'] ?? '',
-                'guide_correlative_supplier' => $data['guide_correlative_supplier'] ?? '',
-                'invoice_serie_supplier' => $data['invoice_serie_supplier'] ?? '',
-                'invoice_correlative_supplier' => $data['invoice_correlative_supplier'] ?? '',
+ 
+                'reference_document_id' => $data['reference_document_id'] ?? 0,
+                'reference_serie' => $data['reference_serie'] ?? '',
+                'reference_correlative' => $data['reference_correlative'] ?? '',
             ]);
 
             $result = $createDocumentEntryGuideUseCase->execute($documentEntryGuide);

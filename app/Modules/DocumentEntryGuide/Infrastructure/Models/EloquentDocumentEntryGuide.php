@@ -10,10 +10,9 @@ class EloquentDocumentEntryGuide extends Model
 
     protected $fillable = [
         'entry_guide_id',
-        'guide_serie_supplier',
-        'guide_correlative_supplier',
-        'invoice_serie_supplier',
-        'invoice_correlative_supplier',
+        'reference_document_id',
+        'reference_serie',
+        'reference_correlative',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

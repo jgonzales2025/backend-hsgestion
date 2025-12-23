@@ -9,6 +9,8 @@ use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use App\Modules\IngressReason\Infrastructure\Models\EloquentIngressReason;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Modules\DocumentEntryGuide\Infrastructure\Models\EloquentDocumentEntryGuide;
 
 class EloquentEntryGuide extends Model
 {
@@ -54,6 +56,10 @@ class EloquentEntryGuide extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(EloquentCompany::class, 'cia_id');
+    }
+    public function documentEntryGuide(): hasMany
+    {
+        return $this->hasMany(EloquentDocumentEntryGuide::class, 'entry_guide_id');
     }
 
     public function toDomain(EloquentEntryGuide $eloquentEntryGuide): EntryGuide

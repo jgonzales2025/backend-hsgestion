@@ -12,37 +12,46 @@ use PhpParser\Node\NullableType;
 class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 {
 
-    public function findAll(?string $description, ?int $status): LengthAwarePaginator
-    {
-        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])
-            ->when($description, fn($query) => $query->whereHas('customer', fn($query) =>
-            $query->where('name', 'like', "%{$description}%")
-                ->orWhere('lastname', 'like', "%{$description}%")
-                ->orWhere('second_lastname', 'like', "%{$description}%")
-                ->orWhere('company_name', 'like', "%{$description}%")))
-            ->when($status !== null, fn($query) => $query->where('status', $status));
+public function findAll(?string $description, ?int $status, ?int $reference_document_id): LengthAwarePaginator
+{
+    $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])
+        ->when($description, fn($query) =>
+            $query->whereHas('customer', fn($q) =>
+                $q->where('name', 'like', "%{$description}%")
+                  ->orWhere('lastname', 'like', "%{$description}%")
+                  ->orWhere('second_lastname', 'like', "%{$description}%")
+                  ->orWhere('company_name', 'like', "%{$description}%")
+            )
+        )
+        ->when($status !== null, fn($query) => $query->where('status', $status))
+        ->when($reference_document_id !== null, fn($query) =>
+            $query->whereHas('documentEntryGuides', fn($q) =>
+                $q->where('reference_document_id', $reference_document_id)
+            )
+        );
 
-        $paginator = $query->orderByDesc('id')->paginate(10);
+    $paginator = $query->orderByDesc('id')->paginate(10);
 
-        $paginator->getCollection()->transform(function ($entryGuide) {
-            return new EntryGuide(
-                id: $entryGuide->id,
-                cia: $entryGuide->company?->toDomain($entryGuide->company),
-                branch: $entryGuide->branch?->toDomain($entryGuide->branch),
-                serie: $entryGuide->serie,
-                correlative: $entryGuide->correlative,
-                date: $entryGuide->date,
-                customer: $entryGuide->customer?->toDomain($entryGuide->customer),
-                observations: $entryGuide->observations,
-                ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
-                reference_po_serie: $entryGuide->reference_po_serie,
-                reference_po_correlative: $entryGuide->reference_po_correlative,
-                status: $entryGuide->status,
-            );
-        });
+    $paginator->getCollection()->transform(function ($entryGuide) {
+        return new EntryGuide(
+            id: $entryGuide->id,
+            cia: $entryGuide->company?->toDomain($entryGuide->company),
+            branch: $entryGuide->branch?->toDomain($entryGuide->branch),
+            serie: $entryGuide->serie,
+            correlative: $entryGuide->correlative,
+            date: $entryGuide->date,
+            customer: $entryGuide->customer?->toDomain($entryGuide->customer),
+            observations: $entryGuide->observations,
+            ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
+            reference_po_serie: $entryGuide->reference_po_serie,
+            reference_po_correlative: $entryGuide->reference_po_correlative,
+            status: $entryGuide->status,
+        );
+    });
 
-        return $paginator;
-    }
+    return $paginator;
+}
+
 
     public function findByCorrelative(?string $correlativo): ?EntryGuide
     {

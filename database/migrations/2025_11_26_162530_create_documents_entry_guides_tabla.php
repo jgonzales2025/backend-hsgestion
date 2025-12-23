@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('documents_entry_guides_tabla', function (Blueprint $table) {
             $table->id();
             $table->foreignId('entry_guide_id')->constrained('entry_guides')->cascadeOnDelete();
-            $table->string('guide_serie_supplier');
-            $table->string('guide_correlative_supplier');
-            $table->string('invoice_serie_supplier');
-            $table->string('invoice_correlative_supplier');
+            $table->foreignId('reference_document_id')->constrained('document_types')->cascadeOnDelete();
+            $table->string('reference_serie', 20)->nullable();
+            $table->string('reference_correlative', 20)->nullable();
 
 
             $table->timestamps();

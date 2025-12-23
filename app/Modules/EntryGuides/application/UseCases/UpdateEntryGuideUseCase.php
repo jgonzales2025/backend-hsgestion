@@ -51,6 +51,9 @@ class UpdateEntryGuideUseCase{
             reference_po_serie: $entryGuideDTO->reference_po_serie ?? null,
             reference_po_correlative: $entryGuideDTO->reference_po_correlative ?? null,
             status: null,
+            subtotal: $entryGuideDTO->subtotal,
+            total_descuento: $entryGuideDTO->total_descuento,
+            total: $entryGuideDTO->total,
         );
         return $this->entryGuideRepositoryInterface->update($entryGuide);
     }

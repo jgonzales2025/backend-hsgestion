@@ -20,6 +20,9 @@ class EntryGuide
     private ?string $reference_po_serie; //opcional purchase order
     private ?string $reference_po_correlative; //opcional purchase order
     private ?bool $status;
+    private float $subtotal;
+    private float $total_descuento;
+    private float $total;
 
     public function __construct(
         ?int $id,
@@ -34,6 +37,9 @@ class EntryGuide
         ?string $reference_po_serie, //opcional purchase order
         ?string $reference_po_correlative, //opcional purchase order
         ?bool $status,
+        float $subtotal,
+        float $total_descuento,
+        float $total,
     ) {
         $this->id = $id;
         $this->cia = $cia;
@@ -47,6 +53,9 @@ class EntryGuide
         $this->reference_po_serie = $reference_po_serie;
         $this->reference_po_correlative = $reference_po_correlative;
         $this->status = $status;
+        $this->subtotal = $subtotal;
+        $this->total_descuento = $total_descuento;
+        $this->total = $total;
 
     }
     public function getId(): int|null
@@ -97,6 +106,18 @@ class EntryGuide
     public function getCustomer(): Customer|null
     {
         return $this->customer;
+    }
+    public function getSubtotal(): float
+    {
+        return $this->subtotal;
+    }
+    public function getTotalDescuento(): float
+    {
+        return $this->total_descuento;
+    }
+    public function getTotal(): float
+    {
+        return $this->total;
     }
 
 }

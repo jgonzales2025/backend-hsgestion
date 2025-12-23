@@ -39,7 +39,11 @@ class EntryGuideResource extends JsonResource
                 'id' => $this->resource->getIngressReason()->getId(),
                 'name' => $this->resource->getIngressReason()->getDescription(),
                 'status' => ($this->resource->getIngressReason()->getStatus()) ? 'Activo' : 'Inactivo',
-            ]
+            ],
+            'subtotal' => $this->resource?->getSubtotal(),
+            'total_descuento' => $this->resource?->getTotalDescuento(),
+            'total' => $this->resource?->getTotal(),
+            
         ];
     }
 }

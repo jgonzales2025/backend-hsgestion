@@ -12,7 +12,7 @@ class EloquentDocumentEntryGuideRepository implements DocumentEntryGuideReposito
     {
         $eloquentCreate = EloquentDocumentEntryGuide::create([
             'entry_guide_id' => $documentEntryGuide->getEntryGuideId(),
-            'reference_document_id' => $documentEntryGuide->getReferenceDocumentId(),
+            'reference_document_id' => $documentEntryGuide->getReferenceDocument()->getId(),
             'reference_serie' => $documentEntryGuide->getReferenceSerie(),
             'reference_correlative' => $documentEntryGuide->getReferenceCorrelative(),
         ]);
@@ -20,7 +20,7 @@ class EloquentDocumentEntryGuideRepository implements DocumentEntryGuideReposito
         return new DocumentEntryGuide(
             id: $eloquentCreate->id,
             entry_guide_id: $eloquentCreate->entry_guide_id,
-            reference_document_id: $eloquentCreate->reference_document_id,
+            reference_document: $eloquentCreate->referenceDocument->toDomain($eloquentCreate->referenceDocument),
             reference_serie: $eloquentCreate->reference_serie,
             reference_correlative: $eloquentCreate->reference_correlative,
         );
@@ -34,7 +34,7 @@ class EloquentDocumentEntryGuideRepository implements DocumentEntryGuideReposito
             return new DocumentEntryGuide(
                 id: $eloquentEntryGuide->id,
                 entry_guide_id: $eloquentEntryGuide->entry_guide_id,
-                reference_document_id: $eloquentEntryGuide->reference_document_id,
+                reference_document: $eloquentEntryGuide->referenceDocument->toDomain($eloquentEntryGuide->referenceDocument),
                 reference_serie: $eloquentEntryGuide->reference_serie,
                 reference_correlative: $eloquentEntryGuide->reference_correlative,
             );
@@ -43,16 +43,33 @@ class EloquentDocumentEntryGuideRepository implements DocumentEntryGuideReposito
 
     public function findAll(): array
     {
-        $eloquentEntryGuides = EloquentDocumentEntryGuide::all();
+        $eloquentEntryGuides = EloquentDocumentEntryGuide::with('referenceDocument')->get();
 
         return $eloquentEntryGuides->map(function ($eloquentEntryGuide) {
             return new DocumentEntryGuide(
                 id: $eloquentEntryGuide->id,
                 entry_guide_id: $eloquentEntryGuide->entry_guide_id,
-                reference_document_id: $eloquentEntryGuide->reference_document_id,
+                reference_document: $eloquentEntryGuide->referenceDocument->toDomain($eloquentEntryGuide->referenceDocument),
                 reference_serie: $eloquentEntryGuide->reference_serie,
                 reference_correlative: $eloquentEntryGuide->reference_correlative,
             );
         })->toArray();
+    }
+
+    public function findByIdObj(int $id): ?DocumentEntryGuide
+    {
+        $eloquentEntryGuide = EloquentDocumentEntryGuide::where('entry_guide_id', $id)->first();
+
+        if (!$eloquentEntryGuide) {
+            return null;
+        }
+
+        return new DocumentEntryGuide(
+            id: $eloquentEntryGuide->id,
+            entry_guide_id: $eloquentEntryGuide->entry_guide_id,
+            reference_document: $eloquentEntryGuide->referenceDocument->toDomain($eloquentEntryGuide->referenceDocument),
+            reference_serie: $eloquentEntryGuide->reference_serie,
+            reference_correlative: $eloquentEntryGuide->reference_correlative,
+        );
     }
 }

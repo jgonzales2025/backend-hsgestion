@@ -23,7 +23,9 @@ return new class extends Migration
             // Datos de referencia (orden de compra)
             $table->string('reference_serie', 20)->nullable();
             $table->string('reference_correlative', 20)->nullable();
-
+            $table->decimal('subtotal', 10, 2)->default(0.00);
+            $table->decimal('total_descuento', 10, 2)->default(0.00);
+            $table->decimal('total', 10, 2)->default(0.00);
             // Estado
             $table->boolean('status')->default(true);
 

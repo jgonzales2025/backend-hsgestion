@@ -14,6 +14,11 @@ class EntryGuideDTO
     public $ingress_reason_id;
     public ?string $reference_po_serie;
     public ?string $reference_po_correlative;
+    public  float $subtotal;
+    public float $total_descuento;
+    public float $total;
+
+
 
     public function __construct($array){
         $this->cia_id = $array['company_id'];
@@ -26,6 +31,8 @@ class EntryGuideDTO
         $this->ingress_reason_id = $array['ingress_reason_id'];
         $this->reference_po_serie = $array['reference_po_serie'] ?? null;
         $this->reference_po_correlative = $array['reference_po_correlative'] ?? null;
-
+        $this->subtotal = $array['subtotal'];
+        $this->total_descuento = $array['total_descuento'];
+        $this->total = $array['total'];
     }
 }

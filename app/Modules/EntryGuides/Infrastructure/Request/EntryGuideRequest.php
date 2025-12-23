@@ -26,17 +26,24 @@ class EntryGuideRequest extends FormRequest
             'ingress_reason_id' => 'required|integer|exists:ingress_reasons,id',
             'reference_po_serie' => 'string',
             'reference_po_correlative' => 'string',
+            'subtotal' => 'nullable|numeric',
+            'total_descuento' => 'nullable|numeric',
+            'total' => 'nullable|numeric',
             'entry_guide_articles'=> 'required|array|min:1',
             'entry_guide_articles.*.article_id' => 'required|integer|exists:articles,id',
             'entry_guide_articles.*.description' => 'required|string',
             'entry_guide_articles.*.quantity' => 'required|numeric',
             'entry_guide_articles.*.serials' => 'nullable|array',
             'entry_guide_articles.*.serials.*' => 'required|string|distinct',
+            'entry_guide_articles.*.subtotal' => 'nullable|numeric',
+            'entry_guide_articles.*.total' => 'nullable|numeric',
+            'entry_guide_articles.*.precio_costo' => 'nullable|numeric',
+            'entry_guide_articles.*.descuento' => 'nullable|numeric',
             'order_purchase_id' => 'nullable|array',
 
 
             'document_entry_guide'=> 'required|array',
-            'document_entry_guide.reference_document_id' => 'required|integer|exists:reference_documents,id',
+            'document_entry_guide.reference_document_id' => 'required|integer|exists:document_types,id',
             'document_entry_guide.reference_serie' => 'nullable|string',
             'document_entry_guide.reference_correlative' => 'nullable|string'
         ];

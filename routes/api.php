@@ -70,200 +70,7 @@ use App\Modules\Statistics\Infrastructure\Controllers\StatisticsController;
 use App\Modules\PaymentMethodsSunat\Infrastructure\Controllers\PaymentMethodSunatController;
 
 Route::post('/login', [AuthController::class, 'login']);
-
-Route::get('/roles', [RoleController::class, 'index']);
-Route::get('/roles-paginate-infinite', [RoleController::class, 'indexPaginateInfinite']);
-Route::get('/roles/{id}', [RoleController::class, 'show']);
-Route::get('/permissions', [RoleController::class, 'indexPermissions']);
-Route::post('/roles', [RoleController::class, 'store']);
-Route::put('/roles/{id}', [RoleController::class, 'update']);
-
-Route::get('/usernames', [UserController::class, 'findAllUserName']);
-
-
-//recordType
-Route::get('/recordType', [RecordTypeController::class, 'index']);
-
-
-
-//branches
-Route::get('/branches', [BranchController::class, 'index']);
-Route::get('/branches/{id}', [BranchController::class, 'show']);
-Route::put('/branches/{id}', [BranchController::class, 'update']);
-Route::get('/branchesID/{id}', [BranchController::class, 'showId']);
-
-//company
-Route::get('/companies', [CompanyController::class, 'index']);
-Route::get('/companies/{id}', [CompanyController::class, 'show']);
-Route::get('/companies-user', [CompanyController::class, 'indexByUser']);
-Route::put('/companies/{id}', [CompanyController::class, 'update']);
-
-
-Route::get('/menus', [MenuController::class, 'index']);
-
-// User routes devuelvelo como estaba protegido
-Route::get('/users', [UserController::class, 'findAllUsers']);
-Route::get('/users/{id}', [UserController::class, 'show']);
 Route::get('/users-name/{userName}', [UserController::class, 'FindByUserName']);
-Route::post('/users', [UserController::class, 'store']);
-Route::put('/users/{id}', [UserController::class, 'update']);
-Route::put('/users/status-login/{id}', [UserController::class, 'updateStLogin']);
-Route::get('/users-vendedor', [UserController::class, 'findAllUsersByVendedor']);
-Route::put('/users-status/{id}', [UserController::class, 'updateStatus']);
-
-// TIPOS DE DOCUMENTOS (DNI, RUC, ETC)
-Route::get('driver-document-types', [CustomerDocumentTypeController::class, 'indexForDrivers']);
-
-//reference code
-Route::get('referenceCode', [ReferenceCodeController::class, 'index']);
-Route::get('referenceCode/{id}', [ReferenceCodeController::class, 'show']);
-Route::put('referenceCode/{id}', [ReferenceCodeController::class, 'update']);
-Route::get('referenceCodeId/{id}', [ReferenceCodeController::class, 'indexid']);
-Route::post('referenceCode-save/{id}', [ReferenceCodeController::class, 'store']);
-
-
-// Marcas
-Route::get('brands', [BrandController::class, 'index']);
-Route::get('brands-paginate-infinite', [BrandController::class, 'indexPaginateInfinite']);
-Route::post('brands', [BrandController::class, 'store']);
-Route::get('brands/{id}', [BrandController::class, 'show']);
-Route::put('brands/{id}', [BrandController::class, 'update']);
-Route::put('brands-status/{id}', [BrandController::class, 'updateStatus']);
-
-// Drivers - conductores
-Route::get('drivers', [DriverController::class, 'index']);
-Route::post('drivers', [DriverController::class, 'store']);
-Route::get('drivers/{id}', [DriverController::class, 'show']);
-Route::put('drivers/{id}', [DriverController::class, 'update']);
-Route::post('drivers-sunatApi', [DriverController::class, 'storeCustomerBySunatApi']);
-Route::put('drivers-status/{id}', [DriverController::class, 'updateStatus']);
-
-
-// Categories - categorias
-Route::get('categories-infinite', [CategoryController::class, 'indexPaginateInfinite']);
-Route::get('categories', [CategoryController::class, 'indexPaginate']);
-Route::post('categories', [CategoryController::class, 'store']);
-Route::get('categories/{id}', [CategoryController::class, 'show']);
-Route::put('categories/{id}', [CategoryController::class, 'update']);
-Route::put('categories-status/{id}', [CategoryController::class, 'updateStatus']);
-
-
-// SubCategories - subcategorias
-Route::get('sub-categories', [SubCategoryController::class, 'index']);
-Route::get('sub-categories/category/{id}', [SubCategoryController::class, 'findByCategoryId']);
-Route::post('sub-categories', [SubCategoryController::class, 'store']);
-Route::get('sub-categories/{id}', [SubCategoryController::class, 'show']);
-Route::put('sub-categories/{id}', [SubCategoryController::class, 'update']);
-Route::put('sub-categories-status/{id}', [SubCategoryController::class, 'updateStatus']);
-Route::get('sub-categories-infinite/{id}', [SubCategoryController::class, 'indexPaginateInfinite']);
-
-// TransportCompanies - Empresa de transportes
-Route::get('transport-companies', [TransportCompanyController::class, 'index']);
-Route::post('transport-companies', [TransportCompanyController::class, 'store']);
-Route::get('transport-companies/{id}', [TransportCompanyController::class, 'show']);
-Route::put('transport-companies/{id}', [TransportCompanyController::class, 'update']);
-Route::post('transport-companies-sunat', [TransportCompanyController::class, 'storeCustomerBySunatApi']);
-Route::put('transport-companies-status/{id}', [TransportCompanyController::class, 'updateStatus']);
-
-// PercentageIGV - Porcentaje de IGV
-Route::get('percentage-igv', [PercentageIGVController::class, 'index']);
-Route::get('percentage-igv-current', [PercentageIGVController::class, 'findPercentageCurrent']);
-Route::post('percentage-igv', [PercentageIGVController::class, 'store']);
-Route::get('percentage-igv/{id}', [PercentageIGVController::class, 'show']);
-Route::put('percentage-igv/{id}', [PercentageIGVController::class, 'update']);
-
-// MeasurementUnits - Unidades de medida
-Route::get('measurement-units', [MeasurementUnitController::class, 'index']);
-Route::get('measurement-units-infinite', [MeasurementUnitController::class, 'indexPaginateInfinite']);
-Route::post('measurement-units', [MeasurementUnitController::class, 'store']);
-Route::get('measurement-units/{id}', [MeasurementUnitController::class, 'show']);
-Route::put('measurement-units/{id}', [MeasurementUnitController::class, 'update']);
-Route::put('measurement-units-status/{id}', [MeasurementUnitController::class, 'updateStatus']);
-
-// Customer types - Tipos de clientes
-Route::get('customer-types', [CustomerTypeController::class, 'index']);
-
-//customer
-Route::get('customer-document-types', [CustomerDocumentTypeController::class, 'index']);
-
-//dispatchArticle
-Route::get('dispatch-Article', [DispatchArticleController::class, 'index']);
-Route::get('dispatch-Article/{id}', [DispatchArticleController::class, 'show']);
-
-
-// Customers - Clientes
-Route::get('customers', [CustomerController::class, 'index']);
-Route::get('customers/unassigned', [CustomerController::class, 'findAllUnassigned']);
-Route::get('customers/{id}', [CustomerController::class, 'show']);
-Route::put('customers/{id}', [CustomerController::class, 'update']);
-Route::put('customers-status/{id}', [CustomerController::class, 'updateStatus']);
-Route::get('customers-suppliers', [CustomerController::class, 'findAllSuppliers']);
-
-// Customer phones - Telefonos de clientes
-Route::get('customer-phones', [CustomerPhoneController::class, 'index']);
-
-// UBIGEO
-Route::get('departments', [DepartmentController::class, 'index']);
-Route::get('provinces/{id}', [ProvinceController::class, 'index']);
-Route::get('districts/{coddep}/{codpro}', [DistrictController::class, 'index']);
-
-//PaymentType
-Route::get('paymentType', [PaymentTypeController::class, 'index']);
-Route::get('paymentType/{id}', [PaymentTypeController::class, 'show']);
-
-//currencyType
-Route::get('currency-type', [CurrencyTypeController::class, 'index']);
-
-
-// Exchange Rates - Tipo de cambio
-Route::get('exchange-rates', [ExchangeRateController::class, 'index']);
-Route::get('exchange-rates/current', [ExchangeRateController::class, 'current']);
-Route::get('exchange-rates/{id}', [ExchangeRateController::class, 'show']);
-Route::put('exchange-rates/{id}', [ExchangeRateController::class, 'update']);
-
-Route::get('/payment-methods', [PaymentMethodController::class, 'findAllPaymentMethods']);
-
-// Emission Reasons - Motivos de emisión
-Route::get('emission-reasons', [EmissionReasonController::class, 'index']);
-Route::get('reason-transfer-orders', [EmissionReasonController::class, 'indexForTransferOrder']);
-Route::get('emission-reason/{id}', [EmissionReasonController::class, 'show']);
-
-// Ingress Reasons - Motivos de ingreso
-Route::get('ingress-reasons', [IngressReasonController::class, 'index']);
-
-// Tipos de documentos
-Route::get('document-types', [DocumentTypeController::class, 'index']);
-Route::get('document-types/sales', [DocumentTypeController::class, 'indexSales']);
-Route::get('document-types/invoices', [DocumentTypeController::class, 'indexInvoices']);
-Route::get('document-types/petty-cash', [DocumentTypeController::class, 'indexPettyCash']);
-Route::get('document-types/petty-cash-infinite', [DocumentTypeController::class, 'indexPettyCashInfinite']);
-Route::get('document-types/document-sales', [DocumentTypeController::class, 'indexDocumentSales']);
-Route::get('document-types/purchases', [DocumentTypeController::class, 'indexPurchases']);
-Route::get('document-types/entry-guides', [DocumentTypeController::class, 'indexEntryGuides']);
-
-// Banks - Bancos
-Route::get('banks', [BankController::class, 'index']);
-Route::post('banks', [BankController::class, 'store']);
-Route::get('banks/{id}', [BankController::class, 'show']);
-Route::put('banks/{id}', [BankController::class, 'update']);
-Route::put('banks-status/{id}', [BankController::class, 'updateStatus']);
-
-// Digital Wallets - Billeteras digitales
-//Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
-Route::post('digital-wallets', [DigitalWalletController::class, 'store']);
-Route::get('digital-wallets/{id}', [DigitalWalletController::class, 'show']);
-Route::put('digital-wallets/{id}', [DigitalWalletController::class, 'update']);
-Route::put('digital-wallets-status/{id}', [DigitalWalletController::class, 'updateStatus']);
-
-// Customer portfolios - Cartera de clientes
-Route::post('customer-portfolios', [CustomerPortfolioController::class, 'store']);
-Route::put('customer-portfolios', [CustomerPortfolioController::class, 'updateAllCustomersByVendedor']);
-Route::put('customer-portfolios/{id}', [CustomerPortfolioController::class, 'update']);
-
-
-
-// Logs de sesion
-Route::get('logs-login', [LoginAttemptController::class, 'index']);
 
 Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
@@ -273,7 +80,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/visibleArticlelist/{id}', [VisibleArticleController::class, 'visibleBranch']);
 
     //articles
-    Route::get('articles', [ArticleController::class, 'index']);
+    Route::get('articles', [ArticleController::class, 'index'])->middleware('permission:tablas.articulos');
     Route::post('articles-save', [ArticleController::class, 'store']);
     Route::get('articles/{id}', [ArticleController::class, 'show']);
     Route::post('articlesupdate/{id}', [ArticleController::class, 'update']);
@@ -398,13 +205,13 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/paymentMethodSunat', [PaymentMethoddSunatController::class, 'store']);
     Route::put('/paymentMethodSunat/{id}', [PaymentMethoddSunatController::class, 'update']);
     Route::get('/paymentMethodSunat/{id}', [PaymentMethoddSunatController::class, 'show']);
-   //kardex
+    //kardex
     Route::get('/kardex', [KardexController::class, 'index']);
-     Route::post('/kardex', [KardexController::class, 'store']);
-      Route::put('/kardex/{id}', [KardexController::class, 'update']);
-      Route::get('/kardex/{id}', [KardexController::class, 'show']);
-      Route::post('/kardex/by-product', [KardexController::class, 'getKardexByProduct']);
-      Route::post('/kardex/excel', [KardexController::class, 'generateExcel']);
+    Route::post('/kardex', [KardexController::class, 'store']);
+    Route::put('/kardex/{id}', [KardexController::class, 'update']);
+    Route::get('/kardex/{id}', [KardexController::class, 'show']);
+    Route::post('/kardex/by-product', [KardexController::class, 'getKardexByProduct']);
+    Route::post('/kardex/excel', [KardexController::class, 'generateExcel']);
     //SCvaucher
     Route::get('/sc-voucher', [ScVoucherController::class, 'index']);
     Route::post('/sc-voucher', [ScVoucherController::class, 'store']);
@@ -489,6 +296,199 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Ruta para envío sunat de venta
     Route::post('/sale-sunat-send/{id}', [SaleSunatController::class, 'store']);
+    Route::get('/roles', [RoleController::class, 'index']);
+    Route::get('/roles-paginate-infinite', [RoleController::class, 'indexPaginateInfinite']);
+    Route::get('/roles/{id}', [RoleController::class, 'show']);
+    Route::get('/permissions', [RoleController::class, 'indexPermissions']);
+    Route::post('/roles', [RoleController::class, 'store']);
+    Route::put('/roles/{id}', [RoleController::class, 'update']);
+
+    Route::get('/usernames', [UserController::class, 'findAllUserName']);
+
+
+    //recordType
+    Route::get('/recordType', [RecordTypeController::class, 'index']);
+
+
+
+    //branches
+    Route::get('/branches', [BranchController::class, 'index']);
+    Route::get('/branches/{id}', [BranchController::class, 'show']);
+    Route::put('/branches/{id}', [BranchController::class, 'update']);
+    Route::get('/branchesID/{id}', [BranchController::class, 'showId']);
+
+    //company
+    Route::get('/companies', [CompanyController::class, 'index']);
+    Route::get('/companies/{id}', [CompanyController::class, 'show']);
+    Route::get('/companies-user', [CompanyController::class, 'indexByUser']);
+    Route::put('/companies/{id}', [CompanyController::class, 'update']);
+
+
+    Route::get('/menus', [MenuController::class, 'index']);
+
+    // User routes devuelvelo como estaba protegido
+    Route::get('/users', [UserController::class, 'findAllUsers']);
+    Route::get('/users/{id}', [UserController::class, 'show']);
+    
+    Route::post('/users', [UserController::class, 'store']);
+    Route::put('/users/{id}', [UserController::class, 'update']);
+    Route::put('/users/status-login/{id}', [UserController::class, 'updateStLogin']);
+    Route::get('/users-vendedor', [UserController::class, 'findAllUsersByVendedor']);
+    Route::put('/users-status/{id}', [UserController::class, 'updateStatus']);
+
+    // TIPOS DE DOCUMENTOS (DNI, RUC, ETC)
+    Route::get('driver-document-types', [CustomerDocumentTypeController::class, 'indexForDrivers']);
+
+    //reference code
+    Route::get('referenceCode', [ReferenceCodeController::class, 'index']);
+    Route::get('referenceCode/{id}', [ReferenceCodeController::class, 'show']);
+    Route::put('referenceCode/{id}', [ReferenceCodeController::class, 'update']);
+    Route::get('referenceCodeId/{id}', [ReferenceCodeController::class, 'indexid']);
+    Route::post('referenceCode-save/{id}', [ReferenceCodeController::class, 'store']);
+
+
+    // Marcas
+    Route::get('brands', [BrandController::class, 'index']);
+    Route::get('brands-paginate-infinite', [BrandController::class, 'indexPaginateInfinite']);
+    Route::post('brands', [BrandController::class, 'store']);
+    Route::get('brands/{id}', [BrandController::class, 'show']);
+    Route::put('brands/{id}', [BrandController::class, 'update']);
+    Route::put('brands-status/{id}', [BrandController::class, 'updateStatus']);
+
+    // Drivers - conductores
+    Route::get('drivers', [DriverController::class, 'index']);
+    Route::post('drivers', [DriverController::class, 'store']);
+    Route::get('drivers/{id}', [DriverController::class, 'show']);
+    Route::put('drivers/{id}', [DriverController::class, 'update']);
+    Route::post('drivers-sunatApi', [DriverController::class, 'storeCustomerBySunatApi']);
+    Route::put('drivers-status/{id}', [DriverController::class, 'updateStatus']);
+
+
+    // Categories - categorias
+    Route::get('categories-infinite', [CategoryController::class, 'indexPaginateInfinite']);
+    Route::get('categories', [CategoryController::class, 'indexPaginate']);
+    Route::post('categories', [CategoryController::class, 'store']);
+    Route::get('categories/{id}', [CategoryController::class, 'show']);
+    Route::put('categories/{id}', [CategoryController::class, 'update']);
+    Route::put('categories-status/{id}', [CategoryController::class, 'updateStatus']);
+
+
+    // SubCategories - subcategorias
+    Route::get('sub-categories', [SubCategoryController::class, 'index']);
+    Route::get('sub-categories/category/{id}', [SubCategoryController::class, 'findByCategoryId']);
+    Route::post('sub-categories', [SubCategoryController::class, 'store']);
+    Route::get('sub-categories/{id}', [SubCategoryController::class, 'show']);
+    Route::put('sub-categories/{id}', [SubCategoryController::class, 'update']);
+    Route::put('sub-categories-status/{id}', [SubCategoryController::class, 'updateStatus']);
+    Route::get('sub-categories-infinite/{id}', [SubCategoryController::class, 'indexPaginateInfinite']);
+
+    // TransportCompanies - Empresa de transportes
+    Route::get('transport-companies', [TransportCompanyController::class, 'index']);
+    Route::post('transport-companies', [TransportCompanyController::class, 'store']);
+    Route::get('transport-companies/{id}', [TransportCompanyController::class, 'show']);
+    Route::put('transport-companies/{id}', [TransportCompanyController::class, 'update']);
+    Route::post('transport-companies-sunat', [TransportCompanyController::class, 'storeCustomerBySunatApi']);
+    Route::put('transport-companies-status/{id}', [TransportCompanyController::class, 'updateStatus']);
+
+    // PercentageIGV - Porcentaje de IGV
+    Route::get('percentage-igv', [PercentageIGVController::class, 'index']);
+    Route::get('percentage-igv-current', [PercentageIGVController::class, 'findPercentageCurrent']);
+    Route::post('percentage-igv', [PercentageIGVController::class, 'store']);
+    Route::get('percentage-igv/{id}', [PercentageIGVController::class, 'show']);
+    Route::put('percentage-igv/{id}', [PercentageIGVController::class, 'update']);
+
+    // MeasurementUnits - Unidades de medida
+    Route::get('measurement-units', [MeasurementUnitController::class, 'index']);
+    Route::get('measurement-units-infinite', [MeasurementUnitController::class, 'indexPaginateInfinite']);
+    Route::post('measurement-units', [MeasurementUnitController::class, 'store']);
+    Route::get('measurement-units/{id}', [MeasurementUnitController::class, 'show']);
+    Route::put('measurement-units/{id}', [MeasurementUnitController::class, 'update']);
+    Route::put('measurement-units-status/{id}', [MeasurementUnitController::class, 'updateStatus']);
+
+    // Customer types - Tipos de clientes
+    Route::get('customer-types', [CustomerTypeController::class, 'index']);
+
+    //customer
+    Route::get('customer-document-types', [CustomerDocumentTypeController::class, 'index']);
+
+    //dispatchArticle
+    Route::get('dispatch-Article', [DispatchArticleController::class, 'index']);
+    Route::get('dispatch-Article/{id}', [DispatchArticleController::class, 'show']);
+
+
+    // Customers - Clientes
+    Route::get('customers', [CustomerController::class, 'index']);
+    Route::get('customers/unassigned', [CustomerController::class, 'findAllUnassigned']);
+    Route::get('customers/{id}', [CustomerController::class, 'show']);
+    Route::put('customers/{id}', [CustomerController::class, 'update']);
+    Route::put('customers-status/{id}', [CustomerController::class, 'updateStatus']);
+    Route::get('customers-suppliers', [CustomerController::class, 'findAllSuppliers']);
+
+    // Customer phones - Telefonos de clientes
+    Route::get('customer-phones', [CustomerPhoneController::class, 'index']);
+
+    // UBIGEO
+    Route::get('departments', [DepartmentController::class, 'index']);
+    Route::get('provinces/{id}', [ProvinceController::class, 'index']);
+    Route::get('districts/{coddep}/{codpro}', [DistrictController::class, 'index']);
+
+    //PaymentType
+    Route::get('paymentType', [PaymentTypeController::class, 'index']);
+    Route::get('paymentType/{id}', [PaymentTypeController::class, 'show']);
+
+    //currencyType
+    Route::get('currency-type', [CurrencyTypeController::class, 'index']);
+
+
+    // Exchange Rates - Tipo de cambio
+    Route::get('exchange-rates', [ExchangeRateController::class, 'index']);
+    Route::get('exchange-rates/current', [ExchangeRateController::class, 'current']);
+    Route::get('exchange-rates/{id}', [ExchangeRateController::class, 'show']);
+    Route::put('exchange-rates/{id}', [ExchangeRateController::class, 'update']);
+
+    Route::get('/payment-methods', [PaymentMethodController::class, 'findAllPaymentMethods']);
+
+    // Emission Reasons - Motivos de emisión
+    Route::get('emission-reasons', [EmissionReasonController::class, 'index']);
+    Route::get('reason-transfer-orders', [EmissionReasonController::class, 'indexForTransferOrder']);
+    Route::get('emission-reason/{id}', [EmissionReasonController::class, 'show']);
+
+    // Ingress Reasons - Motivos de ingreso
+    Route::get('ingress-reasons', [IngressReasonController::class, 'index']);
+
+    // Tipos de documentos
+    Route::get('document-types', [DocumentTypeController::class, 'index']);
+    Route::get('document-types/sales', [DocumentTypeController::class, 'indexSales']);
+    Route::get('document-types/invoices', [DocumentTypeController::class, 'indexInvoices']);
+    Route::get('document-types/petty-cash', [DocumentTypeController::class, 'indexPettyCash']);
+    Route::get('document-types/petty-cash-infinite', [DocumentTypeController::class, 'indexPettyCashInfinite']);
+    Route::get('document-types/document-sales', [DocumentTypeController::class, 'indexDocumentSales']);
+    Route::get('document-types/purchases', [DocumentTypeController::class, 'indexPurchases']);
+    Route::get('document-types/entry-guides', [DocumentTypeController::class, 'indexEntryGuides']);
+
+    // Banks - Bancos
+    Route::get('banks', [BankController::class, 'index']);
+    Route::post('banks', [BankController::class, 'store']);
+    Route::get('banks/{id}', [BankController::class, 'show']);
+    Route::put('banks/{id}', [BankController::class, 'update']);
+    Route::put('banks-status/{id}', [BankController::class, 'updateStatus']);
+
+    // Digital Wallets - Billeteras digitales
+    //Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
+    Route::post('digital-wallets', [DigitalWalletController::class, 'store']);
+    Route::get('digital-wallets/{id}', [DigitalWalletController::class, 'show']);
+    Route::put('digital-wallets/{id}', [DigitalWalletController::class, 'update']);
+    Route::put('digital-wallets-status/{id}', [DigitalWalletController::class, 'updateStatus']);
+
+    // Customer portfolios - Cartera de clientes
+    Route::post('customer-portfolios', [CustomerPortfolioController::class, 'store']);
+    Route::put('customer-portfolios', [CustomerPortfolioController::class, 'updateAllCustomersByVendedor']);
+    Route::put('customer-portfolios/{id}', [CustomerPortfolioController::class, 'update']);
+
+
+
+    // Logs de sesion
+    Route::get('logs-login', [LoginAttemptController::class, 'index']);
 
 });
 

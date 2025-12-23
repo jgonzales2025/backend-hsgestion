@@ -37,6 +37,8 @@ class ArticleForSale
     private int $status;
     private ?User $user;
     private bool $venta;
+    private array $stock_by_branch;
+    private ?string $url_supplier;
 
     // Relaciones opcionales
     private ?Brand $brand;
@@ -84,8 +86,9 @@ class ArticleForSale
         ?SubCategory $subCategory,
         ?Company $company,
         ?string $image_url,
-        ?int $state_modify_article
-
+        ?int $state_modify_article,
+        array $stock_by_branch = [],
+        ?string $url_supplier = null
 
     ) {
         $this->id = $id;
@@ -124,6 +127,16 @@ class ArticleForSale
         $this->company = $company;
         $this->image_url = $image_url;
         $this->state_modify_article = $state_modify_article;
+        $this->stock_by_branch = $stock_by_branch;
+        $this->url_supplier = $url_supplier;
+    }
+    public function getUrlSupplier(): ?string
+    {
+        return $this->url_supplier;
+    }
+    public function getStockByBranch(): array
+    {
+        return $this->stock_by_branch;
     }
 
     public function getUser(): ?User

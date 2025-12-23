@@ -343,6 +343,11 @@ class CustomerController extends Controller
                 $address = $createCustomerAddressUseCase->execute($customerAddressDTO);
             }
 
+            $userId = request()->get('user_id');
+            $customerPortfolioDTO = new CustomerPortfolioDTO(['customer_ids' => [$customer->getId()], 'user_id' => $userId]);
+            $customerPortfolioUseCase = new CreateCustomerPortfolioUseCase($this->customerPortfolioRepository, $this->customerRepository, $this->userRepository);
+            $customerPorfolio = $customerPortfolioUseCase->execute($customerPortfolioDTO);
+
             return response()->json([
                 'customer' => (new CustomerResource($customer))->resolve(),
                 'address' => $address ? (new CustomerAddressResource($address))->resolve() : null

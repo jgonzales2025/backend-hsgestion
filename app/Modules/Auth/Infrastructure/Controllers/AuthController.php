@@ -165,6 +165,16 @@ class AuthController extends Controller
         ]);
         $loginAttemptUseCase->execute($loginAttemptDTO);
 
+        // Verificar si ya se actualizó el tipo de cambio hoy
+        $today = now()->format('Y-m-d');
+        $exchangeRateExists = \DB::table('exchange_rates')
+            ->where('date', $today)
+            ->exists();
+
+        if (!$exchangeRateExists) {
+            \Illuminate\Support\Facades\Artisan::call('exchange:update');
+        }
+
         return $this->respondWithToken($token, $request->cia_id);
     }
 

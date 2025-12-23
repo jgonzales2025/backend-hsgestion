@@ -13,10 +13,9 @@ class UpdateRequestDocumentEntryGuide extends FormRequest
     public function rules(): array
     {
         return [
-            'guide_serie_supplier' => 'required|string|max:10',
-            'guide_correlative_supplier' => 'required|string|max:10',
-            'invoice_serie_supplier' => 'required|string|max:10',
-            'invoice_correlative_supplier' => 'required|string|max:10',
+            'reference_document_id' => 'required|integer|exists:document_types,id',
+            'reference_serie' => 'nullable|string|max:10',
+            'reference_correlative' => 'nullable|string|max:10',
         ];
     }
 }

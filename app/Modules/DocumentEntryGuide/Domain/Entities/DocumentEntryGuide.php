@@ -6,25 +6,22 @@ class DocumentEntryGuide
 {
     private int $id;
     private int $entry_guide_id;
-    private string $guide_serie_supplier;
-    private string $guide_correlative_supplier;
-    private string $invoice_serie_supplier;
-    private string $invoice_correlative_supplier;
+    private int $reference_document_id;
+    private string $reference_serie;
+    private string $reference_correlative;
 
     public function __construct(
          int $id,
          int $entry_guide_id,
-         string $guide_serie_supplier,
-         string $guide_correlative_supplier,
-         string $invoice_serie_supplier,
-         string $invoice_correlative_supplier,
+         int $reference_document_id,
+         string $reference_serie,
+         string $reference_correlative,
     ) {
         $this->id = $id;
         $this->entry_guide_id = $entry_guide_id;
-        $this->guide_serie_supplier = $guide_serie_supplier;
-        $this->guide_correlative_supplier = $guide_correlative_supplier;
-        $this->invoice_serie_supplier = $invoice_serie_supplier;
-        $this->invoice_correlative_supplier = $invoice_correlative_supplier;
+        $this->reference_document_id = $reference_document_id;
+        $this->reference_serie = $reference_serie;
+        $this->reference_correlative = $reference_correlative;
     }
     public function getId(): int
     {
@@ -34,20 +31,16 @@ class DocumentEntryGuide
     {
         return $this->entry_guide_id;
     }
-    public function getGuideSerieSupplier(): string
+    public function getReferenceDocumentId(): int
     {
-        return $this->guide_serie_supplier;
+        return $this->reference_document_id;
     }
-    public function getGuideCorrelativeSupplier(): string
+    public function getReferenceSerie(): string
     {
-        return $this->guide_correlative_supplier;
+        return $this->reference_serie;
     }
-    public function getInvoiceSerieSupplier(): string
+    public function getReferenceCorrelative(): string
     {
-        return $this->invoice_serie_supplier;
-    }
-    public function getInvoiceCorrelativeSupplier(): string
-    {
-        return $this->invoice_correlative_supplier;
+        return $this->reference_correlative;
     }
 }

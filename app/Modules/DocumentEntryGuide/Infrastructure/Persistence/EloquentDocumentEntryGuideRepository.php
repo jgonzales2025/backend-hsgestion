@@ -12,19 +12,17 @@ class EloquentDocumentEntryGuideRepository implements DocumentEntryGuideReposito
     {
         $eloquentCreate = EloquentDocumentEntryGuide::create([
             'entry_guide_id' => $documentEntryGuide->getEntryGuideId(),
-            'guide_serie_supplier' => $documentEntryGuide->getGuideSerieSupplier(),
-            'guide_correlative_supplier' => $documentEntryGuide->getGuideCorrelativeSupplier(),
-            'invoice_serie_supplier' => $documentEntryGuide->getInvoiceSerieSupplier(),
-            'invoice_correlative_supplier' => $documentEntryGuide->getInvoiceCorrelativeSupplier(),
+            'reference_document_id' => $documentEntryGuide->getReferenceDocumentId(),
+            'reference_serie' => $documentEntryGuide->getReferenceSerie(),
+            'reference_correlative' => $documentEntryGuide->getReferenceCorrelative(),
         ]);
 
         return new DocumentEntryGuide(
             id: $eloquentCreate->id,
             entry_guide_id: $eloquentCreate->entry_guide_id,
-            guide_serie_supplier: $eloquentCreate->guide_serie_supplier,
-            guide_correlative_supplier: $eloquentCreate->guide_correlative_supplier,
-            invoice_serie_supplier: $eloquentCreate->invoice_serie_supplier,
-            invoice_correlative_supplier: $eloquentCreate->invoice_correlative_supplier,
+            reference_document_id: $eloquentCreate->reference_document_id,
+            reference_serie: $eloquentCreate->reference_serie,
+            reference_correlative: $eloquentCreate->reference_correlative,
         );
     }
 
@@ -36,10 +34,9 @@ class EloquentDocumentEntryGuideRepository implements DocumentEntryGuideReposito
             return new DocumentEntryGuide(
                 id: $eloquentEntryGuide->id,
                 entry_guide_id: $eloquentEntryGuide->entry_guide_id,
-                guide_serie_supplier: $eloquentEntryGuide->guide_serie_supplier,
-                guide_correlative_supplier: $eloquentEntryGuide->guide_correlative_supplier,
-                invoice_serie_supplier: $eloquentEntryGuide->invoice_serie_supplier,
-                invoice_correlative_supplier: $eloquentEntryGuide->invoice_correlative_supplier,
+                reference_document_id: $eloquentEntryGuide->reference_document_id,
+                reference_serie: $eloquentEntryGuide->reference_serie,
+                reference_correlative: $eloquentEntryGuide->reference_correlative,
             );
         })->toArray();
     }
@@ -52,10 +49,9 @@ class EloquentDocumentEntryGuideRepository implements DocumentEntryGuideReposito
             return new DocumentEntryGuide(
                 id: $eloquentEntryGuide->id,
                 entry_guide_id: $eloquentEntryGuide->entry_guide_id,
-                guide_serie_supplier: $eloquentEntryGuide->guide_serie_supplier,
-                guide_correlative_supplier: $eloquentEntryGuide->guide_correlative_supplier,
-                invoice_serie_supplier: $eloquentEntryGuide->invoice_serie_supplier,
-                invoice_correlative_supplier: $eloquentEntryGuide->invoice_correlative_supplier,
+                reference_document_id: $eloquentEntryGuide->reference_document_id,
+                reference_serie: $eloquentEntryGuide->reference_serie,
+                reference_correlative: $eloquentEntryGuide->reference_correlative,
             );
         })->toArray();
     }

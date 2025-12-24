@@ -48,7 +48,6 @@ class UserController extends Controller
         $user = $userUseCase->execute($userDTO);
 
         $eloquentUser = EloquentUser::find($user->getId());
-
         // 2. Asignar múltiples roles
         $roleIds = collect($request->user_roles)->pluck('role_id')->toArray();
         $eloquentUser->syncRoles($roleIds);
@@ -57,8 +56,7 @@ class UserController extends Controller
         foreach ($request->user_roles as $userRole) {
             $roleId = $userRole['role_id'];
             $customPermissions = $userRole['custom_permissions'] ?? null;
-
-            if ($customPermissions === null) {
+            if ($customPermissions === []) {
                 // Usar permisos del rol por defecto
                 $role = \App\Models\Role::with('menus')->find($roleId);
                 if ($role && $role->menus) {
@@ -82,7 +80,6 @@ class UserController extends Controller
             }
             // Si custom_permissions es [], no se agregan permisos
         }
-
         // 4. Crear asignaciones
         $assignmentDTO = new UserAssignmentDTO([
             'user_id' => $user->getId(),

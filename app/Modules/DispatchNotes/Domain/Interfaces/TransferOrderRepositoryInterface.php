@@ -12,4 +12,5 @@ interface TransferOrderRepositoryInterface
     public function findById(int $id): ?TransferOrder;
     public function update(int $id, TransferOrder $transferOrder): void;
     public function updateStatusTransferOrder(int $transferOrderId): void;
+    public function findAllConsignations(int $companyId, ?string $description, ?string $startDate, ?string $endDate, ?int $status, ?int $emissionReasonId);
 }

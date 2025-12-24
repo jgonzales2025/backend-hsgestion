@@ -62,7 +62,8 @@ class EloquentSale extends Model
         'total_costo_neto',
         'estado_sunat',
         'fecha_aceptacion',
-        'respuesta_sunat'
+        'respuesta_sunat',
+        'consignation_id'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

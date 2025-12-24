@@ -80,14 +80,16 @@ class BuildPcController
         $buildPcUseCase = new CreateBuildPcUseCase($this->buildPcRepository);
         $buildPc = $buildPcUseCase->execute($buildPcDTO);
 
-        // Crear detalles
-        $details = $this->createDetails($buildPc, $data['details']);
+        if($data['details']){
+            // Crear detalles
+            $details = $this->createDetails($buildPc, $data['details']);
+        }
 
         return response()->json(
             array_merge(
                 (new BuildPcResource($buildPc))->resolve(),
                 [
-                    'details' => BuildDetailPcResource::collection($details)->resolve(),
+                    'details' => BuildDetailPcResource::collection($details)->resolve() ?? [],
                 ]
             ),
             201

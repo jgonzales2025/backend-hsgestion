@@ -49,6 +49,7 @@ class StoreSaleRequest extends FormRequest
             'pordetrac' => 'nullable|numeric',
             'stretencion' => 'nullable|numeric',
             'porretencion' => 'nullable|numeric',
+            'consignation_id' => 'nullable|integer|exists:dispatch_notes,id',
 
             'sale_articles' => 'required|array|min:1',
             'sale_articles.*.article_id' => 'required|integer|exists:articles,id',

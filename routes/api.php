@@ -485,7 +485,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('customer-portfolios', [CustomerPortfolioController::class, 'updateAllCustomersByVendedor']);
     Route::put('customer-portfolios/{id}', [CustomerPortfolioController::class, 'update']);
 
-
+    // Consignaciones
+    Route::get('consignations', [TransferOrderController::class, 'indexConsignations']);
 
     // Logs de sesion
     Route::get('logs-login', [LoginAttemptController::class, 'index']);

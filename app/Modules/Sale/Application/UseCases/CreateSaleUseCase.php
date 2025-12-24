@@ -106,7 +106,8 @@ readonly class CreateSaleUseCase
             stretencion: $saleDTO->stretencion,
             porretencion: $saleDTO->porretencion,
             impretens: $saleDTO->impretens,
-            impretend: $saleDTO->impretend
+            impretend: $saleDTO->impretend,
+            consignation_id: $saleDTO->consignation_id
         );
 
         return $this->saleRepository->save($sale);

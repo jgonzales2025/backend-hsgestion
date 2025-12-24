@@ -3,6 +3,7 @@
 namespace App\Modules\Sale\Infrastructure\Persistence;
 
 use App\Modules\Advance\Infrastructure\Models\EloquentAdvance;
+use App\Modules\DispatchNotes\Infrastructure\Models\EloquentDispatchNote;
 use App\Modules\Sale\Domain\Entities\Sale;
 use App\Modules\Sale\Domain\Entities\SaleCreditNote;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
@@ -50,6 +51,15 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             if ($cot) {
                 $cot->status = 0;
                 $cot->save();
+            }
+        }
+
+        if (!is_null($eloquentSale->consignation_id)) {
+            $dispatchNote = EloquentDispatchNote::where('id', $eloquentSale->consignation_id)->first();
+
+            if ($dispatchNote) {
+                $dispatchNote->status = 1;
+                $dispatchNote->save();
             }
         }
 
@@ -402,7 +412,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'stretencion' => $sale->getStretencion(),
             'porretencion' => $sale->getPorretencion(),
             'impretens' => $sale->getImpretens(),
-            'impretend' => $sale->getImpretend()
+            'impretend' => $sale->getImpretend(),
+            'consignation_id' => $sale->getConsignationId()
         ];
     }
 
@@ -522,7 +533,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             porretencion: $eloquentSale->porretencion,
             impretens: $eloquentSale->impretens,
             impretend: $eloquentSale->impretend,
-            total_costo_neto: $eloquentSale->total_costo_neto
+            total_costo_neto: $eloquentSale->total_costo_neto,
+            consignation_id: $eloquentSale->consignation_id
         );
     }
 
@@ -566,7 +578,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             stretencion: $eloquentSale->stretencion,
             porretencion: $eloquentSale->porretencion,
             impretens: $eloquentSale->impretens,
-            impretend: $eloquentSale->impretend
+            impretend: $eloquentSale->impretend,
+            consignation_id: $eloquentSale->consignation_id
         );
     }
 

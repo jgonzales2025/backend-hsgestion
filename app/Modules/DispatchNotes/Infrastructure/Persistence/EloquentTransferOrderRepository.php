@@ -12,6 +12,60 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
     {
         $eloquentDispatchNotes = EloquentDispatchNote::where('document_type_id', 21)
             ->where('cia_id', $companyId)
+            ->where('emission_reason_id', 26)
+            ->when($description, function ($query) use ($description) {
+                return $query->where(function ($q) use ($description) {
+                    $q->where('correlativo', 'like', '%' . $description . '%')
+                        ->orWhereHas('emission_reason', function ($query) use ($description) {
+                            $query->where('description', 'like', '%' . $description . '%');
+                        })
+                        ->orWhereHas('branch', function ($query) use ($description) {
+                            $query->where('name', 'like', '%' . $description . '%');
+                        })
+                        ->orWhereHas('destination_branch', function ($query) use ($description) {
+                            $query->where('name', 'like', '%' . $description . '%');
+                        });
+                });
+            })
+            ->when($startDate, function ($query) use ($startDate) {
+                $query->where('created_at', '>=', $startDate);
+            })
+            ->when($endDate, function ($query) use ($endDate) {
+                $query->where('created_at', '<=', $endDate);
+            })
+            ->when($status !== null, function ($query) use ($status) {
+                $query->where('status', $status);
+            })
+            ->when($emissionReasonId, function ($query) use ($emissionReasonId) {
+                $query->where('emission_reason_id', $emissionReasonId);
+            })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        $eloquentDispatchNotes->getCollection()->transform(function ($item) {
+            return new TransferOrder(
+                id: $item->id,
+                company: $item->company->toDomain($item->company),
+                branch: $item->branch->toDomain($item->branch),
+                serie: $item->serie,
+                correlative: $item->correlativo,
+                emission_reason: $item->emission_reason->toDomain($item->emission_reason),
+                destination_branch: $item->destination_branch->toDomain($item->destination_branch),
+                observations: $item->observations,
+                status: $item->status,
+                transfer_date: $item->transfer_date,
+                arrival_date: $item->arrival_date,
+            );
+        });
+
+        return $eloquentDispatchNotes;
+    }
+
+    public function findAllConsignations(int $companyId, ?string $description, ?string $startDate, ?string $endDate, ?int $status, ?int $emissionReasonId)
+    {
+        $eloquentDispatchNotes = EloquentDispatchNote::where('document_type_id', 21)
+            ->where('cia_id', $companyId)
+            ->where('emission_reason_id', 27)
             ->when($description, function ($query) use ($description) {
                 return $query->where(function ($q) use ($description) {
                     $q->where('correlativo', 'like', '%' . $description . '%')

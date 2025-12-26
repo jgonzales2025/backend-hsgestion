@@ -7,71 +7,86 @@ use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
 use App\Modules\EntryGuides\Infrastructure\Models\EloquentEntryGuide;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use PhpParser\Node\NullableType;
 
 class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 {
 
-public function findAll(?string $description, ?int $status, ?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id): LengthAwarePaginator
-{
-$query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])
-    ->when($description, fn($query) =>
-        $query->whereHas('customer', fn($q) =>
-            $q->where('name', 'like', "%{$description}%")
-              ->orWhere('lastname', 'like', "%{$description}%")
-              ->orWhere('second_lastname', 'like', "%{$description}%")
-              ->orWhere('company_name', 'like', "%{$description}%")
-        )
-    )
-    ->when($status !== null, fn($query) => $query->where('status', $status))
-    ->when($reference_document_id !== null, fn($query) =>
-        $query->whereHas('documentEntryGuides', fn($q) =>
-            $q->where('reference_document_id', $reference_document_id)
-        )
-    )
-    ->when($reference_serie !== null, fn($query) =>
-        $query->whereHas('documentEntryGuides', fn($q) =>
-            $q->where('reference_serie', $reference_serie)
-        )
-    )
-    ->when($reference_correlative !== null, fn($query) =>
-        $query->whereHas('documentEntryGuides', fn($q) =>
-            $q->where('reference_correlative', $reference_correlative)
-        )
-    ) 
-    ->when($supplier_id !== null, fn($query) =>
-    $query->where('customer_id', $supplier_id)
-    );
-    $paginator = $query->orderByDesc('id')->paginate(10);
+    public function findAll(?string $description, ?int $status, ?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id): LengthAwarePaginator
+    {
+        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])
+            ->when($description,fn($query) =>$query->whereHas('customer',fn($q) =>
 
-    $paginator->getCollection()->transform(function ($entryGuide) {
-        return new EntryGuide(
-            id: $entryGuide->id,
-            cia: $entryGuide->company?->toDomain($entryGuide->company),
-            branch: $entryGuide->branch?->toDomain($entryGuide->branch),
-            serie: $entryGuide->serie,
-            correlative: $entryGuide->correlative,
-            date: $entryGuide->date,
-            customer: $entryGuide->customer?->toDomain($entryGuide->customer),
-            observations: $entryGuide->observations,
-            ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
-            reference_po_serie: $entryGuide->reference_po_serie,
-            reference_po_correlative: $entryGuide->reference_po_correlative,
-            status: $entryGuide->status,
-            subtotal: $entryGuide->subtotal,
-            total_descuento: $entryGuide->total_descuento,
-            total: $entryGuide->total,
-        );
-    });
+                    $q->where('name', 'like', "%{$description}%")
+                        ->orWhere('lastname', 'like', "%{$description}%")
+                        ->orWhere('second_lastname', 'like', "%{$description}%")
+                        ->orWhere('company_name', 'like', "%{$description}%")
+                )
+            )
+            ->when($status !== null, fn($query) => $query->where('status', $status))
+            ->when(
+                $reference_document_id !== null,
+                fn($query) =>
+                $query->whereHas(
+                    'documentEntryGuides',
+                    fn($q) =>
+                    $q->where('reference_document_id', $reference_document_id)
+                )
+            )
+            ->when(
+                $reference_serie !== null,
+                fn($query) =>
+                $query->whereHas(
+                    'documentEntryGuides',
+                    fn($q) =>
+                    $q->where('reference_serie', $reference_serie)
+                )
+            )
+            ->when(
+                $reference_correlative !== null,
+                fn($query) =>
+                $query->whereHas(
+                    'documentEntryGuides',
+                    fn($q) =>
+                    $q->where('reference_correlative', $reference_correlative)
+                )
+            )
+            ->when(
+                $supplier_id !== null,
+                fn($query) =>
+                $query->where('customer_id', $supplier_id)
+            );
+        $paginator = $query->orderByDesc('id')->paginate(10);
 
-    return $paginator;
-}
+        $paginator->getCollection()->transform(function ($entryGuide) {
+            return new EntryGuide(
+                id: $entryGuide->id,
+                cia: $entryGuide->company?->toDomain($entryGuide->company),
+                branch: $entryGuide->branch?->toDomain($entryGuide->branch),
+                serie: $entryGuide->serie,
+                correlative: $entryGuide->correlative,
+                date: $entryGuide->date,
+                customer: $entryGuide->customer?->toDomain($entryGuide->customer),
+                observations: $entryGuide->observations,
+                ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
+                reference_po_serie: $entryGuide->reference_serie,
+                reference_po_correlative: $entryGuide->reference_correlative,
+                status: $entryGuide->status,
+                subtotal: $entryGuide->subtotal,
+                total_descuento: $entryGuide->total_descuento,
+                total: $entryGuide->total,
+            );
+        });
+
+        return $paginator;
+    }
 
 
     public function findByCorrelative(?string $correlativo): ?EntryGuide
     {
 
-        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason','documentEntryGuides']);
+        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides']);
         $query->where('correlative', $correlativo);
         $entryGuide = $query->first();
         if (!$entryGuide) {
@@ -116,8 +131,8 @@ $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'docum
             customer: $entryGuide->customer?->toDomain($entryGuide->customer),
             observations: $entryGuide->observations,
             ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
-            reference_po_serie: $entryGuide->reference_po_serie,
-            reference_po_correlative: $entryGuide->reference_po_correlative,
+            reference_po_serie: $entryGuide->reference_serie,
+            reference_po_correlative: $entryGuide->reference_correlative,
             status: $entryGuide->status,
             subtotal: $entryGuide->subtotal,
             total_descuento: $entryGuide->total_descuento,
@@ -126,7 +141,8 @@ $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'docum
     }
     public function save(EntryGuide $entryGuide): ?EntryGuide
     {
-        
+        return DB::transaction(function () use ($entryGuide) {
+
         $eloquentEntryGuide = EloquentEntryGuide::create([
             'cia_id' => $entryGuide->getCompany()->getId(),
             'branch_id' => $entryGuide->getBranch()->getId(),
@@ -136,12 +152,13 @@ $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'docum
             'customer_id' => $entryGuide->getCustomer()->getId(),
             'observations' => $entryGuide->getObservations(),
             'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
-            'reference_serie' => $entryGuide->getSerie(),
-            'reference_correlative' => $entryGuide->getCorrelativo() ,
+            'reference_serie' => $entryGuide->getReferenceSerie(),
+            'reference_correlative' => $entryGuide->getReferenceCorrelative(),
             'subtotal' => $entryGuide->getSubtotal(),
             'total_descuento' => $entryGuide->getTotalDescuento(),
             'total' => $entryGuide->getTotal(),
         ]);
+
         $eloquentEntryGuide->refresh();
         return new EntryGuide(
             id: $eloquentEntryGuide->id,
@@ -158,12 +175,20 @@ $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'docum
             status: $eloquentEntryGuide->status,
             subtotal: $eloquentEntryGuide->subtotal,
             total_descuento: $eloquentEntryGuide->total_descuento,
-            total: $eloquentEntryGuide->total,
-        );
+            total: $eloquentEntryGuide->total,);
+         } );
+
+         DB::statement('CALL update_entry_guides_from_purchase_order(?,?,?,?)',[
+            $entryGuide->getCompany()->getId(),
+            $entryGuide->getCustomer()->getId(),
+            $entryGuide->getReferenceSerie(),
+            $entryGuide->getReferenceCorrelative(),
+         ]);
     }
+    
     public function findById(int $id): ?EntryGuide
     {
-        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason','documentEntryGuides'])->find($id);
+        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])->find($id);
 
         if (!$eloquentEntryGuide) {
             return null;
@@ -188,7 +213,7 @@ $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'docum
     }
     public function update(EntryGuide $entryGuide): EntryGuide|null
     {
-        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason','documentEntryGuides'])->find($entryGuide->getId());
+        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])->find($entryGuide->getId());
 
         if (!$eloquentEntryGuide) {
             return null;
@@ -201,8 +226,8 @@ $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'docum
             'customer_id' => $entryGuide->getCustomer()->getId(),
             'observations' => $entryGuide->getObservations(),
             'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
-            'reference_serie' => $entryGuide->getSerie(),
-            'reference_correlative' => $entryGuide->getCorrelativo(),
+            'reference_serie' => $entryGuide->getReferenceSerie(),
+            'reference_correlative' => $entryGuide->getReferenceCorrelative(),
             'status' => 1,
             'subtotal' => $entryGuide->getSubtotal(),
             'total_descuento' => $entryGuide->getTotalDescuento(),
@@ -243,7 +268,7 @@ $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'docum
             return [];
         }
 
-        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason','documentEntryGuides'])
+        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])
             ->whereIn('id', $ids)
             ->orderByDesc('id')
             ->get();
@@ -263,8 +288,8 @@ $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'docum
                 customer: $entryGuide->customer?->toDomain($entryGuide->customer),
                 observations: $entryGuide->observations,
                 ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
-                reference_po_serie: $entryGuide->reference_po_serie,
-                reference_po_correlative: $entryGuide->reference_po_correlative,
+                reference_po_serie: $entryGuide->reference_serie,
+                reference_po_correlative: $entryGuide->reference_correlative,
                 status: 1,
                 subtotal: $entryGuide->subtotal,
                 total_descuento: $entryGuide->total_descuento,
@@ -278,7 +303,7 @@ $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'docum
         if (empty($ids)) {
             return false;
         }
-        
+
         $distinctCustomers = EloquentEntryGuide::whereIn('id', $ids)
             ->select('customer_id')
             ->distinct()

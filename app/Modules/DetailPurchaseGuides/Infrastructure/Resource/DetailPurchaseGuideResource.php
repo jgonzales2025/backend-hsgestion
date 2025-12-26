@@ -21,7 +21,7 @@ class DetailPurchaseGuideResource extends JsonResource
             'sub_total' => $this->resource->getSubTotal(),
             'total' => $this->resource->getTotal(),
             'cantidad_update' => $this->resource->getCantidadUpdate(),
-            'process_status' => $this->resource->getProcessStatus(),
+            //  'process_status' => $this->resource->getProcessStatus(),
             // 'SKU' => EloquentArticle::find($this->resource->getArticleId())->getCodFab(),
         ];
     }

@@ -156,28 +156,27 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
                     'correlativo' => $detailDTO->correlativo,
                     'id_purchase' => $detailDTO->id_purchase,
                 ]);
+
+                DB::statement("CALL update_purchase_balance(?, ?, ?, ?, ?)", [
+                    $eloquentScVoucher->cia,
+                    $eloquentScVoucher->codigo,
+                    $detailDTO->tipdoc,
+                    $detailDTO->serie,
+                    $detailDTO->correlativo,
+                ]);
             }
             foreach ($scVoucher->getDetailVoucherpurchase() as $purchaseDTO) {
                 EloquentDetVoucherPurchase::create([
                     'voucher_id' => $eloquentScVoucher->id,
                     'purchase_id' => $purchaseDTO->purchase_id,
                     'amount' => $purchaseDTO->amount,
-                ]);
-            }
-
-            DB::statement("CALL update_purchase_balance(?, ?, ?, ?, ?)", [
-                $scVoucher->getCia(),
-                $scVoucher->getAnopr(),
-                $scVoucher->getCorrelativo(),
-                $scVoucher->getFecha(),
-                $scVoucher->getTotal(),
-            ]);
+                ]); 
+            } 
 
             DB::commit();
 
             return $this->findWithRelations($eloquentScVoucher->id);
-            
-        } catch (\Throwable $th) {
+        } catch (\Throwable $th) { 
 
             DB::rollBack();
             throw $th;

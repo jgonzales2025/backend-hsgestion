@@ -17,7 +17,7 @@ class StoreScVoucherdetRequest extends FormRequest
             'cia' => 'required',
             'codcon' => 'required',
             'tipdoc' => 'required',
-            'numdoc' => 'required',
+            'numdoc' => 'required|string',
             'glosa' => 'required',
             'impsol' => 'required',
             'impdol' => 'required',

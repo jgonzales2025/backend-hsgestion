@@ -327,13 +327,15 @@ class AuthController extends Controller
             : $userMenuPermissions->pluck('menu_id')->toArray();
 
         // Obtener menús
-        $allMenus = \App\Models\Menu::whereIn('id', $userMenuIds)
-            ->orWhereIn('id', function ($query) use ($userMenuIds) {
-                $query->select('parent_id')
-                    ->from('menus')
-                    ->whereIn('id', $userMenuIds)
-                    ->whereNotNull('parent_id');
-            })
+        $allMenus = \App\Models\Menu::where(function ($query) use ($userMenuIds) {
+            $query->whereIn('id', $userMenuIds)
+                ->orWhereIn('id', function ($subQuery) use ($userMenuIds) {
+                    $subQuery->select('parent_id')
+                        ->from('menus')
+                        ->whereIn('id', $userMenuIds)
+                        ->whereNotNull('parent_id');
+                });
+        })
             ->where('status', 1)
             ->orderBy('order')
             ->get();
@@ -373,24 +375,28 @@ class AuthController extends Controller
         // Accesos Directos
         $potentialShortcuts = [
             [
+                'id' => 1,
                 'label' => 'Ventas',
                 'link' => config('app.frontend_url') . '/mantenimiento/ventas-principal',
                 'icon' => 'DollarSign',
                 'permission' => 'mantenimiento.vista_principal_ventas'
             ],
             [
+                'id' => 2,
                 'label' => 'Clientes',
                 'link' => config('app.frontend_url') . '/clientes',
                 'icon' => 'Users',
                 'permission' => 'tablas.clientes'
             ],
             [
+                'id' => 3,
                 'label' => 'Articulos',
                 'link' => config('app.frontend_url') . '/tablas/articulos',
                 'icon' => 'Package',
                 'permission' => 'tablas.articulos'
             ],
             [
+                'id' => 4,
                 'label' => 'Series',
                 'link' => config('app.frontend_url') . '/series',
                 'icon' => 'BarChart3',

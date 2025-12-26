@@ -31,7 +31,7 @@ class UpdateCustomerRequest extends FormRequest
             'is_withholding_applicable' => 'sometimes|boolean',
 
             'phones' => 'sometimes|array|min:1',
-            'phones.*.phone' => 'sometimes|string',
+            'phones.*.phone' => 'sometimes|string|max:9',
             'phones.*.status' => 'sometimes|integer|in:0,1',
 
             'emails' => 'sometimes|array|min:1',
@@ -114,6 +114,7 @@ class UpdateCustomerRequest extends FormRequest
             'phones.array' => 'Los teléfonos deben ser un arreglo.',
             'phones.min' => 'Debe proporcionar al menos un teléfono.',
             'phones.*.phone.string' => 'El teléfono debe ser una cadena de texto.',
+            'phones.*.phone.max' => 'El teléfono no debe exceder los 9 caracteres.',
             'phones.*.status.integer' => 'El estado del teléfono debe ser un número entero.',
             'phones.*.status.in' => 'El estado del teléfono debe ser 0 o 1.',
             'emails.array' => 'Los correos electrónicos deben ser un arreglo.',

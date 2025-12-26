@@ -48,7 +48,7 @@ class EloquentDispatchNote extends Model
         'customer_id',
         'supplier_id',
         'address_supplier_id',
-        'pdf',  
+        'pdf',
         'transfer_date',
         'arrival_date'
     ];

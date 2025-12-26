@@ -78,17 +78,17 @@ class ControllerEntryGuide extends Controller
         $reference_serie = $request->query('reference_serie');
         $reference_correlative = $request->query('reference_correlative');
 
-         $supplier_id = $request->query('supplier_id');
-      
+        $supplier_id = $request->query('supplier_id');
+
 
         $entryGuideUseCase = new FindAllEntryGuideUseCase($this->entryGuideRepositoryInterface);
         $entryGuides = $entryGuideUseCase->execute(
-            $description, 
-            $status, 
-            $reference_document_id, 
-            $reference_serie, 
+            $description,
+            $status,
+            $reference_document_id,
+            $reference_serie,
             $reference_correlative,
-             $supplier_id,
+            $supplier_id,
         );
 
         $result = [];
@@ -110,7 +110,7 @@ class ControllerEntryGuide extends Controller
 
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
-            $response['document_entry_guide'] =( new DocumentEntryGuideResource($documentEntryGuide))->resolve();
+            $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
             $response['process_status'] = $this->calculateProcessStatus($articlesWithSerials);
             $result[] = $response;
@@ -313,18 +313,17 @@ class ControllerEntryGuide extends Controller
     private function updateDocumentEntryGuide($shooping, array $data)
     {
         $createDocumentEntryGuideUseCase = new CreateDocumentEntryGuide($this->documentEntryGuideRepositoryInterface, $this->documentTypeRepository);
- 
-            $documentEntryGuide = new DocumentEntryGuideDTO([
-                'entry_guide_id' => $shooping->getId(),
- 
-                'reference_document_id' => $data['reference_document_id'],
-                'reference_serie' => $data['reference_serie'] ?? '',
-                'reference_correlative' => $data['reference_correlative'] ?? '',
-            ]);
 
-            $result = $createDocumentEntryGuideUseCase->execute($documentEntryGuide);
-            return $result;
-    
+        $documentEntryGuide = new DocumentEntryGuideDTO([
+            'entry_guide_id' => $shooping->getId(),
+
+            'reference_document_id' => $data['reference_document_id'],
+            'reference_serie' => $data['reference_serie'] ?? '',
+            'reference_correlative' => $data['reference_correlative'] ?? '',
+        ]);
+
+        $result = $createDocumentEntryGuideUseCase->execute($documentEntryGuide);
+        return $result;
     }
 
     private function calculateProcessStatus(array $articles): string
@@ -399,13 +398,42 @@ class ControllerEntryGuide extends Controller
 
         if (!$isValid) {
             return response()->json(['message' => 'Todos los documentos deben pertenecer al mismo proveedor'], 422);
-        } 
-    
-       
-       
-        $entryGuides = $this->entryGuideRepositoryInterface->findByIds($ids); 
-        
-        dd($entryGuides);
+        }
+
+        $entryGuides = $this->entryGuideRepositoryInterface->findByIds($ids);
+
+        // dd($entryGuides);
+
+        $refSerie = null;
+        $refCorrelative = null;
+        $refDocumentType = null;
+        $entryGuideHeader = null;
+        $firstIter = true;
+
+        foreach ($entryGuides as $guide) {
+            $docEntryGuide = $this->documentEntryGuideRepositoryInterface->findByIdObj($guide->getId());
+
+            if ($firstIter) {
+                $refSerie = $guide->getReferenceSerie();
+                $refCorrelative = $guide->getReferenceCorrelative();
+                $refDocumentType = $docEntryGuide?->getReferenceDocument()?->getId();
+
+                $entryGuideHeader = [
+                    'reference_document_id' => $refDocumentType,
+                    'reference_serie'        => $refSerie,
+                    'reference_correlative'  => $refCorrelative,
+                ];
+
+                $firstIter = false;
+            } else {
+                if ($guide->getReferenceSerie() !== $refSerie || $guide->getReferenceCorrelative() !== $refCorrelative) {
+                    return response()->json(['message' => 'Todos los documentos deben pertenecer a la misma serie y correlativo de referencia'], 422);
+                }
+                if (($docEntryGuide?->getReferenceDocument()?->getId()) !== $refDocumentType) {
+                    return response()->json(['message' => 'Todos los documentos deben tener el mismo tipo de documento de referencia'], 422);
+                }
+            }
+        }
 
         $customerHeader = null;
         foreach ($entryGuides as $entryGuide) {
@@ -424,31 +452,36 @@ class ControllerEntryGuide extends Controller
                 ];
             }
             $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
-            
+
+
+
             foreach ($articles as $article) {
-                $key = $article->getArticle()->getId();
-                if (!isset($aggregated[$key]) ) {
-                    $aggregated[$key] = [
-                        'article_id' => $key,
-                        'description' => $article->getDescription(),
-                        'quantity' => $article->getQuantity(),
-                        'saldo' => $article->getSaldo(),
-                        'cod_fab' => $article->getArticle()->getCodFab(),
-                        'subtotal' => $entryGuide->getSubtotal() ??0,
-                        'total' => $entryGuide->getTotal() ?? 0,
-                        'precio_costo' => $article->getTotalDescuento() ,
-                        'descuento' => $article->getDescuento() ?? 0,
-                    ];
-                } else {
-                    $aggregated[$key]['quantity'] += $article->getQuantity();
-                    $aggregated[$key]['saldo'] += $article->getSaldo();
-                }
+                // $key = $article->getArticle()->getId();
+                // if (!isset($aggregated[$key])) {
+                $aggregated[] = [
+                    'guide_id' => $entryGuide->getId(),
+                    'guide_number' => $entryGuide->getSerie() . '-' . $entryGuide->getCorrelativo(),
+                    'article_id' => $article->getArticle()->getId(),
+                    'description' => $article->getDescription(),
+                    'quantity' => $article->getQuantity(),
+                    'saldo' => $article->getSaldo(),
+                    'cod_fab' => $article->getArticle()->getCodFab(),
+                    'subtotal' => $entryGuide->getSubtotal() ?? 0,
+                    'total' => $entryGuide->getTotal() ?? 0,
+                    'precio_costo' => $article->getTotalDescuento(),
+                    'descuento' => $article->getDescuento() ?? 0,
+                ];
+                // } else {
+                //     $aggregated[$key]['quantity'] += $article->getQuantity();
+                //     $aggregated[$key]['saldo'] += $article->getSaldo();
+                // }
             }
         }
 
         return response()->json([
             'customer' => $customerHeader,
-            'articles' => array_values($aggregated)
+            'articles' => array_values($aggregated),
+            'entry_guide' => $entryGuideHeader
         ], 200);
     }
 

@@ -12,7 +12,7 @@ use App\Modules\User\Domain\Entities\User;
 class ArticleForSale
 {
     private ?int $id;
-    private string $cod_fab;
+    private ?string $cod_fab;
     private string $description;
     private float $weight;
     private bool $with_deduction;
@@ -54,7 +54,7 @@ class ArticleForSale
 
     public function __construct(
         ?int $id,
-        string $cod_fab,
+        ?string $cod_fab,
         string $description,
         float $weight,
         bool $with_deduction,
@@ -153,7 +153,7 @@ class ArticleForSale
     {
         return $this->id;
     }
-    public function getCodFab(): string
+    public function getCodFab(): ?string
     {
         return $this->cod_fab;
     }

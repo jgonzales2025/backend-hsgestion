@@ -401,6 +401,20 @@ class AuthController extends Controller
                 'link' => config('app.frontend_url') . '/series',
                 'icon' => 'BarChart3',
                 'permission' => 'reportes.reporte_series'
+            ],
+            [
+                'id' => 5,
+                'label' => 'Consignaciones',
+                'link' => config('app.frontend_url') . '/tablas/consignaciones',
+                'icon' => 'FileBox',
+                'permission' => 'tablas.lista_consignaciones'
+            ],
+            [
+                'id' => 6,
+                'label' => 'Traslados',
+                'link' => config('app.frontend_url') . '/mantenimiento/ordenes-salida-traslado',
+                'icon' => 'Truck',
+                'permission' => 'tablas.lista_movimientos_traslado'
             ]
         ];
 

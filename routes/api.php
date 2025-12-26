@@ -81,10 +81,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     //articles
     Route::get('articles', [ArticleController::class, 'index'])->middleware('permission:tablas.articulos');
-    Route::post('articles-save', [ArticleController::class, 'store']);
-    Route::get('articles/{id}', [ArticleController::class, 'show']);
-    Route::post('articlesupdate/{id}', [ArticleController::class, 'update']);
-    Route::get('article-excel', [ArticleController::class, 'export']);
+    Route::post('articles-save', [ArticleController::class, 'store'])->middleware('permission:tablas.articulos');
+    Route::get('articles/{id}', [ArticleController::class, 'show'])->middleware('permission:tablas.articulos');
+    Route::post('articlesupdate/{id}', [ArticleController::class, 'update'])->middleware('permission:tablas.articulos');
+    Route::get('article-excel', [ArticleController::class, 'export'])->middleware('permission:tablas.articulos');
     Route::post('articles-notas-debito', [ArticleController::class, 'storeNotesDebito']);
     Route::get('articles-notas-listar', [ArticleController::class, 'indexNotesDebito']);
     Route::put('articles-notas-editar/{id}', [ArticleController::class, 'updateNotesDebito']);
@@ -94,14 +94,14 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/articles-is-combo', [ArticleController::class, 'getIsCombo']);
     Route::get('/articles-placa-madre', [ArticleController::class, 'findArticlesByPlacaMadre']);
     // Customer portfolios - Cartera de clientes
-    Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index']);
-    Route::get('/customer-portfolios-user/{id}', [CustomerPortfolioController::class, 'showUserByCustomer']);
+    Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index'])->middleware('permission:tablas.cartera_clientes');
+    Route::get('/customer-portfolios-user/{id}', [CustomerPortfolioController::class, 'showUserByCustomer'])->middleware('permission:tablas.cartera_clientes');
 
     // Digital Wallets - Billeteras digitales
-    Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
+    Route::get('digital-wallets', [DigitalWalletController::class, 'index'])->middleware('permission:tablas.billetera_digital');
 
     // Crear cliente
-    Route::post('customers', [CustomerController::class, 'store']);
+    Route::post('customers', [CustomerController::class, 'store'])->middleware('permission:tablas.clientes');
     Route::post('customers-save-api', [CustomerController::class, 'storeCustomerBySunatApi']);
     Route::get('customers-company', [CustomerController::class, 'findCustomerCompany']);
     Route::get('customers-no-company', [CustomerController::class, 'findAllCustomersExceptionCompanies']);

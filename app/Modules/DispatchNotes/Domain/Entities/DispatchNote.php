@@ -19,7 +19,7 @@ class DispatchNote
     private ?EmissionReason $emission_reason;
     private ?string $description;
     private ?Branch $destination_branch;
-    private ?string $destination_address_customer;
+    // private ?int $destination_address_customer;
     private ?TransportCompany $transport;
     private ?string $observations;
     private ?string $num_orden_compra;
@@ -32,7 +32,6 @@ class DispatchNote
     private ?float $total_weight;
     private ?int $transfer_type;
     private ?bool $vehicle_type;
-    private ?DocumentType $reference_document_type;
     private ?int $destination_branch_client;
     private ?int $customer_id;
     private string $created_at = ""; 
@@ -48,7 +47,6 @@ class DispatchNote
         ?EmissionReason $emission_reason,
         ?string $description,
         ?Branch $destination_branch,
-        ?string $destination_address_customer,
         ?TransportCompany $transport,
         ?string $observations,
         ?string $num_orden_compra,
@@ -61,7 +59,6 @@ class DispatchNote
         ?float $total_weight,
         ?int $transfer_type,
         ?bool $vehicle_type,
-        ?DocumentType $reference_document_type,
         ?int $destination_branch_client,
         ?int $customer_id,
         ?Customer $supplier,
@@ -77,7 +74,6 @@ class DispatchNote
         $this->emission_reason = $emission_reason;
         $this->description = $description;
         $this->destination_branch = $destination_branch;
-        $this->destination_address_customer = $destination_address_customer;
         $this->transport = $transport;
         $this->observations = $observations;
         $this->num_orden_compra = $num_orden_compra;
@@ -90,7 +86,6 @@ class DispatchNote
         $this->total_weight = $total_weight;
         $this->transfer_type = $transfer_type;
         $this->vehicle_type = $vehicle_type;
-        $this->reference_document_type = $reference_document_type;
         $this->destination_branch_client = $destination_branch_client;
         $this->customer_id = $customer_id;
         $this->supplier = $supplier;
@@ -130,10 +125,6 @@ class DispatchNote
     public function getDestinationBranch(): Branch|null
     {
         return $this->destination_branch;
-    }
-    public function getDestinationAddressCustomer(): ?string
-    {
-        return $this->destination_address_customer;
     }
     public function getTransport(): TransportCompany|null
     {
@@ -182,11 +173,7 @@ class DispatchNote
     public function getVehicleType(): ?bool
     {
         return $this->vehicle_type;
-    }
-    public function getReferenceDocumentType(): ?DocumentType
-    {
-        return $this->reference_document_type;
-    }
+    } 
     public function getdestination_branch_client(): int|null
     {
         return $this->destination_branch_client;

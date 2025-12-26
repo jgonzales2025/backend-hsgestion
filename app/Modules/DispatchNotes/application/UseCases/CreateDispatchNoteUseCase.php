@@ -20,6 +20,7 @@ use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterfa
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\TransportCompany\Application\UseCases\FindByIdTransportCompanyUseCase;
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
+use App\Services\DocumentNumberGeneratorService;
 
 class CreateDispatchNoteUseCase
 {
@@ -32,22 +33,15 @@ class CreateDispatchNoteUseCase
     private readonly TransportCompanyRepositoryInterface $transportCompany,
     private readonly DocumentTypeRepositoryInterface $documentTypeRepositoryInterface,
     private readonly DriverRepositoryInterface $driverRepositoryInterface,
-    private readonly CustomerRepositoryInterface $customerRepositoryInterface
+    private readonly CustomerRepositoryInterface $customerRepositoryInterface,
+    private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
   ) {
   }
 
   public function execute(DispatchNoteDTO $data): DispatchNote
   {
-    $lastDocumentNumber = $this->dispatchNoteRepository->getLastDocumentNumber();
-
-    if ($lastDocumentNumber === null) {
-      $documentNumber = '00001';
-    } else {
-      $nextNumber = intval($lastDocumentNumber) + 1;
-      $documentNumber = str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
-    }
-
-    $data->correlativo = $documentNumber;
+    $lastDocumentNumber = $this->dispatchNoteRepository->getLastDocumentNumber($data->serie);
+    $data->correlativo = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
 
     $companyUseCase = new FindByIdCompanyUseCase($this->companyRepositoryInterface);
     $company = $companyUseCase->execute($data->cia_id);
@@ -73,8 +67,7 @@ class CreateDispatchNoteUseCase
     $transportCompanyUseCase = new FindByIdTransportCompanyUseCase($this->transportCompany);
     $transportCompany = $transportCompanyUseCase->execute($data->transport_id);
 
-    $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepositoryInterface);
-    $referenceDocumentType = $documentTypeUseCase->execute($data->reference_document_type_id);
+
     if ($data->supplier_id != null) {
 
       $supplierUseCase = new FindByIdCustomerUseCase($this->customerRepositoryInterface);
@@ -101,7 +94,6 @@ class CreateDispatchNoteUseCase
       emission_reason: $emissionReason,
       description: $data->description,
       destination_branch: $destination,
-      destination_address_customer: $data->destination_address_customer ?? '',
       transport: $transportCompany,
       observations: $data->observations,
       num_orden_compra: $data->num_orden_compra,
@@ -114,7 +106,6 @@ class CreateDispatchNoteUseCase
       total_weight: $data->total_weight,
       transfer_type: $data->transfer_type,
       vehicle_type: $data->vehicle_type,
-      reference_document_type: $referenceDocumentType,
       destination_branch_client: $data->destination_branch_client,
       customer_id: $data->customer_id,
       supplier: $supplier,

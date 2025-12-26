@@ -45,6 +45,7 @@ use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterfa
 use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInterface;
 use App\Modules\User\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
+use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -69,7 +70,8 @@ class DispatchNotesController extends Controller
         private readonly UserRepositoryInterface $userRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly DispatchArticleSerialRepositoryInterface $dispatchArticleSerialRepository,
-        private readonly ArticleRepositoryInterface $articleRepository
+        private readonly ArticleRepositoryInterface $articleRepository,
+        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -130,6 +132,7 @@ class DispatchNotesController extends Controller
                 $this->documentTypeRepositoryInterface,
                 $this->driverRepositoryInterface,
                 $this->customerRepositoryInterface,
+                $this->documentNumberGeneratorService
             );
 
 

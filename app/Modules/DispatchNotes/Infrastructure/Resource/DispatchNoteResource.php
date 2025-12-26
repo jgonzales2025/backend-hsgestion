@@ -34,7 +34,7 @@ class DispatchNoteResource extends JsonResource
             'serie' => $this->resource->getSerie(),
             'correlativo' => $this->resource->getCorrelativo(),
             'description' => $this->resource->getDescription(),
-            'destination_address_customer' => $this->resource->getDestinationAddressCustomer(),
+
             'transport' => [
                 'id' => $this->resource->getTransport()?->getId(),
                 'status' => $this->resource->getTransport()?->getStatus(),
@@ -56,11 +56,6 @@ class DispatchNoteResource extends JsonResource
             'total_weight' => $this->resource->getTotalWeight(),
             'transfer_type' => $this->resource->getTransferType(),
             'vehicle_type' => $this->resource->getVehicleType(),
-            'reference_document_type' => [
-                'id' => $this->resource->getReferenceDocumentType()?->getId(),
-                'status' => ($this->resource->getReferenceDocumentType()?->getStatus()) == 1 ? 'Activo' : 'Inactivo',
-                'description' => $this->resource->getReferenceDocumentType()?->getDescription(),
-            ],
             'destination_branch_client_id' => (function () {
                 $code = EloquentCustomerAddress::where('id', $this->resource->getdestination_branch_client())->first();
 

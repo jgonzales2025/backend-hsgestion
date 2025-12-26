@@ -221,6 +221,15 @@ class ControllerEntryGuide extends Controller
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
             $response['process_status'] = $this->calculateProcessStatus($entryGuideArticle);
 
+            // dd($entryGuideArticle);
+
+            // DB::statement('CALL update_entry_guides_from_purchase_order(?,?,?,?)', [
+            //     $entryGuide->getCompany()->getId(),
+            //     $entryGuide->getCustomer()->getId(),
+            //     $entryGuide->getReferenceSerie(),
+            //     $entryGuide->getReferenceCorrelative(),
+            // ]);
+
             return response()->json($response, 201);
         });
     }
@@ -306,6 +315,7 @@ class ControllerEntryGuide extends Controller
             }
 
             $guideArticle->serials = $serials;
+
 
             return $guideArticle;
         }, $articlesData);
@@ -414,8 +424,8 @@ class ControllerEntryGuide extends Controller
             $docEntryGuide = $this->documentEntryGuideRepositoryInterface->findByIdObj($guide->getId());
 
             if ($firstIter) {
-                $refSerie = $guide->getReferenceSerie();
-                $refCorrelative = $guide->getReferenceCorrelative();
+                $refSerie = $docEntryGuide?->getReferenceSerie();
+                $refCorrelative = $docEntryGuide?->getReferenceCorrelative();
                 $refDocumentType = $docEntryGuide?->getReferenceDocument()?->getId();
 
                 $entryGuideHeader = [
@@ -426,7 +436,7 @@ class ControllerEntryGuide extends Controller
 
                 $firstIter = false;
             } else {
-                if ($guide->getReferenceSerie() !== $refSerie || $guide->getReferenceCorrelative() !== $refCorrelative) {
+                if ($docEntryGuide?->getReferenceSerie() !== $refSerie || $docEntryGuide?->getReferenceCorrelative() !== $refCorrelative) {
                     return response()->json(['message' => 'Todos los documentos deben pertenecer a la misma serie y correlativo de referencia'], 422);
                 }
                 if (($docEntryGuide?->getReferenceDocument()?->getId()) !== $refDocumentType) {

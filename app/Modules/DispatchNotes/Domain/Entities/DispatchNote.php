@@ -30,7 +30,7 @@ class DispatchNote
     private ?Driver $conductor;
     private ?string $license_plate;
     private ?float $total_weight;
-    private ?string $transfer_type;
+    private ?int $transfer_type;
     private ?bool $vehicle_type;
     private ?DocumentType $reference_document_type;
     private ?int $destination_branch_client;
@@ -59,7 +59,7 @@ class DispatchNote
         ?Driver $conductor,
         ?string $license_plate,
         ?float $total_weight,
-        ?string $transfer_type,
+        ?int $transfer_type,
         ?bool $vehicle_type,
         ?DocumentType $reference_document_type,
         ?int $destination_branch_client,
@@ -175,7 +175,7 @@ class DispatchNote
     {
         return $this->total_weight;
     }
-    public function getTransferType(): ?string
+    public function getTransferType(): ?int
     {
         return $this->transfer_type;
     }

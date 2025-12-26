@@ -2,7 +2,7 @@
 
 namespace App\Modules\BuildPc\Infrastructure\Controllers;
 
-use App\Modules\BuildDetailPc\Application\DTOS\BuildDetailPcdto;
+use App\Modules\BuildDetailPc\Application\DTOS\BuildDetailPcDTO;
 use App\Modules\BuildDetailPc\Application\UseCases\CreateBuildDetailPcUseCase;
 use App\Modules\BuildDetailPc\Domain\Interface\BuildDetailPcRepositoryInterface;
 use App\Modules\BuildDetailPc\Infrastructure\Resource\BuildDetailPcResource;
@@ -149,7 +149,7 @@ class BuildPcController
         $createDetailUseCase = new CreateBuildDetailPcUseCase($this->buildDetailPcRepository);
 
         return array_map(function ($item) use ($buildPc, $createDetailUseCase) {
-            $detailDTO = new BuildDetailPcdto([
+            $detailDTO = new BuildDetailPcDTO([
                 'build_pc_id' => $buildPc->getId(),
                 'article_id' => $item['article_id'],
                 'quantity' => $item['quantity']

@@ -39,7 +39,7 @@ class RequestStore extends FormRequest
             'cod_conductor' => 'nullable|integer|exists:drivers,id',
             'license_plate' => 'string',
             'total_weight' => 'required|numeric',
-            'transfer_type' => 'required|string|max:50',
+            'transfer_type' => 'required|int|in:1,2',
             'vehicle_type' => 'required|boolean',
             'reference_document_type_id' => 'nullable|integer|exists:document_types,id',
             'destination_branch_client_id' => 'nullable|integer|exists:customer_addresses,id',

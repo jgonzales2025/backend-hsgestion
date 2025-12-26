@@ -22,7 +22,7 @@ class DispatchNoteDTO
   public int $cod_conductor;
   public string $license_plate;
   public float $total_weight;
-  public string $transfer_type;
+  public int $transfer_type;
   public ?bool $vehicle_type;
   public int $reference_document_type_id;
   public ?int $destination_branch_client ;

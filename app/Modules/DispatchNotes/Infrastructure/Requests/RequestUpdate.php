@@ -5,17 +5,17 @@ namespace App\Modules\DispatchNotes\Infrastructure\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RequestUpdate extends FormRequest
-{ 
+{
     public function authorize(): bool
     {
         return true;
     }
     protected function prepareForValidation(): void
     {
-       
+
         $companyId = request()->get('company_id');
 
-        $this->merge([ 
+        $this->merge([
             'cia_id' => $companyId,
         ]);
     }
@@ -36,9 +36,9 @@ class RequestUpdate extends FormRequest
             'num_referencia' => 'nullable|string|max:50',
             'date_referencia' => 'nullable|date',
             'cod_conductor' => 'nullable|integer|exists:drivers,id',
-            'license_plate' =>'string',
+            'license_plate' => 'string',
             'total_weight' => 'required|numeric',
-            'transfer_type' => 'required|string|max:50',
+            'transfer_type' => 'required|int|in:1,2',
             'vehicle_type' => 'nullable|boolean',
             'reference_document_type_id' => 'nullable|integer|exists:document_types,id',
             'destination_branch_client_id' => 'nullable|integer|exists:customer_addresses,id',
@@ -47,7 +47,7 @@ class RequestUpdate extends FormRequest
             'address_supplier_id' => 'nullable|integer|exists:customers,id',
             'supplier_id' => 'nullable|integer|exists:customers,id'
         ];
-    } 
+    }
     public function messages(): array
     {
         return [

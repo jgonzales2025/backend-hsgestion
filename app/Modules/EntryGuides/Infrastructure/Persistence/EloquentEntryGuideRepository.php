@@ -159,6 +159,14 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'total' => $entryGuide->getTotal(),
         ]);
 
+        
+        //  DB::statement('CALL update_entry_guides_from_purchase_order(?,?,?,?)',[
+        //     $entryGuide->getCompany()->getId(),
+        //     $entryGuide->getCustomer()->getId(),
+        //     $entryGuide->getReferenceSerie(),
+        //     $entryGuide->getReferenceCorrelative(),
+        //  ]);
+
         $eloquentEntryGuide->refresh();
         return new EntryGuide(
             id: $eloquentEntryGuide->id,
@@ -177,13 +185,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             total_descuento: $eloquentEntryGuide->total_descuento,
             total: $eloquentEntryGuide->total,);
          } );
-
-         DB::statement('CALL update_entry_guides_from_purchase_order(?,?,?,?)',[
-            $entryGuide->getCompany()->getId(),
-            $entryGuide->getCustomer()->getId(),
-            $entryGuide->getReferenceSerie(),
-            $entryGuide->getReferenceCorrelative(),
-         ]);
+ 
     }
     
     public function findById(int $id): ?EntryGuide

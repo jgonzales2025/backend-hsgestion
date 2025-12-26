@@ -54,10 +54,10 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
     }
 
 
-    public function getLastDocumentNumber(): ?string
+    public function getLastDocumentNumber(string $serie): ?string
     {
-        $dispatch = EloquentDispatchNote::all()
-            ->sortByDesc('correlativo')
+        $dispatch = EloquentDispatchNote::where('serie', $serie)
+            ->orderBy('correlativo', 'desc')
             ->first();
 
         return $dispatch?->correlativo;
@@ -107,7 +107,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             emission_reason: $dispatchNote->emission_reason->toDomain($dispatchNote->emission_reason),
             description: $dispatchNote->description,
             destination_branch: $dispatchNote->destination_branch?->toDomain($dispatchNote->destination_branch),
-            destination_address_customer: $dispatchNote->destination_address_customer,
             transport: $dispatchNote->transport?->toDomain($dispatchNote->transport),
             observations: $dispatchNote->observations,
             num_orden_compra: $dispatchNote->num_orden_compra,
@@ -120,7 +119,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             total_weight: $dispatchNote->total_weight,
             transfer_type: $dispatchNote->transfer_type,
             vehicle_type: $dispatchNote->vehicle_type,
-            reference_document_type: $dispatchNote->referenceDocumentType?->toDomain($dispatchNote->referenceDocumentType),
             destination_branch_client: $dispatchNote->destination_branch_client,
             customer_id: $dispatchNote->customer_id,
             supplier: $dispatchNote->supplier?->toDomain($dispatchNote->supplier),
@@ -139,7 +137,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             emission_reason: $dispatchNote->getEmissionReason(),
             description: $eloquentDispatchNote->description,
             destination_branch: $dispatchNote->getDestinationBranch(),
-            destination_address_customer: $dispatchNote->getDestinationAddressCustomer(),
             transport: $dispatchNote->getTransport(),
             observations: $eloquentDispatchNote->observations,
             num_orden_compra: $eloquentDispatchNote->num_orden_compra,
@@ -152,7 +149,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             total_weight: $eloquentDispatchNote->total_weight,
             transfer_type: $eloquentDispatchNote->transfer_type,
             vehicle_type: $eloquentDispatchNote->vehicle_type,
-            reference_document_type: $dispatchNote->getReferenceDocumentType(),
             destination_branch_client: $eloquentDispatchNote->destination_branch_client,
             customer_id: $eloquentDispatchNote->customer_id,
             supplier: $dispatchNote->getSupplier(),
@@ -171,7 +167,6 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'emission_reason_id' => $dispatchNote->getEmissionReason() ? $dispatchNote->getEmissionReason()->getId() : null,
             'description' => $dispatchNote->getDescription(),
             'destination_branch_id' => $dispatchNote->getDestinationBranch() ? $dispatchNote->getDestinationBranch()->getId() : null,
-            'destination_address_customer' => $dispatchNote->getDestinationAddressCustomer(),
             'transport_id' => $dispatchNote->getTransport() ? $dispatchNote->getTransport()->getId() : null,
             'observations' => $dispatchNote->getObservations(),
             'num_orden_compra' => $dispatchNote->getNumOrdenCompra(),
@@ -183,8 +178,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'license_plate' => $dispatchNote->getLicensePlate(),
             'total_weight' => $dispatchNote->getTotalWeight(),
             'transfer_type' => $dispatchNote->getTransferType(),
-            'vehicle_type' => $dispatchNote->getVehicleType(),
-            'reference_document_type_id' => $dispatchNote->getReferenceDocumentType() ? $dispatchNote->getReferenceDocumentType()->getId() : null,
+            'vehicle_type' => $dispatchNote->getVehicleType(), 
             'destination_branch_client' => $dispatchNote->getdestination_branch_client(),
             'customer_id' => $dispatchNote->getCustomerId(),
             'supplier_id' => $dispatchNote->getSupplier()?->getId() ?? null,

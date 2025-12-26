@@ -41,7 +41,6 @@ class RequestStore extends FormRequest
             'total_weight' => 'required|numeric',
             'transfer_type' => 'required|int|in:1,2',
             'vehicle_type' => 'required|boolean',
-            'reference_document_type_id' => 'nullable|integer|exists:document_types,id',
             'destination_branch_client_id' => 'nullable|integer|exists:customer_addresses,id',
             'dispatch_articles' => 'required|array|min:1',
             'dispatch_articles.*.article_id' => 'required|integer|exists:articles,id',
@@ -66,8 +65,6 @@ class RequestStore extends FormRequest
             'date.required' => 'Debe ingresar una fecha.',
             'total_weight.required' => 'Debe ingresar el peso total.',
             'customer_id.exists' => 'Selecciona un cliente',
-            'reference_document_type_id.required' => 'Debe seleccionar un tipo de documento.',
-            'reference_document_type_id.exists' => 'Selecciona un tipo de documento',
             'destination_branch_client_id.required' => 'Debe seleccionar un cliente.',
             'destination_branch_client_id.exists' => 'Selecciona un cliente',
 

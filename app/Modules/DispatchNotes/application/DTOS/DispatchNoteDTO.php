@@ -11,7 +11,6 @@ class DispatchNoteDTO
   public int $emission_reason_id;
   public ?string $description;
   public ?int $destination_branch_id;
-  public string $destination_address_customer;
   public int $transport_id;
   public ?string $observations;
   public ?string $num_orden_compra;
@@ -24,7 +23,6 @@ class DispatchNoteDTO
   public float $total_weight;
   public int $transfer_type;
   public ?bool $vehicle_type;
-  public int $reference_document_type_id;
   public ?int $destination_branch_client ;
   public int $customer_id;
   public ?int $supplier_id;
@@ -41,7 +39,6 @@ class DispatchNoteDTO
     $this->emission_reason_id = $date['emission_reason_id'] ?? 1;
     $this->description = $date['description'] ?? '';
     $this->destination_branch_id = $date['destination_branch_id'] ?? null;
-    $this->destination_address_customer = $date['destination_address_customer'] ?? '';
     $this->transport_id = $date['transport_id'] ?? 1;
     $this->observations = $date['observations'] ?? '';
     $this->num_orden_compra = $date['num_orden_compra'] ?? null;
@@ -54,7 +51,6 @@ class DispatchNoteDTO
     $this->total_weight = $date['total_weight'];
     $this->transfer_type = $date['transfer_type'];
     $this->vehicle_type = $date['vehicle_type']?? 1;
-    $this->reference_document_type_id = $date['reference_document_type_id'] ?? 1;
     $this->destination_branch_client = $date['destination_branch_client_id'] ?? null;
     $this->customer_id = $date['customer_id'] ?? 1;
     $this->supplier_id = $date['supplier_id'] ?? null;

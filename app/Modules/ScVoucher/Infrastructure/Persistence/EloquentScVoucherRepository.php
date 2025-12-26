@@ -163,7 +163,9 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
                     'purchase_id' => $purchaseDTO->purchase_id,
                     'amount' => $purchaseDTO->amount,
                 ]);
+                 
             }
+
 
             DB::statement("CALL update_purchase_balance(?, ?, ?, ?, ?)", [
                 $scVoucher->getCia(),

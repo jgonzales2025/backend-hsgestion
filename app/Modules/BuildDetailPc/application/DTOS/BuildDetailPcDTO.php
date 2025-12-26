@@ -2,7 +2,7 @@
 
 namespace App\Modules\BuildDetailPc\Application\DTOS;
 
-class BuildDetailPcdto
+class BuildDetailPcDTO
 {
     public int $build_pc_id;
     public int $article_id;

@@ -53,12 +53,12 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 $cot->save();
             }
         }
-
+        
         if (!is_null($eloquentSale->consignation_id)) {
             $dispatchNote = EloquentDispatchNote::where('id', $eloquentSale->consignation_id)->first();
 
             if ($dispatchNote) {
-                $dispatchNote->status = 1;
+                $dispatchNote->stage = 1;
                 $dispatchNote->save();
             }
         }

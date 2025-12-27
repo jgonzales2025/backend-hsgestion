@@ -8,6 +8,7 @@ use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Collections\Infrastructure\Models\EloquentCollection;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
+use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
 use App\Modules\Customer\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
@@ -133,6 +134,13 @@ class SaleController extends Controller
     public function store(StoreSaleRequest $request): JsonResponse
     {
         return DB::transaction(function () use ($request) {
+            $customerUseCase = new FindByIdCustomerUseCase($this->customerRepository);
+            $customer = $customerUseCase->execute($request->validated()['customer_id']);
+
+            if ($customer->getCustomerDocumentType()->getId() == 3 && $request->validated()['document_type_id'] == 1) {
+                return new JsonResponse(['message' => 'No se puede emitir una factura a un cliente con DNI'], 400);
+            }
+            
             $saleDTO = new SaleDTO($request->validated());
             $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->documentNumberGeneratorService);
             $sale = $saleUseCase->execute($saleDTO);

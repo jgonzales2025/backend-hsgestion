@@ -81,10 +81,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     //articles
     Route::get('articles', [ArticleController::class, 'index'])->middleware('permission:tablas.articulos');
-    Route::post('articles-save', [ArticleController::class, 'store'])->middleware('permission:tablas.articulos');
-    Route::get('articles/{id}', [ArticleController::class, 'show'])->middleware('permission:tablas.articulos');
-    Route::post('articlesupdate/{id}', [ArticleController::class, 'update'])->middleware('permission:tablas.articulos');
-    Route::get('article-excel', [ArticleController::class, 'export'])->middleware('permission:tablas.articulos');
+    Route::post('articles-save', [ArticleController::class, 'store']);
+    Route::get('articles/{id}', [ArticleController::class, 'show']);
+    Route::post('articlesupdate/{id}', [ArticleController::class, 'update']);
+    Route::get('article-excel', [ArticleController::class, 'export']);
     Route::post('articles-notas-debito', [ArticleController::class, 'storeNotesDebito']);
     Route::get('articles-notas-listar', [ArticleController::class, 'indexNotesDebito']);
     Route::put('articles-notas-editar/{id}', [ArticleController::class, 'updateNotesDebito']);
@@ -95,16 +95,13 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/articles-placa-madre', [ArticleController::class, 'findArticlesByPlacaMadre']);
     // Customer portfolios - Cartera de clientes
     Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index'])->middleware('permission:tablas.cartera_clientes');
-    Route::get('/customer-portfolios-user/{id}', [CustomerPortfolioController::class, 'showUserByCustomer'])->middleware('permission:tablas.cartera_clientes');
-
-    // Digital Wallets - Billeteras digitales
-    Route::get('digital-wallets', [DigitalWalletController::class, 'index'])->middleware('permission:tablas.billetera_digital');
+    Route::get('/customer-portfolios-user/{id}', [CustomerPortfolioController::class, 'showUserByCustomer']);
 
     // Crear cliente
-    Route::post('customers', [CustomerController::class, 'store'])->middleware('permission:tablas.clientes');
+    Route::post('customers', [CustomerController::class, 'store'])->middleware('permission:tablas.clientes|mantenimiento.vista_principal_ventas');
     Route::post('customers-save-api', [CustomerController::class, 'storeCustomerBySunatApi']);
     Route::get('customers-company', [CustomerController::class, 'findCustomerCompany']);
-    Route::get('customers-no-company', [CustomerController::class, 'findAllCustomersExceptionCompanies'])->middleware('permission:mantenimiento.vista_principal_ventas');
+    Route::get('customers-no-company', [CustomerController::class, 'findAllCustomersExceptionCompanies']);
 
     // Series
     Route::get('/serie-number', [SerieController::class, 'findByDocumentType']);
@@ -113,8 +110,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/branches-by-user', [UserAssignmentController::class, 'indexBranchesByUser']);
 
     // Ruta para ventas
-
-    Route::get('/sales-proformas', [SaleController::class, 'indexProformas'])->middleware('permission:mantenimiento.cotizacion');
+    Route::get('/sales-proformas', [SaleController::class, 'indexProformas'])->middleware('permission:mantenimiento.cotizacion|mantenimiento.vista_principal_ventas');
     Route::get('/sales-by-customer', [SaleController::class, 'findAllPendingSalesByCustomerId']);
     Route::get('/sales/by-document', [SaleController::class, 'showDocumentSale']);
     Route::get('/sales/by-document-debit', [SaleController::class, 'findSaleByDocumentForDebitNote']);
@@ -300,11 +296,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     Route::get('/usernames', [UserController::class, 'findAllUserName']);
 
-
     //recordType
     Route::get('/recordType', [RecordTypeController::class, 'index']);
-
-
 
     //branches
     Route::get('/branches', [BranchController::class, 'index']);
@@ -412,7 +405,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
 
     // Customers - Clientes
-    Route::get('customers', [CustomerController::class, 'index'])->middleware('permission:mantenimiento.vista_principal_ventas');
+    Route::get('customers', [CustomerController::class, 'index'])->middleware('permission:mantenimiento.vista_principal_ventas|tablas.clientes');
     Route::get('customers/unassigned', [CustomerController::class, 'findAllUnassigned']);
     Route::get('customers/{id}', [CustomerController::class, 'show']);
     Route::put('customers/{id}', [CustomerController::class, 'update']);
@@ -436,7 +429,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
 
     // Exchange Rates - Tipo de cambio
-    Route::get('exchange-rates', [ExchangeRateController::class, 'index']);
+    Route::get('exchange-rates', [ExchangeRateController::class, 'index'])->middleware('permission:tablas.tipo_cambio');
     Route::get('exchange-rates/current', [ExchangeRateController::class, 'current']);
     Route::get('exchange-rates/{id}', [ExchangeRateController::class, 'show']);
     Route::put('exchange-rates/{id}', [ExchangeRateController::class, 'update']);
@@ -469,7 +462,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('banks-status/{id}', [BankController::class, 'updateStatus']);
 
     // Digital Wallets - Billeteras digitales
-    //Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
+    Route::get('digital-wallets', [DigitalWalletController::class, 'index'])->middleware('permission:tablas.billetera_digital|mantenimiento.vista_principal_ventas');
     Route::post('digital-wallets', [DigitalWalletController::class, 'store']);
     Route::get('digital-wallets/{id}', [DigitalWalletController::class, 'show']);
     Route::put('digital-wallets/{id}', [DigitalWalletController::class, 'update']);

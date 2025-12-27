@@ -23,8 +23,16 @@ class PurchaseResource extends JsonResource
                 'name' => $this->resource->getSupplier()->getCompanyName() ??
                     trim($this->resource->getSupplier()->getName() . ' ' .
                         $this->resource->getSupplier()->getLastName() . ' ' .
-                        $this->resource->getSupplier()->getSecondLastname()),
+                        $this->resource->getSupplier()->getSecondLastname()) ,
                 'ruc' => $this->resource->getSupplier()->getDocumentNumber() ?? "",
+            ],
+            'supplierdos' => [
+                'id' => $this->resource->getSupplier()->getId(),
+                'name' => ($this->resource->getSupplier()->getCompanyName() ??
+                    trim($this->resource->getSupplier()->getName() . ' ' .
+                        $this->resource->getSupplier()->getLastName() . ' ' .
+                        $this->resource->getSupplier()->getSecondLastname())) . " " . $this->resource->getSupplier()->getDocumentNumber() . " " . $this->getSupplierAddress(),
+
             ],
             'serie' => $this->resource->getSerie(),
             'correlative' => $this->resource->getCorrelative(),
@@ -82,5 +90,16 @@ class PurchaseResource extends JsonResource
         }
 
         return 'facturado';
+    }
+
+    private function getSupplierAddress(): string
+    {
+        $addresses = $this->resource->getSupplier()->getAddresses() ?? [];
+        foreach ($addresses as $address) {
+            if ($address->isPrincipal() === 1) {
+                return $address->getAddress();
+            }
+        }
+        return !empty($addresses) ? $addresses[0]->getAddress() : "";
     }
 }

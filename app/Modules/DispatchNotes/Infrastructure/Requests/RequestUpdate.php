@@ -40,6 +40,7 @@ class RequestUpdate extends FormRequest
             'total_weight' => 'required|numeric',
             'transfer_type' => 'required|int|in:1,2',
             'vehicle_type' => 'nullable|boolean',
+            'reference_document_type_id' => 'nullable|integer|exists:document_types,id',
             'destination_branch_client_id' => 'nullable|integer|exists:customer_addresses,id',
             'dispatch_articles' => 'required|array|min:1',
             'customer_id' => 'required|integer|exists:customers,id',

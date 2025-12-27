@@ -13,7 +13,7 @@ class RequestStore extends FormRequest
     }
     protected function prepareForValidation(): void
     {
-       
+
         $companyId = request()->get('company_id');
 
         $this->merge([
@@ -41,6 +41,7 @@ class RequestStore extends FormRequest
             'total_weight' => 'required|numeric',
             'transfer_type' => 'required|int|in:1,2',
             'vehicle_type' => 'required|boolean',
+            'reference_document_type_id' => 'nullable|integer|exists:document_types,id',
             'destination_branch_client_id' => 'nullable|integer|exists:customer_addresses,id',
             'dispatch_articles' => 'required|array|min:1',
             'dispatch_articles.*.article_id' => 'required|integer|exists:articles,id',
@@ -100,7 +101,7 @@ class RequestStore extends FormRequest
             'address_supplier_id.exists' => 'Selecciona un cliente',
             'supplier_id.required' => 'Debe seleccionar un proveedor.',
             'supplier_id.exists' => 'Selecciona un proveedor',
-        ]; 
+        ];
     }
 
     protected function withValidator($validator)
@@ -131,4 +132,4 @@ class RequestStore extends FormRequest
             }
         });
     }
-} 
+}

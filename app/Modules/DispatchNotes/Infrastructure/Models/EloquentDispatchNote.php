@@ -24,6 +24,7 @@ class EloquentDispatchNote extends Model
         'cia_id',
         'branch_id',
         'document_type_id',
+        'reference_document_type_id',
         'serie',
         'correlativo',
         'date',
@@ -50,7 +51,7 @@ class EloquentDispatchNote extends Model
         'transfer_date',
         'arrival_date'
     ];
-  public $timestamps = true;
+    public $timestamps = true;
 
 
     public function measurementUnit(): BelongsTo
@@ -93,10 +94,12 @@ class EloquentDispatchNote extends Model
     {
         return $this->belongsTo(EloquentCustomerAddress::class, 'destination_branch_client');
     }
-    public function supplier():BelongsTo{
+    public function supplier(): BelongsTo
+    {
         return $this->belongsTo(EloquentCustomer::class, 'supplier_id');
     }
-    public function address_supplier(){
+    public function address_supplier()
+    {
         return $this->belongsTo(EloquentCustomer::class, 'address_supplier_id');
     }
     public function referenceDocumentType(): BelongsTo
@@ -130,7 +133,7 @@ class EloquentDispatchNote extends Model
             $dispatchNote->vehicle_type,
             $dispatchNote->reference_document_type?->toDomain($dispatchNote->reference_document_type),
             $dispatchNote->destination_branch_client,
-            $dispatchNote->customer?->toDomain($dispatchNote->customer),
+            $dispatchNote->customer_id,
             $dispatchNote->supplier?->toDomain($dispatchNote->supplier),
             $dispatchNote->address_supplier?->toDomain($dispatchNote->address_supplier),
             $dispatchNote->created_at,

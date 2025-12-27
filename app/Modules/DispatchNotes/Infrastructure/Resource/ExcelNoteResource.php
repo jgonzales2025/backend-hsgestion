@@ -37,7 +37,6 @@ class ExcelNoteResource extends JsonResource
             'serie' => $this->resource->getSerie(),
             'correlativo' => $this->resource->getCorrelativo(),
             'description' => $this->resource->getDescription(),
-            'destination_address_customer' => $this->resource->getDestinationAddressCustomer(),
             'transport' => [
                 'id' => $this->resource->getTransport()->getId(),
                 'status' => $this->resource->getTransport()->getStatus(),

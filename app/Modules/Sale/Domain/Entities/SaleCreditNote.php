@@ -25,6 +25,7 @@ class SaleCreditNote
     private string $due_date;
     private int $days;
     private User $user;
+    private User $user_sale;
     private ?PaymentType $paymentType;
     private ?CurrencyType $currencyType;
     private float $subtotal;
@@ -53,6 +54,7 @@ class SaleCreditNote
         string $due_date,
         int $days,
         User $user,
+        User $user_sale,
         ?PaymentType $paymentType,
         ?CurrencyType $currencyType,
         float $subtotal,
@@ -80,6 +82,7 @@ class SaleCreditNote
         $this->due_date = $due_date;
         $this->days = $days;
         $this->user = $user;
+        $this->user_sale = $user_sale;
         $this->paymentType = $paymentType;
         $this->currencyType = $currencyType;
         $this->subtotal = $subtotal;
@@ -108,6 +111,7 @@ class SaleCreditNote
     public function getDueDate(): string { return $this->due_date; }
     public function getDays(): int { return $this->days; }
     public function getUser(): User { return $this->user; }
+    public function getUserSale(): User { return $this->user_sale; }
     public function getPaymentType(): ?PaymentType { return $this->paymentType; }
     public function getCurrencyType(): ?CurrencyType { return $this->currencyType; }
     public function getSubtotal(): float { return $this->subtotal; }

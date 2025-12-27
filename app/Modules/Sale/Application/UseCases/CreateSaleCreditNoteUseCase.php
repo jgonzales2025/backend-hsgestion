@@ -24,6 +24,7 @@ use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\User\Application\UseCases\GetUserByIdUseCase;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
+use Illuminate\Support\Facades\Log;
 
 readonly class CreateSaleCreditNoteUseCase
 {
@@ -45,6 +46,11 @@ readonly class CreateSaleCreditNoteUseCase
         $lastDocumentNumber = $this->saleRepository->getLastDocumentNumber($saleCreditNoteDTO->serie);
         $saleCreditNoteDTO->document_number = $this->documentNumberGenerator->generateNextNumber($lastDocumentNumber);
 
+        $saleUseCase = new FindByDocumentSaleUseCase($this->saleRepository);
+        $sale = $saleUseCase->execute($saleCreditNoteDTO->reference_document_type_id, $saleCreditNoteDTO->reference_serie, $saleCreditNoteDTO->reference_correlative);
+        Log::info($saleCreditNoteDTO->reference_document_type_id);
+        Log::info($saleCreditNoteDTO->reference_serie);
+        Log::info($saleCreditNoteDTO->reference_correlative);
         $companyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
         $company = $companyUseCase->execute($saleCreditNoteDTO->company_id);
 
@@ -53,6 +59,9 @@ readonly class CreateSaleCreditNoteUseCase
 
         $userUseCase = new GetUserByIdUseCase($this->userRepository);
         $user = $userUseCase->execute($saleCreditNoteDTO->user_id);
+
+        $userSaleUseCase = new GetUserByIdUseCase($this->userRepository);
+        $userSale = $userSaleUseCase->execute($sale->getUserSale()->getId());
 
         $currencyTypeUseCase = new FindByIdCurrencyTypeUseCase($this->currencyTypeRepository);
         $currencyType = $currencyTypeUseCase->execute($saleCreditNoteDTO->currency_type_id);
@@ -82,6 +91,7 @@ readonly class CreateSaleCreditNoteUseCase
             due_date: $saleCreditNoteDTO->due_date,
             days: $saleCreditNoteDTO->days,
             user: $user,
+            user_sale: $userSale,
             paymentType: $paymentType,
             currencyType: $currencyType,
             subtotal: $saleCreditNoteDTO->subtotal,

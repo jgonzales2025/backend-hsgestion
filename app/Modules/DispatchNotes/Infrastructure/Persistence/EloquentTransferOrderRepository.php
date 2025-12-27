@@ -5,6 +5,7 @@ namespace App\Modules\DispatchNotes\Infrastructure\Persistence;
 use App\Modules\DispatchNotes\Domain\Interfaces\TransferOrderRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Models\EloquentDispatchNote;
 use App\Modules\DispatchNotes\Domain\Entities\TransferOrder;
+use Illuminate\Support\Facades\Log;
 
 class EloquentTransferOrderRepository implements TransferOrderRepositoryInterface
 {
@@ -130,7 +131,7 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
             'stage' => $transferOrder->getStage(),
             'transfer_date' => now()->toDateString()
         ]);
-
+        Log::info($eloquentDispatchNote->status);
         return new TransferOrder(
             id: $eloquentDispatchNote->id,
             company: $transferOrder->getCompany(),
@@ -140,8 +141,8 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
             emission_reason: $transferOrder->getEmissionReason(),
             destination_branch: $transferOrder->getDestinationBranch(),
             observations: $eloquentDispatchNote->observations,
-            status: $transferOrder->getStatus(),
-            stage: $transferOrder->getStage(),
+            status: $eloquentDispatchNote->status,
+            stage: $eloquentDispatchNote->stage,
             transfer_date: $eloquentDispatchNote->transfer_date
         );
     }

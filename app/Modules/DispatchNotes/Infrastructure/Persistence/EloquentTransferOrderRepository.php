@@ -126,6 +126,7 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
             'destination_branch_id' => $transferOrder->getDestinationBranch()->getId(),
             'observations' => $transferOrder->getObservations(),
             'status' => $transferOrder->getStatus(),
+            'stage' => $transferOrder->getStage(),
             'transfer_date' => now()->toDateString()
         ]);
 
@@ -139,6 +140,7 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
             destination_branch: $transferOrder->getDestinationBranch(),
             observations: $eloquentDispatchNote->observations,
             status: $transferOrder->getStatus(),
+            stage: $transferOrder->getStage(),
             transfer_date: $eloquentDispatchNote->transfer_date
         );
     }

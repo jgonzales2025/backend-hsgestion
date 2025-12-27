@@ -17,6 +17,7 @@ class TransferOrder
     private ?Branch $destination_branch;
     private ?string $observations;
     private ?bool $status;
+    private ?int $stage;
     private ?string $transfer_date;
     private ?string $arrival_date;
 
@@ -29,7 +30,8 @@ class TransferOrder
         ?EmissionReason $emission_reason,
         ?Branch $destination_branch,
         ?string $observations,
-        ?bool $status = false,
+        ?bool $status = true,
+        ?int $stage = 0,
         ?string $transfer_date = null,
         ?string $arrival_date = null
     ) {
@@ -42,6 +44,7 @@ class TransferOrder
         $this->destination_branch = $destination_branch;
         $this->observations = $observations;
         $this->status = $status;
+        $this->stage = $stage;
         $this->transfer_date = $transfer_date;
         $this->arrival_date = $arrival_date;
     }
@@ -55,6 +58,7 @@ class TransferOrder
     public function getDestinationBranch(): ?Branch { return $this->destination_branch; }
     public function getObservations(): ?string { return $this->observations; }
     public function getStatus(): ?bool { return $this->status; }
+    public function getStage(): ?int { return $this->stage; }
     public function getTransferDate(): ?string { return $this->transfer_date; }
     public function getArrivalDate(): ?string { return $this->arrival_date; }
 }

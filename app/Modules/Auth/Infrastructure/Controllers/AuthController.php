@@ -418,9 +418,15 @@ class AuthController extends Controller
             ]
         ];
 
+        // Obtener labels de los menús visibles para validación cruzada
+        $visibleMenuLabels = $allMenus->pluck('label')->map(fn($label) => mb_strtoupper($label))->toArray();
+
         $shortcuts = [];
         foreach ($potentialShortcuts as $shortcut) {
-            if ($eloquentUser->can($shortcut['permission'])) {
+            $shortcutLabel = mb_strtoupper($shortcut['label']);
+
+            // Permitir si tiene el permiso explícito O si el menú correspondiente es visible
+            if ($eloquentUser->can($shortcut['permission']) || in_array($shortcutLabel, $visibleMenuLabels)) {
                 unset($shortcut['permission']);
                 $shortcuts[] = $shortcut;
             }

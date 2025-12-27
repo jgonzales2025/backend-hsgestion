@@ -37,11 +37,11 @@ class EloquentArticleResource extends JsonResource
                 'name' => $this->resource->measurementUnit->name,
                 'status' => ($this->resource->measurementUnit->status) == 1 ? 'Activo' : 'Inactivo',
             ],
-            'subCategory' => [
-                'id' => $this->resource->id,
+            'subCategory' => $this->resource->subCategory?->id ? [
+                'id' => $this->resource->subCategory->id,
                 'name' => $this->resource->subCategory->name,
                 'status' => ($this->resource->subCategory->status) == 1 ? 'Activo' : 'Inactivo',
-            ],
+            ] : null,
             'location' => $this->resource->location,
             'warranty' => $this->resource->warranty,
             'tariff_rate' => $this->resource->tariff_rate,

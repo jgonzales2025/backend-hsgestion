@@ -104,7 +104,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('customers', [CustomerController::class, 'store'])->middleware('permission:tablas.clientes');
     Route::post('customers-save-api', [CustomerController::class, 'storeCustomerBySunatApi']);
     Route::get('customers-company', [CustomerController::class, 'findCustomerCompany']);
-    Route::get('customers-no-company', [CustomerController::class, 'findAllCustomersExceptionCompanies'])->middleware('permission:tablas.clientes');
+    Route::get('customers-no-company', [CustomerController::class, 'findAllCustomersExceptionCompanies'])->middleware('permission:mantenimiento.vista_principal_ventas');
 
     // Series
     Route::get('/serie-number', [SerieController::class, 'findByDocumentType']);
@@ -313,7 +313,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/branchesID/{id}', [BranchController::class, 'showId']);
 
     //company
-    Route::get('/companies', [CompanyController::class, 'index'])->middleware('permission:tablas.companias');
+    Route::get('/companies', [CompanyController::class, 'index']);
     Route::get('/companies/{id}', [CompanyController::class, 'show']);
     Route::get('/companies-user', [CompanyController::class, 'indexByUser']);
     Route::put('/companies/{id}', [CompanyController::class, 'update']);
@@ -343,7 +343,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
 
     // Marcas
-    Route::get('brands', [BrandController::class, 'index'])->middleware('permission:tablas.marcas');
+    Route::get('brands', [BrandController::class, 'index']);
     Route::get('brands-paginate-infinite', [BrandController::class, 'indexPaginateInfinite']);
     Route::post('brands', [BrandController::class, 'store']);
     Route::get('brands/{id}', [BrandController::class, 'show']);
@@ -361,7 +361,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Categories - categorias
     Route::get('categories-infinite', [CategoryController::class, 'indexPaginateInfinite']);
-    Route::get('categories', [CategoryController::class, 'indexPaginate'])->middleware('permission:tablas.categorias_articulos');
+    Route::get('categories', [CategoryController::class, 'indexPaginate']);
     Route::post('categories', [CategoryController::class, 'store']);
     Route::get('categories/{id}', [CategoryController::class, 'show']);
     Route::put('categories/{id}', [CategoryController::class, 'update']);
@@ -369,7 +369,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
 
     // SubCategories - subcategorias
-    Route::get('sub-categories', [SubCategoryController::class, 'index'])->middleware('permission:tablas.subcategorias_articulos');
+    Route::get('sub-categories', [SubCategoryController::class, 'index']);
     Route::get('sub-categories/category/{id}', [SubCategoryController::class, 'findByCategoryId']);
     Route::post('sub-categories', [SubCategoryController::class, 'store']);
     Route::get('sub-categories/{id}', [SubCategoryController::class, 'show']);
@@ -386,14 +386,14 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('transport-companies-status/{id}', [TransportCompanyController::class, 'updateStatus']);
 
     // PercentageIGV - Porcentaje de IGV
-    Route::get('percentage-igv', [PercentageIGVController::class, 'index'])->middleware('permission:tablas.porcentajes_igv');
+    Route::get('percentage-igv', [PercentageIGVController::class, 'index']);
     Route::get('percentage-igv-current', [PercentageIGVController::class, 'findPercentageCurrent']);
     Route::post('percentage-igv', [PercentageIGVController::class, 'store']);
     Route::get('percentage-igv/{id}', [PercentageIGVController::class, 'show']);
     Route::put('percentage-igv/{id}', [PercentageIGVController::class, 'update']);
 
     // MeasurementUnits - Unidades de medida
-    Route::get('measurement-units', [MeasurementUnitController::class, 'index'])->middleware('permission:tablas.unidad_medida');
+    Route::get('measurement-units', [MeasurementUnitController::class, 'index']);
     Route::get('measurement-units-infinite', [MeasurementUnitController::class, 'indexPaginateInfinite']);
     Route::post('measurement-units', [MeasurementUnitController::class, 'store']);
     Route::get('measurement-units/{id}', [MeasurementUnitController::class, 'show']);
@@ -412,7 +412,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
 
     // Customers - Clientes
-    Route::get('customers', [CustomerController::class, 'index'])->middleware('permission:tablas.clientes');
+    Route::get('customers', [CustomerController::class, 'index'])->middleware('permission:mantenimiento.vista_principal_ventas');
     Route::get('customers/unassigned', [CustomerController::class, 'findAllUnassigned']);
     Route::get('customers/{id}', [CustomerController::class, 'show']);
     Route::put('customers/{id}', [CustomerController::class, 'update']);
@@ -436,7 +436,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
 
     // Exchange Rates - Tipo de cambio
-    Route::get('exchange-rates', [ExchangeRateController::class, 'index'])->middleware('permission:tablas.tipos_cambio');
+    Route::get('exchange-rates', [ExchangeRateController::class, 'index']);
     Route::get('exchange-rates/current', [ExchangeRateController::class, 'current']);
     Route::get('exchange-rates/{id}', [ExchangeRateController::class, 'show']);
     Route::put('exchange-rates/{id}', [ExchangeRateController::class, 'update']);

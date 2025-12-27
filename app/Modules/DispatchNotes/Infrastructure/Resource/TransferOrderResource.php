@@ -30,7 +30,8 @@ class TransferOrderResource extends JsonResource
                 'name' => $this->resource->getDestinationBranch()->getName(),
             ],
             'observations' => $this->resource->getObservations(),
-            'status' => $this->resource->getStatus() == 0 ? 'En traslado' : 'Entregado',
+            'status' => $this->resource->getStatus() == 0 ? 'Activo' : 'Inactivo',
+            'stage' => $this->resource->getStage() == 0 ? 'En traslado' : 'Entregado',
             'transfer_date' => $this->resource->getTransferDate(),
             'arrival_date' => $this->resource->getArrivalDate()
         ];

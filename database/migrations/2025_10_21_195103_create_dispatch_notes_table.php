@@ -38,6 +38,7 @@ return new class extends Migration {
             $table->date('date_referencia')->nullable();
 
             $table->boolean('status')->default(true);
+            $table->integer('stage')->default(0);
 
            $table->foreignId('cod_conductor')->nullable()->constrained('drivers');
           $table->string('license_plate')->nullable();

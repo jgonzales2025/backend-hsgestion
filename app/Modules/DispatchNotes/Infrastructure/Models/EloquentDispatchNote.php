@@ -38,6 +38,7 @@ class EloquentDispatchNote extends Model
         'num_referencia',
         'date_referencia',
         'status',
+        'stage',
         'cod_conductor',
         'license_plate',
         'total_weight',
@@ -135,8 +136,7 @@ class EloquentDispatchNote extends Model
             $dispatchNote->destination_branch_client,
             $dispatchNote->customer_id,
             $dispatchNote->supplier?->toDomain($dispatchNote->supplier),
-            $dispatchNote->address_supplier?->toDomain($dispatchNote->address_supplier),
-            $dispatchNote->created_at,
+            $dispatchNote->address_supplier?->toDomain($dispatchNote->address_supplier)
         );
     }
 }

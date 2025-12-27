@@ -65,7 +65,6 @@ class BuildPcController
     public function store(CreateBuildPcRequest $request): JsonResponse
     {
         $data = $request->validated();
-
         // El precio no se calcula aquí, se usan los campos min y max
         // $totalPrice = 0;
         // foreach ($data['details'] as $detail) {
@@ -80,16 +79,13 @@ class BuildPcController
         $buildPcUseCase = new CreateBuildPcUseCase($this->buildPcRepository);
         $buildPc = $buildPcUseCase->execute($buildPcDTO);
 
-        if($data['details']){
-            // Crear detalles
-            $details = $this->createDetails($buildPc, $data['details']);
-        }
+        $details = $this->createDetails($buildPc, $data['details']);
 
         return response()->json(
             array_merge(
                 (new BuildPcResource($buildPc))->resolve(),
                 [
-                    'details' => BuildDetailPcResource::collection($details)->resolve() ?? [],
+                    'details' => $details ? BuildDetailPcResource::collection($details)->resolve() : [],
                 ]
             ),
             201

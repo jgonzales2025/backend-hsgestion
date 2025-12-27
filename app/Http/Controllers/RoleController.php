@@ -160,6 +160,15 @@ class RoleController extends Controller
         // Sincronizar menús
         if (isset($validatedData['menus'])) {
             $role->menus()->sync($validatedData['menus']);
+
+            // Obtener los permisos de los menús seleccionados
+            $menus = \App\Models\Menu::whereIn('id', $validatedData['menus'])
+                ->whereNotNull('permission')
+                ->pluck('permission')
+                ->toArray();
+
+            // Asignar los permisos al rol
+            $role->syncPermissions($menus);
         }
 
         return response()->json([

@@ -58,7 +58,8 @@ class EloquentBuildPcRepository implements BuildPcRepositoryInterface
             ->when(!is_null($is_active), function ($query) use ($is_active) {
                 $query->where('status', $is_active);
             })
-            ->orderByDesc('created_at')
+            ->orderByRaw('CASE WHEN status = 2 THEN 0 ELSE 1 END')
+            ->orderByDesc('id')
             ->paginate(10);
 
         // Transformar la colección de resultados

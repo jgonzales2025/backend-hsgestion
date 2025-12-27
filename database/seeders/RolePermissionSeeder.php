@@ -116,6 +116,7 @@ class RolePermissionSeeder extends Seeder
             'tablas.notas_debito',
             'tablas.motivos_caja_chica',
             'tablas.concepto_pago',
+            'tablas.lista_movimientos_traslado',
 
             // MANTENIMIENTO
             'mantenimiento.guias_ingreso_internas',
@@ -403,7 +404,7 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         DB::table('menu_role')->insert([
-           ['role_id' => $vendedor->id, 'menu_id' => 62],
+            ['role_id' => $vendedor->id, 'menu_id' => 62],
             ['role_id' => $vendedor->id, 'menu_id' => 63],
             ['role_id' => $vendedor->id, 'menu_id' => 7],
             ['role_id' => $vendedor->id, 'menu_id' => 8],
@@ -425,9 +426,9 @@ class RolePermissionSeeder extends Seeder
             ['username' => 'admin'],
             [
                 'firstname' => 'Admin',
-                'lastname'  => 'Admin',
-                'password'  => Hash::make('123456789'),
-                'status'    => 1,
+                'lastname' => 'Admin',
+                'password' => Hash::make('123456789'),
+                'status' => 1,
                 'password_item' => Hash::make('123456789'),
             ]
         );

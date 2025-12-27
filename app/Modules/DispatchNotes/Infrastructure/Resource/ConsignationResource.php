@@ -31,7 +31,7 @@ class ConsignationResource extends JsonResource
             ],
             'observations' => $this->resource->getObservations(),
             'status' => $this->resource->getStatus() == 0 ? 'Activo' : 'Inactivo',
-            'stage' => $this->resource->getStage() == 0 ? 'En traslado' : 'Entregado',
+            'stage' => $this->resource->getStage() == 0 ? 'Pendiente' : 'Facturado',
             'transfer_date' => $this->resource->getTransferDate(),
             'arrival_date' => $this->resource->getArrivalDate()
         ];

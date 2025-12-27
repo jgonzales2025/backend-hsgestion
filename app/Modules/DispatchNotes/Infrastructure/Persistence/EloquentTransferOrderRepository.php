@@ -106,6 +106,7 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
                 destination_branch: $item->destination_branch->toDomain($item->destination_branch),
                 observations: $item->observations,
                 status: $item->status,
+                stage: $item->stage,
                 transfer_date: $item->transfer_date,
                 arrival_date: $item->arrival_date,
             );

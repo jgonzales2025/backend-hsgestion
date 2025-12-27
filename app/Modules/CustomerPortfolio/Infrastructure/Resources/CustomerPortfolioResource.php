@@ -10,13 +10,13 @@ class CustomerPortfolioResource extends JsonResource
     public function toArray(Request $request): array
     {
         $customer = $this->resource->getCustomer();
-        $isCompany = $customer->getCustomerDocumentTypeId() == 2;
+        $isCompany = $customer->getCustomerDocumentType()->getId() == 2;
 
         return [
             'id' => $this->resource->getId(),
             'customer' => [
                 'id' => $customer->getId(),
-                'document_type' => $customer->getCustomerDocumentTypeAbbreviation(),
+                'document_type' => $customer->getCustomerDocumentType()->getAbbreviation(),
                 ...($isCompany ? [
                     'document_number' => $customer->getDocumentNumber(),
                     'business_name' => $customer->getCompanyName(),

@@ -281,10 +281,9 @@ class AuthController extends Controller
         // Obtener permisos del rol base
         $roleMenuIds = [];
         if ($selectedRole) {
-            $roleMenuIds = \DB::table('role_has_permissions')
-                ->join('menus', 'role_has_permissions.permission_id', '=', 'menus.id')
-                ->where('role_has_permissions.role_id', $roleId)
-                ->pluck('menus.id')
+            $roleMenuIds = \DB::table('menu_role')
+                ->where('role_id', $roleId)
+                ->pluck('menu_id')
                 ->toArray();
         }
 

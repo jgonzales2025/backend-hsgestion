@@ -33,8 +33,7 @@ class UpdateDispatchNoteUseCase
     private readonly DocumentTypeRepositoryInterface $documentTypeRepositoryInterface,
     private readonly DriverRepositoryInterface $driverRepositoryInterface,
     private readonly CustomerRepositoryInterface $customerRepositoryInterface
-  ) {
-  }
+  ) {}
 
   public function execute(DispatchNoteDTO $data, DispatchNote $dispatchNote): DispatchNote
   {
@@ -65,7 +64,7 @@ class UpdateDispatchNoteUseCase
     $transportCompany = $transportCompanyUseCase->execute($data->transport_id);
 
     $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepositoryInterface);
-    $referenceDocumentType = $documentTypeUseCase->execute($data->reference_document_type_id);
+    $referenceDocumentType = $data->reference_document_type_id ? $documentTypeUseCase->execute($data->reference_document_type_id) : null;
 
     if ($data->supplier_id != null) {
 
@@ -90,7 +89,7 @@ class UpdateDispatchNoteUseCase
       correlativo: $dispatchNote->getCorrelativo(),
       emission_reason: $emissionReason,
       description: $data->description,
-      destination_branch: $destination, 
+      destination_branch: $destination,
       transport: $transportCompany,
       observations: $data->observations,
       num_orden_compra: $data->num_orden_compra,

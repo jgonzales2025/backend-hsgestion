@@ -20,6 +20,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'document_type',
             'supplier',
             'address_supplier',
+            'referenceDocumentType',
         ])
             ->orderByDesc('id')
             ->where('document_type_id', '!=', 21)
@@ -123,6 +124,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             customer_id: $dispatchNote->customer_id,
             supplier: $dispatchNote->supplier?->toDomain($dispatchNote->supplier),
             address_supplier: $dispatchNote->address_supplier?->toDomain($dispatchNote->address_supplier),
+            reference_document_type: $dispatchNote->referenceDocumentType?->toDomain($dispatchNote->referenceDocumentType),
             created_at: $dispatchNote->created_at ? $dispatchNote->created_at->format('Y-m-d H:i:s') : null
         );
     }
@@ -153,6 +155,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             customer_id: $eloquentDispatchNote->customer_id,
             supplier: $dispatchNote->getSupplier(),
             address_supplier: $dispatchNote->getAddressSupplier(),
+            reference_document_type: $dispatchNote->getReferenceDocumentType(),
             created_at: $eloquentDispatchNote->created_at ? $eloquentDispatchNote->created_at->format('Y-m-d H:i:s') : null
         );
     }
@@ -178,11 +181,12 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'license_plate' => $dispatchNote->getLicensePlate(),
             'total_weight' => $dispatchNote->getTotalWeight(),
             'transfer_type' => $dispatchNote->getTransferType(),
-            'vehicle_type' => $dispatchNote->getVehicleType(), 
+            'vehicle_type' => $dispatchNote->getVehicleType(),
             'destination_branch_client' => $dispatchNote->getdestination_branch_client(),
             'customer_id' => $dispatchNote->getCustomerId(),
             'supplier_id' => $dispatchNote->getSupplier()?->getId() ?? null,
-            'address_supplier_id' => $dispatchNote->getAddressSupplier()?->getId() ?? null
+            'address_supplier_id' => $dispatchNote->getAddressSupplier()?->getId() ?? null,
+            'reference_document_type_id' => $dispatchNote->getReferenceDocumentType()?->getId() ?? null,
         ];
     }
     public function updateStatus(int $dispatchNote, int $status): void

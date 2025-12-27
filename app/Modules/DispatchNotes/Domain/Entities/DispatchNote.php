@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\DispatchNotes\Domain\Entities;
 
 use App\Modules\Branch\Domain\Entities\Branch;
@@ -34,9 +35,11 @@ class DispatchNote
     private ?bool $vehicle_type;
     private ?int $destination_branch_client;
     private ?int $customer_id;
-    private string $created_at = ""; 
+    private string $created_at = "";
     private ?Customer $supplier;
     private ?Customer $address_supplier;
+    private ?DocumentType $reference_document_type;
+
 
     public function __construct(
         ?int $id,
@@ -63,6 +66,7 @@ class DispatchNote
         ?int $customer_id,
         ?Customer $supplier,
         ?Customer $address_supplier,
+        ?DocumentType $reference_document_type,
         ?string $created_at
 
     ) {
@@ -90,6 +94,7 @@ class DispatchNote
         $this->customer_id = $customer_id;
         $this->supplier = $supplier;
         $this->address_supplier = $address_supplier;
+        $this->reference_document_type = $reference_document_type;
         $this->created_at = $created_at;
     }
 
@@ -173,7 +178,7 @@ class DispatchNote
     public function getVehicleType(): ?bool
     {
         return $this->vehicle_type;
-    } 
+    }
     public function getdestination_branch_client(): int|null
     {
         return $this->destination_branch_client;
@@ -182,20 +187,25 @@ class DispatchNote
     {
         return $this->customer_id;
     }
-    public function getCreatedFecha():?string{
+    public function getCreatedFecha(): ?string
+    {
         return $this->created_at;
     }
-        public function setCreatedAt(?string $date): void
+    public function setCreatedAt(?string $date): void
     {
         $this->created_at = $date;
     }
- public function getSupplier(): ?Customer
-{
-    return $this->supplier;
-}
-public function getAddressSupplier(): ?Customer
-{
-    return $this->address_supplier;
-}
+    public function getSupplier(): ?Customer
+    {
+        return $this->supplier;
+    }
+    public function getAddressSupplier(): ?Customer
+    {
+        return $this->address_supplier;
+    }
 
+    public function getReferenceDocumentType(): ?DocumentType
+    {
+        return $this->reference_document_type;
+    }
 }

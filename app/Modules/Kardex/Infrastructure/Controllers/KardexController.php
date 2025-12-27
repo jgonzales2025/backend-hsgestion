@@ -78,7 +78,7 @@ class KardexController extends Controller
     }
     public function getKardexByProduct(Request $request): JsonResponse
     {
-      
+
         $validated = $request->validate([
             'product_id' => 'nullable|integer',
             'company_id' => 'nullable|integer',
@@ -90,16 +90,18 @@ class KardexController extends Controller
         ]);
 
 
-         $companyId = request()->get('company_id');
+        $companyId = request()->get('company_id');
+
         $validated['company_id'] = $companyId;
 
-    
+
         $kardex = $this->kardexRepository->getKardexByProductId(
             productId: (int) $validated['product_id'] ?? 1,
             companyId: (int) $validated['company_id'],
             branchId: (int) $validated['branch_id'],
             fecha: $validated['fecha'],
             fecha1: $validated['fecha1'],
+
             // categoria: (int) $validated['categoria'],
             // marca: (int) $validated['marca'],
         );
@@ -127,13 +129,13 @@ class KardexController extends Controller
 
         $export = new GenerateExcel(
             companyId: $companyId,
-            branchId: (int) $validated['branch_id'],
-            productId: (int) $validated['product_id'],
-            fecha: $validated['fecha'],
-            fecha1: $validated['fecha1'],
-            categoria: (int) $validated['categoria'],
-            marca: isset($validated['marca']) ? (int) $validated['marca'] : 0,
-            consulta: isset($validated['consulta']) ? (int) $validated['consulta'] : 1,
+            branchId: (int) ($validated['branch_id'] ?? 0),
+            productId: (int) ($validated['product_id'] ?? 0),
+            fecha: $validated['fecha'] ?? null,
+            fecha1: $validated['fecha1'] ?? null,
+            categoria: (int) ($validated['categoria'] ?? 0),
+            marca: (int) ($validated['marca'] ?? 0),
+            consulta: (int) ($validated['consulta'] ?? 1),
             title: 'Kardex Físico - Producto ' . $validated['product_id'] . ' - ' . $validated['fecha'] . ' a ' . $validated['fecha1'],
         );
         $fileName = 'kardex_' . $validated['product_id'] . '_' . date('YmdHis') . '.xlsx';

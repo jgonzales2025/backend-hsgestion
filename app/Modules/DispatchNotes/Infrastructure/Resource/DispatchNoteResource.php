@@ -1,10 +1,12 @@
 <?php
 
 namespace App\Modules\DispatchNotes\Infrastructure\Resource;
+
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\CustomerAddress\Infrastructure\Models\EloquentCustomerAddress;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+
 class DispatchNoteResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -46,6 +48,11 @@ class DispatchNoteResource extends JsonResource
             'doc_referencia' => $this->resource->getDocReferencia(),
             'num_referencia' => $this->resource->getNumReferencia(),
             'date_referencia' => $this->resource->getDateReferencia(),
+            'reference_document_type' => [
+                'id' => $this->resource->getReferenceDocumentType()?->getId(),
+                'status' => $this->resource->getReferenceDocumentType()?->getStatus() == 1 ? 'Activo' : 'Inactivo',
+                 'name' => $this->resource->getReferenceDocumentType()?->getDescription()
+            ],
             'status' => $this->resource->getStatus() == "true" ? "Activo" : "Inactivo",
             'conductor' => [
                 'id' => $this->resource->getConductor()?->getId(),
@@ -68,7 +75,7 @@ class DispatchNoteResource extends JsonResource
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
                     'name' => $code->address,
                     // 'name' => $code->address[0]['address'],
-    
+
                 ];
             })(),
 
@@ -90,7 +97,7 @@ class DispatchNoteResource extends JsonResource
             'supplier' => [
                 'id' => $this->resource->getSupplier()?->getId(),
                 'status' => $this->resource->getSupplier()?->getStatus() == 1 ? 'Activo' : 'Inactivo',
-                'name' => $this->resource->getSupplier()?->getName(), 
+                'name' => $this->resource->getSupplier()?->getName(),
             ],
             'address_supplier' => [
                 'id' => $this->resource->getAddressSupplier()?->getId(),

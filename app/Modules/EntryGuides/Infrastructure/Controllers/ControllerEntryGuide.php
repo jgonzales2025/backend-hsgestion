@@ -33,8 +33,7 @@ use App\Modules\EntryGuideArticle\Infrastructure\Resource\EntryGuideArticleResou
 use App\Modules\EntryGuides\Application\UseCases\GeneratePDF;
 use App\Modules\EntryGuides\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuidePDF;
-use App\Modules\EntryItemSerial\Application\DTOS\EntryItemSerialDTO;
-use App\Modules\EntryItemSerial\Infrastructure\Resource\EntryItemSerialResource;
+use App\Modules\EntryItemSerial\Application\DTOS\EntryItemSerialDTO; 
 use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
 use App\Modules\EntryItemSerial\Application\UseCases\CreateEntryItemSerialUseCase;
 use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
@@ -43,14 +42,12 @@ use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterfa
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Request; 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ControllerEntryGuide extends Controller
-{
-
+{ 
     public function __construct(
         private readonly EntryGuideRepositoryInterface        $entryGuideRepositoryInterface,
         private readonly CompanyRepositoryInterface           $companyRepositoryInterface,
@@ -352,7 +349,7 @@ class ControllerEntryGuide extends Controller
         }
 
         if ($totalQuantity == 0) {
-            return 'pendiente'; // Edge case, avoid division by zero or weird states
+            return 'pendiente'; 
         }
 
         if ($totalSaldo == $totalQuantity) {
@@ -411,9 +408,7 @@ class ControllerEntryGuide extends Controller
         }
 
         $entryGuides = $this->entryGuideRepositoryInterface->findByIds($ids);
-
-        // dd($entryGuides);
-
+ 
         $refSerie = null;
         $refCorrelative = null;
         $refDocumentType = null;
@@ -455,19 +450,13 @@ class ControllerEntryGuide extends Controller
                         ->first()
                         ?->getAddress()
                         ?: 'no hay direccion'
-                    ),
-                    // 'subtotal' => $entryGuide->getSubtotal() ??0,
-                    // 'total' => $entryGuide->getTotal() ?? 0,
-                    // 'total_descuento' => $entryGuide->getTotalDescuento() ??0,
+                    )
                 ];
             }
             $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
-
-
-
+ 
             foreach ($articles as $article) {
-                // $key = $article->getArticle()->getId();
-                // if (!isset($aggregated[$key])) {
+
                 $aggregated[] = [
                     'guide_id' => $entryGuide->getId(),
                     'guide_number' => $entryGuide->getSerie() . '-' . $entryGuide->getCorrelativo(),
@@ -480,14 +469,9 @@ class ControllerEntryGuide extends Controller
                     'total' => $entryGuide->getTotal() ?? 0,
                     'precio_costo' => $article->getTotalDescuento(),
                     'descuento' => $article->getDescuento() ?? 0,
-                ];
-                // } else {
-                //     $aggregated[$key]['quantity'] += $article->getQuantity();
-                //     $aggregated[$key]['saldo'] += $article->getSaldo();
-                // }
+                ]; 
             }
-        }
-
+        } 
         return response()->json([
             'customer' => $customerHeader,
             'articles' => array_values($aggregated),

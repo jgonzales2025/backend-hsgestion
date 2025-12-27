@@ -35,8 +35,7 @@ class CreateDispatchNoteUseCase
     private readonly DriverRepositoryInterface $driverRepositoryInterface,
     private readonly CustomerRepositoryInterface $customerRepositoryInterface,
     private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
-  ) {
-  }
+  ) {}
 
   public function execute(DispatchNoteDTO $data): DispatchNote
   {
@@ -83,6 +82,9 @@ class CreateDispatchNoteUseCase
       $supplierAddress = null;
     }
 
+    $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepositoryInterface);
+    $referenceDocumentType = $data->reference_document_type_id ? $documentTypeUseCase->execute($data->reference_document_type_id) : null;
+
 
 
     $dispatchNote = new DispatchNote(
@@ -110,6 +112,7 @@ class CreateDispatchNoteUseCase
       customer_id: $data->customer_id,
       supplier: $supplier,
       address_supplier: $supplierAddress,
+      reference_document_type: $referenceDocumentType,
       created_at: ''
 
     );

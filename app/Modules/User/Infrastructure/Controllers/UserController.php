@@ -38,7 +38,8 @@ class UserController extends Controller
     public function __construct(
         protected EloquentUserRepository $userRepository,
         protected UserMenuService $userMenuService
-    ) {}
+    ) {
+    }
 
     public function store(StoreUserRequest $request): JsonResponse
     {
@@ -56,19 +57,7 @@ class UserController extends Controller
         foreach ($request->user_roles as $userRole) {
             $roleId = $userRole['role_id'];
             $customPermissions = $userRole['custom_permissions'] ?? null;
-            if ($customPermissions === []) {
-                // Usar permisos del rol por defecto
-                $role = \App\Models\Role::with('menus')->find($roleId);
-                if ($role && $role->menus) {
-                    foreach ($role->menus as $menu) {
-                        UserMenuPermission::create([
-                            'user_id' => $user->getId(),
-                            'role_id' => $roleId,
-                            'menu_id' => $menu->id,
-                        ]);
-                    }
-                }
-            } elseif (is_array($customPermissions) && count($customPermissions) > 0) {
+            if (is_array($customPermissions) && count($customPermissions) > 0) {
                 // Usar permisos personalizados
                 foreach ($customPermissions as $menuId) {
                     UserMenuPermission::create([
@@ -228,19 +217,7 @@ class UserController extends Controller
                 $roleId = $userRole['role_id'];
                 $customPermissions = $userRole['custom_permissions'] ?? null;
 
-                if ($customPermissions === null) {
-                    // Usar permisos del rol
-                    $role = \App\Models\Role::with('menus')->find($roleId);
-                    if ($role && $role->menus) {
-                        foreach ($role->menus as $menu) {
-                            UserMenuPermission::create([
-                                'user_id' => $id,
-                                'role_id' => $roleId,
-                                'menu_id' => $menu->id,
-                            ]);
-                        }
-                    }
-                } elseif (is_array($customPermissions) && count($customPermissions) > 0) {
+                if (is_array($customPermissions) && count($customPermissions) > 0) {
                     foreach ($customPermissions as $menuId) {
                         UserMenuPermission::create([
                             'user_id' => $id,
@@ -331,7 +308,7 @@ class UserController extends Controller
             'status' => 'required|integer|in:0,1'
         ]);
         $status = $validatedData['status'];
-        
+
         $updateStatusUseCase = new UpdateStatusUseCase($this->userRepository);
         $updateStatusUseCase->execute($id, $status);
 

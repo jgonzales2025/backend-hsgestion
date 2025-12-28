@@ -103,29 +103,33 @@ class CustomerController extends Controller
             }
 
             // Crear los teléfonos con foreach
-            $createPhoneUseCase = new CreateCustomerPhoneUseCase($this->customerPhoneRepository);
-
             $phones = [];
-            foreach ($validatedData['phones'] as $phoneData) {
-                $customerPhoneDTO = new CustomerPhoneDTO([
-                    'phone' => $phoneData['phone'],
-                    'customer_id' => $customer->getId(),
-                    'status' => 1
-                ]);
-                $phones[] = $createPhoneUseCase->execute($customerPhoneDTO);
+            if (!empty($validatedData['phones'])) {
+                $createPhoneUseCase = new CreateCustomerPhoneUseCase($this->customerPhoneRepository);
+
+                foreach ($validatedData['phones'] as $phoneData) {
+                    $customerPhoneDTO = new CustomerPhoneDTO([
+                        'phone' => $phoneData['phone'],
+                        'customer_id' => $customer->getId(),
+                        'status' => 1
+                    ]);
+                    $phones[] = $createPhoneUseCase->execute($customerPhoneDTO);
+                }
             }
 
             // Crear los emails con foreach
-            $createEmailUseCase = new CreateCustomerEmailUseCase($this->customerEmailRepository);
-
             $emails = [];
-            foreach ($validatedData['emails'] as $emailData) {
-                $customerEmailDTO = new CustomerEmailDTO([
-                    'email' => $emailData['email'],
-                    'customer_id' => $customer->getId(),
-                    'status' => 1
-                ]);
-                $emails[] = $createEmailUseCase->execute($customerEmailDTO);
+            if (!empty($validatedData['emails'])) {
+                $createEmailUseCase = new CreateCustomerEmailUseCase($this->customerEmailRepository);
+
+                foreach ($validatedData['emails'] as $emailData) {
+                    $customerEmailDTO = new CustomerEmailDTO([
+                        'email' => $emailData['email'],
+                        'customer_id' => $customer->getId(),
+                        'status' => 1
+                    ]);
+                    $emails[] = $createEmailUseCase->execute($customerEmailDTO);
+                }
             }
 
             // Crear las direcciones con foreach
@@ -184,49 +188,55 @@ class CustomerController extends Controller
             $customerUseCase = new UpdateCustomerUseCase($this->customerRepository, $this->customerDocumentTypeRepository);
             $customer = $customerUseCase->execute($id, $customerDTO);
 
-            EloquentCustomerPhone::where('customer_id', $id)->delete();
-            $createPhoneUseCase = new CreateCustomerPhoneUseCase($this->customerPhoneRepository);
             $phones = [];
-            foreach ($validatedData['phones'] as $phoneData) {
-                $customerPhoneDTO = new CustomerPhoneDTO([
-                    'phone' => $phoneData['phone'],
-                    'customer_id' => $id,
-                    'status' => $phoneData['status'],
-                ]);
-                $phones[] = $createPhoneUseCase->execute($customerPhoneDTO);
+            if (!empty($validatedData['phones'])) {
+                EloquentCustomerPhone::where('customer_id', $id)->delete();
+                $createPhoneUseCase = new CreateCustomerPhoneUseCase($this->customerPhoneRepository);
+                foreach ($validatedData['phones'] as $phoneData) {
+                    $customerPhoneDTO = new CustomerPhoneDTO([
+                        'phone' => $phoneData['phone'],
+                        'customer_id' => $id,
+                        'status' => $phoneData['status'],
+                    ]);
+                    $phones[] = $createPhoneUseCase->execute($customerPhoneDTO);
+                }
             }
 
-            EloquentCustomerEmail::where('customer_id', $id)->delete();
-            $createEmailUseCase = new CreateCustomerEmailUseCase($this->customerEmailRepository);
             $emails = [];
-            foreach ($validatedData['emails'] as $emailData) {
-                $customerEmailDTO = new CustomerEmailDTO([
-                    'email' => $emailData['email'],
-                    'customer_id' => $id,
-                    'status' => $emailData['status'],
-                ]);
-                $emails[] = $createEmailUseCase->execute($customerEmailDTO);
+            if (!empty($validatedData['emails'])) {
+                EloquentCustomerEmail::where('customer_id', $id)->delete();
+                $createEmailUseCase = new CreateCustomerEmailUseCase($this->customerEmailRepository);
+                foreach ($validatedData['emails'] as $emailData) {
+                    $customerEmailDTO = new CustomerEmailDTO([
+                        'email' => $emailData['email'],
+                        'customer_id' => $id,
+                        'status' => $emailData['status'],
+                    ]);
+                    $emails[] = $createEmailUseCase->execute($customerEmailDTO);
+                }
             }
 
-            EloquentCustomerAddress::where('customer_id', $id)->delete();
-            $createCustomerAddressUseCase = new CreateCustomerAddressUseCase(
-                $this->customerAddressRepository,
-                $this->departmentRepository,
-                $this->provinceRepository,
-                $this->districtRepository,
-            );
             $addresses = [];
-            foreach ($validatedData['addresses'] as $addressData) {
-                $customerAddressDTO = new CustomerAddressDTO([
-                    'customer_id' => $id,
-                    'address' => $addressData['address'],
-                    'department_id' => $addressData['department_id'],
-                    'province_id' => $addressData['province_id'],
-                    'district_id' => $addressData['district_id'],
-                    'status' => $addressData['status'],
-                    'st_principal' => $addressData['st_principal'] ?? 0,
-                ]);
-                $addresses[] = $createCustomerAddressUseCase->execute($customerAddressDTO);
+            if (!empty($validatedData['addresses'])) {
+                EloquentCustomerAddress::where('customer_id', $id)->delete();
+                $createCustomerAddressUseCase = new CreateCustomerAddressUseCase(
+                    $this->customerAddressRepository,
+                    $this->departmentRepository,
+                    $this->provinceRepository,
+                    $this->districtRepository,
+                );
+                foreach ($validatedData['addresses'] as $addressData) {
+                    $customerAddressDTO = new CustomerAddressDTO([
+                        'customer_id' => $id,
+                        'address' => $addressData['address'],
+                        'department_id' => $addressData['department_id'],
+                        'province_id' => $addressData['province_id'],
+                        'district_id' => $addressData['district_id'],
+                        'status' => $addressData['status'],
+                        'st_principal' => $addressData['st_principal'] ?? 0,
+                    ]);
+                    $addresses[] = $createCustomerAddressUseCase->execute($customerAddressDTO);
+                }
             }
 
             return response()->json([

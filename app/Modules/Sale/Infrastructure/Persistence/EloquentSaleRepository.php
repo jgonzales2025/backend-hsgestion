@@ -53,7 +53,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 $cot->save();
             }
         }
-        
+
         if (!is_null($eloquentSale->consignation_id)) {
             $dispatchNote = EloquentDispatchNote::where('id', $eloquentSale->consignation_id)->first();
 
@@ -83,7 +83,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 
     public function findById(int $id): ?Sale
     {
-        $eloquentSale = EloquentSale::find($id);
+        $eloquentSale = EloquentSale::with('noteReason')->find($id);
 
         if (!$eloquentSale) {
             return null;
@@ -536,7 +536,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             impretens: $eloquentSale->impretens,
             impretend: $eloquentSale->impretend,
             total_costo_neto: $eloquentSale->total_costo_neto,
-            consignation_id: $eloquentSale->consignation_id
+            consignation_id: $eloquentSale->consignation_id,
+            note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason)
         );
     }
 
@@ -581,7 +582,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             porretencion: $eloquentSale->porretencion,
             impretens: $eloquentSale->impretens,
             impretend: $eloquentSale->impretend,
-            consignation_id: $eloquentSale->consignation_id
+            consignation_id: $eloquentSale->consignation_id,
+            note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason)
         );
     }
 

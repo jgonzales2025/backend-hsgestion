@@ -25,10 +25,10 @@ class StoreCustomerRequest extends FormRequest
             'contact' => 'nullable|string|max:100',
             'is_withholding_applicable' => 'required|boolean',
 
-            'phones' => 'required|array|min:1',
+            'phones' => 'nullable|array',
             'phones.*.phone' => 'required|string',
 
-            'emails' => 'required|array|min:1',
+            'emails' => 'nullable|array',
             'emails.*.email' => 'required|email',
 
             'addresses' => 'required|array|min:1',

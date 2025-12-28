@@ -53,6 +53,7 @@ class Sale
     private ?float $impretend;
     private ?float $total_costo_neto;
     private ?int $consignation_id;
+    private ?NoteReason $note_reason;
 
     public function __construct(
         int $id,
@@ -95,7 +96,8 @@ class Sale
         ?int $consignation_id,
         ?int $status = null,
         ?float $total_costo_neto = null,
-    ){
+        ?NoteReason $note_reason = null
+    ) {
         $this->id = $id;
         $this->company = $company;
         $this->branch = $branch;
@@ -136,46 +138,171 @@ class Sale
         $this->impretend = $impretend;
         $this->total_costo_neto = $total_costo_neto;
         $this->consignation_id = $consignation_id;
+        $this->note_reason = $note_reason;
     }
 
-    public function getId(): int { return $this->id; }
-    public function getCompany(): Company { return $this->company; }
-    public function getBranch(): Branch { return $this->branch; }
-    public function getDocumentType(): DocumentType { return $this->documentType; }
-    public function getSerie(): string { return $this->serie; }
-    public function getDocumentNumber(): string { return $this->document_number; }
-    public function getParallelRate(): float { return $this->parallel_rate; }
-    public function getCustomer(): Customer { return $this->customer; }
-    public function getDate(): string { return $this->date; }
-    public function getDueDate(): string { return $this->due_date; }
-    public function getDays(): int { return $this->days; }
-    public function getUser(): User { return $this->user; }
-    public function getUserSale(): User|null { return $this->user_sale; }
-    public function getPaymentType(): PaymentType { return $this->paymentType; }
-    public function getObservations(): string|null { return $this->observations; }
-    public function getCurrencyType(): CurrencyType { return $this->currencyType; }
-    public function getSubtotal(): float { return $this->subtotal; }
-    public function getIgv(): float { return $this->igv; }
-    public function getTotal(): float { return $this->total; }
-    public function getSaldo(): ?float { return $this->saldo; }
-    public function getAmountAmortized(): ?float { return $this->amount_amortized; }
-    public function getStatus(): ?int { return $this->status; }
-    public function getPaymentStatus(): ?int { return $this->payment_status; }
-    public function getIsLocked(): ?bool { return $this->is_locked; }
-    public function getIdProf(): ?int { return $this->id_prof; }
-    public function getSerieProf(): string|null { return $this->serie_prof; }
-    public function getCorrelativeProf(): string|null { return $this->correlative_prof; }
-    public function getPurchaseOrder(): string|null { return $this->purchase_order; }
-    public function getUserAuthorized(): ?User { return $this->user_authorized; }
-    public function getCreditAmount(): ?float { return $this->credit_amount; }
-    public function getCoddetrac(): ?int { return $this->coddetrac; }
-    public function getPordetrac(): ?float { return $this->pordetrac; }
-    public function getImpdetracs(): ?float { return $this->impdetracs; }
-    public function getImpdetracd(): ?float { return $this->impdetracd; }
-    public function getStretencion(): ?float { return $this->stretencion; }
-    public function getPorretencion(): ?float { return $this->porretencion; }
-    public function getImpretens(): ?float { return $this->impretens; }
-    public function getImpretend(): ?float { return $this->impretend; }
-    public function getTotalCostoNeto(): ?float { return $this->total_costo_neto; }
-    public function getConsignationId(): ?int { return $this->consignation_id; }
+    public function getId(): int
+    {
+        return $this->id;
+    }
+    public function getCompany(): Company
+    {
+        return $this->company;
+    }
+    public function getBranch(): Branch
+    {
+        return $this->branch;
+    }
+    public function getDocumentType(): DocumentType
+    {
+        return $this->documentType;
+    }
+    public function getSerie(): string
+    {
+        return $this->serie;
+    }
+    public function getDocumentNumber(): string
+    {
+        return $this->document_number;
+    }
+    public function getParallelRate(): float
+    {
+        return $this->parallel_rate;
+    }
+    public function getCustomer(): Customer
+    {
+        return $this->customer;
+    }
+    public function getDate(): string
+    {
+        return $this->date;
+    }
+    public function getDueDate(): string
+    {
+        return $this->due_date;
+    }
+    public function getDays(): int
+    {
+        return $this->days;
+    }
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+    public function getUserSale(): User|null
+    {
+        return $this->user_sale;
+    }
+    public function getPaymentType(): PaymentType
+    {
+        return $this->paymentType;
+    }
+    public function getObservations(): string|null
+    {
+        return $this->observations;
+    }
+    public function getCurrencyType(): CurrencyType
+    {
+        return $this->currencyType;
+    }
+    public function getSubtotal(): float
+    {
+        return $this->subtotal;
+    }
+    public function getIgv(): float
+    {
+        return $this->igv;
+    }
+    public function getTotal(): float
+    {
+        return $this->total;
+    }
+    public function getSaldo(): ?float
+    {
+        return $this->saldo;
+    }
+    public function getAmountAmortized(): ?float
+    {
+        return $this->amount_amortized;
+    }
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+    public function getPaymentStatus(): ?int
+    {
+        return $this->payment_status;
+    }
+    public function getIsLocked(): ?bool
+    {
+        return $this->is_locked;
+    }
+    public function getIdProf(): ?int
+    {
+        return $this->id_prof;
+    }
+    public function getSerieProf(): string|null
+    {
+        return $this->serie_prof;
+    }
+    public function getCorrelativeProf(): string|null
+    {
+        return $this->correlative_prof;
+    }
+    public function getPurchaseOrder(): string|null
+    {
+        return $this->purchase_order;
+    }
+    public function getUserAuthorized(): ?User
+    {
+        return $this->user_authorized;
+    }
+    public function getCreditAmount(): ?float
+    {
+        return $this->credit_amount;
+    }
+    public function getCoddetrac(): ?int
+    {
+        return $this->coddetrac;
+    }
+    public function getPordetrac(): ?float
+    {
+        return $this->pordetrac;
+    }
+    public function getImpdetracs(): ?float
+    {
+        return $this->impdetracs;
+    }
+    public function getImpdetracd(): ?float
+    {
+        return $this->impdetracd;
+    }
+    public function getStretencion(): ?float
+    {
+        return $this->stretencion;
+    }
+    public function getPorretencion(): ?float
+    {
+        return $this->porretencion;
+    }
+    public function getImpretens(): ?float
+    {
+        return $this->impretens;
+    }
+    public function getImpretend(): ?float
+    {
+        return $this->impretend;
+    }
+    public function getTotalCostoNeto(): ?float
+    {
+        return $this->total_costo_neto;
+    }
+    public function getConsignationId(): ?int
+    {
+        return $this->consignation_id;
+    }
+    public function getNoteReason(): ?NoteReason
+    {
+        return $this->note_reason;
+    }
 }

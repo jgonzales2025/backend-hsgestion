@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ $sale->getDocumentType()->getDescription() }} {{ $sale->getSerie() }}-{{ $sale->getDocumentNumber() }}</title>
+    <title>{{ $sale->getDocumentType()->getDescription() }} {{ $sale->getSerie() }}-{{ $sale->getDocumentNumber() }}
+    </title>
     <style>
         @page {
             margin: 0cm 0cm;
@@ -156,7 +157,7 @@
         <table style="width: 100%;">
             <tr>
                 <td style="width: 60%; vertical-align: top;">
-                    <img src="{{ public_path('storage/logo/logo.jpeg') }}" class="logo" alt="Logo">
+                    <img src="{{ public_path('storage/logo/logocyberhouse.jpeg') }}" class="logo" alt="Logo">
                     <div class="company-info" style="margin-top: 5px;">
                         <div class="company-name">{{ $sale->getCompany()->getCompanyName() }}</div>
                         <div class="company-address">{{ $sale->getCompany()->getAddress() }}</div>
@@ -167,7 +168,8 @@
                         <div class="ruc-number">R.U.C. {{ $sale->getCompany()->getRuc() }}</div>
                         <div class="doc-title">{{ strtoupper($sale->getDocumentType()->getDescription()) }}</div>
                         <div class="doc-number">{{ $sale->getSerie() }} -
-                            {{ str_pad($sale->getDocumentNumber(), 8, '0', STR_PAD_LEFT) }}</div>
+                            {{ str_pad($sale->getDocumentNumber(), 8, '0', STR_PAD_LEFT) }}
+                        </div>
                     </div>
                 </td>
             </tr>
@@ -215,7 +217,8 @@
             </tr>
             <tr>
                 <td class="label">USUARIO:</td>
-                <td>{{ $transactionLog->getUser()->getFirstname() }} {{ $transactionLog->getUser()->getLastname() }}</td>
+                <td>{{ $transactionLog->getUser()->getFirstname() }} {{ $transactionLog->getUser()->getLastname() }}
+                </td>
                 <td class="label" colspan="3" style="text-align: right;">FECHA DE IMPRESIÓN:</td>
                 <td>{{ now()->format('Y-m-d H:i:s') }}</td>
             </tr>
@@ -246,6 +249,16 @@
                 <tr>
                     <td class="label">OBSERVACIONES:</td>
                     <td colspan="3">{{ $sale->getObservations() }}</td>
+                </tr>
+            @endif
+            @if(in_array($sale->getDocumentType()->getId(), [7, 8]))
+                <tr>
+                    <td class="label">MOTIVO:</td>
+                    <td colspan="5">{{ $sale->getNoteReason()?->getDescription() ?? 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <td class="label">DOC. REFERENCIA:</td>
+                    <td colspan="5">{{ $sale->getSerieProf() }} - {{ $sale->getCorrelativeProf() }}</td>
                 </tr>
             @endif
         </table>
@@ -292,14 +305,19 @@
                     </thead>
                     <tbody>
                         <tr style="background-color: #f9f9f9;">
-                            <td style="padding: 8px; text-align: center; font-weight: bold; border-right: 1px solid #ddd;">
-                                {{ $sale->getCurrencyType()->getCommercialSymbol() }} {{ number_format($sale->getSubtotal(), 2) }}
+                            <td
+                                style="padding: 8px; text-align: center; font-weight: bold; border-right: 1px solid #ddd;">
+                                {{ $sale->getCurrencyType()->getCommercialSymbol() }}
+                                {{ number_format($sale->getSubtotal(), 2) }}
                             </td>
-                            <td style="padding: 8px; text-align: center; font-weight: bold; border-right: 1px solid #ddd;">
-                                {{ $sale->getCurrencyType()->getCommercialSymbol() }} {{ number_format($sale->getIgv(), 2) }}
+                            <td
+                                style="padding: 8px; text-align: center; font-weight: bold; border-right: 1px solid #ddd;">
+                                {{ $sale->getCurrencyType()->getCommercialSymbol() }}
+                                {{ number_format($sale->getIgv(), 2) }}
                             </td>
                             <td style="padding: 8px; text-align: center; font-weight: bold; background-color: #eee;">
-                                {{ $sale->getCurrencyType()->getCommercialSymbol() }} {{ number_format($sale->getTotal(), 2) }}
+                                {{ $sale->getCurrencyType()->getCommercialSymbol() }}
+                                {{ number_format($sale->getTotal(), 2) }}
                             </td>
                         </tr>
                     </tbody>
@@ -307,12 +325,18 @@
             </div>
             <div style="clear: both;"></div>
         </div>
-        
+
         <!-- QR Code -->
         <div style="width: 100%; margin-top: 20px; text-align: right;">
-            <div style="display: inline-block; border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
+            <div
+                style="display: inline-block; border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
                 <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code" style="width: 50px; height: 50px;">
                 <div style="font-size: 8px; margin-top: 5px; color: #666;">Escanea para verificar</div>
+            </div>
+            <div
+                style="display: inline-block; margin-left: 10px; vertical-align: top; font-size: 9px; color: #333; max-width: 150px; text-align: left;">
+                <strong>REPRESENTACIÓN FÍSICA DE {{ strtoupper($sale->getDocumentType()->getDescription()) }}
+                    ELECTRÓNICA</strong>
             </div>
         </div>
     </div>

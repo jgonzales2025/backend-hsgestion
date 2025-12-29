@@ -18,6 +18,7 @@ class ExcelNoteResource extends JsonResource
                 'id' => $this->resource->getCompany()->getId(),
                 'status' => ($this->resource->getCompany()->getStatus()) == 1 ? 'Activo' : 'Inactivo',
                 'ruc' => $this->resource->getCompany()->getRuc(),
+                'name' => $this->resource->getCompany()->getCompanyName(),
             ],
             'branch' => [
                 'id' => $this->resource->getBranch()->getId(),

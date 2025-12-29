@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Orden de Compra {{ $purchaseOrder->getSerie() }}-{{ $purchaseOrder->getCorrelative() }}</title>
@@ -7,6 +8,7 @@
         @page {
             margin: 0cm 0cm;
         }
+
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 10px;
@@ -16,6 +18,7 @@
             margin-left: 1.5cm;
             margin-right: 1.5cm;
         }
+
         header {
             position: fixed;
             top: 0cm;
@@ -27,6 +30,7 @@
             padding-left: 1.5cm;
             padding-right: 1.5cm;
         }
+
         footer {
             position: fixed;
             bottom: 0cm;
@@ -39,22 +43,27 @@
             font-size: 9px;
             border-top: 1px solid #ddd;
         }
+
         .logo {
             max-width: 180px;
             max-height: 60px;
         }
+
         .company-info {
             text-align: left;
         }
+
         .company-name {
             font-size: 14px;
             font-weight: bold;
             color: #000;
         }
+
         .company-address {
             font-size: 9px;
             color: #555;
         }
+
         .ruc-box {
             border: 1px solid #000;
             text-align: center;
@@ -62,10 +71,12 @@
             border-radius: 5px;
             background-color: #f9f9f9;
         }
+
         .ruc-number {
             font-size: 14px;
             font-weight: bold;
         }
+
         .doc-title {
             font-size: 16px;
             font-weight: bold;
@@ -74,10 +85,12 @@
             color: #fff;
             padding: 2px;
         }
+
         .doc-number {
             font-size: 14px;
             font-weight: bold;
         }
+
         .section-title {
             font-size: 11px;
             font-weight: bold;
@@ -87,20 +100,24 @@
             border-bottom: 1px solid #ccc;
             color: #000;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 10px;
         }
+
         .info-table td {
             padding: 4px;
             vertical-align: top;
         }
+
         .label {
             font-weight: bold;
             color: #444;
             width: 100px;
         }
+
         .products-table th {
             background-color: #333;
             color: #fff;
@@ -108,29 +125,35 @@
             font-size: 9px;
             text-align: center;
         }
+
         .products-table td {
             border-bottom: 1px solid #ddd;
             padding: 6px;
             font-size: 9px;
             vertical-align: middle;
         }
+
         .products-table tr:nth-child(even) {
             background-color: #f9f9f9;
         }
+
         .totals-table {
             width: 40%;
             float: right;
             margin-top: 10px;
         }
+
         .totals-table td {
             padding: 5px;
             border-bottom: 1px solid #eee;
         }
+
         .total-row {
             font-weight: bold;
             font-size: 11px;
             background-color: #eee;
         }
+
         .amount-in-words {
             margin-top: 20px;
             font-style: italic;
@@ -138,11 +161,13 @@
             /*border-top: 1px solid #ccc;*/
             padding-top: 5px;
         }
+
         .page-number:before {
             content: "Página " counter(page);
         }
     </style>
 </head>
+
 <body>
     <header>
         <table style="width: 100%;">
@@ -174,32 +199,32 @@
         <div class="section-title">DATOS DEL PROVEEDOR</div>
         <table class="info-table">
             @php
-                $supplier = $purchaseOrder->getSupplier();
-                $isCompany = $supplier->getCustomerDocumentTypeId() == 2;
+            $supplier = $purchaseOrder->getSupplier();
+            $isCompany = $supplier->getCustomerDocumentType()->getId() == 2;
             @endphp
-            
+
             @if($isCompany)
-                <tr>
-                    <td class="label">R.U.C.:</td>
-                    <td>{{ $supplier->getDocumentNumber() }}</td>
-                    <td class="label">RAZÓN SOCIAL:</td>
-                    <td>{{ $supplier->getCompanyName() }}</td>
-                </tr>
+            <tr>
+                <td class="label">R.U.C.:</td>
+                <td>{{ $supplier->getDocumentNumber() }}</td>
+                <td class="label">RAZÓN SOCIAL:</td>
+                <td>{{ $supplier->getCompanyName() }}</td>
+            </tr>
             @else
-                <tr>
-                    <td class="label">DNI:</td>
-                    <td>{{ $supplier->getDocumentNumber() }}</td>
-                    <td class="label">NOMBRE:</td>
-                    <td>{{ $supplier->getName() }} {{ $supplier->getLastname() }} {{ $supplier->getSecondLastname() }}</td>
-                </tr>
+            <tr>
+                <td class="label">DNI:</td>
+                <td>{{ $supplier->getDocumentNumber() }}</td>
+                <td class="label">NOMBRE:</td>
+                <td>{{ $supplier->getName() }} {{ $supplier->getLastname() }} {{ $supplier->getSecondLastname() }}</td>
+            </tr>
             @endif
-            
+
             <tr>
                 <td class="label">DIRECCIÓN:</td>
                 <td colspan="3">
                     @php
-                        $addresses = $supplier->getAddresses();
-                        $address = $addresses && count($addresses) > 0 ? $addresses[0]->getAddress() : '';
+                    $addresses = $supplier->getAddresses();
+                    $address = $addresses && count($addresses) > 0 ? $addresses[0]->getAddress() : '';
                     @endphp
                     {{ $address }}
                 </td>
@@ -233,13 +258,13 @@
                 <td class="label">FORMA PAGO:</td>
                 <td>{{ $purchaseOrder->getPaymentType()->getName() }}</td>
                 <td class="label">MONEDA:</td>
-                <td>{{ $purchaseOrder->getCurrencyType()->getName() }}</td> 
+                <td>{{ $purchaseOrder->getCurrencyType()->getName() }}</td>
             </tr>
             <tr>
                 <td class="label">LUGAR ENTREGA:</td>
                 <td colspan="4">{{ $purchaseOrder->getBranch()->getName() }} - {{ $purchaseOrder->getBranch()->getAddress() }}</td>
             </tr>
-             <tr>
+            <tr>
                 <td class="label">OBSERVACIONES:</td>
                 <td colspan="4">{{ $purchaseOrder->getObservations() }}</td>
             </tr>
@@ -258,13 +283,13 @@
             </thead>
             <tbody>
                 @foreach($purchaseOrderArticles as $article)
-                    <tr>
-                        <td style="text-align:center;">{{ $article->getCodFab() }}</td>
-                        <td style="text-align:left; padding-left: 10px;">{{ $article->getDescription() }}</td>
-                        <td style="text-align:center;">{{ $article->getQuantity() }}</td>
-                        <td style="text-align:right;">{{ number_format($article->getPurchasePrice(), 2) }}</td>
-                        <td style="text-align:right;">{{ number_format($article->getSubTotal(), 2) }}</td>
-                    </tr>
+                <tr>
+                    <td style="text-align:center;">{{ $article->getCodFab() }}</td>
+                    <td style="text-align:left; padding-left: 10px;">{{ $article->getDescription() }}</td>
+                    <td style="text-align:center;">{{ $article->getQuantity() }}</td>
+                    <td style="text-align:right;">{{ number_format($article->getPurchasePrice(), 2) }}</td>
+                    <td style="text-align:right;">{{ number_format($article->getSubTotal(), 2) }}</td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
@@ -296,4 +321,5 @@
         </div>
     </div>
 </body>
+
 </html>

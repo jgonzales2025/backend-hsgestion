@@ -43,9 +43,11 @@ class DomPdfGenerator implements PdfGeneratorInterface
                 number_format(array_sum(array_column($dispatchArticles, 'subtotal_weight')), 2)
             );
 
-            // Generar QR code usando QR Server API
-            $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' . urlencode($qrData);
-            $qrCode = base64_encode(file_get_contents($qrCodeUrl));
+            // Generar QR code usando SimpleSoftwareIO\QrCode (SVG para evitar dependencia de imagick)
+            $qrCode = base64_encode(\SimpleSoftwareIO\QrCode\Facades\QrCode::format('svg')
+                ->size(150)
+                ->margin(0)
+                ->generate($qrData));
 
             // Cargar la vista Blade con los datos de la guía y los artículos
             $pdf = Pdf::loadView('dispatch_note', [

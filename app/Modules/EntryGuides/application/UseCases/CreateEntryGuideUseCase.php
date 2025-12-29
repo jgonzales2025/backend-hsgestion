@@ -15,7 +15,8 @@ use App\Modules\IngressReason\Application\UseCases\FindByIdIngressReasonUseCase;
 use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 
-class CreateEntryGuideUseCase{
+class CreateEntryGuideUseCase
+{
     public function __construct(
         private readonly EntryGuideRepositoryInterface $entryGuideRepositoryInterface,
         private readonly CompanyRepositoryInterface $companyRepositoryInterface,
@@ -23,9 +24,9 @@ class CreateEntryGuideUseCase{
         private readonly CustomerRepositoryInterface $customerRepositoryInterface,
         private readonly IngressReasonRepositoryInterface $ingressReasonRepositoryInterface,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
-    ){}
+    ) {}
 
-    public function execute(EntryGuideDTO $entryGuideDTO):?EntryGuide
+    public function execute(EntryGuideDTO $entryGuideDTO): ?EntryGuide
     {
         $lastDocumentNumber = $this->entryGuideRepositoryInterface->getLastDocumentNumber($entryGuideDTO->serie);
         $entryGuideDTO->correlative = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
@@ -43,7 +44,7 @@ class CreateEntryGuideUseCase{
         $ingressReason = $ingressReasonUseCase->execute($entryGuideDTO->ingress_reason_id);
 
         $entryGuide = new EntryGuide(
-            id:null,
+            id: null,
             cia: $company,
             branch: $branch,
             serie: $entryGuideDTO->serie,
@@ -58,9 +59,9 @@ class CreateEntryGuideUseCase{
             subtotal: $entryGuideDTO->subtotal,
             total_descuento: $entryGuideDTO->total_descuento,
             total: $entryGuideDTO->total,
+            update_price: $entryGuideDTO->update_price,
         );
 
         return $this->entryGuideRepositoryInterface->save($entryGuide);
     }
-
 }

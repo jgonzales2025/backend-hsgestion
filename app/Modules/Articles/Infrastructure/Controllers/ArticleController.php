@@ -98,11 +98,12 @@ class ArticleController extends Controller
     $branchId = $request->query("branch_id");
     $brand_id = $request->query("brand_id");
     $category_id = $request->query("category_id");
+    $medida = $request->query('medida');
     $status = $request->query('status') !== null ? (int) $request->query('status') : null;
 
     $articleUseCase = new FindAllArticleUseCase($this->articleRepository);
 
-    $articles = $articleUseCase->execute($name, $branchId, $brand_id, $category_id, $status);
+    $articles = $articleUseCase->execute($name, $branchId, $brand_id, $category_id,$status,$medida);
 
     // Return paginated response
     return new JsonResponse([

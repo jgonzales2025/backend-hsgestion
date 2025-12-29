@@ -120,14 +120,17 @@
 
 <body>
     <div class="container">
+        <div style="text-align: left; margin-bottom: 5px;">
+            <img src="{{ public_path('storage/image/guia_remision.jpg') }}" style="width: 150px; height: auto;">
+        </div>
 
         <!-- ENCABEZADO -->
         <table class="header-table">
             <tr>
                 <td width="60%">
                     @if($dispatchNote->cia->logo_horizontal && file_exists(public_path('storage/cias/' . $dispatchNote->cia->logo_horizontal)))
-                        <img src="{{ public_path('storage/cias/' . $dispatchNote->cia->logo_horizontal) }}"
-                            class="logo"><br>
+                    <img src="{{ public_path('storage/cias/' . $dispatchNote->cia->logo_horizontal) }}"
+                        class="logo"><br>
                     @endif
                     <div class="company-info">
                         <strong>{{ strtoupper($dispatchNote->cia->descripcion) }}</strong><br>
@@ -166,11 +169,11 @@
                 <td width="50%"><strong>DIRECCIÓN PARTIDA</strong><br>{{ $dispatchNote->cia->direccion }}</td>
                 <td width="50%"><strong>DIRECCIÓN DESTINO <br></strong>
                     @if (is_null($dispatchNote->direccion_destino_cliente))
-                        {{ $dispatchNote->sucursal->direccion }}
+                    {{ $dispatchNote->sucursal->direccion }}
                     @elseif ($dispatchNote->direccion_destino_cliente == 0)
-                        {{ $dispatchNote->customer->direccion }}
+                    {{ $dispatchNote->customer->direccion }}
                     @elseif ($dispatchNote->direccion_destino_cliente > 0)
-                        {{ $dispatchNote->address->descripcion }}
+                    {{ $dispatchNote->address->descripcion }}
                     @endif
 
                 </td>
@@ -208,11 +211,11 @@
             </thead>
             <tbody>
                 @foreach($dispatchNote->detalles as $detalle)
-                    <tr>
-                        <td>{{ $detalle->producto->unidad->siglas ?? 'UND' }}</td>
-                        <td style="text-align:center;">{{ $detalle->cantidad }}</td>
-                        <td>{{ $detalle->producto->descripcion }}</td>
-                    </tr>
+                <tr>
+                    <td>{{ $detalle->producto->unidad->siglas ?? 'UND' }}</td>
+                    <td style="text-align:center;">{{ $detalle->cantidad }}</td>
+                    <td>{{ $detalle->producto->descripcion }}</td>
+                </tr>
                 @endforeach
             </tbody>
         </table>

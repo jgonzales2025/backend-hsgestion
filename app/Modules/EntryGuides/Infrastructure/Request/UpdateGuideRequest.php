@@ -27,6 +27,7 @@ class UpdateGuideRequest extends FormRequest
             'total_descuento' => 'nullable|numeric',
             'total' => 'nullable|numeric',
             'descuento' => 'nullable|numeric',
+            'update_price' => 'nullable|boolean',
             'entry_guide_articles' => 'required|array|min:1',
             'entry_guide_articles.*.article_id' => 'required|integer|exists:articles,id',
             'entry_guide_articles.*.description' => 'required|string',

@@ -26,8 +26,8 @@ class EntryGuideArticle
         float $saldo = 0.0,
         float $subtotal,
         float $total,
-        float $total_descuento ,
-        float $descuento ,
+        float $total_descuento,
+        float $descuento,
     ) {
         $this->id = $id;
         $this->entry_guide_id = $entry_guide_id;

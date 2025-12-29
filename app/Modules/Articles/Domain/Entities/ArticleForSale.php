@@ -17,7 +17,7 @@ class ArticleForSale
     private float $weight;
     private bool $with_deduction;
     private bool $series_enabled;
-    private string $location;
+    private ?string $location;
     private string $warranty;
     private float $tariff_rate;
     private bool $igv_applicable;
@@ -173,7 +173,7 @@ class ArticleForSale
     {
         return $this->series_enabled;
     }
-    public function getLocation(): string
+    public function getLocation(): ?string
     {
         return $this->location;
     }

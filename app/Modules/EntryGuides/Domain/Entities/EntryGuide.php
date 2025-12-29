@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\EntryGuides\Domain\Entities;
 
 use App\Modules\Branch\Domain\Entities\Branch;
@@ -15,7 +16,7 @@ class EntryGuide
     private ?string $correlative;
     private string $date;
     private ?Customer $customer;
-    private string $observations;
+    private ?string $observations;
     private ?IngressReason $ingressReason;
     private ?string $reference_po_serie; //opcional purchase order
     private ?string $reference_po_correlative; //opcional purchase order
@@ -23,6 +24,7 @@ class EntryGuide
     private float $subtotal;
     private float $total_descuento;
     private float $total;
+    private bool $update_price;
 
     public function __construct(
         ?int $id,
@@ -32,7 +34,7 @@ class EntryGuide
         ?string $correlative,
         string $date,
         ?Customer $customer,
-        string $observations,
+        ?string $observations,
         ?IngressReason $ingressReason,
         ?string $reference_po_serie, //opcional purchase order
         ?string $reference_po_correlative, //opcional purchase order
@@ -40,6 +42,7 @@ class EntryGuide
         float $subtotal,
         float $total_descuento,
         float $total,
+        bool $update_price = false,
     ) {
         $this->id = $id;
         $this->cia = $cia;
@@ -56,7 +59,7 @@ class EntryGuide
         $this->subtotal = $subtotal;
         $this->total_descuento = $total_descuento;
         $this->total = $total;
-
+        $this->update_price = $update_price;
     }
     public function getId(): int|null
     {
@@ -75,7 +78,7 @@ class EntryGuide
     {
         return $this->date;
     }
-    public function getObservations(): string
+    public function getObservations(): ?string
     {
         return $this->observations;
     }
@@ -120,4 +123,8 @@ class EntryGuide
         return $this->total;
     }
 
+    public function getUpdatePrice(): bool
+    {
+        return $this->update_price;
+    }
 }

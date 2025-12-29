@@ -20,7 +20,7 @@ class EloquentEntryGuideArticle extends Model
         'total',
         'total_descuento',
         'descuento',
-    ];  
+    ];
 
     protected $hidden = ['created_at', 'updated_at'];
 

@@ -66,7 +66,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticle(?string $description, ?int $branchId, ?int $brand_id, ?int $category_id, ?int $status)
+    public function findAllArticle(?string $description, ?int $branchId, ?int $brand_id, ?int $category_id, ?int $status, ?string $medida)
     {
         $companyId = request()->get('company_id');
         $articles = EloquentArticle::where('company_type_id', $companyId)->where('status_Esp', false)
@@ -275,18 +275,18 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                     })
                         // Grupo 2: Búsqueda por Serie (usar cadena completa)
                         ->orWhere(function ($subQ) use ($name, $branchId) {
-                        if ($branchId) {
-                            $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
-                                $s->where('serial', $name)
-                                    ->where('branch_id', $branchId);
-                            });
-                            // Validar también que sea visible en la sucursal
-                            $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
-                                $v->where('branch_id', $branchId)
-                                    ->where('status', 1);
-                            });
-                        }
-                    });
+                            if ($branchId) {
+                                $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
+                                    $s->where('serial', $name)
+                                        ->where('branch_id', $branchId);
+                                });
+                                // Validar también que sea visible en la sucursal
+                                $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
+                                    $v->where('branch_id', $branchId)
+                                        ->where('status', 1);
+                                });
+                            }
+                        });
                 });
             })
             // Si NO hay descripción, mantener el filtro original (solo lo que tiene stock/series en la sucursal)
@@ -439,8 +439,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             //->where('url_supplier', true)
             ->where('category_id', 2)
             ->whereHas('visibleArticles', fn($query) =>
-                $query->where('branch_id', $branchId)
-                    ->where('status', 1))
+            $query->where('branch_id', $branchId)
+                ->where('status', 1))
             ->when($description, function ($query, $description) {
                 return $query->where('description', 'like', "%{$description}%");
             })

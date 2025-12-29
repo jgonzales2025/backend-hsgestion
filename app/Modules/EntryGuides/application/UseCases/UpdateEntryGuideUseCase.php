@@ -15,16 +15,17 @@ use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
 use App\Modules\IngressReason\Application\UseCases\FindByIdIngressReasonUseCase;
 use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
 
-class UpdateEntryGuideUseCase{
+class UpdateEntryGuideUseCase
+{
     public function __construct(
         private readonly EntryGuideRepositoryInterface $entryGuideRepositoryInterface,
         private readonly CompanyRepositoryInterface $companyRepositoryInterface,
         private readonly BranchRepositoryInterface $branchRepositoryInterface,
         private readonly CustomerRepositoryInterface $customerRepositoryInterface,
         private readonly IngressReasonRepositoryInterface $ingressReasonRepositoryInterface,
-    ){}
+    ) {}
 
-    public function execute(EntryGuideDTO $entryGuideDTO, $id):?EntryGuide
+    public function execute(EntryGuideDTO $entryGuideDTO, $id): ?EntryGuide
     {
         $companyUseCase = new FindByIdCompanyUseCase($this->companyRepositoryInterface);
         $company = $companyUseCase->execute($entryGuideDTO->cia_id);
@@ -37,9 +38,9 @@ class UpdateEntryGuideUseCase{
 
         $ingressReasonUseCase = new FindByIdIngressReasonUseCase($this->ingressReasonRepositoryInterface);
         $ingressReason = $ingressReasonUseCase->execute($entryGuideDTO->ingress_reason_id);
-        
+
         $entryGuide = new EntryGuide(
-            id:$id,
+            id: $id,
             cia: $company,
             branch: $branch,
             serie: $entryGuideDTO->serie ?? null,
@@ -54,8 +55,8 @@ class UpdateEntryGuideUseCase{
             subtotal: $entryGuideDTO->subtotal,
             total_descuento: $entryGuideDTO->total_descuento,
             total: $entryGuideDTO->total,
+            update_price: $entryGuideDTO->update_price,
         );
         return $this->entryGuideRepositoryInterface->update($entryGuide);
     }
-
 }

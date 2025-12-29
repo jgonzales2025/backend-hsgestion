@@ -9,7 +9,7 @@ class AdvanceResource extends JsonResource
     public function toArray($request)
     {
         $customer = $this->resource->getCustomer();
-        $isCompany = $customer->getCustomerDocumentTypeId() == 2;
+        $isCompany = $customer->getCustomerDocumentType()->getId() == 2;
         return [
             'id' => $this->resource->getId(),
             'correlative' => $this->resource->getCorrelative(),

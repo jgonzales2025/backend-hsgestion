@@ -29,11 +29,13 @@ class EntryGuideRequest extends FormRequest
             'subtotal' => 'nullable|numeric',
             'total_descuento' => 'nullable|numeric',
             'total' => 'nullable|numeric',
-            'entry_guide_articles'=> 'required|array|min:1',
+            'update_price' => 'nullable|boolean',
+            'entry_guide_articles' => 'required|array|min:1',
             'entry_guide_articles.*.article_id' => 'required|integer|exists:articles,id',
             'entry_guide_articles.*.description' => 'required|string',
             'entry_guide_articles.*.quantity' => 'required|numeric',
             'entry_guide_articles.*.serials' => 'nullable|array',
+
             'entry_guide_articles.*.serials.*' => 'required|string|distinct',
             'entry_guide_articles.*.subtotal' => 'nullable|numeric',
             'entry_guide_articles.*.total' => 'nullable|numeric',
@@ -42,7 +44,7 @@ class EntryGuideRequest extends FormRequest
             'order_purchase_id' => 'nullable|array',
 
 
-            'document_entry_guide'=> 'required|array',
+            'document_entry_guide' => 'required|array',
             'document_entry_guide.reference_document_id' => 'required|integer|exists:document_types,id',
             'document_entry_guide.reference_serie' => 'nullable|string',
             'document_entry_guide.reference_correlative' => 'nullable|string'
@@ -104,7 +106,5 @@ class EntryGuideRequest extends FormRequest
                 'Hay números de serie duplicados en la guía de ingreso.'
             );
         }
-
     }
-
 }

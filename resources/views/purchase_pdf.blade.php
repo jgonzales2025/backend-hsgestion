@@ -29,19 +29,12 @@
             display: table;
             width: 100%;
             margin-bottom: 15px;
-            border: 1px solid #000;
+            /* border: 1px solid #000; */
         }
 
-        .header-left {
-            display: table-cell;
-            width: 50%;
-            padding: 10px;
-            vertical-align: top;
-            border-right: 1px solid #000;
-        }
 
         .header-right {
-            display: table-cell;
+            /* display: table-cell; */
             width: 50%;
             padding: 10px;
             vertical-align: top;
@@ -72,7 +65,7 @@
         }
 
         .electronic-label {
-            background: #000;
+            /* background: #000; */
             color: #fff;
             padding: 3px 8px;
             font-size: 8px;
@@ -184,16 +177,7 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <div class="header-left">
-                <div class="company-name">GRUPO COMPUTER S.A.C.</div>
-                <div class="company-info">
-                    RUC: 20000000000<br>
-                    Dirección de la empresa<br>
-                    PROVINCIA: LIMA - LIMA<br>
-                    DEPARTAMENTO: LIMA<br>
-                    SUCURSAL: {{ $purchase['branch']['name'] }}
-                </div>
-            </div>
+
             <div class="header-right">
                 <div class="invoice-box">
                     <div class="electronic-label">FACTURA ELECTRÓNICA</div>

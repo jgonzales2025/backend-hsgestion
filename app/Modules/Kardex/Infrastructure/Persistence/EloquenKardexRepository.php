@@ -103,13 +103,14 @@ class EloquenKardexRepository implements KardexRepositoryInterface
     }
 
     public function getKardexByProductId(
-        int $productId,
-        int $companyId,
-        int $branchId,
-        string $fecha,
-        string $fecha1,
-        // int $categoria,
-        // int $marca,
+         int $companyId,
+         int $branchId,
+         int $productId,
+         string $fecha,
+         string $fecha1,
+         int $categoria,
+         int $marca,
+         int $consulta,
     ): array {
         $results = DB::select(
             'CALL sp_kardex_fisico(?, ?, ?, ?, ?, ?, ?, ?)',
@@ -119,9 +120,9 @@ class EloquenKardexRepository implements KardexRepositoryInterface
                 $productId,   // p_idproducto
                 $fecha,       // p_fecha
                 $fecha1,      // p_fecha1
-                0,   // p_categoria
-                0,       // p_marca
-                1     // p_consulta
+                $categoria,   // p_categoria
+                $marca,       // p_marca
+                $consulta     // p_consulta
             ]
         );
 

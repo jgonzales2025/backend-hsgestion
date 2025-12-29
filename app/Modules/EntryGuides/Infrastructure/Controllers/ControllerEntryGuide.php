@@ -418,14 +418,14 @@ class ControllerEntryGuide extends Controller
         }
 
         $entryGuides = $this->entryGuideRepositoryInterface->findByIds($ids);
-        // dd($entryGuides);
-
+        
+         
         $refSerie = null;
         $refCorrelative = null;
         $refDocumentType = null;
         $entryGuideHeader = null;
         $firstIter = true;
-
+        
         foreach ($entryGuides as $guide) {
             $docEntryGuide = $this->documentEntryGuideRepositoryInterface->findByIdObj($guide->getId());
 

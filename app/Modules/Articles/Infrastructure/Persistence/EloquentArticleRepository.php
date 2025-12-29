@@ -19,6 +19,11 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     {
 
         $eloquentArticle = EloquentArticle::create($this->mapToArray($article));
+
+        if (empty($eloquentArticle->cod_fab)) {
+            $eloquentArticle->update(['cod_fab' => (string)$eloquentArticle->id]);
+        }
+
         $eloquentArticle->refresh();
 
         $companyId = request()->get('company_id');
@@ -61,7 +66,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         );
     }
 
-    public function findAllArticle(?string $description, ?int $branchId, ?int $brand_id, ?int $category_id, ?int $status)
+    public function findAllArticle(?string $description, ?int $branchId, ?int $brand_id, ?int $category_id, ?int $status, ?string $medida)
     {
         $companyId = request()->get('company_id');
         $articles = EloquentArticle::where('company_type_id', $companyId)->where('status_Esp', false)
@@ -70,13 +75,33 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                     // Grupo 1: Búsqueda por Nombre/Código/Referencia (Validar con visibleArticles)
                     $mainGroup->where(function ($subQ) use ($name, $branchId) {
                         $subQ->where(function ($textQ) use ($name) {
-                            $textQ->where('description', 'like', "%{$name}%")
-                                ->orWhere('cod_fab', 'like', "%{$name}%")
-                                ->orWhereHas('referenceCodes', function ($r) use ($name) {
-                                    $r->where('ref_code', 'like', "%{$name}%");
-                                });
-                        });
+                            $textQ->where(function ($q) use ($name) {
+                                $keywords = preg_split('/\s+/', trim($name)); // divide por espacios
 
+                                foreach ($keywords as $keyword) {
+                                    $q->where('description', 'like', "%{$keyword}%");
+                                }
+                            })->orWhere(function ($q) use ($name) {
+                                $keywords = preg_split('/\s+/', trim($name));
+
+                                foreach ($keywords as $keyword) {
+                                    $q->where('cod_fab', 'like', "%{$keyword}%");
+                                }
+                            })->orWhereHas('referenceCodes', function ($r) use ($name) {
+                                $keywords = preg_split('/\s+/', trim($name));
+
+                                foreach ($keywords as $keyword) {
+                                    $r->where('ref_code', 'like', "%{$keyword}%");
+                                }
+                            })->orWhere(function ($q) use ($name) {
+                                $keywords = preg_split('/\s+/', trim($name));
+                                foreach ($keywords as $keyword) {
+                                    if (is_numeric($keyword)) {
+                                        $q->orWhere('id', $keyword);
+                                    }
+                                }
+                            });
+                        });
                         if ($branchId) {
                             $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
                                 $v->where('branch_id', $branchId);
@@ -252,18 +277,18 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                     })
                         // Grupo 2: Búsqueda por Serie (Validar con entryItemSerials y visibleArticles)
                         ->orWhere(function ($subQ) use ($name, $branchId) {
-                        if ($branchId) {
-                            $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
-                                $s->where('serial', $name)
-                                    ->where('branch_id', $branchId);
-                            });
-                            // Validar también que sea visible en la sucursal
-                            $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
-                                $v->where('branch_id', $branchId)
-                                    ->where('status', 1);
-                            });
-                        }
-                    });
+                            if ($branchId) {
+                                $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
+                                    $s->where('serial', $name)
+                                        ->where('branch_id', $branchId);
+                                });
+                                // Validar también que sea visible en la sucursal
+                                $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
+                                    $v->where('branch_id', $branchId)
+                                        ->where('status', 1);
+                                });
+                            }
+                        });
                 });
             })
             // Si NO hay descripción, mantener el filtro original (solo lo que tiene stock/series en la sucursal)
@@ -416,8 +441,8 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             //->where('url_supplier', true)
             ->where('category_id', 2)
             ->whereHas('visibleArticles', fn($query) =>
-                $query->where('branch_id', $branchId)
-                    ->where('status', 1))
+            $query->where('branch_id', $branchId)
+                ->where('status', 1))
             ->when($description, function ($query, $description) {
                 return $query->where('description', 'like', "%{$description}%");
             })
@@ -429,7 +454,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     private function mapToArray(Article $article): array
     {
         return [
-            'cod_fab' => $article->getCodFab() ?? (string) $article->getId(),
+            'cod_fab' => ($article->getCodFab() !== null && $article->getCodFab() !== '') ? $article->getCodFab() : (is_null($article->getId()) ? null : (string) $article->getId()),
             'description' => $article->getDescription(),
             'weight' => $article->getWeight(),
             'with_deduction' => $article->getWithDeduction(),

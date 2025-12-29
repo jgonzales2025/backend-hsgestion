@@ -16,7 +16,7 @@ class EntryGuide
     private ?string $correlative;
     private string $date;
     private ?Customer $customer;
-    private string $observations;
+    private ?string $observations;
     private ?IngressReason $ingressReason;
     private ?string $reference_po_serie; //opcional purchase order
     private ?string $reference_po_correlative; //opcional purchase order
@@ -34,7 +34,7 @@ class EntryGuide
         ?string $correlative,
         string $date,
         ?Customer $customer,
-        string $observations,
+        ?string $observations,
         ?IngressReason $ingressReason,
         ?string $reference_po_serie, //opcional purchase order
         ?string $reference_po_correlative, //opcional purchase order
@@ -78,7 +78,7 @@ class EntryGuide
     {
         return $this->date;
     }
-    public function getObservations(): string
+    public function getObservations(): ?string
     {
         return $this->observations;
     }

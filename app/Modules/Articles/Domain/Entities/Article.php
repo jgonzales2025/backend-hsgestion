@@ -163,7 +163,7 @@ class Article
     {
         return $this->series_enabled;
     }
-    public function getLocation(): string
+    public function getLocation(): ?string
     {
         return $this->location;
     }

@@ -14,4 +14,5 @@ interface DispatchNotesRepositoryInterface
     public function getLastDocumentNumber(string $serie): ?string;
     public function updateStatus(int $dispatchNoteId, int $status): void;
     public function findByDocumentSale(string $serie, string $correlative): ?DispatchNote;
+    public function findByDocument(string $serie, string $correlative): ?DispatchNote;
 }

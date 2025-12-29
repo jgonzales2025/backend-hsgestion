@@ -335,8 +335,7 @@
             </div>
             <div
                 style="display: inline-block; margin-left: 10px; vertical-align: top; font-size: 9px; color: #333; max-width: 150px; text-align: left;">
-                <strong>REPRESENTACIÓN FÍSICA DE {{ strtoupper($sale->getDocumentType()->getDescription()) }}
-                    ELECTRÓNICA</strong>
+                <strong>REPRESENTACIÓN FÍSICA DE {{ strtoupper($sale->getDocumentType()->getDescription()) }}</strong>
             </div>
         </div>
     </div>

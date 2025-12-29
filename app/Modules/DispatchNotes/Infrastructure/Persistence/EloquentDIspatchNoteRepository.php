@@ -193,4 +193,19 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
     {
         EloquentDispatchNote::where('id', $dispatchNote)->update(['status' => $status]);
     }
+
+    public function findByDocument(string $serie, string $correlative): ?DispatchNote
+    {
+        $dispatchNote = EloquentDispatchNote::where('serie', $serie)->where('correlativo', $correlative)
+        ->whereIn('emission_reason_id', [1, 5])
+        ->whereNull('doc_referencia')
+        ->whereNull('num_referencia')
+        ->first();
+
+        if (!$dispatchNote) {
+            return null;
+        }
+
+        return $this->mapToDomain($dispatchNote);
+    }
 }

@@ -37,9 +37,9 @@ class Sale
     private ?int $status;
     private ?int $payment_status;
     private ?bool $is_locked;
-    private ?int $id_prof;
-    private ?string $serie_prof;
-    private ?string $correlative_prof;
+    private ?int $reference_document_type_id;
+    private ?string $reference_serie;
+    private ?string $reference_correlative;
     private ?string $purchase_order;
     private ?User $user_authorized;
     private ?float $credit_amount;
@@ -79,9 +79,9 @@ class Sale
         ?float $amount_amortized,
         ?int $payment_status,
         ?bool $is_locked,
-        ?int $id_prof,
-        ?string $serie_prof,
-        ?string $correlative_prof,
+        ?int $reference_document_type_id,
+        ?string $reference_serie,
+        ?string $reference_correlative,
         ?string $purchase_order,
         ?User $user_authorized,
         ?float $credit_amount,
@@ -122,9 +122,9 @@ class Sale
         $this->status = $status;
         $this->payment_status = $payment_status;
         $this->is_locked = $is_locked;
-        $this->id_prof = $id_prof;
-        $this->serie_prof = $serie_prof;
-        $this->correlative_prof = $correlative_prof;
+        $this->reference_document_type_id = $reference_document_type_id;
+        $this->reference_serie = $reference_serie;
+        $this->reference_correlative = $reference_correlative;
         $this->purchase_order = $purchase_order;
         $this->user_authorized = $user_authorized;
         $this->credit_amount = $credit_amount;
@@ -237,17 +237,17 @@ class Sale
     {
         return $this->is_locked;
     }
-    public function getIdProf(): ?int
+    public function getReferenceDocumentTypeId(): ?int
     {
-        return $this->id_prof;
+        return $this->reference_document_type_id;
     }
-    public function getSerieProf(): string|null
+    public function getReferenceSerie(): string|null
     {
-        return $this->serie_prof;
+        return $this->reference_serie;
     }
-    public function getCorrelativeProf(): string|null
+    public function getReferenceCorrelative(): string|null
     {
-        return $this->correlative_prof;
+        return $this->reference_correlative;
     }
     public function getPurchaseOrder(): string|null
     {

@@ -26,9 +26,9 @@ class SaleDTO
     public ?float $amount_amortized;
     public ?int $payment_status;
     public ?bool $is_locked;
-    public ?int $id_prof;
-    public ?string $serie_prof;
-    public ?string $correlative_prof;
+    public ?int $reference_document_type_id;
+    public ?string $reference_serie;
+    public ?string $reference_correlative;
     public ?string $purchase_order;
     public ?int $user_authorized_id;
     public ?float $credit_amount;
@@ -66,9 +66,9 @@ class SaleDTO
         $this->amount_amortized = $data['amount_amortized'] ?? null;
         $this->payment_status = $data['payment_status'] ?? null;
         $this->is_locked = $data['is_locked'] ?? null;
-        $this->id_prof = $data['id_prof'] ?? null;
-        $this->serie_prof = $data['serie_prof'] ?? null;
-        $this->correlative_prof = $data['correlative_prof'] ?? null;
+        $this->reference_document_type_id = $data['reference_document_type_id'] ?? null;
+        $this->reference_serie = $data['reference_serie'] ?? null;
+        $this->reference_correlative = $data['reference_correlative'] ?? null;
         $this->purchase_order = $data['purchase_order'] ?? null;
         $this->user_authorized_id = $data['user_authorized_id'] ?? null;
         $this->credit_amount = $data['credit_amount'] ?? null;

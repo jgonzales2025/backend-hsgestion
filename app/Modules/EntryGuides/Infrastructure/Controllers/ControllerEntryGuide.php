@@ -33,7 +33,7 @@ use App\Modules\EntryGuideArticle\Infrastructure\Resource\EntryGuideArticleResou
 use App\Modules\EntryGuides\Application\UseCases\GeneratePDF;
 use App\Modules\EntryGuides\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuidePDF;
-use App\Modules\EntryItemSerial\Application\DTOS\EntryItemSerialDTO; 
+use App\Modules\EntryItemSerial\Application\DTOS\EntryItemSerialDTO;
 use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
 use App\Modules\EntryItemSerial\Application\UseCases\CreateEntryItemSerialUseCase;
 use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
@@ -42,12 +42,12 @@ use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterfa
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request; 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class ControllerEntryGuide extends Controller
-{ 
+{
     public function __construct(
         private readonly EntryGuideRepositoryInterface        $entryGuideRepositoryInterface,
         private readonly CompanyRepositoryInterface           $companyRepositoryInterface,
@@ -204,6 +204,11 @@ class ControllerEntryGuide extends Controller
             $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
             $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
+            //
+            //   $findbyidobt = $this->entryGuideArticleRepositoryInterface->findByIdObj($entryGuide);
+
+            //   
+
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
 
 
@@ -285,6 +290,11 @@ class ControllerEntryGuide extends Controller
                 'precio_costo' => $q['precio_costo'] ?? 0,
                 'descuento' => $q['descuento'] ?? 0,
             ]);
+
+            $findbyidobt = $this->entryGuideArticleRepositoryInterface->findByIdObj($entryGuide->getId(), $q['article_id']);
+
+            //  dd($findbyidobt);
+
             $guideArticle = $createEntryGuideArticleUseCase->execute($entryGuideArticleDTO);
 
             // Array para almacenar los seriales
@@ -349,7 +359,7 @@ class ControllerEntryGuide extends Controller
         }
 
         if ($totalQuantity == 0) {
-            return 'pendiente'; 
+            return 'pendiente';
         }
 
         if ($totalSaldo == $totalQuantity) {
@@ -408,7 +418,8 @@ class ControllerEntryGuide extends Controller
         }
 
         $entryGuides = $this->entryGuideRepositoryInterface->findByIds($ids);
- 
+        // dd($entryGuides);
+
         $refSerie = null;
         $refCorrelative = null;
         $refDocumentType = null;
@@ -441,6 +452,8 @@ class ControllerEntryGuide extends Controller
         }
 
         $customerHeader = null;
+        $articleMap = []; // Mapa para consolidar artículos por article_id
+
         foreach ($entryGuides as $entryGuide) {
             if ($customerHeader === null) {
                 $customerHeader = [
@@ -454,27 +467,42 @@ class ControllerEntryGuide extends Controller
                 ];
             }
             $articles = $this->entryGuideArticleRepositoryInterface->findById($entryGuide->getId());
- 
-            foreach ($articles as $article) {
 
-                $aggregated[] = [
-                    'guide_id' => $entryGuide->getId(),
-                    'guide_number' => $entryGuide->getSerie() . '-' . $entryGuide->getCorrelativo(),
-                    'article_id' => $article->getArticle()->getId(),
-                    'description' => $article->getDescription(),
-                    'quantity' => $article->getQuantity(),
-                    'saldo' => $article->getSaldo(),
-                    'cod_fab' => $article->getArticle()->getCodFab(),
-                    'subtotal' => $entryGuide->getSubtotal() ?? 0,
-                    'total' => $entryGuide->getTotal() ?? 0,
-                    'precio_costo' => $article->getTotalDescuento(),
-                    'descuento' => $article->getDescuento() ?? 0,
-                ]; 
+            foreach ($articles as $article) {
+                $articleId = $article->getArticle()->getId();
+
+                // Si el artículo ya existe en el mapa, sumar las cantidades
+                if (isset($articleMap[$articleId])) {
+                    $articleMap[$articleId]['quantity'] += $article->getQuantity();
+                    $articleMap[$articleId]['saldo'] += $article->getSaldo();
+                    $articleMap[$articleId]['subtotal'] += $entryGuide->getSubtotal() ?? 0;
+                    $articleMap[$articleId]['total'] += $entryGuide->getTotal() ?? 0;
+                    $articleMap[$articleId]['descuento'] += $article->getDescuento() ?? 0;
+                } else {
+                    // Si es la primera vez que aparece este article_id, agregarlo al mapa
+                    $articleMap[$articleId] = [
+                        'guide_id' => $entryGuide->getId(),
+                        'guide_number' => $entryGuide->getSerie() . '-' . $entryGuide->getCorrelativo(),
+                        'article_id' => $articleId,
+                        'description' => $article->getDescription(),
+                        'quantity' => $article->getQuantity(),
+                        'saldo' => $article->getSaldo(),
+                        'cod_fab' => $article->getArticle()->getCodFab(),
+                        'subtotal' => $entryGuide->getSubtotal() ?? 0,
+                        'total' => $entryGuide->getTotal() ?? 0,
+                        'precio_costo' => $article->getTotalDescuento(),
+                        'descuento' => $article->getDescuento() ?? 0,
+                    ];
+                }   
             }
-        } 
+        }
+
+        // Convertir el mapa a array indexado
+        $aggregated = array_values($articleMap);
+
         return response()->json([
             'customer' => $customerHeader,
-            'articles' => array_values($aggregated),
+            'articles' => $aggregated,
             'entry_guide' => $entryGuideHeader
         ], 200);
     }

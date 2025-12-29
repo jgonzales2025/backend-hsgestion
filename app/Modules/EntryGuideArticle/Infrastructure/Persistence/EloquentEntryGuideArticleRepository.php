@@ -59,7 +59,49 @@ class EloquentEntryGuideArticleRepository implements EntryGuideArticleRepository
             );
         })->toArray();
     }
+    public function findByIdObj(int $entryGuideId): ?EntryGuideArticle
+    {
 
+        $eloquent = EloquentEntryGuideArticle::where('article_id', $entryGuideId)
+            ->first();
+
+        if (!$eloquent) {
+            return null;
+        }
+
+        return new EntryGuideArticle(
+            id: $eloquent->id,
+            entry_guide_id: $eloquent->entry_guide_id,
+            article: $eloquent->article?->toDomain($eloquent->article),
+            description: $eloquent->description,
+            quantity: $eloquent->quantity,
+            saldo: $eloquent->saldo,
+            subtotal: $eloquent->subtotal,
+            total: $eloquent->total,
+            total_descuento: $eloquent->total_descuento,
+            descuento: $eloquent->descuento,
+        );
+    }
+
+
+    public function update(EntryGuideArticle $article): void
+    {
+        EloquentEntryGuideArticle::where('id', $article->getId())->update([
+            'quantity' => $article->getQuantity(),
+            'saldo' => $article->getSaldo(),
+            'subtotal' => $article->getSubtotal(),
+            'total' => $article->getTotal(),
+            'total_descuento' => $article->getTotalDescuento(),
+            'descuento' => $article->getDescuento(),
+        ]);
+    }
+    public function updateQuantity(int $articleId, int $quantity): void
+    {
+        EloquentEntryGuideArticle::where('article_id', $articleId)->update([
+            'quantity' => $quantity,
+            'saldo' => $quantity,
+        ]);
+    }
     public function deleteByEntryGuideId(int $id): void
     {
         EloquentEntryGuideArticle::where('entry_guide_id', $id)->delete();

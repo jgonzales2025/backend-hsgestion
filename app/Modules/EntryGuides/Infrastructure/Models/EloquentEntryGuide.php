@@ -34,7 +34,8 @@ class EloquentEntryGuide extends Model
         'status',
         'subtotal',
         'total_descuento',
-        'total'
+        'total',
+        'update_price',
     ];
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -46,7 +47,6 @@ class EloquentEntryGuide extends Model
     public function branch(): BelongsTo
     {
         return $this->belongsTo(EloquentBranch::class, 'branch_id');
-
     }
     public function customer(): BelongsTo
     {
@@ -83,8 +83,7 @@ class EloquentEntryGuide extends Model
             subtotal: $eloquentEntryGuide->subtotal,
             total_descuento: $eloquentEntryGuide->total_descuento,
             total: $eloquentEntryGuide->total,
+            update_price: (bool) $eloquentEntryGuide->update_price,
         );
     }
-
-
 }

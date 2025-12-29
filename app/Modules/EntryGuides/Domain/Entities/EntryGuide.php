@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\EntryGuides\Domain\Entities;
 
 use App\Modules\Branch\Domain\Entities\Branch;
@@ -23,6 +24,7 @@ class EntryGuide
     private float $subtotal;
     private float $total_descuento;
     private float $total;
+    private bool $update_price;
 
     public function __construct(
         ?int $id,
@@ -40,6 +42,7 @@ class EntryGuide
         float $subtotal,
         float $total_descuento,
         float $total,
+        bool $update_price = false,
     ) {
         $this->id = $id;
         $this->cia = $cia;
@@ -56,7 +59,7 @@ class EntryGuide
         $this->subtotal = $subtotal;
         $this->total_descuento = $total_descuento;
         $this->total = $total;
-
+        $this->update_price = $update_price;
     }
     public function getId(): int|null
     {
@@ -120,4 +123,8 @@ class EntryGuide
         return $this->total;
     }
 
+    public function getUpdatePrice(): bool
+    {
+        return $this->update_price;
+    }
 }

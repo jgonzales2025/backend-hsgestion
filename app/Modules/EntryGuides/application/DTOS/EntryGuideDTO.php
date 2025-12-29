@@ -17,10 +17,12 @@ class EntryGuideDTO
     public  float $subtotal;
     public float $total_descuento;
     public float $total;
+    public bool $update_price;
 
 
 
-    public function __construct($array){
+    public function __construct($array)
+    {
         $this->cia_id = $array['company_id'];
         $this->branch_id = $array['branch_id'];
         $this->serie = $array['serie'] ?? null;
@@ -34,5 +36,6 @@ class EntryGuideDTO
         $this->subtotal = $array['subtotal'];
         $this->total_descuento = $array['total_descuento'];
         $this->total = $array['total'];
+        $this->update_price = (bool) ($array['update_price'] ?? false);
     }
 }

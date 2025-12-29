@@ -63,6 +63,16 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             }
         }
 
+        if ($eloquentSale->reference_document_type_id == 9)
+        {
+            EloquentDispatchNote::where('serie', $eloquentSale->reference_serie)
+                ->where('correlativo', $eloquentSale->reference_correlative)
+                ->update([
+                    'doc_referencia' => $eloquentSale->serie,
+                    'num_referencia' => $eloquentSale->document_number,
+                ]);
+        }
+
         return $this->buildDomainSale($eloquentSale, $sale);
     }
 

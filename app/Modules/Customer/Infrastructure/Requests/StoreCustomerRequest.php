@@ -26,10 +26,10 @@ class StoreCustomerRequest extends FormRequest
             'is_withholding_applicable' => 'required|boolean',
 
             'phones' => 'nullable|array',
-            'phones.*.phone' => 'required|string',
+            'phones.*.phone' => 'nullable|string',
 
             'emails' => 'nullable|array',
-            'emails.*.email' => 'required|email',
+            'emails.*.email' => 'nullable|email',
 
             'addresses' => 'required|array|min:1',
             'addresses.*.address' => 'required|string',
@@ -85,14 +85,14 @@ class StoreCustomerRequest extends FormRequest
             'status.required' => 'El estado es obligatorio.',
             'status.integer' => 'El estado debe ser un número entero.',
 
-            'phones.required' => 'Debe ingresar al menos un teléfono.',
+            // 'phones.required' => 'Debe ingresar al menos un teléfono.',
             'phones.array' => 'El campo teléfonos debe ser un arreglo.',
-            'phones.*.phone.required' => 'El número de teléfono es obligatorio.',
+            // 'phones.*.phone.required' => 'El número de teléfono es obligatorio.',
             'phones.*.phone.string' => 'El número de teléfono debe ser una cadena de texto.',
 
-            'emails.required' => 'Debe ingresar al menos un correo electrónico.',
+            // 'emails.required' => 'Debe ingresar al menos un correo electrónico.',
             'emails.array' => 'El campo correos debe ser un arreglo.',
-            'emails.*.email.required' => 'El correo electrónico es obligatorio.',
+            // 'emails.*.email.required' => 'El correo electrónico es obligatorio.',
             'emails.*.email.email' => 'El correo electrónico debe ser válido.',
 
             'addresses.required' => 'Debe ingresar al menos una dirección.',

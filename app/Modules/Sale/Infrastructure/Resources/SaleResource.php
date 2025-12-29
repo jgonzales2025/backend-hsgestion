@@ -77,9 +77,9 @@ class SaleResource extends JsonResource
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             'payment_status' => ($this->resource->getPaymentStatus()) == 1 ? 'Cancelado' : 'Pendiente',
             'is_locked' => $this->resource->getIsLocked(),
-            'id_prof' => $this->resource->getIdProf() ?? null,
-            'serie_prof' => $this->resource->getSerieProf() ?? null,
-            'correlative_prof' => $this->resource->getCorrelativeProf() ?? null,
+            'reference_document_type_id' => $this->resource->getReferenceDocumentTypeId() ?? null,
+            'reference_serie' => $this->resource->getReferenceSerie() ?? null,
+            'reference_correlative' => $this->resource->getReferenceCorrelative() ?? null,
             'purchase_order' => $this->resource->getPurchaseOrder() ?? null,
             'user_authorized' => $this->resource->getUserAuthorized() ? [
                 'id' => $this->resource->getUserAuthorized()->getId(),

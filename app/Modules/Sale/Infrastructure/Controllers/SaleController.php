@@ -11,7 +11,11 @@ use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
 use App\Modules\Customer\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
+use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
+use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
+use App\Modules\DispatchNotes\Infrastructure\Resource\DispatchNoteResource;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\Installment\Application\DTOs\InstallmentDTO;
@@ -86,7 +90,9 @@ class SaleController extends Controller
         private readonly EntryItemSerialRepositoryInterface $entryItemSerialRepository,
         private readonly ArticleRepositoryInterface $articleRepository,
         private readonly DispatchNotesRepositoryInterface $dispatchNoteRepository,
-        private readonly InstallmentRepositoryInterface $installmentRepository
+        private readonly InstallmentRepositoryInterface $installmentRepository,
+        private readonly DispatchArticleRepositoryInterface $dispatchNoteArticleRepository,
+        private readonly DispatchArticleSerialRepositoryInterface $dispatchArticleSerialRepository,
     ) {
     }
 
@@ -338,23 +344,46 @@ class SaleController extends Controller
 
         $paddedCorrelative = str_pad($correlative, 8, '0', STR_PAD_LEFT);
 
-        $saleUseCase = new FindByDocumentSaleUseCase($this->saleRepository);
-        $sale = $saleUseCase->execute($documentTypeId, $serie, $paddedCorrelative);
-        if (!$sale) {
-            return response()->json(['message' => 'Venta no encontrada'], 404);
+        if($documentTypeId == 9)
+        {
+            $dispatchNoteUseCase = new \App\Modules\DispatchNotes\Application\UseCases\FindByDocumentUseCase($this->dispatchNoteRepository);
+            $dispatchNote = $dispatchNoteUseCase->execute($serie, $paddedCorrelative);
+            if (!$dispatchNote) {
+                return response()->json(['message' => 'Nota de despacho no encontrada'], 404);
+            }
+
+            $articles = $this->dispatchNoteArticleRepository->findByDispatchNoteId($dispatchNote->getId());
+            $serialsByArticle = $this->dispatchArticleSerialRepository->findSerialsByTransferOrderId($dispatchNote->getId());
+            $articles = array_map(function ($article) use ($serialsByArticle) {
+                $article->serials = $serialsByArticle[$article->getArticleId()] ?? [];
+                return $article;
+            }, $articles);
+
+            return response()->json([
+                'dispatch_note' => (new DispatchNoteResource($dispatchNote))->resolve(),
+                'articles' => DispatchArticleResource::collection($articles)->resolve()
+            ]);
+        }else {
+            $saleUseCase = new FindByDocumentSaleUseCase($this->saleRepository);
+            $sale = $saleUseCase->execute($documentTypeId, $serie, $paddedCorrelative);
+            if (!$sale) {
+                return response()->json(['message' => 'Venta no encontrada'], 404);
+            }
+
+            $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
+            $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
+            $articles = array_map(function ($article) use ($serialsByArticle) {
+                $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
+                return $article;
+            }, $articles);
+
+            return response()->json([
+                'sale' => (new SaleResource($sale))->resolve(),
+                'articles' => SaleArticleResource::collection($articles)->resolve()
+            ]);
         }
 
-        $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
-        $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
-        $articles = array_map(function ($article) use ($serialsByArticle) {
-            $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
-            return $article;
-        }, $articles);
-
-        return response()->json([
-            'sale' => (new SaleResource($sale))->resolve(),
-            'articles' => SaleArticleResource::collection($articles)->resolve()
-        ]);
+        
     }
 
     public function findSaleByDocumentForDebitNote(Request $request): JsonResponse

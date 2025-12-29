@@ -19,6 +19,11 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     {
 
         $eloquentArticle = EloquentArticle::create($this->mapToArray($article));
+        if (empty($article->getCodFab())) {
+            $eloquentArticle->update([
+                'cod_fab' => $article->getId()
+            ]);
+        }
         $eloquentArticle->refresh();
 
         $companyId = request()->get('company_id');
@@ -66,21 +71,30 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
         $companyId = request()->get('company_id');
         $articles = EloquentArticle::where('company_type_id', $companyId)->where('status_Esp', false)
             ->when($description, function ($query, $name) use ($branchId) {
-                return $query->where(function ($mainGroup) use ($name, $branchId) {
-                    // Grupo 1: Búsqueda por Nombre/Código/Referencia (Validar con visibleArticles)
-                    $mainGroup->where(function ($subQ) use ($name, $branchId) {
-                        $subQ->where(function ($textQ) use ($name) {
-                            $textQ->where('description', 'like', "%{$name}%")
-                                ->orWhere('cod_fab', 'like', "%{$name}%")
-                                ->orWhereHas('referenceCodes', function ($r) use ($name) {
-                                    $r->where('ref_code', 'like', "%{$name}%");
-                                });
-                        });
+                // Dividir la búsqueda en palabras individuales (máximo 3)
+                $searchTerms = explode(' ', trim($name));
+                $searchTerms = array_filter($searchTerms); // Eliminar vacíos
+                $searchTerms = array_slice($searchTerms, 0, 3); // Máximo 3 palabras
+    
+                return $query->where(function ($mainGroup) use ($searchTerms, $branchId) {
+                    // Búsqueda por palabras múltiples en Nombre/Código/Referencia
+                    $mainGroup->where(function ($subQ) use ($searchTerms, $branchId) {
+                        // Para cada palabra, debe estar presente en algún campo
+                        foreach ($searchTerms as $term) {
+                            $subQ->where(function ($wordQuery) use ($term) {
+                                $wordQuery->where('description', 'like', "%{$term}%")
+                                    ->orWhere('cod_fab', 'like', "%{$term}%")
+                                    ->orWhereHas('referenceCodes', function ($r) use ($term) {
+                                        $r->where('ref_code', 'like', "%{$term}%");
+                                    });
+                            });
+                        }
 
+                        // Validar visibilidad en sucursal
                         if ($branchId) {
                             $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
-                                $v->where('branch_id', $branchId);
-                                $v->where('status', 1);
+                                $v->where('branch_id', $branchId)
+                                    ->where('status', 1);
                             });
                         }
                     });
@@ -232,25 +246,34 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 }
             })
             ->when($description, function ($query, $name) use ($branchId) {
-                return $query->where(function ($mainGroup) use ($name, $branchId) {
-                    // Grupo 1: Búsqueda por Nombre/Código/Referencia (Validar con visibleArticles)
-                    $mainGroup->where(function ($subQ) use ($name, $branchId) {
-                        $subQ->where(function ($textQ) use ($name) {
-                            $textQ->where('description', 'like', "%{$name}%")
-                                ->orWhere('cod_fab', 'like', "%{$name}%")
-                                ->orWhereHas('referenceCodes', function ($r) use ($name) {
-                                    $r->where('ref_code', 'like', "%{$name}%");
-                                });
-                        });
+                // Dividir la búsqueda en palabras individuales (máximo 3)
+                $searchTerms = explode(' ', trim($name));
+                $searchTerms = array_filter($searchTerms); // Eliminar vacíos
+                $searchTerms = array_slice($searchTerms, 0, 3); // Máximo 3 palabras
+    
+                return $query->where(function ($mainGroup) use ($searchTerms, $name, $branchId) {
+                    // Grupo 1: Búsqueda por palabras múltiples en Nombre/Código/Referencia
+                    $mainGroup->where(function ($subQ) use ($searchTerms, $branchId) {
+                        // Para cada palabra, debe estar presente en algún campo
+                        foreach ($searchTerms as $term) {
+                            $subQ->where(function ($wordQuery) use ($term) {
+                                $wordQuery->where('description', 'like', "%{$term}%")
+                                    ->orWhere('cod_fab', 'like', "%{$term}%")
+                                    ->orWhereHas('referenceCodes', function ($r) use ($term) {
+                                        $r->where('ref_code', 'like', "%{$term}%");
+                                    });
+                            });
+                        }
 
+                        // Validar visibilidad en sucursal
                         if ($branchId) {
                             $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
-                                $v->where('branch_id', $branchId);
-                                $v->where('status', 1);
+                                $v->where('branch_id', $branchId)
+                                    ->where('status', 1);
                             });
                         }
                     })
-                        // Grupo 2: Búsqueda por Serie (Validar con entryItemSerials y visibleArticles)
+                        // Grupo 2: Búsqueda por Serie (usar cadena completa)
                         ->orWhere(function ($subQ) use ($name, $branchId) {
                         if ($branchId) {
                             $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
@@ -429,7 +452,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     private function mapToArray(Article $article): array
     {
         return [
-            'cod_fab' => $article->getCodFab() ?? (string) $article->getId(),
+            'cod_fab' => ($article->getCodFab() !== null && $article->getCodFab() !== '') ? $article->getCodFab() : (is_null($article->getId()) ? null : (string) $article->getId()),
             'description' => $article->getDescription(),
             'weight' => $article->getWeight(),
             'with_deduction' => $article->getWithDeduction(),

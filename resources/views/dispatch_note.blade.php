@@ -120,6 +120,9 @@
 
 <body>
     <div class="container">
+        <div style="text-align: left; margin-bottom: 5px;">
+            <img src="{{ public_path('storage/image/guia_remision.jpg') }}" style="width: 150px; height: auto;">
+        </div>
 
         <!-- ENCABEZADO -->
         <table class="header-table">

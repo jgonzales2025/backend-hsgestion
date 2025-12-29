@@ -19,14 +19,14 @@ class GenerateExcel implements FromArray, WithHeadings, WithEvents, WithCustomSt
     private array $keys = [];
 
     public function __construct(
-        private readonly int $companyId,
-        private readonly int $branchId,
-        private readonly int $productId,
-        private readonly string $fecha,
-        private readonly string $fecha1,
-        private readonly int $categoria,
-        private readonly int $marca,
-        private readonly int $consulta,
+        private readonly ?int $companyId,
+        private readonly ?int $branchId,
+        private readonly ?int $productId,
+        private readonly ?string $fecha,
+        private readonly ?string $fecha1,
+        private readonly ?int $categoria,
+        private readonly ?int $marca,
+        private readonly ?int $consulta,
         private readonly string $title = 'Kardex Físico'
     ) {
         $results = DB::select(

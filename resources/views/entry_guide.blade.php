@@ -174,7 +174,7 @@
         <div class="section-title">DATOS DEL PROVEEDOR</div>
         <table class="info-table">
             @php
-            $isCompany = $customer->getCustomerDocumentTypeId() == 2;
+            $isCompany = $customer->getCustomerDocumentType()->getId() == 2;
             @endphp
 
             @if($isCompany)
@@ -198,19 +198,19 @@
                 <td colspan="3">
                     @php
                     $addresses = $customer->getAddresses();
-                    $address = $addresses && count($addresses) > 0 ? $addresses[0]->getAddress() : '';
+                    $address = $addresses && count($addresses) > 0 ? $addresses[0]->getAddress() : 'N/A';
                     @endphp
                     {{ $address }}
                 </td>
             </tr>
             <tr>
                 <td class="label">CONTACTO:</td>
-                <td>{{ $customer->getContact() ?? '' }}</td>
+                <td>{{ $customer->getContact() ?: 'N/A' }}</td>
                 <td class="label">TELÉFONO:</td>
                 <td>
                     @php
                     $phones = $customer->getPhones();
-                    $phone = $phones && count($phones) > 0 ? $phones[0]->getPhone() : '';
+                    $phone = $phones && count($phones) > 0 ? $phones[0]->getPhone() : 'N/A';
                     @endphp
                     {{ $phone }}
                 </td>
@@ -230,21 +230,22 @@
                 <td class="label">FECHA EMISIÓN:</td>
                 <td>{{ $entryGuide->getDate() }}</td>
                 <td class="label">MOTIVO INGRESO:</td>
-                <td colspan="3">{{ $entryGuide->getIngressReason()?->getDescription() ?? '' }}</td>
+                <td colspan="3">{{ $entryGuide->getIngressReason()?->getDescription() ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td class="label">LUGAR ENTREGA:</td>
                 <td colspan="5">{{ $branch->getName() }} - {{ $branch->getAddress() }}</td>
             </tr>
-            @if($entryGuide->getReferenceSerie() && $entryGuide->getReferenceCorrelative())
             <tr>
-                <td class="label">REF. O/C:</td>
-                <td colspan="5">{{ $entryGuide->getReferenceSerie() }} - {{ $entryGuide->getReferenceCorrelative() }}</td>
+                <td class="label">Documento de deferencia:</td>
+                <td colspan="5">
+                      {{ $document_entry_guide?->getReferenceDocument()->getDescription() }} {{ $document_entry_guide?->getReferenceSerie() }} - {{ $document_entry_guide?->getReferenceCorrelative() }}
+
+                </td>
             </tr>
-            @endif
             <tr>
                 <td class="label">OBSERVACIONES:</td>
-                <td colspan="5">{{ $entryGuide->getObservations() }}</td>
+                <td colspan="5">{{ $entryGuide->getObservations() ?: 'N/A' }}</td>
             </tr>
         </table>
 

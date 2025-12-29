@@ -211,11 +211,8 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                     'entry_guide_id' => $shopping_Income_Guide->entry_guide_id,
                 ]);
             }
-
-            // NOTE: Saldo calculations are now handled by PurchaseController::updateEntryGuideSaldosFIFO
-            // which is called when cantidad_update changes through the updateDetail endpoint.
-            // We DO NOT call the stored procedure here to avoid double deductions.
-
+             
+  
             return $this->findWithRelations($eloquentpurchase->id);
         });
     }

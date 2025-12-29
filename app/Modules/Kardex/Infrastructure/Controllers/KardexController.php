@@ -101,9 +101,9 @@ class KardexController extends Controller
             branchId: (int) $validated['branch_id'],
             fecha: $validated['fecha'],
             fecha1: $validated['fecha1'],
-
-            // categoria: (int) $validated['categoria'],
-            // marca: (int) $validated['marca'],
+            categoria: (int) $validated['categoria'] ?? 0,
+            marca: (int) $validated['marca'] ?? 0,
+            consulta: (int) $validated['consulta'] ?? 1,
         );
 
         return response()->json([
@@ -127,18 +127,27 @@ class KardexController extends Controller
         $companyId = request()->get('company_id');
         $validated['company_id'] = $companyId;
 
+        $productId = $validated['product_id'] ?? null;
+        $fecha = $validated['fecha'] ?? null;
+        $fecha1 = $validated['fecha1'] ?? null;
+
+        $title = 'Kardex Físico';
+        if ($productId) $title .= ' - Producto ' . $productId;
+        if ($fecha && $fecha1) $title .= ' - ' . $fecha . ' a ' . $fecha1;
+
         $export = new GenerateExcel(
             companyId: $companyId,
-            branchId: (int) ($validated['branch_id'] ?? 0),
-            productId: (int) ($validated['product_id'] ?? 0),
-            fecha: $validated['fecha'] ?? null,
-            fecha1: $validated['fecha1'] ?? null,
-            categoria: (int) ($validated['categoria'] ?? 0),
-            marca: (int) ($validated['marca'] ?? 0),
-            consulta: (int) ($validated['consulta'] ?? 1),
-            title: 'Kardex Físico - Producto ' . $validated['product_id'] . ' - ' . $validated['fecha'] . ' a ' . $validated['fecha1'],
+            branchId: isset($validated['branch_id']) ? (int) $validated['branch_id'] : null,
+            productId: $productId ? (int) $productId : null,
+            fecha: $fecha,
+            fecha1: $fecha1,
+            categoria: isset($validated['categoria']) ? (int) $validated['categoria'] : null,
+            marca: isset($validated['marca']) ? (int) $validated['marca'] : null,
+            consulta: isset($validated['consulta']) ? (int) $validated['consulta'] : null,
+            title: $title,
         );
-        $fileName = 'kardex_' . $validated['product_id'] . '_' . date('YmdHis') . '.xlsx';
+
+        $fileName = 'kardex_' . ($productId ?? 'general') . '_' . date('YmdHis') . '.xlsx';
         return Excel::download($export, $fileName);
     }
 }

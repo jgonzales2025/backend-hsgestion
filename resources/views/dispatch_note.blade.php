@@ -122,8 +122,8 @@
     <div class="container">
         <div style="text-align: left; margin-bottom: 5px;">
             <!-- <img src="{{ public_path('storage/image/guia_remision.jpg') }}" style="width: 150px; height: auto;"> -->
-             <img src="{{ public_path('storage/logo/logocyberhouse.jpeg') }}" class="logo" alt="Logo" style="width: 150px; height: auto;">
-         
+            <img src="{{ public_path('storage/logo/logocyberhouse.jpeg') }}" class="logo" alt="Logo" style="width: 150px; height: auto;">
+
         </div>
 
         <!-- ENCABEZADO -->
@@ -232,13 +232,14 @@
         </table>
 
         <div class="footer">
-            <p>NO SE ACEPTAN CAMBIOS NI DEVOLUCIONES CON DAÑOS FÍSICOS O ACCESORIOS FALTANTES, SOLO POR FALLAS DE
-                FABRICACIÓN</p>
-            <p>Autorizado mediante resolución N° {{ $dispatchNote['company']['resolucion'] ?? '0180050002825' }}</p>
-            <p>Representación impresa - Documento Electrónico</p>
-            <p>Podrá ser consultada en:
-                <strong>{{ $dispatchNote['company']['pagina_web'] ?? 'http://www.supertec.com.pe/cdpelectronico' }}</strong>
-            </p>
+
+            @if(isset($qrCode))
+            <div class="qr">
+                <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code">
+            </div>
+            @endif
+            <p>Representación impresa - Guia de Remisión Electrónica</p>
+ 
         </div>
 
 

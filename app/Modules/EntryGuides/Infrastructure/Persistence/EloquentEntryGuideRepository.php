@@ -16,7 +16,11 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     public function findAll(?string $description, ?int $status, ?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id): LengthAwarePaginator
     {
         $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])
-            ->when($description,fn($query) =>$query->whereHas('customer',fn($q) =>
+            ->when(
+                $description,
+                fn($query) => $query->whereHas(
+                    'customer',
+                    fn($q) =>
 
                     $q->where('name', 'like', "%{$description}%")
                         ->orWhere('lastname', 'like', "%{$description}%")
@@ -76,6 +80,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 subtotal: $entryGuide->subtotal,
                 total_descuento: $entryGuide->total_descuento,
                 total: $entryGuide->total,
+                update_price: (bool) $entryGuide->update_price,
             );
         });
 
@@ -108,6 +113,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             subtotal: $entryGuide->subtotal,
             total_descuento: $entryGuide->total_descuento,
             total: $entryGuide->total,
+            update_price: (bool) $entryGuide->update_price,
         );
     }
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide
@@ -137,57 +143,60 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             subtotal: $entryGuide->subtotal,
             total_descuento: $entryGuide->total_descuento,
             total: $entryGuide->total,
+            update_price: (bool) $entryGuide->update_price,
         );
     }
     public function save(EntryGuide $entryGuide): ?EntryGuide
     {
         return DB::transaction(function () use ($entryGuide) {
 
-        $eloquentEntryGuide = EloquentEntryGuide::create([
-            'cia_id' => $entryGuide->getCompany()->getId(),
-            'branch_id' => $entryGuide->getBranch()->getId(),
-            'serie' => $entryGuide->getSerie(),
-            'correlative' => $entryGuide->getCorrelativo(),
-            'date' => $entryGuide->getDate(),
-            'customer_id' => $entryGuide->getCustomer()->getId(),
-            'observations' => $entryGuide->getObservations(),
-            'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
-            'reference_serie' => $entryGuide->getReferenceSerie(),
-            'reference_correlative' => $entryGuide->getReferenceCorrelative(),
-            'subtotal' => $entryGuide->getSubtotal(),
-            'total_descuento' => $entryGuide->getTotalDescuento(),
-            'total' => $entryGuide->getTotal(),
-        ]);
+            $eloquentEntryGuide = EloquentEntryGuide::create([
+                'cia_id' => $entryGuide->getCompany()->getId(),
+                'branch_id' => $entryGuide->getBranch()->getId(),
+                'serie' => $entryGuide->getSerie(),
+                'correlative' => $entryGuide->getCorrelativo(),
+                'date' => $entryGuide->getDate(),
+                'customer_id' => $entryGuide->getCustomer()->getId(),
+                'observations' => $entryGuide->getObservations(),
+                'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
+                'reference_serie' => $entryGuide->getReferenceSerie(),
+                'reference_correlative' => $entryGuide->getReferenceCorrelative(),
+                'subtotal' => $entryGuide->getSubtotal(),
+                'total_descuento' => $entryGuide->getTotalDescuento(),
+                'total' => $entryGuide->getTotal(),
+                'update_price' => $entryGuide->getUpdatePrice(),
+            ]);
 
-        
-        //  DB::statement('CALL update_entry_guides_from_purchase_order(?,?,?,?)',[
-        //     $entryGuide->getCompany()->getId(),
-        //     $entryGuide->getCustomer()->getId(),
-        //     $entryGuide->getReferenceSerie(),
-        //     $entryGuide->getReferenceCorrelative(),
-        //  ]);
 
-        $eloquentEntryGuide->refresh();
-        return new EntryGuide(
-            id: $eloquentEntryGuide->id,
-            cia: $eloquentEntryGuide->company?->toDomain($eloquentEntryGuide->company),
-            branch: $eloquentEntryGuide->branch?->toDomain($eloquentEntryGuide->branch),
-            serie: $eloquentEntryGuide->serie,
-            correlative: $eloquentEntryGuide->correlative,
-            date: $eloquentEntryGuide->date,
-            customer: $eloquentEntryGuide->customer?->toDomain($eloquentEntryGuide->customer),
-            observations: $eloquentEntryGuide->observations,
-            ingressReason: $eloquentEntryGuide->ingressReason?->toDomain($eloquentEntryGuide->ingressReason),
-            reference_po_serie: $eloquentEntryGuide->reference_serie,
-            reference_po_correlative: $eloquentEntryGuide->reference_correlative,
-            status: $eloquentEntryGuide->status,
-            subtotal: $eloquentEntryGuide->subtotal,
-            total_descuento: $eloquentEntryGuide->total_descuento,
-            total: $eloquentEntryGuide->total,);
-         } );
- 
+            //  DB::statement('CALL update_entry_guides_from_purchase_order(?,?,?,?)',[
+            //     $entryGuide->getCompany()->getId(),
+            //     $entryGuide->getCustomer()->getId(),
+            //     $entryGuide->getReferenceSerie(),
+            //     $entryGuide->getReferenceCorrelative(),
+            //  ]);
+
+            $eloquentEntryGuide->refresh();
+            return new EntryGuide(
+                id: $eloquentEntryGuide->id,
+                cia: $eloquentEntryGuide->company?->toDomain($eloquentEntryGuide->company),
+                branch: $eloquentEntryGuide->branch?->toDomain($eloquentEntryGuide->branch),
+                serie: $eloquentEntryGuide->serie,
+                correlative: $eloquentEntryGuide->correlative,
+                date: $eloquentEntryGuide->date,
+                customer: $eloquentEntryGuide->customer?->toDomain($eloquentEntryGuide->customer),
+                observations: $eloquentEntryGuide->observations,
+                ingressReason: $eloquentEntryGuide->ingressReason?->toDomain($eloquentEntryGuide->ingressReason),
+                reference_po_serie: $eloquentEntryGuide->reference_serie,
+                reference_po_correlative: $eloquentEntryGuide->reference_correlative,
+                status: $eloquentEntryGuide->status,
+                subtotal: $eloquentEntryGuide->subtotal,
+                total_descuento: $eloquentEntryGuide->total_descuento,
+                total: $eloquentEntryGuide->total,
+                update_price: (bool) $eloquentEntryGuide->update_price,
+            );
+        });
     }
-    
+
     public function findById(int $id): ?EntryGuide
     {
         $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])->find($id);
@@ -211,6 +220,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             subtotal: $eloquentEntryGuide->subtotal,
             total_descuento: $eloquentEntryGuide->total_descuento,
             total: $eloquentEntryGuide->total,
+            update_price: (bool) $eloquentEntryGuide->update_price,
         );
     }
     public function update(EntryGuide $entryGuide): EntryGuide|null
@@ -234,6 +244,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'subtotal' => $entryGuide->getSubtotal(),
             'total_descuento' => $entryGuide->getTotalDescuento(),
             'total' => $entryGuide->getTotal(),
+            'update_price' => $entryGuide->getUpdatePrice(),
         ]);
 
         return new EntryGuide(
@@ -252,6 +263,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             subtotal: $eloquentEntryGuide->subtotal,
             total_descuento: $eloquentEntryGuide->total_descuento,
             total: $eloquentEntryGuide->total,
+            update_price: (bool) $eloquentEntryGuide->update_price,
         );
     }
 
@@ -296,6 +308,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 subtotal: $entryGuide->subtotal,
                 total_descuento: $entryGuide->total_descuento,
                 total: $entryGuide->total,
+                update_price: (bool) $entryGuide->update_price,
             );
         })->toArray();
     }

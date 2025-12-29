@@ -36,6 +36,7 @@ return new class extends Migration
             $table->foreignId('branch_id')->constrained('branches');
             $table->foreignId('customer_id')->constrained('customers');
             $table->foreignId('ingress_reason_id')->constrained('ingress_reasons');
+            $table->boolean('update_price')->default(false);
         });
     }
 

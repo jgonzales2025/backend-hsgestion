@@ -10,7 +10,7 @@ use App\Modules\DetailPurchaseGuides\Application\DTOS\DetailPurchaseGuideDTO;
 use App\Modules\DetailPurchaseGuides\Application\UseCases\CreateDetailPurchaseGuideUseCase;
 use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
 use App\Modules\DetailPurchaseGuides\Infrastructure\Resource\DetailPurchaseGuideResource;
-use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface; 
+use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
 use App\Modules\Purchases\Application\UseCases\CreatePurchaseUseCase;
@@ -31,7 +31,9 @@ use App\Modules\Purchases\Domain\Interface\GeneratepdfRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB; 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Modules\ShoppingIncomeGuide\Infrastructure\Models\EloquentShoppingIncomeGuide;
 
 class PurchaseController extends Controller
 {
@@ -44,7 +46,7 @@ class PurchaseController extends Controller
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
-        private readonly DocumentTypeRepositoryInterface $documentTypeRepository, 
+        private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -78,7 +80,7 @@ class PurchaseController extends Controller
         $purchase = $findByIdPurchaseUseCase->execute($id);
         if (!$purchase) {
             return response()->json(['message' => 'Compra no encontrada'], 404);
-        } 
+        }
 
         return response()->json(
             new PurchaseResource($purchase),
@@ -88,7 +90,7 @@ class PurchaseController extends Controller
 
     public function store(CreatePurchaseRequest $request): JsonResponse
     {
- 
+
         $purchaseDTO = new PurchaseDTO($request->validated());
         $cretaePurchaseUseCase = new CreatePurchaseUseCase(
             $this->purchaseRepository,
@@ -101,7 +103,7 @@ class PurchaseController extends Controller
         );
 
         $purchase = $cretaePurchaseUseCase->execute($purchaseDTO);
-        return response()->json( 
+        return response()->json(
             (new PurchaseResource($purchase))->resolve(),
             201
         );
@@ -124,7 +126,7 @@ class PurchaseController extends Controller
 
         if (!$purchase) {
             return response()->json(['message' => 'Compra no encontrada'], 404);
-        } 
+        }
 
         return response()->json(
             (new PurchaseResource($purchase))->resolve(),
@@ -139,6 +141,10 @@ class PurchaseController extends Controller
             $this->shoppingIncomeGuideRepository,
             app(GeneratepdfRepositoryInterface::class)
         );
+        $purchase = $this->purchaseRepository->findById($id);
+        if (!$purchase) {
+            dd("ID recibido: $id. No se encontró en la base de datos.");
+        }
         return $useCase->execute($id);
     }
 
@@ -179,7 +185,7 @@ class PurchaseController extends Controller
         $shoppingGuide = $createGuideUseCase->execute($detailDTO);
 
         return $shoppingGuide;
-    } 
+    }
 
     public function proovedor(int $id): JsonResponse
     {
@@ -231,6 +237,15 @@ class PurchaseController extends Controller
         $cantidadOriginal = (float) $detail->getCantidad();
         $consumidoActual = (float) $detail->getCantidadUpdate();
         $saldoDisponible = max(0, $cantidadOriginal - $consumidoActual);
+
+        Log::info('[UPDATE_DETAIL] Before update', [
+            'detail_id' => $id,
+            'cantidad_original' => $cantidadOriginal,
+            'consumido_actual' => $consumidoActual,
+            'saldo_disponible' => $saldoDisponible,
+            'cantidad_update_recibida' => $cantidadUpdate
+        ]);
+
         if ($cantidadUpdate > $saldoDisponible) {
             return response()->json([
                 'success' => false,
@@ -242,6 +257,11 @@ class PurchaseController extends Controller
 
         // Calculate new total consumed
         $nuevoConsumidoTotal = $consumidoActual + $cantidadUpdate;
+
+        Log::info('[UPDATE_DETAIL] Calculated new total', [
+            'nuevo_consumido_total' => $nuevoConsumidoTotal,
+            'formula' => "$consumidoActual + $cantidadUpdate"
+        ]);
 
         // Update entity: keep original cantidad, update total consumido
         $detail->setCantidadUpdate($nuevoConsumidoTotal);
@@ -256,21 +276,20 @@ class PurchaseController extends Controller
             ], 500);
         }
 
-        // Update entry guide articles saldo via stored procedure
+        // Update entry guide articles saldo using PHP FIFO logic
         try {
             $findByIdPurchaseUseCase = new FindByIdPurchaseUseCase($this->purchaseRepository);
             $purchase = $findByIdPurchaseUseCase->execute($detail->getPurchaseId());
+
             if ($purchase) {
-                DB::statement('CALL update_entry_guides_from_purchase(?,?,?,?,?)', [
-                    $purchase->getCompanyId(),
-                    $purchase->getSupplier()?->getId(),
-                    $purchase->getTypeDocumentId()?->getId(),
-                    $purchase->getReferenceSerie(),
-                    $purchase->getReferenceCorrelative(),
-                ]);
+                $this->updateEntryGuideSaldosFIFO($purchase, $detail->getArticleId(), $nuevoConsumidoTotal);
             }
         } catch (\Throwable $e) {
-            // swallow and still return success; saldo update can be retried
+            Log::error('Error updating entry guide saldos: ' . $e->getMessage(), [
+                'exception' => $e,
+                'purchase_id' => $detail->getPurchaseId(),
+                'article_id' => $detail->getArticleId()
+            ]);
         }
 
         // Return success response
@@ -317,5 +336,102 @@ class PurchaseController extends Controller
         }
 
         return 'En proceso';
+    }
+
+    /**
+     * Update entry guide saldos using FIFO (First In, First Out) logic
+     * 
+     * @param \App\Modules\Purchases\Domain\Entities\Purchase $purchase
+     * @param int $articleId
+     * @param float $totalConsumed
+     * @return void
+     */
+    private function updateEntryGuideSaldosFIFO($purchase, int $articleId, float $totalConsumed): void
+    {
+        Log::info('[FIFO] Starting update', [
+            'purchase_id' => $purchase->getId(),
+            'article_id' => $articleId,
+            'total_consumed' => $totalConsumed
+        ]);
+
+        // Get all entry guide IDs related to this purchase
+        $entryGuideIds = EloquentShoppingIncomeGuide::where('purchase_id', $purchase->getId())
+            ->pluck('entry_guide_id')
+            ->toArray();
+
+        Log::info('[FIFO] Found entry guides', ['count' => count($entryGuideIds), 'ids' => $entryGuideIds]);
+
+        if (empty($entryGuideIds)) {
+            Log::warning('[FIFO] No entry guides found');
+            return;
+        }
+
+        // Get all entry guide articles for this article, ordered by FIFO (creation date)
+        $entryGuideArticles = DB::table('entry_guide_article as ega')
+            ->join('entry_guides as eg', 'eg.id', '=', 'ega.entry_guide_id')
+            ->whereIn('ega.entry_guide_id', $entryGuideIds)
+            ->where('ega.article_id', $articleId)
+            ->orderBy('eg.created_at', 'ASC')
+            ->orderBy('eg.id', 'ASC')
+            ->select('ega.id', 'ega.entry_guide_id', 'ega.quantity', 'ega.saldo')
+            ->get();
+
+        Log::info('[FIFO] Found articles', ['count' => $entryGuideArticles->count()]);
+
+        if ($entryGuideArticles->isEmpty()) {
+            Log::warning('[FIFO] No articles found for article_id', ['article_id' => $articleId]);
+            return;
+        }
+
+        $remainingToDeduct = $totalConsumed;
+        $updatesApplied = 0;
+
+        foreach ($entryGuideArticles as $article) {
+            if ($remainingToDeduct <= 0) {
+                // No more to deduct, restore to original quantity
+                DB::table('entry_guide_article')
+                    ->where('id', $article->id)
+                    ->update([
+                        'saldo' => $article->quantity,
+                        'updated_at' => now()
+                    ]);
+
+                Log::info('[FIFO] Restored', ['article_id' => $article->id, 'saldo' => $article->quantity]);
+                $updatesApplied++;
+                continue;
+            }
+
+            $quantityToDeduct = min($remainingToDeduct, $article->quantity);
+            $newSaldo = $article->quantity - $quantityToDeduct;
+            $remainingToDeduct -= $quantityToDeduct;
+
+            // Update saldo
+            $updated = DB::table('entry_guide_article')
+                ->where('id', $article->id)
+                ->update([
+                    'saldo' => $newSaldo,
+                    'updated_at' => now()
+                ]);
+
+            Log::info('[FIFO] Updated', [
+                'article_id' => $article->id,
+                'old_saldo' => $article->saldo,
+                'new_saldo' => $newSaldo,
+                'deducted' => $quantityToDeduct,
+                'rows_affected' => $updated
+            ]);
+
+            $updatesApplied++;
+
+            // Update entry guide timestamp
+            DB::table('entry_guides')
+                ->where('id', $article->entry_guide_id)
+                ->update(['updated_at' => now()]);
+        }
+
+        Log::info('[FIFO] Completed', [
+            'updates_applied' => $updatesApplied,
+            'final_remaining' => $remainingToDeduct
+        ]);
     }
 }

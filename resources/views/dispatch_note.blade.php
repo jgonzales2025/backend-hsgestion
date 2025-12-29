@@ -3,289 +3,240 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Factura Electrónica</title>
-
+    <title>Guía de Remisión Electrónica</title>
     <style>
-        @page {
-            margin: 0cm 0cm;
-        }
-
         body {
-            font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 10px;
-            color: #333;
-            margin-top: 3cm;
-            margin-bottom: 2.3cm;
-            margin-left: 1.5cm;
-            margin-right: 1.5cm;
-        }
-
-        header {
-            position: fixed;
-            top: 0cm;
-            left: 0cm;
-            right: 0cm;
-            height: 2.5cm;
-            background-color: #fff;
-            padding-top: 0.3cm;
-            padding-left: 1.5cm;
-            padding-right: 1.5cm;
-        }
-
-        footer {
-            position: fixed;
-            bottom: 0cm;
-            left: 0cm;
-            right: 0cm;
-            height: 2.2cm;
-            background-color: #fff;
-            text-align: center;
-            padding: 5px 10px;
-        }
-
-        .logo {
-            max-width: 150px;
-            max-height: 60px;
-        }
-
-        .footer-logo {
-            max-width: 120px;
-        }
-
-        .company-info {
-            text-align: left;
-            font-size: 9px;
-            margin-top: 5px;
-        }
-
-        .company-name {
-            font-size: 14px;
-            font-weight: bold;
-            color: #000;
-        }
-
-        .company-address {
-            font-size: 9px;
-            color: #555;
-        }
-
-        .ruc-box {
-            border: 1px solid #000;
-            border-radius: 8px;
-            text-align: center;
-            padding: 10px;
-        }
-
-        .ruc-number {
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .doc-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin: 5px 0;
-            background-color: #333;
-            color: #fff;
-            padding: 5px;
-        }
-
-        .doc-number {
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .section-title {
+            font-family: DejaVu Sans, sans-serif;
             font-size: 11px;
-            font-weight: bold;
-            background-color: #f0f0f0;
-            padding: 5px;
-            margin-top: 10px;
-            margin-bottom: 5px;
-            border-bottom: 1px solid #ccc;
             color: #000;
+            margin: 0;
+        }
+
+        .container {
+            width: 100%;
+            padding: 10px 25px;
         }
 
         table {
-            width: 100%;
             border-collapse: collapse;
-            margin-bottom: 5px;
+            width: 100%;
+        }
+
+        .header-table td {
+            vertical-align: top;
+        }
+
+        .logo {
+            width: 160px;
+            max-height: 60px;
+        }
+
+        .company-info {
+            font-size: 10px;
+            line-height: 1.4;
+        }
+
+        .company-ruc {
+            border: 1px solid #000;
+            text-align: center;
+            padding: 8px;
+        }
+
+        .company-ruc h2 {
+            margin: 2px 0;
+            font-size: 13px;
+        }
+
+        .company-ruc h3 {
+            margin: 3px 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .company-ruc h4 {
+            margin: 3px 0;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Secciones */
+        .section-title {
+            background-color: #eaeaea;
+            font-weight: bold;
+            padding: 4px 6px;
+            border: 1px solid #000;
         }
 
         .info-table td {
-            padding: 4px;
-            vertical-align: top;
-            font-size: 10px;
+            border: 1px solid #000;
+            padding: 3px 5px;
         }
 
-        .label {
-            font-weight: bold;
-            color: #444;
+        .info-table td strong {
+            color: #000;
+        }
+
+        .products-table {
+            width: 100%;
+            margin-top: 6px;
+            font-size: 10px;
+            border: 1px solid #000;
+        }
+
+
+        .products-table th,
+        .products-table td {
+            border: 1px solid #000;
+            padding: 4px;
         }
 
         .products-table th {
-            background-color: #f0f0f0;
-            color: #000;
-            padding: 6px;
-            font-size: 10px;
+            background-color: #eaeaea;
             text-align: center;
-            font-weight: bold;
-            border-bottom: 1px solid #ccc;
         }
 
-        .products-table td {
-            padding: 6px;
-            font-size: 10px;
-            vertical-align: middle;
-            border-bottom: 1px solid #eee;
+        .products-table td:nth-child(1),
+        .products-table td:nth-child(2),
+        .products-table td:nth-child(3) {
+            text-align: center;
         }
 
-        .totals-table td {
-            padding: 5px;
+        .footer {
+            font-size: 9px;
+            margin-top: 10px;
+            text-align: center;
         }
 
-        .codigoQr {
-            border: 1px solid #000;
+        .qr {
+            text-align: center;
+            margin-top: 8px;
+        }
 
+        .qr img {
+            width: 70px;
         }
     </style>
 </head>
 
 <body>
-    <header>
-        <table style="width: 100%;">
+    <div class="container">
+
+        <!-- ENCABEZADO -->
+        <table class="header-table">
             <tr>
-                <td style="width: 60%; vertical-align: top;">
-                    <img src="{{ resource_path('img/loogohsperu.jpg') }}" class="logo" alt="HS Peru">
+                <td width="60%">
+                    @if(isset($dispatchNote['company']['logo_horizontal']) && $dispatchNote['company']['logo_horizontal'] && file_exists(public_path('storage/cias/' . $dispatchNote['company']['logo_horizontal'])))
+                    <img src="{{ public_path('storage/cias/' . $dispatchNote['company']['logo_horizontal']) }}"
+                        class="logo"><br>
+                    @endif
                     <div class="company-info">
-                        <div class="company-name">GRUPO COMPUTEL S.A.C.</div>
-                        <div class="company-address">AV. GARCILAZO DE LA VEGA NRO. 1348 TDA 1A-178-179 LIMA - LIMA - LIMA</div>
+                        <strong>{{ strtoupper($dispatchNote['company']['name'] ?? 'N/A') }}</strong><br>
+                        DIRECC: {{ $dispatchNote['branch']['direccion'] ?? $dispatchNote['company']['address'] ?? 'N/A' }}<br>
+                        TELF: {{ $dispatchNote['company']['telefono'] ?? 'N/A' }}<br>
+                        CORREO: {{ $dispatchNote['company']['correo'] ?? 'N/A' }}
                     </div>
                 </td>
-                <td style="width: 40%; vertical-align: top;">
-                    <div class="ruc-box">
-                        <div class="ruc-number">R.U.C. {{ $dispatchNote['company']['ruc'] ?? '20537005514' }}</div>
-                        <div class="doc-title">FACTURA ELECTRÓNICA</div>
-                        <div class="doc-number">{{ $dispatchNote['serie'] }} - {{ str_pad($dispatchNote['correlativo'], 8, '0', STR_PAD_LEFT) }}</div>
+                <td width="40%">
+                    <div class="company-ruc">
+                        <h2>R.U.C. {{ $dispatchNote['company']['ruc'] ?? 'N/A' }}</h2>
+                        <h3>GUÍA DE REMISIÓN ELECTRÓNICA</h3>
+                        <h4>{{ $dispatchNote['serie'] ?? 'N/A' }} N°{{ str_pad($dispatchNote['correlativo'] ?? 0, 8, '0', STR_PAD_LEFT) }}
+                        </h4>
                     </div>
                 </td>
             </tr>
         </table>
-    </header>
 
-    <footer>
-        <div style="position: relative; width: 100%; height: 100%;">
-            @if(isset($qrCode))
-            <div style="position: absolute; bottom: 5px; right: 10px;">
-                <img src="data:image/png;base64,{{ $qrCode }}" style="width: 80px; height: 80px;" alt="QR Code">
-            </div>
-            @endif
-        </div>
-    </footer>
+        <!-- DATOS PRINCIPALES -->
+        <table class="info-table" style="margin-top:10px;">
+            <tr>
+                <td><strong>EMISIÓN</strong><br>{{ $dispatchNote['date'] ?? 'N/A' }}</td>
+                <td><strong>TRASLADO</strong><br>{{ $dispatchNote['date'] ?? 'N/A' }}
+                </td>
+                <td><strong>DESTINATARIO</strong><br>{{ $dispatchNote['customer']['name'] ?? 'N/A' }}</td>
 
-    <div class="content">
-        <!-- Customer Information -->
-        <div style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 5px 0; margin-bottom: 15px;">
-            <table class="info-table">
-                <tr>
-                    <td style="width: 15%;"><span class="label">R.U.C.:</span></td>
-                    <td style="width: 35%;">{{ $dispatchNote['customer']['ruc'] ?? '20100073723' }}</td>
-                    <td style="width: 15%;"><span class="label">RAZÓN SOCIAL:</span></td>
-                    <td style="width: 35%;">{{ $dispatchNote['customer']['name'] ?? 'CORPORACION PERUANA DE PRODUCTOS QUIMICOS S.A.' }}</td>
-                </tr>
-                <tr>
-                    <td><span class="label">DIRECCIÓN:</span></td>
-                    <td colspan="3">{{ $dispatchNote['customer']['address'] ?? 'JR. LOS CLAVELES NRO. 265' }}</td>
-                </tr>
-                <tr>
-                    <td><span class="label">USUARIO:</span></td>
-                    <td>Admin Admin</td>
-                    <td style="text-align: right;"><span class="label">FECHA DE IMPRESIÓN:</span> {{ now()->format('Y-m-d H:i:s') }}</td>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
+                <td><strong>RUC</strong><br>{{ $dispatchNote['customer']['ruc'] ?? 'N/A' }}</td>
+                <td><strong>MOTIVO
+                        TRASLADO</strong><br>{{ strtoupper($dispatchNote['emission_reason']['name'] ?? 'VENTA') }}
+                </td>
+            </tr>
+        </table>
 
-        <!-- Sale Details -->
-        <div class="section-title">DETALLES DE LA VENTA</div>
+        <!-- DIRECCIONES -->
         <table class="info-table">
             <tr>
-                <td style="width: 15%;"><span class="label">FECHA EMISIÓN:</span></td>
-                <td style="width: 25%;">{{ $dispatchNote['date'] ?? '2025-11-25' }}</td>
-                <td style="width: 15%;"><span class="label">FECHA VENCIMIENTO:</span></td>
-                <td style="width: 25%;">{{ $dispatchNote['date_referencia'] ?? '2025-12-25' }}</td>
-                <td style="width: 10%;"><span class="label">TIPO DE CAMBIO:</span></td>
-                <td style="width: 10%;">3.75</td>
-            </tr>
-            <tr>
-                <td><span class="label">FORMA PAGO:</span></td>
-                <td>CONTADO</td>
-                <td><span class="label">MONEDA:</span></td>
-                <td>DOLARES</td>
-                <td colspan="2"></td>
-            </tr>
-            <tr>
-                <td><span class="label">SUCURSAL:</span></td>
-                <td colspan="5">{{ $dispatchNote['branch']['direccion'] ?? 'PRINCIPAL - AV. GARCILAZO DE LA VEGA NRO. 1348 TDA 1A-178-179 LIMA - LIMA - LIMA' }}</td>
+                <td width="50%"><strong>DIRECCIÓN PARTIDA</strong><br>{{ $dispatchNote['branch']['direccion'] ?? $dispatchNote['company']['address'] ?? 'N/A' }}</td>
+                <td width="50%"><strong>DIRECCIÓN DESTINO <br></strong>
+                    {{ $dispatchNote['customer']['address'] ?? 'N/A' }}
+                </td>
             </tr>
         </table>
 
-        <!-- Articles -->
-        <table class="products-table" style="margin-top: 15px;">
+        <!-- TRANSPORTE -->
+        <table class="info-table">
+            <tr>
+                <td width="50%">
+                    <strong>DATOS DEL TRANSPORTISTA</strong><br>
+                    <strong>N° PLACA:</strong> {{ $dispatchNote['license_plate'] ?? 'N/A' }}<br>
+                    <strong>CONDUCTOR:</strong>
+                    {{ ($dispatchNote['conductor']['name'] ?? '') . ' ' . ($dispatchNote['conductor']['pat_surname'] ?? '') . ' ' . ($dispatchNote['conductor']['mat_surname'] ?? '') }}
+                    @if(empty($dispatchNote['conductor']['name'])) N/A @endif<br>
+                    <strong>LIC. CONDUCIR:</strong> {{ $dispatchNote['conductor']['license'] ?? 'N/A' }}
+                </td>
+                <td width="50%">
+                    <strong>EMPRESA DE TRANSPORTE</strong><br>
+                    <strong>RUC:</strong> {{ $dispatchNote['transport']['ruc'] ?? 'N/A'  }}<br>
+                    <strong>RAZÓN SOCIAL:</strong>{{ $dispatchNote['transport']['name'] ?? 'N/A'  }}<br>
+                    <strong>PESO TOTAL:</strong> {{ number_format($dispatchNote['total_weight'] ?? 0, 4) }} KGM
+                </td>
+            </tr>
+        </table>
+
+        <!-- DETALLES -->
+        <table class="products-table">
             <thead>
                 <tr>
-                    <th style="width: 5%;">ITEM</th>
-                    <th style="width: 15%;">CÓDIGO</th>
-                    <th style="width: 50%; text-align: left;">DESCRIPCIÓN</th>
-                    <th style="width: 10%;">CANT</th>
-                    <th style="width: 10%;">P. UNIT</th>
-                    <th style="width: 10%;">TOTAL</th>z
+                    <th>UND</th>
+                    <th>CANT</th>
+                    <th>DESCRIPCIÓN</th>
                 </tr>
             </thead>
             <tbody>
-                @php
-                $subtotal = 0;
-                $item = 1;
-                @endphp
-                @foreach($dispatchArticles as $article)
-                @php
-                $price = $article['price'] ?? 0;
-                $quantity = $article['quantity'] ?? 1;
-                $total = $price * $quantity;
-                $subtotal += $total;
-                @endphp
+                @foreach($dispatchArticles as $detalle)
                 <tr>
-                    <td style="text-align:center;">{{ $item++ }}</td>
-                    <td style="text-align:center;">{{ $article['cod_fab'] ?? '' }}</td>
-                    <td>{{ $article['name'] ?? '' }}</td>
-                    <td style="text-align:center;">{{ $quantity }}</td>
-                    <td style="text-align:right;">{{ number_format($price, 2) }}</td>
-                    <td style="text-align:right;">{{ number_format($total, 2) }}</td>
+                    <td>{{ $detalle['unidad']['siglas'] ?? 'UND' }}</td>
+                    <td style="text-align:center;">{{ $detalle['quantity'] ?? 0 }}</td>
+                    <td>{{ $detalle['name'] ?? 'N/A' }}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <!-- Totals -->
-        <div style="width: 100%; margin-top: 20px;">
-            <div style="float: right; width: 40%;">
-                <table class="totals-table">
-                    <tr>
-                        <td style="text-align: right; font-weight: bold;">GRAVADO:</td>
-                        <td style="text-align: right; border: 1px solid #ccc; background-color: #f9f9f9;">$ {{ number_format($subtotal, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: right; font-weight: bold;">I.G.V.:</td>
-                        <td style="text-align: right; border: 1px solid #ccc; background-color: #f9f9f9;">$ {{ number_format($subtotal * 0.18, 2) }}</td>
-                    </tr>
-                    <tr>
-                        <td style="text-align: right; font-weight: bold;">TOTAL:</td>
-                        <td style="text-align: right; border: 1px solid #000; font-weight: bold;">$ {{ number_format($subtotal * 1.18, 2) }}</td>
-                    </tr>
-                </table>
-            </div>
-            <div style="clear: both;"></div>
+        <!-- PIE -->
+        <table class="info-table" style="margin-top:6px;">
+            <tr>
+                <td>
+                    <strong>TIPO Y N° DE COMPROBANTE DE PAGO:</strong>
+                    {{ ($dispatchNote['serie_referencia'] ?? '') . '-' . ($dispatchNote['correlativo_referencia'] ?? '') }}
+                    @if(empty($dispatchNote['serie_referencia']) && empty($dispatchNote['correlativo_referencia'])) N/A @endif
+                </td>
+            </tr>
+            <tr>
+                <td><strong>OBSERVACIÓN:</strong> {{ $dispatchNote['observations'] ?? 'N/A' }}</td>
+            </tr>
+        </table>
+
+        <div class="footer">
+            <p>NO SE ACEPTAN CAMBIOS NI DEVOLUCIONES CON DAÑOS FÍSICOS O ACCESORIOS FALTANTES, SOLO POR FALLAS DE
+                FABRICACIÓN</p>
+            <p>Autorizado mediante resolución N° {{ $dispatchNote['company']['resolucion'] ?? '0180050002825' }}</p>
+            <p>Representación impresa - Documento Electrónico</p>
+            <p>Podrá ser consultada en:
+                <strong>{{ $dispatchNote['company']['pagina_web'] ?? 'http://www.supertec.com.pe/cdpelectronico' }}</strong>
+            </p>
         </div>
+
+
     </div>
 </body>
 

@@ -157,7 +157,7 @@
         <table style="width: 100%;">
             <tr>
                 <td style="width: 60%; vertical-align: top;">
-                    <img src="{{ public_path('storage/logo/logocyberhouse.jpeg') }}" class="logo" alt="Logo">
+                    <img src="{{ public_path('storage/logo/logocyberhouse.jpg') }}" class="logo" alt="Logo">
                     <div class="company-info" style="margin-top: 5px;">
                         <div class="company-name">{{ $sale->getCompany()->getCompanyName() }}</div>
                         <div class="company-address">{{ $sale->getCompany()->getAddress() }}</div>
@@ -258,7 +258,7 @@
                 </tr>
                 <tr>
                     <td class="label">DOC. REFERENCIA:</td>
-                    <td colspan="5">{{ $sale->getSerieProf() }} - {{ $sale->getCorrelativeProf() }}</td>
+                    <td colspan="5">{{ $sale->getReferenceSerie() }} - {{ $sale->getReferenceCorrelative() }}</td>
                 </tr>
             @endif
         </table>

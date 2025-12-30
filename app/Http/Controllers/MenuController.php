@@ -101,7 +101,10 @@ class MenuController extends Controller
      */
     public function index()
     {
-        $menus = Menu::with(['children'])
+        $menus = Menu::with(['children' => function ($query) {
+            $query->active();
+        }])
+            ->active()
             ->main()
             ->ordered()
             ->get();

@@ -260,7 +260,7 @@ class UserController extends Controller
         $user = $userUseCase->execute($username);
 
         if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
         }
 
         return response()->json(new UserResource($user), 200);

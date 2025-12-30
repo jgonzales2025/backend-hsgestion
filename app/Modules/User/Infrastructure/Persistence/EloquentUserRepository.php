@@ -88,21 +88,12 @@ class EloquentUserRepository implements UserRepositoryInterface
 
     public function update(User $user): void
     {
-        $eloquentUser = EloquentUser::find($user->getId());
-
-        $data = [
+        EloquentUser::where('id', $user->getId())->update([
             'firstname' => $user->getFirstname(),
             'lastname' => $user->getLastname(),
-            'password_item' => $user->getPasswordItem()
-        ];
-
-        if ($user->getPassword() !== null
-            && $user->getPassword() !== $eloquentUser->password
-            && !str_starts_with($user->getPassword(), '$2y$')) {
-            $data['password'] = password_hash($user->getPassword(), PASSWORD_BCRYPT);
-        }
-
-        $eloquentUser->update($data);
+            'password_item' => $user->getPasswordItem(),
+            'password' => $user->getPassword()
+        ]);
     }
 
     public function findAllUsers(?string $description, ?int $roleId, ?int $statusLogin, ?int $status)

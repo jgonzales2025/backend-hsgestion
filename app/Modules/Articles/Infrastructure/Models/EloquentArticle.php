@@ -115,7 +115,6 @@ class EloquentArticle extends Model
             warranty: $eloquentArticle->warranty,
             tariff_rate: $eloquentArticle->tariff_rate,
             igv_applicable: $eloquentArticle->igv_applicable,
-            plastic_bag_applicable: $eloquentArticle->plastic_bag_applicable,
             min_stock: $eloquentArticle->min_stock,
             currencyType: $eloquentArticle->currencyType?->toDomain($eloquentArticle->currencyType),
             purchase_price: $eloquentArticle->purchase_price,

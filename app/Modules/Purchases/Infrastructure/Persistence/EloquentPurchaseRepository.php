@@ -203,6 +203,16 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                     'cantidad_update' => $det->cantidad,
                     'process_status'  => $det->process_status,
                 ]);
+
+                DB::statement('CALL descontar_saldo_fifo(?,?,?,?,?,?,?)', [
+                    $purchase->getCompanyId(),                  // cia
+                    $purchase->getSupplier()->getId(),          // cliente
+                    $det->article_id,                           //  artículo correcto
+                    $purchase->getTypeDocumentId()->getId(),    // tipo documento
+                    $purchase->getReferenceSerie(),             // serie
+                    $purchase->getReferenceCorrelative(),       // correlativo
+                    $det->cantidad                              // cantidad
+                ]);
             }
 
             foreach ($purchase->getShoppingIncomeGuide() as $shopping_Income_Guide) {
@@ -211,8 +221,8 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                     'entry_guide_id' => $shopping_Income_Guide->entry_guide_id,
                 ]);
             }
-             
-  
+
+
             return $this->findWithRelations($eloquentpurchase->id);
         });
     }
@@ -312,5 +322,74 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         ])->findOrFail($id);
 
         return $model->toDomain();
+    }
+
+    public function findAllExcel(?string $description, $num_doc, $id_proveedr): \Illuminate\Support\Collection
+    {
+        $companyId = request()->get('company_id');
+
+        $purchases = EloquentPurchase::with([
+            'paymentType',
+            'branches',
+            'customers',
+            'currencyType',
+            'documentType'
+        ])
+            ->where('company_id', $companyId)
+            ->when($description, function ($query) use ($description) {
+                $query->where(function ($q) use ($description) {
+                    $q->whereHas('customers', function ($c) use ($description) {
+                        $c->where('name', 'like', "%{$description}%")
+                            ->orWhere('lastname', 'like', "%{$description}%")
+                            ->orWhere('second_lastname', 'like', "%{$description}%")
+                            ->orWhere('company_name', 'like', "%{$description}%")
+                            ->orWhere('reference_serie', 'like', "%{$description}%")
+                            ->orWhere('reference_correlative', 'like', "%{$description}%")
+                            ->orWhere('serie', 'like', "%{$description}%")
+                            ->orWhere('correlative', 'like', "%{$description}%");
+                    })
+                        ->orWhereHas('paymentType', function ($p) use ($description) {
+                            $p->where('name', 'like', "%{$description}%");
+                        });
+                });
+            })
+            ->when($num_doc, fn($query) => $query->where('document_type_id', $num_doc))
+            ->when($id_proveedr, fn($query) => $query->where('supplier_id', $id_proveedr))
+            ->orderByDesc('id')
+            ->get();
+
+        return $purchases->map(function ($purchase) {
+            return new Purchase(
+                id: $purchase->id,
+                company_id: $purchase->company_id,
+                branch: $purchase->branches->toDomain($purchase->branches),
+                supplier: $purchase->customers->toDomain($purchase->customers),
+                serie: $purchase->serie,
+                correlative: $purchase->correlative,
+                exchange_type: $purchase->exchange_type,
+                payment_type: $purchase->paymentType->toDomain($purchase->paymentType),
+                currency: $purchase->currencyType->toDomain($purchase->currencyType),
+                date: $purchase->date,
+                date_ven: $purchase->date_ven,
+                days: $purchase->days,
+                observation: $purchase->observation,
+                detraccion: $purchase->detraccion,
+                fech_detraccion: $purchase->fech_detraccion,
+                amount_detraccion: $purchase->amount_detraccion,
+                is_detracion: $purchase->is_detracion,
+                subtotal: $purchase->subtotal,
+                total_desc: $purchase->total_desc,
+                inafecto: $purchase->inafecto,
+                igv: $purchase->igv,
+                total: $purchase->total,
+                is_igv: $purchase->is_igv,
+                type_document_id: $purchase->documentType->toDomain($purchase->documentType),
+                reference_serie: $purchase->reference_serie,
+                reference_correlative: $purchase->reference_correlative,
+                saldo: $purchase->saldo,
+                det_compras_guia_ingreso: [],
+                shopping_Income_Guide: [],
+            );
+        });
     }
 }

@@ -26,7 +26,6 @@ class StoreArticleRequest extends FormRequest
             'with_deduction' => filter_var($this->with_deduction, FILTER_VALIDATE_BOOLEAN),
             'series_enabled' => filter_var($this->series_enabled, FILTER_VALIDATE_BOOLEAN),
             'igv_applicable' => filter_var($this->igv_applicable, FILTER_VALIDATE_BOOLEAN),
-            'plastic_bag_applicable' => filter_var($this->plastic_bag_applicable, FILTER_VALIDATE_BOOLEAN),
             'venta' => filter_var($this->venta, FILTER_VALIDATE_BOOLEAN),
 
             // Conversión de numéricos
@@ -95,7 +94,6 @@ class StoreArticleRequest extends FormRequest
             'warranty' => 'nullable|string|max:255',
             'tariff_rate' => 'nullable|numeric|min:0',
             'igv_applicable' => 'nullable|boolean',
-            'plastic_bag_applicable' => 'nullable|boolean',
             'min_stock' => 'nullable|integer|min:0',
             'public_price_percent' => 'nullable|numeric|min:0',
             'distributor_price_percent' => 'nullable|numeric|min:0',
@@ -104,6 +102,14 @@ class StoreArticleRequest extends FormRequest
             'filtNameEsp' => 'nullable|string|max:100',
             'statusEsp' => 'nullable|boolean',
             'url_supplier' => 'nullable|string',
+        ];
+    }
+    public function messages(): array
+    {
+        return [
+            'image_url.image' => 'El archivo debe ser una imagen.',
+            'image_url.mimes' => 'La imagen debe ser de tipo: jpeg, png, jpg, gif o webp.',
+
         ];
     }
 }

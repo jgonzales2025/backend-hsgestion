@@ -24,7 +24,6 @@ class UpdateArticleRequest extends FormRequest
             'with_deduction' => filter_var($this->with_deduction, FILTER_VALIDATE_BOOLEAN),
             'series_enabled' => filter_var($this->series_enabled, FILTER_VALIDATE_BOOLEAN),
             'igv_applicable' => filter_var($this->igv_applicable, FILTER_VALIDATE_BOOLEAN),
-            'plastic_bag_applicable' => filter_var($this->plastic_bag_applicable, FILTER_VALIDATE_BOOLEAN),
             'venta' => filter_var($this->venta, FILTER_VALIDATE_BOOLEAN),
 
             // Conversión de numéricos
@@ -87,7 +86,6 @@ class UpdateArticleRequest extends FormRequest
             'warranty' => 'nullable|string|max:255',
             'tariff_rate' => 'nullable|numeric|min:0',
             'igv_applicable' => 'nullable|boolean',
-            'plastic_bag_applicable' => 'nullable|boolean',
             'min_stock' => 'nullable|integer|min:0',
             'public_price_percent' => 'nullable|numeric|min:0',
             'distributor_price_percent' => 'nullable|numeric|min:0',

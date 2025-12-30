@@ -101,7 +101,6 @@ readonly class CreateArticleUseCase
             warranty: $articleDTO->warranty,
             tariff_rate: $articleDTO->tariff_rate,
             igv_applicable: $articleDTO->igv_applicable,
-            plastic_bag_applicable: $articleDTO->plastic_bag_applicable,
             min_stock: $articleDTO->min_stock,
             purchase_price: $articleDTO->purchase_price,
             public_price: $articleDTO->public_price,

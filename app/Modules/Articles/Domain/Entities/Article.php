@@ -21,7 +21,6 @@ class Article
     private ?string $warranty;
     private float $tariff_rate;
     private bool $igv_applicable;
-    private bool $plastic_bag_applicable;
     private int $min_stock;
     private float $purchase_price;
     private float $public_price;
@@ -61,7 +60,6 @@ class Article
         ?string $warranty,
         float $tariff_rate,
         bool $igv_applicable,
-        bool $plastic_bag_applicable,
         int $min_stock,
         float $purchase_price,
         float $public_price,
@@ -97,7 +95,6 @@ class Article
         $this->warranty = $warranty;
         $this->tariff_rate = $tariff_rate;
         $this->igv_applicable = $igv_applicable;
-        $this->plastic_bag_applicable = $plastic_bag_applicable;
         $this->min_stock = $min_stock;
         $this->purchase_price = $purchase_price;
         $this->public_price = $public_price;
@@ -178,10 +175,6 @@ class Article
     public function getIgvApplicable(): bool
     {
         return $this->igv_applicable;
-    }
-    public function getPlasticBagApplicable(): bool
-    {
-        return $this->plastic_bag_applicable;
     }
     public function getMinStock(): int
     {

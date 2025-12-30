@@ -331,4 +331,6 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     {
         EloquentEntryGuide::where('id', $id)->update(['status' => $status]);
     }
+
+ 
 }

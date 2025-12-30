@@ -148,7 +148,7 @@
         <table style="width: 100%;">
             <tr>
                 <td style="width: 60%; vertical-align: top;">
-                    <img src="{{ public_path('storage/logo/logo.jpeg') }}" class="logo" alt="Logo">
+                    <img src="{{  public_path('storage/logo/logocyberhouse.jpg') }}" class="logo" alt="Logo">
                     <div class="company-info" style="margin-top: 5px;">
                         <div class="company-name">{{ $company->getCompanyName() }}</div>
                         <div class="company-address">{{ $company->getAddress() }}</div>

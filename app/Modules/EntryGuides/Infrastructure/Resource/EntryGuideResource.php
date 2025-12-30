@@ -43,7 +43,7 @@ class EntryGuideResource extends JsonResource
             'subtotal' => $this->resource?->getSubtotal(),
             'total_descuento' => $this->resource?->getTotalDescuento(),
             'total' => $this->resource?->getTotal(),
-            
+            'update_price' => $this->resource?->getUpdatePrice(),
         ];
     }
 }

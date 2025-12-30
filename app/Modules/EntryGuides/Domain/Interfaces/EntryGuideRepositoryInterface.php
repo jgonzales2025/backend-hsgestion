@@ -21,4 +21,5 @@ interface EntryGuideRepositoryInterface
 
 
       public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide;
+
 }

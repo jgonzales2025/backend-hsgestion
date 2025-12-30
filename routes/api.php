@@ -173,6 +173,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/purchases/consolidate-guides', [ControllerEntryGuide::class, 'validateSameCustomer']);
     Route::get('/entry-guide-pdf/{id}', [ControllerEntryGuide::class, 'downloadPdf']);
     Route::put('/entry-guides-status/{id}', [ControllerEntryGuide::class, 'updateStatus']);
+    Route::post('/entry-guides-procedure-fifo', [ControllerEntryGuide::class, 'getProcedureFIFO']);
     //PettyCashReceipt
     Route::get('/pettyCashReceipt', [PettyCashReceiptController::class, 'index']);
     Route::post('/pettyCashReceipt', [PettyCashReceiptController::class, 'store']);
@@ -252,6 +253,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
     Route::get('/purchases-pdf/{id}', [PurchaseController::class, 'downloadPdf']);
     Route::put('/purchase-supplier/{id}', [PurchaseController::class, 'updateDetail']);
+    Route::get('/purchase-excel', [PurchaseController::class, 'exportExcel']);
 
     // Advances - Anticipos
     Route::get('/advances', [AdvanceController::class, 'index']);
@@ -479,7 +481,6 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Logs de sesion
     Route::get('logs-login', [LoginAttemptController::class, 'index']);
-
 });
 
 Route::middleware('auth:api')->group(function () {

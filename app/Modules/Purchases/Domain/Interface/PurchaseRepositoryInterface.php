@@ -13,4 +13,5 @@ interface PurchaseRepositoryInterface
     public function getLastDocumentNumber(int $company_id, int $branch_id, string $serie): ?string;
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?Purchase;
     public function findWithRelations(int $id): ?Purchase;
+    public function findAllExcel(?string $description, $num_doc, $id_proveedr): \Illuminate\Support\Collection;
 }

@@ -456,6 +456,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('document-types/document-sales', [DocumentTypeController::class, 'indexDocumentSales']);
     Route::get('document-types/purchases', [DocumentTypeController::class, 'indexPurchases']);
     Route::get('document-types/entry-guides', [DocumentTypeController::class, 'indexEntryGuides']);
+    Route::get('document-types/references-sales', [DocumentTypeController::class, 'indexReferencesSales']);
 
     // Banks - Bancos
     Route::get('banks', [BankController::class, 'index']);

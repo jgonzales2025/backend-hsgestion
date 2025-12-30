@@ -47,7 +47,10 @@ class EntryGuideRequest extends FormRequest
             'document_entry_guide' => 'required|array',
             'document_entry_guide.reference_document_id' => 'required|integer|exists:document_types,id',
             'document_entry_guide.reference_serie' => 'nullable|string',
-            'document_entry_guide.reference_correlative' => 'nullable|string'
+            'document_entry_guide.reference_correlative' => 'nullable|string',
+            'currency_id' => 'required|integer|exists:currency_types,id',
+            'entry_igv' => 'nullable|numeric',
+            'includ_igv' => 'nullable|boolean',
         ];
     }
 

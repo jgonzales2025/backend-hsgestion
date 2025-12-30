@@ -60,6 +60,9 @@ class CreateEntryGuideUseCase
             total_descuento: $entryGuideDTO->total_descuento,
             total: $entryGuideDTO->total,
             update_price: $entryGuideDTO->update_price,
+            entry_igv: $entryGuideDTO->entry_igv,
+            currency_id: $entryGuideDTO->currency_id,
+            includ_igv: $entryGuideDTO->includ_igv,
         );
 
         return $this->entryGuideRepositoryInterface->save($entryGuide);

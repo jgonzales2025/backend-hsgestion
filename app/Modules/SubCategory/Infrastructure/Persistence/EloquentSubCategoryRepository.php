@@ -16,7 +16,7 @@ class EloquentSubCategoryRepository implements SubCategoryRepositoryInterface
             ->where('status', 1)
             ->when($description, fn($query) => $query->where('name', 'like', "%{$description}%"))
             ->when($category_id, fn($query) => $query->where('category_id', $category_id))
-            ->orderBy('id', 'asc') // Cursor pagination requiere ordenar por columna única
+            ->orderBy('name', 'asc') // Cursor pagination requiere ordenar por columna única
             ->cursorPaginate(10);
     }
 

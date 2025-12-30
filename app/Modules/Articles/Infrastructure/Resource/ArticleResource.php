@@ -47,7 +47,6 @@ class ArticleResource extends JsonResource
             'warranty' => $this->getWarranty(),
             'tariff_rate' => $this->getTariffRate(),
             'igv_applicable' => $this->getIgvApplicable(),
-            'plastic_bag_applicable' => $this->getPlasticBagApplicable(),
             'min_stock' => $this->getMinStock(), 
             'purchase_price' => $this->getPurchasePrice(),
             'public_price' => $this->getPublicPrice(),

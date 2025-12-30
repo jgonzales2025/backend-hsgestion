@@ -253,6 +253,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
     Route::get('/purchases-pdf/{id}', [PurchaseController::class, 'downloadPdf']);
     Route::put('/purchase-supplier/{id}', [PurchaseController::class, 'updateDetail']);
+    Route::get('/purchase-excel', [PurchaseController::class, 'exportExcel']);
 
     // Advances - Anticipos
     Route::get('/advances', [AdvanceController::class, 'index']);
@@ -318,7 +319,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // User routes devuelvelo como estaba protegido
     Route::get('/users', [UserController::class, 'findAllUsers']);
     Route::get('/users/{id}', [UserController::class, 'show']);
-    
+
     Route::post('/users', [UserController::class, 'store']);
     Route::put('/users/{id}', [UserController::class, 'update']);
     Route::put('/users/status-login/{id}', [UserController::class, 'updateStLogin']);
@@ -479,7 +480,6 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Logs de sesion
     Route::get('logs-login', [LoginAttemptController::class, 'index']);
-
 });
 
 Route::middleware('auth:api')->group(function () {

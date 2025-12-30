@@ -34,6 +34,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Modules\ShoppingIncomeGuide\Infrastructure\Models\EloquentShoppingIncomeGuide;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Modules\Purchases\Infrastructure\Persistence\PurchasesExport;
 
 class PurchaseController extends Controller
 {
@@ -433,5 +435,16 @@ class PurchaseController extends Controller
             'updates_applied' => $updatesApplied,
             'final_remaining' => $remainingToDeduct
         ]);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $description = $request->query('description');
+        $num_doc = $request->query('num_doc');
+        $id_proveedr = $request->query('supplier_id');
+
+        $purchases = $this->purchaseRepository->findAllExcel($description, $num_doc, $id_proveedr);
+
+        return Excel::download(new PurchasesExport($purchases), 'compras.xlsx');
     }
 }

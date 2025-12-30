@@ -18,7 +18,6 @@ class ArticleDTO
     public ?string $warranty;
     public float $tariff_rate;
     public bool $igv_applicable;
-    public bool $plastic_bag_applicable;
     public int $min_stock;
     public int $currency_type_id;
     public float $purchase_price;
@@ -55,7 +54,6 @@ class ArticleDTO
         $this->warranty = $data['warranty'] ?? '';
         $this->tariff_rate = isset($data['tariff_rate']) ? (float) $data['tariff_rate'] : 0;
         $this->igv_applicable = isset($data['igv_applicable']) ? filter_var($data['igv_applicable'], FILTER_VALIDATE_BOOLEAN) : false;
-        $this->plastic_bag_applicable = isset($data['plastic_bag_applicable']) ? filter_var($data['plastic_bag_applicable'], FILTER_VALIDATE_BOOLEAN) : false;
         $this->min_stock = (int) ($data['min_stock'] ?? 0);
         $this->currency_type_id = $data['currency_type_id'] ?? null;
         $this->purchase_price = isset($data['purchase_price']) ? (float) $data['purchase_price'] : 0;

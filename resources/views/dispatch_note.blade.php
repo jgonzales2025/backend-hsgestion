@@ -122,7 +122,7 @@
     <div class="container">
         <div style="text-align: left; margin-bottom: 5px;">
             <!-- <img src="{{ public_path('storage/image/guia_remision.jpg') }}" style="width: 150px; height: auto;"> -->
-            <img src="{{ public_path('storage/logo/logocyberhouse.jpeg') }}" class="logo" alt="Logo" style="width: 150px; height: auto;">
+            <img src="{{ public_path('storage/logo/logocyberhouse.jpg') }}" class="logo" alt="Logo" style="width: 150px; height: auto;">
 
         </div>
 

@@ -418,14 +418,14 @@ class ControllerEntryGuide extends Controller
         }
 
         $entryGuides = $this->entryGuideRepositoryInterface->findByIds($ids);
-        
-         
+
+
         $refSerie = null;
         $refCorrelative = null;
         $refDocumentType = null;
         $entryGuideHeader = null;
         $firstIter = true;
-        
+
         foreach ($entryGuides as $guide) {
             $docEntryGuide = $this->documentEntryGuideRepositoryInterface->findByIdObj($guide->getId());
 
@@ -471,13 +471,35 @@ class ControllerEntryGuide extends Controller
             foreach ($articles as $article) {
                 $articleId = $article->getArticle()->getId();
 
+                // Get values from article line
+                $qty = (float) $article->getQuantity();
+                $saldo = (float) $article->getSaldo();
+                $precio = (float) $article->getTotalDescuento(); 
+
+                // Fallback to article purchase price if 0
+                if ($precio == 0) {
+                    $precio = (float) $article->getArticle()->getPurchasePrice();
+                }
+
+                $subtotal = (float) $article->getSubtotal();
+                if ($subtotal == 0 && $precio > 0) {
+                    $subtotal = $qty * $precio;
+                }
+
+                $total = (float) $article->getTotal();
+                if ($total == 0 && $subtotal > 0) {
+                    $total = $subtotal; 
+                }
+
+                $descuento = (float) $article->getDescuento();
+
                 // Si el artículo ya existe en el mapa, sumar las cantidades
                 if (isset($articleMap[$articleId])) {
-                    $articleMap[$articleId]['quantity'] += $article->getQuantity();
-                    $articleMap[$articleId]['saldo'] += $article->getSaldo();
-                    $articleMap[$articleId]['subtotal'] += $entryGuide->getSubtotal() ?? 0;
-                    $articleMap[$articleId]['total'] += $entryGuide->getTotal() ?? 0;
-                    $articleMap[$articleId]['descuento'] += $article->getDescuento() ?? 0;
+                    $articleMap[$articleId]['quantity'] += $qty;
+                    $articleMap[$articleId]['saldo'] += $saldo;
+                    $articleMap[$articleId]['subtotal'] += $subtotal;
+                    $articleMap[$articleId]['total'] += $total;
+                    $articleMap[$articleId]['descuento'] += $descuento;
                 } else {
                     // Si es la primera vez que aparece este article_id, agregarlo al mapa
                     $articleMap[$articleId] = [
@@ -485,15 +507,15 @@ class ControllerEntryGuide extends Controller
                         'guide_number' => $entryGuide->getSerie() . '-' . $entryGuide->getCorrelativo(),
                         'article_id' => $articleId,
                         'description' => $article->getDescription(),
-                        'quantity' => $article->getQuantity(),
-                        'saldo' => $article->getSaldo(),
+                        'quantity' => $qty,
+                        'saldo' => $saldo,
                         'cod_fab' => $article->getArticle()->getCodFab(),
-                        'subtotal' => $entryGuide->getSubtotal() ?? 0,
-                        'total' => $entryGuide->getTotal() ?? 0,
-                        'precio_costo' => $article->getTotalDescuento(),
-                        'descuento' => $article->getDescuento() ?? 0,
+                        'subtotal' => $subtotal,
+                        'total' => $total,
+                        'precio_costo' => $precio,
+                        'descuento' => $descuento,
                     ];
-                }   
+                }
             }
         }
 
@@ -561,4 +583,6 @@ class ControllerEntryGuide extends Controller
 
         return response()->json(['message' => 'Estado actualizado correctamente']);
     }
+
+
 }

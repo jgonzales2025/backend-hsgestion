@@ -25,6 +25,7 @@ class CompanyResource extends JsonResource
             'min_profit' => $this->resource->getMinProfit(),
             'max_profit' => $this->resource->getMaxProfit(),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+            'detrac_cta_banco' => $this->resource->getDetracCtaBanco(),
         ];
     }
 }

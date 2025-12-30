@@ -30,7 +30,7 @@ class RoleController extends Controller
     public function index(Request $request): JsonResponse
     {
         $description = $request->query('description');
-        $roles = Role::when($description, fn($query) => $query->where('name', 'like', "%{$description}%"))->paginate(10);
+        $roles = Role::when($description, fn($query) => $query->where('name', 'like', "%{$description}%"))->orderBy('id', 'desc')->paginate(10);
         return new JsonResponse([
             'data' => $roles->items(),
             'current_page' => $roles->currentPage(),

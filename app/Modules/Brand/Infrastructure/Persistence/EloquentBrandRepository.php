@@ -28,7 +28,7 @@ class EloquentBrandRepository implements BrandRepositoryInterface
         return EloquentBrand::query()
             ->where('status', 1)
             ->when($name, fn($query) => $query->where('name', 'like', "%{$name}%"))
-            ->orderBy('id', 'asc') // Cursor pagination requiere ordenar por columna única
+            ->orderBy('name', 'asc') // Cursor pagination requiere ordenar por columna única
             ->cursorPaginate(10);
     }
 

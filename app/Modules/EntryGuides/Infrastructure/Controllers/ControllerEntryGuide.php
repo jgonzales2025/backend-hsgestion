@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
+use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DetEntryguidePurchaseorder\application\DTOS\DetEntryguidePurchaseorderDTO;
 use App\Modules\DetEntryguidePurchaseOrder\application\UseCases\CreateDetEntryguidePurchaseOrderUseCase;
@@ -63,6 +64,7 @@ class ControllerEntryGuide extends Controller
         private readonly DocumentTypeRepositoryInterface     $documentTypeRepository,
         private readonly DocumentEntryGuideRepositoryInterface $documentEntryGuideRepositoryInterface,
         private readonly DetEntryguidePurchaseOrderRepositoryInterface $detEntryguidePurchaseOrderRepository,
+        private readonly CurrencyTypeRepositoryInterface $currencyTypeRepositoryInterface,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -200,6 +202,7 @@ class ControllerEntryGuide extends Controller
                 $this->customerRepositoryInterface,
                 $this->ingressReasonRepositoryInterface,
                 $this->documentNumberGeneratorService,
+                $this->currencyTypeRepositoryInterface,
             );
             $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
@@ -252,6 +255,7 @@ class ControllerEntryGuide extends Controller
             $this->branchRepositoryInterface,
             $this->customerRepositoryInterface,
             $this->ingressReasonRepositoryInterface,
+            $this->currencyTypeRepositoryInterface,
         );
 
         $entryGuide = $entryGuideUseCase->execute($entryGuideDTO, $id);

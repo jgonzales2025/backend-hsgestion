@@ -6,6 +6,8 @@ use App\Modules\Branch\Application\UseCases\FindByIdBranchUseCase;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Application\UseCases\FindByIdCompanyUseCase;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
+use App\Modules\CurrencyType\Application\UseCases\FindByIdCurrencyTypeUseCase;
+use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\EntryGuides\Application\DTOS\EntryGuideDTO;
@@ -24,6 +26,7 @@ class CreateEntryGuideUseCase
         private readonly CustomerRepositoryInterface $customerRepositoryInterface,
         private readonly IngressReasonRepositoryInterface $ingressReasonRepositoryInterface,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
+        private readonly CurrencyTypeRepositoryInterface $currencyTypeRepositoryInterface,
     ) {}
 
     public function execute(EntryGuideDTO $entryGuideDTO): ?EntryGuide
@@ -43,6 +46,9 @@ class CreateEntryGuideUseCase
         $ingressReasonUseCase = new FindByIdIngressReasonUseCase($this->ingressReasonRepositoryInterface);
         $ingressReason = $ingressReasonUseCase->execute($entryGuideDTO->ingress_reason_id);
 
+        $currencyUseCase = new FindByIdCurrencyTypeUseCase($this->currencyTypeRepositoryInterface);
+        $currency = $currencyUseCase->execute($entryGuideDTO->currency_id);
+
         $entryGuide = new EntryGuide(
             id: null,
             cia: $company,
@@ -61,7 +67,7 @@ class CreateEntryGuideUseCase
             total: $entryGuideDTO->total,
             update_price: $entryGuideDTO->update_price,
             entry_igv: $entryGuideDTO->entry_igv,
-            currency_id: $entryGuideDTO->currency_id,
+            currency: $currency,
             includ_igv: $entryGuideDTO->includ_igv,
         );
 

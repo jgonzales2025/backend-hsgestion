@@ -4,6 +4,7 @@ namespace App\Modules\EntryGuides\Domain\Entities;
 
 use App\Modules\Branch\Domain\Entities\Branch;
 use App\Modules\Company\Domain\Entities\Company;
+use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
 use App\Modules\Customer\Domain\Entities\Customer;
 use App\Modules\IngressReason\Domain\Entities\IngressReason;
 
@@ -26,7 +27,7 @@ class EntryGuide
     private float $total;
     private bool $update_price;
     private float $entry_igv;
-    private int $currency_id;
+    private ?CurrencyType $currency;
     private bool $includ_igv;
 
     public function __construct(
@@ -47,7 +48,7 @@ class EntryGuide
         float $total,
         bool $update_price = false,
         float $entry_igv,
-        int $currency_id,
+        ?CurrencyType $currency,
         bool $includ_igv,
     ) {
         $this->id = $id;
@@ -67,7 +68,7 @@ class EntryGuide
         $this->total = $total;
         $this->update_price = $update_price;
         $this->entry_igv = $entry_igv;
-        $this->currency_id = $currency_id;
+        $this->currency = $currency;
         $this->includ_igv = $includ_igv;
     }
     public function getId(): int|null
@@ -139,8 +140,8 @@ class EntryGuide
     public function getEntryIgv(){
         return $this->entry_igv;
     }
-    public function getCurrencyId(){
-        return $this->currency_id;
+    public function getCurrency():?CurrencyType{
+        return $this->currency;
     }
     public function getIncludIgv(){
         return $this->includ_igv;

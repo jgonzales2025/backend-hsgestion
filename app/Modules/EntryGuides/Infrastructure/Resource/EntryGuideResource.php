@@ -45,7 +45,10 @@ class EntryGuideResource extends JsonResource
             'total' => $this->resource?->getTotal(),
             'update_price' => $this->resource?->getUpdatePrice(),
             'entry_igv' => $this->resource?->getEntryIgv(),
-            'currency_id' => $this->resource?->getCurrencyId(),
+            'currency' => [
+                'id' => $this->resource->getCurrency()->getId(),
+                'name' => $this->resource->getCurrency()->getName(),
+            ],
             'includ_igv' => $this->resource?->getIncludIgv(),
         ];
     }

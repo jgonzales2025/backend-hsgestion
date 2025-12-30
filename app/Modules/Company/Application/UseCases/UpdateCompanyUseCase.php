@@ -18,6 +18,7 @@ class UpdateCompanyUseCase
             default_currency_type_id: $updateCompanyDTO->default_currency_type_id,
             min_profit: $updateCompanyDTO->min_profit,
             max_profit: $updateCompanyDTO->max_profit,
+            detrac_cta_banco: $updateCompanyDTO->detrac_cta_banco,
         );
         
         $this->companyRepositoryInterface->update($id, $company);

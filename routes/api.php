@@ -429,7 +429,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
 
     // Exchange Rates - Tipo de cambio
-    Route::get('exchange-rates', [ExchangeRateController::class, 'index'])->middleware('permission:tablas.tipo_cambio');
+    Route::get('exchange-rates', [ExchangeRateController::class, 'index'])->middleware('permission:tablas.tipos_cambio');
     Route::get('exchange-rates/current', [ExchangeRateController::class, 'current']);
     Route::get('exchange-rates/{id}', [ExchangeRateController::class, 'show']);
     Route::put('exchange-rates/{id}', [ExchangeRateController::class, 'update']);

@@ -30,7 +30,7 @@ class EloquentCustomerPortfolioRepository implements CustomerPortfolioRepository
         $role = request()->get('role');
 
         // Si no es admin, filtrar solo los registros del usuario
-        if ($role !== 'Administrador') {
+        if ($role !== 'Gerencia') {
             $query->where('user_id', $userId);
         }
 

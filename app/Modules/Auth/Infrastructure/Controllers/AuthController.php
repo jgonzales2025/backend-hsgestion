@@ -414,6 +414,20 @@ class AuthController extends Controller
                 'link' => config('app.frontend_url') . '/tablas/movimiento-traslado',
                 'icon' => 'Truck',
                 'permission' => 'tablas.lista_movimientos_traslado'
+            ],
+            [
+                'id' => 7,
+                'label' => 'Guía de remisión',
+                'link' => config('app.frontend_url') . '/mantenimiento/guias-remision',
+                'icon' => 'FileText',
+                'permission' => 'mantenimiento.guias_remision'
+            ],
+            [
+                'id' => 8,
+                'label' => 'Guía de ingreso',
+                'link' => config('app.frontend_url') . '/almacen/guia-ingreso',
+                'icon' => 'ClipboardPlus',
+                'permission' => 'almacen.guia_ingreso'
             ]
         ];
 

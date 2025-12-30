@@ -312,12 +312,13 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/companies/{id}', [CompanyController::class, 'update']);
 
 
+    Route::get('/menus/search', [MenuController::class, 'searchChildren']);
     Route::get('/menus', [MenuController::class, 'index']);
 
     // User routes devuelvelo como estaba protegido
     Route::get('/users', [UserController::class, 'findAllUsers']);
     Route::get('/users/{id}', [UserController::class, 'show']);
-    
+
     Route::post('/users', [UserController::class, 'store']);
     Route::put('/users/{id}', [UserController::class, 'update']);
     Route::put('/users/status-login/{id}', [UserController::class, 'updateStLogin']);

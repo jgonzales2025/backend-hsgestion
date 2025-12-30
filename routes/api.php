@@ -80,7 +80,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/visibleArticlelist/{id}', [VisibleArticleController::class, 'visibleBranch']);
 
     //articles
-    Route::get('articles', [ArticleController::class, 'index'])->middleware('permission:tablas.articulos');
+    Route::get('articles', [ArticleController::class, 'index']);
     Route::post('articles-save', [ArticleController::class, 'store']);
     Route::get('articles/{id}', [ArticleController::class, 'show']);
     Route::post('articlesupdate/{id}', [ArticleController::class, 'update']);
@@ -94,11 +94,11 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/articles-is-combo', [ArticleController::class, 'getIsCombo']);
     Route::get('/articles-placa-madre', [ArticleController::class, 'findArticlesByPlacaMadre']);
     // Customer portfolios - Cartera de clientes
-    Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index'])->middleware('permission:tablas.cartera_clientes');
+    Route::get('customer-portfolios', [CustomerPortfolioController::class, 'index']);
     Route::get('/customer-portfolios-user/{id}', [CustomerPortfolioController::class, 'showUserByCustomer']);
 
     // Crear cliente
-    Route::post('customers', [CustomerController::class, 'store'])->middleware('permission:tablas.clientes|mantenimiento.vista_principal_ventas');
+    Route::post('customers', [CustomerController::class, 'store']);
     Route::post('customers-save-api', [CustomerController::class, 'storeCustomerBySunatApi']);
     Route::get('customers-company', [CustomerController::class, 'findCustomerCompany']);
     Route::get('customers-no-company', [CustomerController::class, 'findAllCustomersExceptionCompanies']);
@@ -110,41 +110,41 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/branches-by-user', [UserAssignmentController::class, 'indexBranchesByUser']);
 
     // Ruta para ventas
-    Route::get('/sales-proformas', [SaleController::class, 'indexProformas'])->middleware('permission:mantenimiento.cotizacion|mantenimiento.vista_principal_ventas');
+    Route::get('/sales-proformas', [SaleController::class, 'indexProformas']);
     Route::get('/sales-by-customer', [SaleController::class, 'findAllPendingSalesByCustomerId']);
     Route::get('/sales/by-document', [SaleController::class, 'showDocumentSale']);
     Route::get('/sales/by-document-debit', [SaleController::class, 'findSaleByDocumentForDebitNote']);
     Route::get('/sales/get-updated-quantities', [SaleController::class, 'getUpdatedQuantities']);
-    Route::get('/sales', [SaleController::class, 'index'])->middleware('permission:mantenimiento.vista_principal_ventas');
+    Route::get('/sales', [SaleController::class, 'index']);
     Route::get('/sales/{id}', [SaleController::class, 'show']);
     Route::get('/sales-credit-notes/{id}', [SaleController::class, 'showCreditNote']);
     Route::get('/credit-notes-customer', [SaleController::class, 'indexCreditNotesByCustomer']);
-    Route::post('/sales', [SaleController::class, 'store'])->middleware('permission:mantenimiento.vista_principal_ventas');
-    Route::post('/sales-credit-notes', [SaleController::class, 'storeCreditNote'])->middleware('permission:mantenimiento.vista_principal_ventas');
-    Route::put('/sales/{id}', [SaleController::class, 'update'])->middleware('permission:mantenimiento.vista_principal_ventas');
+    Route::post('/sales', [SaleController::class, 'store']);
+    Route::post('/sales-credit-notes', [SaleController::class, 'storeCreditNote']);
+    Route::put('/sales/{id}', [SaleController::class, 'update']);
     Route::put('/sales-credit-notes/{id}', [SaleController::class, 'updateCreditNote']);
     Route::get('/sales/{id}/pdf', [SaleController::class, 'generatePdf']);
     Route::get('/documents-by-customer', [SaleController::class, 'findAllDocumentsByCustomerId']);
     Route::put('/sales-status/{id}', [SaleController::class, 'updateStatus']);
 
     // Ruta para cobranzas
-    Route::get('/collections', [CollectionController::class, 'index'])->middleware('permission:mantenimiento.vista_principal_ventas');
+    Route::get('/collections', [CollectionController::class, 'index']);
     Route::post('/collections', [CollectionController::class, 'store']);
     Route::post('/collections-credits', [CollectionController::class, 'storeCollectionCreditNote']);
-    Route::get('/collections/{id}', [CollectionController::class, 'showBySaleId'])->middleware('permission:mantenimiento.vista_principal_ventas');
+    Route::get('/collections/{id}', [CollectionController::class, 'showBySaleId']);
     Route::put('/collections/{id}', [CollectionController::class, 'cancelCharge']);
     Route::post('/collections-bulk', [CollectionController::class, 'storeBulkCollection']);
 
     //dispatch Notes
-    Route::get('dispatchNote', [DispatchNotesController::class, 'index'])->middleware('permission:almacen.guia_remision');
+    Route::get('dispatchNote', [DispatchNotesController::class, 'index']);
     Route::post('dispatchNote-save', [DispatchNotesController::class, 'store']);
     Route::get('dispatchNote/{id}', [DispatchNotesController::class, 'show']);
-    Route::put('dispatchNote-update/{id}', [DispatchNotesController::class, 'update'])->middleware('permission:mantenimiento.guias_remision');
+    Route::put('dispatchNote-update/{id}', [DispatchNotesController::class, 'update']);
     Route::get('dispatchNote-PDF/{id}', [DispatchNotesController::class, 'generate']);
     Route::get('dispatchNote-proveedor', [DispatchNotesController::class, 'traerProovedores']);
-    Route::put('dispatchNote-status/{id}', [DispatchNotesController::class, 'updateStatus'])->middleware('permission:mantenimiento.guias_remision');
+    Route::put('dispatchNote-status/{id}', [DispatchNotesController::class, 'updateStatus']);
     Route::post('transfer-orders', [TransferOrderController::class, 'store']);
-    Route::get('transfer-orders', [TransferOrderController::class, 'index'])->middleware('permission:tablas.lista_movimientos_traslado');
+    Route::get('transfer-orders', [TransferOrderController::class, 'index']);
     Route::get('transfer-orders/{id}', [TransferOrderController::class, 'show']);
     Route::put('transfer-orders/{id}', [TransferOrderController::class, 'update']);
 
@@ -165,21 +165,21 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/note-reasons', [NoteReasonController::class, 'index']);
 
     //Entry Guide
-    Route::get('/entry-guides', [ControllerEntryGuide::class, 'index'])->middleware('permission:almacen.guia_ingreso');
+    Route::get('/entry-guides', [ControllerEntryGuide::class, 'index']);
     Route::get('/entryp', [ControllerEntryGuide::class, 'indexC']);
-    Route::get('/entry-guides/{id}', [ControllerEntryGuide::class, 'show'])->middleware('permission:almacen.guia_ingreso');
-    Route::post('/entry-guides', [ControllerEntryGuide::class, 'store'])->middleware('permission:almacen.guia_ingreso');
+    Route::get('/entry-guides/{id}', [ControllerEntryGuide::class, 'show']);
+    Route::post('/entry-guides', [ControllerEntryGuide::class, 'store']);
     Route::put('/entry-guides/{id}', [ControllerEntryGuide::class, 'update']);
     Route::post('/purchases/consolidate-guides', [ControllerEntryGuide::class, 'validateSameCustomer']);
     Route::get('/entry-guide-pdf/{id}', [ControllerEntryGuide::class, 'downloadPdf']);
     Route::put('/entry-guides-status/{id}', [ControllerEntryGuide::class, 'updateStatus']);
     //PettyCashReceipt
-    Route::get('/pettyCashReceipt', [PettyCashReceiptController::class, 'index'])->middleware('permission:caja.caja_chica');
+    Route::get('/pettyCashReceipt', [PettyCashReceiptController::class, 'index']);
     Route::post('/pettyCashReceipt', [PettyCashReceiptController::class, 'store']);
     Route::put('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'update']);
     Route::get('/pettyCashReceipt/{id}', [PettyCashReceiptController::class, 'show']);
     Route::put('/pettyCashReceiptstatus/{id}', [PettyCashReceiptController::class, 'updateStatus']);
-    Route::post('/pettyCashReceipt/select-procedure', [PettyCashReceiptController::class, 'selectProcedure'])->middleware('permission:caja.parte_diario');
+    Route::post('/pettyCashReceipt/select-procedure', [PettyCashReceiptController::class, 'selectProcedure']);
     Route::post('/pettyCashReceipt/export-excel', [PettyCashReceiptController::class, 'exportExcel']);
     //PettyCashReceiptMotive
     Route::get('/pettyCashMotive', [PettyCashMotiveController::class, 'index']);
@@ -209,8 +209,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/kardex/by-product', [KardexController::class, 'getKardexByProduct']);
     Route::post('/kardex/excel', [KardexController::class, 'generateExcel']);
     //SCvaucher
-    Route::get('/sc-voucher', [ScVoucherController::class, 'index'])->middleware('permission:caja.voucher_egreso');
-    Route::post('/sc-voucher', [ScVoucherController::class, 'store'])->middleware('permission:caja.voucher_egreso');
+    Route::get('/sc-voucher', [ScVoucherController::class, 'index']);
+    Route::post('/sc-voucher', [ScVoucherController::class, 'store']);
     Route::put('/sc-voucher-status/{id}', [ScVoucherController::class, 'updateStatus']);
     Route::get('/sc-voucher/{id}', [ScVoucherController::class, 'show']);
     Route::put('/sc-voucher/{id}', [ScVoucherController::class, 'update']);
@@ -223,17 +223,17 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/sc-voucherdetalle/{id}', [ScVoucherdetController::class, 'update']);
 
     // build pc
-    Route::get('/build-pc', [BuildPcController::class, 'index'])->middleware('permission:mantenimiento.arma_tu_pc');
-    Route::post('/build-pc', [BuildPcController::class, 'store'])->middleware('permission:mantenimiento.arma_tu_pc');
+    Route::get('/build-pc', [BuildPcController::class, 'index']);
+    Route::post('/build-pc', [BuildPcController::class, 'store']);
     Route::get('/build-pc/{id}', [BuildPcController::class, 'show']);
     Route::put('/build-pc/{id}', [BuildPcController::class, 'update']);
     Route::put('/build-pc/status/{id}', [BuildPcController::class, 'updateStatus']);
 
     // Ruta para las ordenes de compra
-    Route::get('/purchase-orders', [PurchaseOrderController::class, 'index'])->middleware('permission:compras.orden_compras_proveedores');
+    Route::get('/purchase-orders', [PurchaseOrderController::class, 'index']);
     Route::post('/purchase-orders', [PurchaseOrderController::class, 'store']);
-    Route::get('/purchase-orders/{id}', [PurchaseOrderController::class, 'show'])->middleware('permission:compras.orden_compras_proveedores');
-    Route::put('/purchase-orders/{id}', [PurchaseOrderController::class, 'update'])->middleware('permission:compras.orden_compras_proveedores');
+    Route::get('/purchase-orders/{id}', [PurchaseOrderController::class, 'show']);
+    Route::put('/purchase-orders/{id}', [PurchaseOrderController::class, 'update']);
     Route::get('/purchase-orders/{id}/pdf', [PurchaseOrderController::class, 'generatePdf']);
     Route::post('/purchase-orders-customer', [PurchaseOrderController::class, 'getBySupplier']);
     // Ruta para traer las series de un articulo
@@ -246,7 +246,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/transfer-orders-status/{id}', [TransferOrderController::class, 'updateStatusTransferOrder']);
 
     //purchase 
-    Route::get('/purchases', [PurchaseController::class, 'index'])->middleware('permission:compras.listar_compras');
+    Route::get('/purchases', [PurchaseController::class, 'index']);
     Route::post('/purchases', [PurchaseController::class, 'store']);
     Route::get('/purchases/{id}', [PurchaseController::class, 'show']);
     Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
@@ -254,7 +254,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/purchase-supplier/{id}', [PurchaseController::class, 'updateDetail']);
 
     // Advances - Anticipos
-    Route::get('/advances', [AdvanceController::class, 'index'])->middleware('permission:caja.anticipo');
+    Route::get('/advances', [AdvanceController::class, 'index']);
     Route::get('/advances/{customerId}', [AdvanceController::class, 'showAdvancesByCustomer']);
     Route::post('/advances', [AdvanceController::class, 'store']);
 
@@ -315,7 +315,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/menus', [MenuController::class, 'index']);
 
     // User routes devuelvelo como estaba protegido
-    Route::get('/users', [UserController::class, 'findAllUsers'])->middleware('permission:tablas.usuarios');
+    Route::get('/users', [UserController::class, 'findAllUsers']);
     Route::get('/users/{id}', [UserController::class, 'show']);
     
     Route::post('/users', [UserController::class, 'store']);
@@ -344,7 +344,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('brands-status/{id}', [BrandController::class, 'updateStatus']);
 
     // Drivers - conductores
-    Route::get('drivers', [DriverController::class, 'index'])->middleware('permission:tablas.conductor');
+    Route::get('drivers', [DriverController::class, 'index']);
     Route::post('drivers', [DriverController::class, 'store']);
     Route::get('drivers/{id}', [DriverController::class, 'show']);
     Route::put('drivers/{id}', [DriverController::class, 'update']);
@@ -371,7 +371,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('sub-categories-infinite/{id}', [SubCategoryController::class, 'indexPaginateInfinite']);
 
     // TransportCompanies - Empresa de transportes
-    Route::get('transport-companies', [TransportCompanyController::class, 'index'])->middleware('permission:tablas.empresa_transporte');
+    Route::get('transport-companies', [TransportCompanyController::class, 'index']);
     Route::post('transport-companies', [TransportCompanyController::class, 'store']);
     Route::get('transport-companies/{id}', [TransportCompanyController::class, 'show']);
     Route::put('transport-companies/{id}', [TransportCompanyController::class, 'update']);
@@ -405,7 +405,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
 
     // Customers - Clientes
-    Route::get('customers', [CustomerController::class, 'index'])->middleware('permission:mantenimiento.vista_principal_ventas|tablas.clientes');
+    Route::get('customers', [CustomerController::class, 'index']);
     Route::get('customers/unassigned', [CustomerController::class, 'findAllUnassigned']);
     Route::get('customers/{id}', [CustomerController::class, 'show']);
     Route::put('customers/{id}', [CustomerController::class, 'update']);
@@ -429,7 +429,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
 
     // Exchange Rates - Tipo de cambio
-    Route::get('exchange-rates', [ExchangeRateController::class, 'index'])->middleware('permission:tablas.tipos_cambio');
+    Route::get('exchange-rates', [ExchangeRateController::class, 'index']);
     Route::get('exchange-rates/current', [ExchangeRateController::class, 'current']);
     Route::get('exchange-rates/{id}', [ExchangeRateController::class, 'show']);
     Route::put('exchange-rates/{id}', [ExchangeRateController::class, 'update']);
@@ -455,14 +455,14 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('document-types/entry-guides', [DocumentTypeController::class, 'indexEntryGuides']);
 
     // Banks - Bancos
-    Route::get('banks', [BankController::class, 'index'])->middleware('permission:tablas.bancos');
+    Route::get('banks', [BankController::class, 'index']);
     Route::post('banks', [BankController::class, 'store']);
     Route::get('banks/{id}', [BankController::class, 'show']);
     Route::put('banks/{id}', [BankController::class, 'update']);
     Route::put('banks-status/{id}', [BankController::class, 'updateStatus']);
 
     // Digital Wallets - Billeteras digitales
-    Route::get('digital-wallets', [DigitalWalletController::class, 'index'])->middleware('permission:tablas.billetera_digital|mantenimiento.vista_principal_ventas');
+    Route::get('digital-wallets', [DigitalWalletController::class, 'index']);
     Route::post('digital-wallets', [DigitalWalletController::class, 'store']);
     Route::get('digital-wallets/{id}', [DigitalWalletController::class, 'show']);
     Route::put('digital-wallets/{id}', [DigitalWalletController::class, 'update']);

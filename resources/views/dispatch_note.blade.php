@@ -3,246 +3,289 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Guía de Remisión Electrónica</title>
+    <title>Guía de Remisión Electrónica {{ $dispatchNote['serie'] }}-{{ $dispatchNote['correlativo'] }}</title>
     <style>
+        @page {
+            margin: 0cm 0cm;
+        }
+
         body {
-            font-family: DejaVu Sans, sans-serif;
-            font-size: 11px;
-            color: #000;
-            margin: 0;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 10px;
+            color: #333;
+            margin-top: 3cm;
+            margin-bottom: 2cm;
+            margin-left: 1.5cm;
+            margin-right: 1.5cm;
         }
 
-        .container {
+        header {
+            position: fixed;
+            top: 0cm;
+            left: 0cm;
+            right: 0cm;
+            height: 3cm;
+            background-color: #fff;
+            padding-top: 0.5cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0cm;
+            left: 0cm;
+            right: 0cm;
+            height: 2cm;
+            background-color: #fff;
+            text-align: center;
+            line-height: 1.5cm;
+            font-size: 9px;
+            border-top: 1px solid #ddd;
             width: 100%;
-            padding: 10px 25px;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        .header-table td {
-            vertical-align: top;
         }
 
         .logo {
-            width: 160px;
+            max-width: 180px;
             max-height: 60px;
         }
 
         .company-info {
-            font-size: 10px;
-            line-height: 1.4;
+            text-align: left;
         }
 
-        .company-ruc {
+        .company-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .company-address {
+            font-size: 9px;
+            color: #555;
+        }
+
+        .ruc-box {
             border: 1px solid #000;
             text-align: center;
-            padding: 8px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
         }
 
-        .company-ruc h2 {
-            margin: 2px 0;
-            font-size: 13px;
-        }
-
-        .company-ruc h3 {
-            margin: 3px 0;
+        .ruc-number {
             font-size: 14px;
             font-weight: bold;
         }
 
-        .company-ruc h4 {
-            margin: 3px 0;
-            font-size: 12px;
+        .doc-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 5px 0;
+            background-color: #333;
+            color: #fff;
+            padding: 2px;
+        }
+
+        .doc-number {
+            font-size: 14px;
             font-weight: bold;
         }
 
-        /* Secciones */
         .section-title {
-            background-color: #eaeaea;
+            font-size: 11px;
             font-weight: bold;
-            padding: 4px 6px;
-            border: 1px solid #000;
-        }
-
-        .info-table td {
-            border: 1px solid #000;
-            padding: 3px 5px;
-        }
-
-        .info-table td strong {
+            background-color: #eee;
+            padding: 5px;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #ccc;
             color: #000;
         }
 
-        .products-table {
+        table {
             width: 100%;
-            margin-top: 6px;
-            font-size: 10px;
-            border: 1px solid #000;
+            border-collapse: collapse;
+            margin-bottom: 10px;
         }
 
-
-        .products-table th,
-        .products-table td {
-            border: 1px solid #000;
+        .info-table td {
             padding: 4px;
+            vertical-align: top;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #444;
+            width: 120px;
         }
 
         .products-table th {
-            background-color: #eaeaea;
-            text-align: center;
-        }
-
-        .products-table td:nth-child(1),
-        .products-table td:nth-child(2),
-        .products-table td:nth-child(3) {
-            text-align: center;
-        }
-
-        .footer {
+            background-color: #333;
+            color: #fff;
+            padding: 6px;
             font-size: 9px;
-            margin-top: 10px;
             text-align: center;
         }
 
-        .qr {
-            text-align: center;
-            margin-top: 8px;
+        .products-table td {
+            border-bottom: 1px solid #ddd;
+            padding: 6px;
+            font-size: 9px;
+            vertical-align: middle;
         }
 
-        .qr img {
-            width: 70px;
+        .products-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .page-number:before {
+            content: "Página " counter(page);
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <div style="text-align: left; margin-bottom: 5px;">
-            <!-- <img src="{{ public_path('storage/image/guia_remision.jpg') }}" style="width: 150px; height: auto;"> -->
-            <img src="{{ public_path('storage/logo/logocyberhouse.jpg') }}" class="logo" alt="Logo" style="width: 150px; height: auto;">
-
-        </div>
-
-        <!-- ENCABEZADO -->
-        <table class="header-table">
+    <header>
+        <table style="width: 100%;">
             <tr>
-                <td width="60%">
-                    @if(isset($dispatchNote['company']['logo_horizontal']) && $dispatchNote['company']['logo_horizontal'] && file_exists(public_path('storage/cias/' . $dispatchNote['company']['logo_horizontal'])))
-                    <img src="{{ public_path('storage/cias/' . $dispatchNote['company']['logo_horizontal']) }}"
-                        class="logo"><br>
-                    @endif
-                    <div class="company-info">
-                        <strong>{{ strtoupper($dispatchNote['company']['name'] ?? 'N/A') }}</strong><br>
-                        DIRECC: {{ $dispatchNote['branch']['direccion'] ?? $dispatchNote['company']['address'] ?? 'N/A' }}<br>
-                        TELF: {{ $dispatchNote['company']['telefono'] ?? 'N/A' }}<br>
-                        CORREO: {{ $dispatchNote['company']['correo'] ?? 'N/A' }}
+                <td style="width: 60%; vertical-align: top;">
+                    <img src="{{ public_path('storage/logo/logocyberhouse.jpg') }}" class="logo" alt="Logo">
+                    <div class="company-info" style="margin-top: 5px;">
+                        <div class="company-name">{{ $dispatchNote['company']['name'] ?? 'N/A' }}</div>
+                        <div class="company-address">
+                            {{ $dispatchNote['branch']['direccion'] ?? $dispatchNote['company']['address'] ?? 'N/A' }}
+                        </div>
+                        <div class="company-address">TELF: {{ $dispatchNote['company']['telefono'] ?? 'N/A' }}</div>
+                        <div class="company-address">CORREO: {{ $dispatchNote['company']['correo'] ?? 'N/A' }}</div>
                     </div>
                 </td>
-                <td width="40%">
-                    <div class="company-ruc">
-                        <h2>R.U.C. {{ $dispatchNote['company']['ruc'] ?? 'N/A' }}</h2>
-                        <h3>GUÍA DE REMISIÓN ELECTRÓNICA</h3>
-                        <h4>{{ $dispatchNote['serie'] ?? 'N/A' }} N°{{ str_pad($dispatchNote['correlativo'] ?? 0, 8, '0', STR_PAD_LEFT) }}
-                        </h4>
+                <td style="width: 40%; vertical-align: top;">
+                    <div class="ruc-box">
+                        <div class="ruc-number">R.U.C. {{ $dispatchNote['company']['ruc'] ?? 'N/A' }}</div>
+                        <div class="doc-title">GUÍA DE REMISIÓN ELECTRÓNICA</div>
+                        <div class="doc-number">{{ $dispatchNote['serie'] ?? 'N/A' }} -
+                            {{ str_pad($dispatchNote['correlativo'] ?? 0, 8, '0', STR_PAD_LEFT) }}
+                        </div>
                     </div>
                 </td>
             </tr>
         </table>
+    </header>
 
-        <!-- DATOS PRINCIPALES -->
-        <table class="info-table" style="margin-top:10px;">
+    <footer>
+        <div class="page-number"></div>
+    </footer>
+
+    <div class="content">
+        <!-- Customer Information -->
+        <div class="section-title">DATOS DEL DESTINATARIO</div>
+        <table class="info-table">
             <tr>
-                <td><strong>EMISIÓN</strong><br>{{ $dispatchNote['date'] ?? 'N/A' }}</td>
-                <td><strong>TRASLADO</strong><br>{{ $dispatchNote['date'] ?? 'N/A' }}
-                </td>
-                <td><strong>DESTINATARIO</strong><br>{{ $dispatchNote['customer']['name'] ?? 'N/A' }}</td>
-
-                <td><strong>RUC</strong><br>{{ $dispatchNote['customer']['ruc'] ?? 'N/A' }}</td>
-                <td><strong>MOTIVO
-                        TRASLADO</strong><br>{{ strtoupper($dispatchNote['emission_reason']['name'] ?? 'VENTA') }}
-                </td>
+                <td class="label">R.U.C. / DNI:</td>
+                <td>{{ $dispatchNote['customer']['ruc'] ?? 'N/A' }}</td>
+                <td class="label">RAZÓN SOCIAL:</td>
+                <td>{{ $dispatchNote['customer']['name'] ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">DIRECCIÓN LLEGADA:</td>
+                <td colspan="3">{{ $dispatchNote['customer']['address'] ?? 'N/A' }}</td>
             </tr>
         </table>
 
-        <!-- DIRECCIONES -->
+        <!-- Shipment Information -->
+        <div class="section-title" style="margin-top: 10px;">DATOS DEL TRASLADO</div>
         <table class="info-table">
             <tr>
-                <td width="50%"><strong>DIRECCIÓN PARTIDA</strong><br>{{ $dispatchNote['branch']['direccion'] ?? $dispatchNote['company']['address'] ?? 'N/A' }}</td>
-                <td width="50%"><strong>DIRECCIÓN DESTINO <br></strong>
-                    {{ $dispatchNote['customer']['address'] ?? 'N/A' }}
-                </td>
+                <td class="label">FECHA EMISIÓN:</td>
+                <td>{{ $dispatchNote['date'] ?? 'N/A' }}</td>
+                <td class="label">FECHA TRASLADO:</td>
+                <td>{{ $dispatchNote['date'] ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">MOTIVO TRASLADO:</td>
+                <td>{{ strtoupper($dispatchNote['emission_reason']['name'] ?? 'VENTA') }}</td>
+                <td class="label">PESO TOTAL:</td>
+                <td>{{ number_format($dispatchNote['total_weight'] ?? 0, 4) }} KGM</td>
+            </tr>
+            <tr>
+                <td class="label">DIRECCIÓN PARTIDA:</td>
+                <td colspan="3">
+                    {{ $dispatchNote['branch']['direccion'] ?? $dispatchNote['company']['address'] ?? 'N/A' }}</td>
             </tr>
         </table>
 
-        <!-- TRANSPORTE -->
+        <!-- Transport Information -->
+        <div class="section-title" style="margin-top: 10px;">DATOS DEL TRANSPORTE</div>
         <table class="info-table">
             <tr>
-                <td width="50%">
-                    <strong>DATOS DEL TRANSPORTISTA</strong><br>
-                    <strong>N° PLACA:</strong> {{ $dispatchNote['license_plate'] ?? 'N/A' }}<br>
-                    <strong>CONDUCTOR:</strong>
+                <td class="label">CONDUCTOR:</td>
+                <td>
                     {{ ($dispatchNote['conductor']['name'] ?? '') . ' ' . ($dispatchNote['conductor']['pat_surname'] ?? '') . ' ' . ($dispatchNote['conductor']['mat_surname'] ?? '') }}
-                    @if(empty($dispatchNote['conductor']['name'])) N/A @endif<br>
-                    <strong>LIC. CONDUCIR:</strong> {{ $dispatchNote['conductor']['license'] ?? 'N/A' }}
+                    @if(empty($dispatchNote['conductor']['name'])) N/A @endif
                 </td>
-                <td width="50%">
-                    <strong>EMPRESA DE TRANSPORTE</strong><br>
-                    <strong>RUC:</strong> {{ $dispatchNote['transport']['ruc'] ?? 'N/A'  }}<br>
-                    <strong>RAZÓN SOCIAL:</strong>{{ $dispatchNote['transport']['name'] ?? 'N/A'  }}<br>
-                    <strong>PESO TOTAL:</strong> {{ number_format($dispatchNote['total_weight'] ?? 0, 4) }} KGM
-                </td>
+                <td class="label">LICENCIA:</td>
+                <td>{{ $dispatchNote['conductor']['license'] ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">EMPRESA TRANSP.:</td>
+                <td>{{ $dispatchNote['transport']['name'] ?? 'N/A' }}</td>
+                <td class="label">RUC TRANSP.:</td>
+                <td>{{ $dispatchNote['transport']['ruc'] ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">PLACA VEHÍCULO:</td>
+                <td colspan="3">{{ $dispatchNote['license_plate'] ?? 'N/A' }}</td>
             </tr>
         </table>
 
-        <!-- DETALLES -->
-        <table class="products-table">
+        <!-- Reference Document -->
+        @if(!empty($dispatchNote['serie_referencia']) || !empty($dispatchNote['correlativo_referencia']))
+            <div class="section-title" style="margin-top: 10px;">DOC. REFERENCIA</div>
+            <table class="info-table">
+                <tr>
+                    <td class="label">DOCUMENTO:</td>
+                    <td>{{ ($dispatchNote['serie_referencia'] ?? '') . '-' . ($dispatchNote['correlativo_referencia'] ?? '') }}
+                    </td>
+                    <td class="label">OBSERVACIONES:</td>
+                    <td>{{ $dispatchNote['observations'] ?? '-' }}</td>
+                </tr>
+            </table>
+        @endif
+
+        <!-- Articles -->
+        <table class="products-table" style="margin-top: 15px;">
             <thead>
                 <tr>
-                    <th>UND</th>
-                    <th>CANT</th>
-                    <th>DESCRIPCIÓN</th>
+                    <th style="width: 10%;">CANT</th>
+                    <th style="width: 15%;">UNIDAD</th>
+                    <th style="width: 75%; text-align: left; padding-left: 10px;">DESCRIPCIÓN</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($dispatchArticles as $detalle)
-                <tr>
-                    <td>{{ $detalle['unidad']['siglas'] ?? 'UND' }}</td>
-                    <td style="text-align:center;">{{ $detalle['quantity'] ?? 0 }}</td>
-                    <td>{{ $detalle['name'] ?? 'N/A' }}</td>
-                </tr>
+                    <tr>
+                        <td style="text-align:center;">{{ $detalle['quantity'] ?? 0 }}</td>
+                        <td style="text-align:center;">{{ $detalle['unidad']['siglas'] ?? 'UND' }}</td>
+                        <td style="text-align:left; padding-left: 10px;">{{ $detalle['name'] ?? 'N/A' }}</td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <!-- PIE -->
-        <table class="info-table" style="margin-top:6px;">
-            <tr>
-                <td>
-                    <strong>TIPO Y N° DE COMPROBANTE DE PAGO:</strong>
-                    {{ ($dispatchNote['serie_referencia'] ?? '') . '-' . ($dispatchNote['correlativo_referencia'] ?? '') }}
-                    @if(empty($dispatchNote['serie_referencia']) && empty($dispatchNote['correlativo_referencia'])) N/A @endif
-                </td>
-            </tr>
-            <tr>
-                <td><strong>OBSERVACIÓN:</strong> {{ $dispatchNote['observations'] ?? 'N/A' }}</td>
-            </tr>
-        </table>
-
-        <div class="footer">
-
+        <!-- QR Code -->
+        <div style="width: 100%; margin-top: 20px; text-align: right;">
             @if(isset($qrCode))
-            <div class="qr">
-                <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code">
-            </div>
+                <div
+                    style="display: inline-block; border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
+                    <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code" style="width: 50px; height: 50px;">
+                    <div style="font-size: 8px; margin-top: 5px; color: #666;">Escanea para verificar</div>
+                </div>
             @endif
-            <p>Representación impresa - Guia de Remisión Electrónica</p>
- 
+            <div
+                style="display: inline-block; margin-left: 10px; vertical-align: top; font-size: 9px; color: #333; max-width: 150px; text-align: left;">
+                <strong>REPRESENTACIÓN IMPRESA DE GUÍA DE REMISIÓN ELECTRÓNICA</strong>
+            </div>
         </div>
-
-
     </div>
 </body>
 

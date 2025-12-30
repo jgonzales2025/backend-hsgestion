@@ -4,6 +4,7 @@ namespace App\Modules\EntryGuides\Infrastructure\Models;
 
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
+use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use App\Modules\IngressReason\Infrastructure\Models\EloquentIngressReason;
@@ -67,6 +68,10 @@ class EloquentEntryGuide extends Model
     {
         return $this->hasMany(EloquentDocumentEntryGuide::class, 'entry_guide_id');
     }
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(EloquentCurrencyType::class, 'currency_id');
+    }
 
     public function toDomain(EloquentEntryGuide $eloquentEntryGuide): EntryGuide
     {
@@ -89,7 +94,7 @@ class EloquentEntryGuide extends Model
             update_price: (bool) $eloquentEntryGuide->update_price,
             includ_igv: (bool) $eloquentEntryGuide->includ_igv,
             entry_igv: $eloquentEntryGuide->entry_igv,
-            currency_id: $eloquentEntryGuide->currency_id,
+            currency: $eloquentEntryGuide->currency->toDomain($eloquentEntryGuide->currency),
         );
     }
 }

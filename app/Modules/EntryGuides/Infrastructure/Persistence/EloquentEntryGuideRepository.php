@@ -15,7 +15,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 
     public function findAll(?string $description, ?int $status, ?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id): LengthAwarePaginator
     {
-        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])
+        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides','currency'])
             ->when(
                 $description,
                 fn($query) => $query->whereHas(
@@ -82,7 +82,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 total: $entryGuide->total,
                 update_price: (bool) $entryGuide->update_price,
                 entry_igv: $entryGuide->entry_igv,
-                currency_id: $entryGuide->currency_id,
+                currency: $entryGuide->currency?->toDomain($entryGuide->currency),
                 includ_igv: $entryGuide->includ_igv,
             );
         });
@@ -118,13 +118,13 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             total: $entryGuide->total,
             update_price: (bool) $entryGuide->update_price,
             entry_igv: $entryGuide->entry_igv,
-            currency_id: $entryGuide->currency_id,
+            currency: $entryGuide->currency_id,
             includ_igv: $entryGuide->includ_igv,
         );
     }
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide
     {
-        $entryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason'])
+        $entryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason','currency'])
             ->where('reference_serie', $serie)
             ->where('reference_correlative', $correlative)
             ->first();
@@ -151,7 +151,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             total: $entryGuide->total,
             update_price: (bool) $entryGuide->update_price,
             entry_igv: $entryGuide->entry_igv,
-            currency_id: $entryGuide->currency_id,
+            currency: $entryGuide->currency?->toDomain($entryGuide->currency),
             includ_igv: $entryGuide->includ_igv,
         );
     }
@@ -175,7 +175,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 'total' => $entryGuide->getTotal(),
                 'update_price' => $entryGuide->getUpdatePrice(),
                 'entry_igv' => $entryGuide->getEntryIgv(),
-                'currency_id' => $entryGuide->getCurrencyId(),
+                'currency_id' => $entryGuide->getCurrency()->getId(),
                 'includ_igv' => $entryGuide->getIncludIgv(),
             ]);
 
@@ -206,7 +206,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 total: $eloquentEntryGuide->total,
                 update_price: (bool) $eloquentEntryGuide->update_price,
                 entry_igv: $eloquentEntryGuide->entry_igv,
-                currency_id: $eloquentEntryGuide->currency_id,
+                currency: $eloquentEntryGuide->currency?->toDomain($eloquentEntryGuide->currency),
                 includ_igv: $eloquentEntryGuide->includ_igv,
             );
         });
@@ -214,7 +214,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 
     public function findById(int $id): ?EntryGuide
     {
-        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])->find($id);
+        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides','currency'])->find($id);
 
         if (!$eloquentEntryGuide) {
             return null;
@@ -237,7 +237,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             total: $eloquentEntryGuide->total,
             update_price: (bool) $eloquentEntryGuide->update_price,
             entry_igv: $eloquentEntryGuide->entry_igv,
-            currency_id: $eloquentEntryGuide->currency_id,
+            currency: $eloquentEntryGuide->currency?->toDomain($eloquentEntryGuide->currency),
             includ_igv: $eloquentEntryGuide->includ_igv,
         );
     }
@@ -265,7 +265,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'update_price' => $entryGuide->getUpdatePrice(),
             'includ_igv' => $entryGuide->getIncludIgv(),
             'entry_igv' => $entryGuide->getEntryIgv(),
-            'currency_id' => $entryGuide->getCurrencyId(),
+            'currency_id' => $entryGuide->getCurrency()->getId(),
         ]);
 
         return new EntryGuide(
@@ -286,7 +286,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             total: $eloquentEntryGuide->total,
             update_price: (bool) $eloquentEntryGuide->update_price,
             entry_igv: $eloquentEntryGuide->entry_igv,
-            currency_id: $eloquentEntryGuide->currency_id,
+            currency: $eloquentEntryGuide->currency?->toDomain($eloquentEntryGuide->currency),
             includ_igv: $eloquentEntryGuide->includ_igv,
         );
     }
@@ -306,7 +306,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             return [];
         }
 
-        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])
+        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency'])
             ->whereIn('id', $ids)
             ->orderByDesc('id')
             ->get();
@@ -334,7 +334,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 total: $entryGuide->total,
                 update_price: (bool) $entryGuide->update_price,
                 entry_igv: $entryGuide->entry_igv,
-                currency_id: $entryGuide->currency_id,
+                currency: $entryGuide->currency?->toDomain($entryGuide->currency),
                 includ_igv: $entryGuide->includ_igv,
             );
         })->toArray();

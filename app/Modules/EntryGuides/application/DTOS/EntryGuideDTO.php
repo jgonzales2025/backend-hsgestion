@@ -18,6 +18,9 @@ class EntryGuideDTO
     public float $total_descuento;
     public float $total;
     public bool $update_price;
+    public float $entry_igv;
+    public int $currency_id;
+    public bool $includ_igv;
 
 
 
@@ -37,5 +40,8 @@ class EntryGuideDTO
         $this->total_descuento = $array['total_descuento'];
         $this->total = $array['total'];
         $this->update_price = (bool) ($array['update_price'] ?? false);
+        $this->entry_igv = $array['entry_igv'];
+        $this->currency_id = $array['currency_id'];
+        $this->includ_igv = (bool) ($array['includ_igv'] ?? false);
     }
 }

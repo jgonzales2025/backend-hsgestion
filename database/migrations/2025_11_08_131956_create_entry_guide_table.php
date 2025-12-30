@@ -37,6 +37,9 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained('customers');
             $table->foreignId('ingress_reason_id')->constrained('ingress_reasons');
             $table->boolean('update_price')->default(false);
+            $table->boolean('includ_igv')->default(false);
+            $table->decimal('entry_igv', 10, 2)->default(0.00);
+            $table->foreignId('currency_id')->constrained('currency_types');
         });
     }
 

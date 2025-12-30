@@ -25,6 +25,9 @@ class EntryGuide
     private float $total_descuento;
     private float $total;
     private bool $update_price;
+    private float $entry_igv;
+    private int $currency_id;
+    private bool $includ_igv;
 
     public function __construct(
         ?int $id,
@@ -43,6 +46,9 @@ class EntryGuide
         float $total_descuento,
         float $total,
         bool $update_price = false,
+        float $entry_igv,
+        int $currency_id,
+        bool $includ_igv,
     ) {
         $this->id = $id;
         $this->cia = $cia;
@@ -60,6 +66,9 @@ class EntryGuide
         $this->total_descuento = $total_descuento;
         $this->total = $total;
         $this->update_price = $update_price;
+        $this->entry_igv = $entry_igv;
+        $this->currency_id = $currency_id;
+        $this->includ_igv = $includ_igv;
     }
     public function getId(): int|null
     {
@@ -126,5 +135,14 @@ class EntryGuide
     public function getUpdatePrice(): bool
     {
         return $this->update_price;
+    }
+    public function getEntryIgv(){
+        return $this->entry_igv;
+    }
+    public function getCurrencyId(){
+        return $this->currency_id;
+    }
+    public function getIncludIgv(){
+        return $this->includ_igv;
     }
 }

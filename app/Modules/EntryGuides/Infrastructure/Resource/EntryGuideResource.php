@@ -44,6 +44,9 @@ class EntryGuideResource extends JsonResource
             'total_descuento' => $this->resource?->getTotalDescuento(),
             'total' => $this->resource?->getTotal(),
             'update_price' => $this->resource?->getUpdatePrice(),
+            'entry_igv' => $this->resource?->getEntryIgv(),
+            'currency_id' => $this->resource?->getCurrencyId(),
+            'includ_igv' => $this->resource?->getIncludIgv(),
         ];
     }
 }

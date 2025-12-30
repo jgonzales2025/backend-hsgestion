@@ -36,6 +36,9 @@ class EloquentEntryGuide extends Model
         'total_descuento',
         'total',
         'update_price',
+        'includ_igv',
+        'entry_igv',
+        'currency_id',
     ];
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -84,6 +87,9 @@ class EloquentEntryGuide extends Model
             total_descuento: $eloquentEntryGuide->total_descuento,
             total: $eloquentEntryGuide->total,
             update_price: (bool) $eloquentEntryGuide->update_price,
+            includ_igv: (bool) $eloquentEntryGuide->includ_igv,
+            entry_igv: $eloquentEntryGuide->entry_igv,
+            currency_id: $eloquentEntryGuide->currency_id,
         );
     }
 }

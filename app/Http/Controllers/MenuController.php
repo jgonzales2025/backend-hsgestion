@@ -19,9 +19,11 @@ class MenuController extends Controller
         $menus = Menu::active()
             ->main()
             ->ordered()
-            ->with(['children' => function ($query) {
-                $query->active()->ordered();
-            }])
+            ->with([
+                'children' => function ($query) {
+                    $query->active()->ordered();
+                }
+            ])
             ->get();
 
         // Filtrar menús según permisos del usuario
@@ -97,13 +99,54 @@ class MenuController extends Controller
     }
 
     /**
+     * Buscar menús hijos por coincidencia
+     */
+    public function searchChildren(Request $request)
+    {
+        $user = $request->user();
+        $query = $request->query('description');
+
+        if (!$query) {
+            return response()->json([]);
+        }
+
+        $menus = Menu::active()
+            ->whereNotNull('parent_id') // Solo hijos
+            ->where(function ($q) use ($query) {
+                $q->where('name', 'LIKE', "%{$query}%")
+                    ->orWhere('label', 'LIKE', "%{$query}%");
+            })
+            ->ordered()
+            ->get();
+
+        // Filtrar menús según permisos del usuario
+        $filteredMenus = $menus->filter(function ($menu) use ($user) {
+            return $this->userCanAccessMenu($menu, $user);
+        })->map(function ($menu) {
+            return [
+                'id' => $menu->id,
+                'name' => $menu->name,
+                'label' => $menu->label,
+                'icon' => $menu->icon,
+                'route' => $menu->route,
+                'type' => $menu->type,
+                'order' => $menu->order,
+            ];
+        })->values();
+
+        return response()->json($filteredMenus);
+    }
+
+    /**
      * Obtener todos los menús (para administración)
      */
     public function index()
     {
-        $menus = Menu::with(['children' => function ($query) {
-            $query->active();
-        }])
+        $menus = Menu::with([
+            'children' => function ($query) {
+                $query->active();
+            }
+        ])
             ->active()
             ->main()
             ->ordered()

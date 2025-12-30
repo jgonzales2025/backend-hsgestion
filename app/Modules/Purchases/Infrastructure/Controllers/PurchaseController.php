@@ -340,14 +340,7 @@ class PurchaseController extends Controller
         return 'En proceso';
     }
 
-    /**
-     * Update entry guide saldos using FIFO (First In, First Out) logic
-     * 
-     * @param \App\Modules\Purchases\Domain\Entities\Purchase $purchase
-     * @param int $articleId
-     * @param float $totalConsumed
-     * @return void
-     */
+
     private function updateEntryGuideSaldosFIFO($purchase, int $articleId, float $totalConsumed): void
     {
         Log::info('[FIFO] Starting update', [

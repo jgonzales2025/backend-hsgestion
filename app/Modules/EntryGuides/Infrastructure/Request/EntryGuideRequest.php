@@ -26,6 +26,7 @@ class EntryGuideRequest extends FormRequest
             'ingress_reason_id' => 'required|integer|exists:ingress_reasons,id',
             'reference_po_serie' => 'string',
             'reference_po_correlative' => 'string',
+            'reference_document_id' => 'required|integer|exists:document_types,id',
             'subtotal' => 'nullable|numeric',
             'total_descuento' => 'nullable|numeric',
             'total' => 'nullable|numeric',

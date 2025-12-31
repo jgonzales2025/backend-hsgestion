@@ -75,7 +75,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 $searchTerms = explode(' ', trim($name));
                 $searchTerms = array_filter($searchTerms); // Eliminar vacíos
                 $searchTerms = array_slice($searchTerms, 0, 3); // Máximo 3 palabras
-    
+
                 return $query->where(function ($mainGroup) use ($searchTerms, $branchId) {
                     // Búsqueda por palabras múltiples en Nombre/Código/Referencia
                     $mainGroup->where(function ($subQ) use ($searchTerms, $branchId) {
@@ -201,8 +201,14 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             throw new \Exception('Articulo no encontrado');
         }
         $eloquentArticle->update($this->mapToArray($article));
+        if (empty($article->getCodFab())) {
+            $eloquentArticle->update([
+                'cod_fab' => $article->getId()
+            ]);
+        }
         return $this->buildDomainSale($eloquentArticle, $article);
     }
+
     public function updateNotesDebito(ArticleNotasDebito $article): ?ArticleNotasDebito
     {
         $eloquentArticle = EloquentArticle::find($article->getId());
@@ -250,7 +256,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                 $searchTerms = explode(' ', trim($name));
                 $searchTerms = array_filter($searchTerms); // Eliminar vacíos
                 $searchTerms = array_slice($searchTerms, 0, 3); // Máximo 3 palabras
-    
+
                 return $query->where(function ($mainGroup) use ($searchTerms, $name, $branchId) {
                     // Grupo 1: Búsqueda por palabras múltiples en Nombre/Código/Referencia
                     $mainGroup->where(function ($subQ) use ($searchTerms, $branchId) {

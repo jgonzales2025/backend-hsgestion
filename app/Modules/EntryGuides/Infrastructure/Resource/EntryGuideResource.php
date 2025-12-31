@@ -50,6 +50,7 @@ class EntryGuideResource extends JsonResource
                 'name' => $this->resource->getCurrency()->getName(),
             ],
             'includ_igv' => $this->resource?->getIncludIgv(),
+            'reference_document_id' => $this->resource?->getReferenceDocument(),
         ];
     }
 }

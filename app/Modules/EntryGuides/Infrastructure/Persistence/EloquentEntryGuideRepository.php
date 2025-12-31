@@ -84,6 +84,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 entry_igv: $entryGuide->entry_igv,
                 currency: $entryGuide->currency?->toDomain($entryGuide->currency),
                 includ_igv: $entryGuide->includ_igv,
+                reference_document_id: $entryGuide->reference_document_id,
             );
         });
 
@@ -120,6 +121,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             entry_igv: $entryGuide->entry_igv,
             currency: $entryGuide->currency_id,
             includ_igv: $entryGuide->includ_igv,
+            reference_document_id: $entryGuide->reference_document_id,
         );
     }
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide
@@ -153,6 +155,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             entry_igv: $entryGuide->entry_igv,
             currency: $entryGuide->currency?->toDomain($entryGuide->currency),
             includ_igv: $entryGuide->includ_igv,
+            reference_document_id: $entryGuide->reference_document_id,
         );
     }
     public function save(EntryGuide $entryGuide): ?EntryGuide
@@ -177,15 +180,14 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 'entry_igv' => $entryGuide->getEntryIgv(),
                 'currency_id' => $entryGuide->getCurrency()->getId(),
                 'includ_igv' => $entryGuide->getIncludIgv(),
+                'reference_document_id' => $entryGuide->getReferenceDocument(),
             ]);
 
 
-            //  DB::statement('CALL update_entry_guides_from_purchase_order(?,?,?,?)',[
+            //  DB::statement('CALL sp_update_price_article_by_entry_guide(?,?)',[
             //     $entryGuide->getCompany()->getId(),
-            //     $entryGuide->getCustomer()->getId(),
-            //     $entryGuide->getReferenceSerie(),
-            //     $entryGuide->getReferenceCorrelative(),
-            //  ]);
+            //     $entryGuide->getId(),
+            // ]);
 
             $eloquentEntryGuide->refresh();
             return new EntryGuide(
@@ -208,6 +210,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 entry_igv: $eloquentEntryGuide->entry_igv,
                 currency: $eloquentEntryGuide->currency?->toDomain($eloquentEntryGuide->currency),
                 includ_igv: $eloquentEntryGuide->includ_igv,
+                reference_document_id: $eloquentEntryGuide->reference_document_id,
             );
         });
     }
@@ -239,6 +242,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             entry_igv: $eloquentEntryGuide->entry_igv,
             currency: $eloquentEntryGuide->currency?->toDomain($eloquentEntryGuide->currency),
             includ_igv: $eloquentEntryGuide->includ_igv,
+            reference_document_id: $eloquentEntryGuide->reference_document_id,
         );
     }
     public function update(EntryGuide $entryGuide): EntryGuide|null
@@ -266,7 +270,13 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'includ_igv' => $entryGuide->getIncludIgv(),
             'entry_igv' => $entryGuide->getEntryIgv(),
             'currency_id' => $entryGuide->getCurrency()->getId(),
+            'reference_document_id' => $entryGuide->getReferenceDocument(),
         ]);
+
+        // DB::statement('CALL sp_update_price_article_by_entry_guide(?,?)',[
+        //     $entryGuide->getCompany()->getId(),
+        //     $entryGuide->getId(),
+        // ]);
 
         return new EntryGuide(
             id: $eloquentEntryGuide->id,
@@ -288,6 +298,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             entry_igv: $eloquentEntryGuide->entry_igv,
             currency: $eloquentEntryGuide->currency?->toDomain($eloquentEntryGuide->currency),
             includ_igv: $eloquentEntryGuide->includ_igv,
+            reference_document_id: $eloquentEntryGuide->reference_document_id,
         );
     }
 
@@ -336,6 +347,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 entry_igv: $entryGuide->entry_igv,
                 currency: $entryGuide->currency?->toDomain($entryGuide->currency),
                 includ_igv: $entryGuide->includ_igv,
+                reference_document_id: $entryGuide->reference_document_id,
             );
         })->toArray();
     }

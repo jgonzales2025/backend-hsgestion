@@ -69,6 +69,7 @@ class CreateEntryGuideUseCase
             entry_igv: $entryGuideDTO->entry_igv,
             currency: $currency,
             includ_igv: $entryGuideDTO->includ_igv,
+            reference_document_id: $entryGuideDTO->reference_document_id,
         );
 
         return $this->entryGuideRepositoryInterface->save($entryGuide);

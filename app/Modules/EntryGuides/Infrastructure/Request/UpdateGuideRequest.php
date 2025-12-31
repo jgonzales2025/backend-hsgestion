@@ -19,7 +19,7 @@ class UpdateGuideRequest extends FormRequest
             'user_id' => 'required|integer|exists:users,id',
             'date' => 'string',
             'customer_id' => 'required|integer|exists:customers,id',
-            'observations' => 'string',
+            'observations' => 'nullable|string',
             'ingress_reason_id' => 'required|integer|exists:ingress_reasons,id',
             'reference_serie' => 'nullable|string',
             'reference_correlative' => 'nullable|string',

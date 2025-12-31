@@ -78,9 +78,9 @@ class EloquentUserAssignmentRepository implements UserAssignmentRepositoryInterf
             $branches = $branches->filter(function ($branch) {
                 return $branch->branch->st_sales === 1;
             });
-        } elseif ($type === 'entry_guides') {
+        } elseif ($type === 'dispatch_notes') {
             $branches = $branches->filter(function ($branch) {
-                return $branch->branch->st_entry_guide === 1;
+                return $branch->branch->st_dispatch_notes === 1;
             });
         } elseif ($type === 'petty_cash') {
             $branches = $branches->filter(function ($branch) {

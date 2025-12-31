@@ -15,7 +15,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 
     public function findAll(?string $description, ?int $status, ?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id): LengthAwarePaginator
     {
-        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency'])
+        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides','currency'])
             ->when(
                 $description,
                 fn($query) => $query->whereHas(
@@ -126,7 +126,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     }
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide
     {
-        $entryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'currency'])
+        $entryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason','currency'])
             ->where('reference_serie', $serie)
             ->where('reference_correlative', $correlative)
             ->first();
@@ -160,62 +160,64 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     }
     public function save(EntryGuide $entryGuide): ?EntryGuide
     {
+        return DB::transaction(function () use ($entryGuide) {
 
-        $eloquentEntryGuide = EloquentEntryGuide::create([
-            'cia_id' => $entryGuide->getCompany()->getId(),
-            'branch_id' => $entryGuide->getBranch()->getId(),
-            'serie' => $entryGuide->getSerie(),
-            'correlative' => $entryGuide->getCorrelativo(),
-            'date' => $entryGuide->getDate(),
-            'customer_id' => $entryGuide->getCustomer()->getId(),
-            'observations' => $entryGuide->getObservations(),
-            'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
-            'reference_serie' => $entryGuide->getReferenceSerie(),
-            'reference_correlative' => $entryGuide->getReferenceCorrelative(),
-            'subtotal' => $entryGuide->getSubtotal(),
-            'total_descuento' => $entryGuide->getTotalDescuento(),
-            'total' => $entryGuide->getTotal(),
-            'update_price' => $entryGuide->getUpdatePrice(),
-            'entry_igv' => $entryGuide->getEntryIgv(),
-            'currency_id' => $entryGuide->getCurrency()->getId(),
-            'includ_igv' => $entryGuide->getIncludIgv(),
-            'reference_document_id' => $entryGuide->getReferenceDocument(),
-        ]);
+            $eloquentEntryGuide = EloquentEntryGuide::create([
+                'cia_id' => $entryGuide->getCompany()->getId(),
+                'branch_id' => $entryGuide->getBranch()->getId(),
+                'serie' => $entryGuide->getSerie(),
+                'correlative' => $entryGuide->getCorrelativo(),
+                'date' => $entryGuide->getDate(),
+                'customer_id' => $entryGuide->getCustomer()->getId(),
+                'observations' => $entryGuide->getObservations(),
+                'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
+                'reference_serie' => $entryGuide->getReferenceSerie(),
+                'reference_correlative' => $entryGuide->getReferenceCorrelative(),
+                'subtotal' => $entryGuide->getSubtotal(),
+                'total_descuento' => $entryGuide->getTotalDescuento(),
+                'total' => $entryGuide->getTotal(),
+                'update_price' => $entryGuide->getUpdatePrice(),
+                'entry_igv' => $entryGuide->getEntryIgv(),
+                'currency_id' => $entryGuide->getCurrency()->getId(),
+                'includ_igv' => $entryGuide->getIncludIgv(),
+                'reference_document_id' => $entryGuide->getReferenceDocument(),
+            ]);
 
-        // // ⚠️ SIN DB::transaction()
-        // DB::statement('CALL sp_update_price_article_by_entry_guide(?, ?)', [
-        //     $entryGuide->getCompany()->getId(),
-        //     $eloquentEntryGuide->id, 
-        // ]);
 
-        $eloquentEntryGuide->refresh();
-        return new EntryGuide(
-            id: $eloquentEntryGuide->id,
-            cia: $eloquentEntryGuide->company?->toDomain($eloquentEntryGuide->company),
-            branch: $eloquentEntryGuide->branch?->toDomain($eloquentEntryGuide->branch),
-            serie: $eloquentEntryGuide->serie,
-            correlative: $eloquentEntryGuide->correlative,
-            date: $eloquentEntryGuide->date,
-            customer: $eloquentEntryGuide->customer?->toDomain($eloquentEntryGuide->customer),
-            observations: $eloquentEntryGuide->observations,
-            ingressReason: $eloquentEntryGuide->ingressReason?->toDomain($eloquentEntryGuide->ingressReason),
-            reference_po_serie: $eloquentEntryGuide->reference_serie,
-            reference_po_correlative: $eloquentEntryGuide->reference_correlative,
-            status: $eloquentEntryGuide->status,
-            subtotal: $eloquentEntryGuide->subtotal,
-            total_descuento: $eloquentEntryGuide->total_descuento,
-            total: $eloquentEntryGuide->total,
-            update_price: (bool) $eloquentEntryGuide->update_price,
-            entry_igv: $eloquentEntryGuide->entry_igv,
-            currency: $eloquentEntryGuide->currency?->toDomain($eloquentEntryGuide->currency),
-            includ_igv: $eloquentEntryGuide->includ_igv,
-            reference_document_id: $eloquentEntryGuide->reference_document_id,
-        );
+            //  DB::statement('CALL sp_update_price_article_by_entry_guide(?,?)',[
+            //     $entryGuide->getCompany()->getId(),
+            //     $eloquentEntryGuide->id,
+            // ]);
+
+            $eloquentEntryGuide->refresh();
+            return new EntryGuide(
+                id: $eloquentEntryGuide->id,
+                cia: $eloquentEntryGuide->company?->toDomain($eloquentEntryGuide->company),
+                branch: $eloquentEntryGuide->branch?->toDomain($eloquentEntryGuide->branch),
+                serie: $eloquentEntryGuide->serie,
+                correlative: $eloquentEntryGuide->correlative,
+                date: $eloquentEntryGuide->date,
+                customer: $eloquentEntryGuide->customer?->toDomain($eloquentEntryGuide->customer),
+                observations: $eloquentEntryGuide->observations,
+                ingressReason: $eloquentEntryGuide->ingressReason?->toDomain($eloquentEntryGuide->ingressReason),
+                reference_po_serie: $eloquentEntryGuide->reference_serie,
+                reference_po_correlative: $eloquentEntryGuide->reference_correlative,
+                status: $eloquentEntryGuide->status,
+                subtotal: $eloquentEntryGuide->subtotal,
+                total_descuento: $eloquentEntryGuide->total_descuento,
+                total: $eloquentEntryGuide->total,
+                update_price: (bool) $eloquentEntryGuide->update_price,
+                entry_igv: $eloquentEntryGuide->entry_igv,
+                currency: $eloquentEntryGuide->currency?->toDomain($eloquentEntryGuide->currency),
+                includ_igv: $eloquentEntryGuide->includ_igv,
+                reference_document_id: $eloquentEntryGuide->reference_document_id,
+            );
+        });
     }
 
     public function findById(int $id): ?EntryGuide
     {
-        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency'])->find($id);
+        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides','currency'])->find($id);
 
         if (!$eloquentEntryGuide) {
             return null;
@@ -368,4 +370,6 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     {
         EloquentEntryGuide::where('id', $id)->update(['status' => $status]);
     }
+
+ 
 }

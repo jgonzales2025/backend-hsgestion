@@ -26,7 +26,7 @@ class UpdateBranchUseCase{
             start_date:$branchDTO->start_date,
             serie:$branchDTO->serie,
             status:$branchDTO->status,
-            phones: $branchDTO->phones, 
+            phones: $branchDTO->phones
         );
         $this->branchRepository->update($branch);
     }

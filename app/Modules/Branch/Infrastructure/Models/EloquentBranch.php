@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class EloquentBranch extends Model
 {
      protected $table = 'branches';
-    protected $fillable = ['cia_id', 'name', 'address', 'email', 'start_date', 'serie', 'status'];
+    protected $fillable = ['cia_id', 'name', 'address', 'email', 'start_date', 'serie', 'status', 'st_sales', 'st_entry_guide', 'st_petty_cash'];
 
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -39,6 +39,9 @@ class EloquentBranch extends Model
             start_date: $eloquentBranch->start_date,
             serie: $eloquentBranch->serie,
             status: $eloquentBranch->status,
+            st_sales: $eloquentBranch->st_sales,
+            st_entry_guide: $eloquentBranch->st_entry_guide,
+            st_petty_cash: $eloquentBranch->st_petty_cash,
         );
     }
 }

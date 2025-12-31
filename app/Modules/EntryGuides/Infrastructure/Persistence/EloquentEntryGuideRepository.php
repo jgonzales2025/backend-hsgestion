@@ -183,7 +183,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 'reference_document_id' => $entryGuide->getReferenceDocument(),
             ]);
 
-
+             
             //  DB::statement('CALL sp_update_price_article_by_entry_guide(?,?)',[
             //     $entryGuide->getCompany()->getId(),
             //     $eloquentEntryGuide->id,

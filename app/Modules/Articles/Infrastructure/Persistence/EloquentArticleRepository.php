@@ -19,9 +19,10 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     {
 
         $eloquentArticle = EloquentArticle::create($this->mapToArray($article));
-        if (empty($article->getCodFab())) {
+
+        if (!($article->getCodFab())) {
             $eloquentArticle->update([
-                'cod_fab' => $article->getId()
+                'cod_fab' => $eloquentArticle->id
             ]);
         }
         $eloquentArticle->refresh();
@@ -201,9 +202,10 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             throw new \Exception('Articulo no encontrado');
         }
         $eloquentArticle->update($this->mapToArray($article));
+
         if (empty($article->getCodFab())) {
             $eloquentArticle->update([
-                'cod_fab' => $article->getId()
+                'cod_fab' => $eloquentArticle->id
             ]);
         }
         return $this->buildDomainSale($eloquentArticle, $article);
@@ -458,7 +460,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
     private function mapToArray(Article $article): array
     {
         return [
-            'cod_fab' => ($article->getCodFab() !== null && $article->getCodFab() !== '') ? $article->getCodFab() : (is_null($article->getId()) ? null : (string) $article->getId()),
+            'cod_fab' => $article->getCodFab(),
             'description' => $article->getDescription(),
             'weight' => $article->getWeight(),
             'with_deduction' => $article->getWithDeduction(),

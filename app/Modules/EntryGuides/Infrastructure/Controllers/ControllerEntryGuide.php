@@ -109,7 +109,7 @@ class ControllerEntryGuide extends Controller
 
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
-            $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve();
+            $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve() ;
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
             $response['process_status'] = $this->calculateProcessStatus($articlesWithSerials);
             $result[] = $response;
@@ -210,7 +210,7 @@ class ControllerEntryGuide extends Controller
             //
             //   $findbyidobt = $this->entryGuideArticleRepositoryInterface->findByIdObj($entryGuide);
 
-            //   
+              
 
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
 
@@ -226,14 +226,6 @@ class ControllerEntryGuide extends Controller
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
             $response['process_status'] = $this->calculateProcessStatus($entryGuideArticle);
 
-            // dd($entryGuideArticle);
-
-            // DB::statement('CALL update_entry_guides_from_purchase_order(?,?,?,?)', [
-            //     $entryGuide->getCompany()->getId(),
-            //     $entryGuide->getCustomer()->getId(),
-            //     $entryGuide->getReferenceSerie(),
-            //     $entryGuide->getReferenceCorrelative(),
-            // ]);
 
             return response()->json($response, 201);
         });

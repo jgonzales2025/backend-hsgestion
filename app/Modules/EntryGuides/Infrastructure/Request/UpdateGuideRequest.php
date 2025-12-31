@@ -105,4 +105,10 @@ class UpdateGuideRequest extends FormRequest
             );
         }
     }
+        public function messages()
+    {
+        return [
+            'currency_id.required' => 'La moneda es obligatoria.',
+        ];
+    }
 }

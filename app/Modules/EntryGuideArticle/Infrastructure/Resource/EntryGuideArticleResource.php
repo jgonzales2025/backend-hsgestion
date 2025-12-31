@@ -15,7 +15,7 @@ class   EntryGuideArticleResource extends JsonResource
             'article_id' => $this->resource->getArticle()->getId(),
             'description' => $this->resource->getDescription(),
             'quantity' => $this->resource->getQuantity(),
-            'sku' => $this->resource->getArticle()->getCodFab(),
+            'cod_fab' => $this->resource->getArticle()->getCodFab(),
             'saldo' => $this->resource->getSaldo(),
             'serials' => array_map(
                 fn($itemSerial) => method_exists($itemSerial, 'getSerial') ? $itemSerial->getSerial() : $itemSerial,

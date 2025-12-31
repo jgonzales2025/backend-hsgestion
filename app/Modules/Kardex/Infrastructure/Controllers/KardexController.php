@@ -82,11 +82,11 @@ class KardexController extends Controller
         $validated = $request->validate([
             'product_id' => 'nullable|integer',
             'company_id' => 'nullable|integer',
-            'branch_id'  => 'required|integer',
+            'branch_id'  => 'nullable|integer',
             'fecha'      => 'required|date',
             'fecha1'     => 'required|date',
-            // 'categoria'  => 'required|integer',
-            // 'marca'      => 'nullable|integer',
+            'categoria'  => 'nullable|integer',
+            'marca'      => 'nullable|integer',
         ]);
 
 
@@ -96,14 +96,14 @@ class KardexController extends Controller
 
 
         $kardex = $this->kardexRepository->getKardexByProductId(
-            productId: (int) $validated['product_id'] ?? 1,
+            productId: (int) ($validated['product_id'] ?? 1),
             companyId: (int) $validated['company_id'],
-            branchId: (int) $validated['branch_id'],
+            branchId: (int) ($validated['branch_id'] ?? 0),
             fecha: $validated['fecha'],
             fecha1: $validated['fecha1'],
-            categoria: (int) $validated['categoria'] ?? 0,
-            marca: (int) $validated['marca'] ?? 0,
-            consulta: (int) $validated['consulta'] ?? 1,
+            categoria: (int) ($validated['categoria'] ?? 0),
+            marca: (int) ($validated['marca'] ?? 0),
+            consulta: (int) ($validated['consulta'] ?? 1),
         );
 
         return response()->json([

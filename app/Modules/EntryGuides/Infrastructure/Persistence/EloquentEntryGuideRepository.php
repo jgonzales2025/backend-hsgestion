@@ -2,20 +2,18 @@
 
 namespace App\Modules\EntryGuides\Infrastructure\Persistence;
 
-use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
 use App\Modules\EntryGuides\Infrastructure\Models\EloquentEntryGuide;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
-use PhpParser\Node\NullableType;
 
 class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 {
 
     public function findAll(?string $description, ?int $status, ?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id): LengthAwarePaginator
     {
-        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides','currency'])
+        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency'])
             ->when(
                 $description,
                 fn($query) => $query->whereHas(
@@ -126,7 +124,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     }
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide
     {
-        $entryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason','currency'])
+        $entryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'currency'])
             ->where('reference_serie', $serie)
             ->where('reference_correlative', $correlative)
             ->first();
@@ -183,14 +181,12 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 'reference_document_id' => $entryGuide->getReferenceDocument(),
             ]);
 
-             
-            //  DB::statement('CALL sp_update_price_article_by_entry_guide(?,?)',[
-            //     $entryGuide->getCompany()->getId(),
-            //     $eloquentEntryGuide->id,
-            // ]);
+            DB::statement('CALL sp_update_price_article_by_entry_guide(?,?)', [
+                $entryGuide->getCompany()->getId(),
+                $eloquentEntryGuide->id,
+            ]);
 
-            $eloquentEntryGuide->refresh();
-            return new EntryGuide(
+            return new EntryGuide( 
                 id: $eloquentEntryGuide->id,
                 cia: $eloquentEntryGuide->company?->toDomain($eloquentEntryGuide->company),
                 branch: $eloquentEntryGuide->branch?->toDomain($eloquentEntryGuide->branch),
@@ -217,7 +213,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 
     public function findById(int $id): ?EntryGuide
     {
-        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides','currency'])->find($id);
+        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency'])->find($id);
 
         if (!$eloquentEntryGuide) {
             return null;
@@ -273,10 +269,11 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'reference_document_id' => $entryGuide->getReferenceDocument(),
         ]);
 
-        // DB::statement('CALL sp_update_price_article_by_entry_guide(?,?)',[
-        //     $entryGuide->getCompany()->getId(),
-        //     $entryGuide->getId(),
-        // ]);
+ 
+            DB::statement('CALL sp_update_price_article_by_entry_guide(?,?)', [
+                $entryGuide->getCompany()->getId(),
+                $eloquentEntryGuide->id,
+            ]);
 
         return new EntryGuide(
             id: $eloquentEntryGuide->id,
@@ -370,6 +367,4 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     {
         EloquentEntryGuide::where('id', $id)->update(['status' => $status]);
     }
-
- 
 }

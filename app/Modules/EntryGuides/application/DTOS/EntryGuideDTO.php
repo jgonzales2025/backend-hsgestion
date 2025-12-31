@@ -40,7 +40,7 @@ class EntryGuideDTO
         $this->total_descuento = $array['total_descuento'];
         $this->total = $array['total'];
         $this->update_price = (bool) ($array['update_price'] ?? false);
-        $this->entry_igv = $array['entry_igv'];
+        $this->entry_igv = $array['entry_igv'] ?? 0;
         $this->currency_id = $array['currency_id'];
         $this->includ_igv = (bool) ($array['includ_igv'] ?? false);
     }

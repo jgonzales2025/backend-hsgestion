@@ -40,6 +40,7 @@ class EloquentEntryGuide extends Model
         'includ_igv',
         'entry_igv',
         'currency_id',
+        'reference_document_id'
     ];
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -95,6 +96,7 @@ class EloquentEntryGuide extends Model
             includ_igv: (bool) $eloquentEntryGuide->includ_igv,
             entry_igv: $eloquentEntryGuide->entry_igv,
             currency: $eloquentEntryGuide->currency->toDomain($eloquentEntryGuide->currency),
+            reference_document_id: $eloquentEntryGuide->reference_document_id,
         );
     }
 }

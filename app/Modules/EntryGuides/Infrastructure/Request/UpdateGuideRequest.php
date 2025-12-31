@@ -25,6 +25,7 @@ class UpdateGuideRequest extends FormRequest
             'reference_correlative' => 'nullable|string',
             'subtotal' => 'nullable|numeric',
             'total_descuento' => 'nullable|numeric',
+            'reference_document_id' => 'required|integer|exists:document_types,id',
             'total' => 'nullable|numeric',
             'descuento' => 'nullable|numeric',
             'update_price' => 'nullable|boolean',

@@ -21,6 +21,7 @@ class EntryGuideDTO
     public float $entry_igv;
     public int $currency_id;
     public bool $includ_igv;
+    public int $reference_document_id;
 
 
 
@@ -43,5 +44,6 @@ class EntryGuideDTO
         $this->entry_igv = $array['entry_igv'] ?? 0;
         $this->currency_id = $array['currency_id'];
         $this->includ_igv = (bool) ($array['includ_igv'] ?? false);
+        $this->reference_document_id = $array['reference_document_id'];
     }
 }

@@ -29,6 +29,7 @@ class EntryGuide
     private float $entry_igv;
     private ?CurrencyType $currency;
     private bool $includ_igv;
+    private ?int $reference_document_id;
 
     public function __construct(
         ?int $id,
@@ -50,6 +51,7 @@ class EntryGuide
         float $entry_igv,
         ?CurrencyType $currency,
         bool $includ_igv,
+        ?int $reference_document_id,
     ) {
         $this->id = $id;
         $this->cia = $cia;
@@ -70,6 +72,7 @@ class EntryGuide
         $this->entry_igv = $entry_igv;
         $this->currency = $currency;
         $this->includ_igv = $includ_igv;
+        $this->reference_document_id = $reference_document_id;
     }
     public function getId(): int|null
     {
@@ -145,5 +148,9 @@ class EntryGuide
     }
     public function getIncludIgv(){
         return $this->includ_igv;
+    }
+    public function getReferenceDocument():int|null
+    {
+        return $this->reference_document_id;
     }
 }

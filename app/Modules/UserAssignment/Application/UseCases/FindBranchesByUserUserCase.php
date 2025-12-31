@@ -8,8 +8,8 @@ readonly class FindBranchesByUserUserCase
 {
     public function __construct(private readonly UserAssignmentRepositoryInterface $userAssignmentRepository){}
 
-    public function execute(int $userId, int $companyId): array
+    public function execute(int $userId, int $companyId, ?string $type): array
     {
-        return $this->userAssignmentRepository->findBranchesByUser($userId, $companyId);
+        return $this->userAssignmentRepository->findBranchesByUser($userId, $companyId, $type);
     }
 }

@@ -9,6 +9,6 @@ interface UserAssignmentRepositoryInterface
     public function createUserAssignment(int $userId, array $assignments): ?array;
     public function updateUserAssignments(int $userId, array $assignments): array;
     public function deleteUserAssignments(int $userId): void;
-    public function findBranchesByUser(int $userId, int $companyId): array;
+    public function findBranchesByUser(int $userId, int $companyId, ?string $type): array;
 
 }

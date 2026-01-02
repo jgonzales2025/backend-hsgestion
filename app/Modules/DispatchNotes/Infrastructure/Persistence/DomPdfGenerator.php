@@ -22,6 +22,14 @@ class DomPdfGenerator implements PdfGeneratorInterface
                     $articles = app(DispatchArticleRepositoryInterface::class)
                         ->findById($dispatchNote->getId());
 
+                    $serialsByArticle = app(\App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface::class)
+                        ->findSerialsByTransferOrderId($dispatchNote->getId());
+
+                    $articles = array_map(function ($article) use ($serialsByArticle) {
+                        $article->serials = $serialsByArticle[$article->getArticleID()] ?? [];
+                        return $article;
+                    }, $articles);
+
                     return DispatchArticleResource::collection($articles)->resolve();
                 } catch (\Throwable $e) {
                     Log::error("Error obteniendo artículos: " . $e->getMessage());

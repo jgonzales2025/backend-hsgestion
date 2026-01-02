@@ -221,6 +221,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             $updatedArticles[] = [
                 'sale_article_id' => $saleArticle->id,
                 'article_id' => $articleId,
+                'cod_fab' => $saleArticle->article->cod_fab,
                 'description' => $saleArticle->description,
                 'measurement_unit' => $saleArticle->article->measurementUnit->name ?? null,
                 'original_quantity' => $originalQuantity,

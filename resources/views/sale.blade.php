@@ -278,7 +278,18 @@
                 @foreach($saleArticles as $article)
                     <tr>
                         <td style="text-align:center;">{{ $article->getSku() }}</td>
-                        <td style="text-align:left; padding-left: 10px;">{{ $article->getDescription() }}</td>
+                        <td style="text-align:left; padding-left: 10px;">
+                            {{ $article->getDescription() }}
+                            @if (!empty($article->serials))
+                                <br>
+                                <span style="font-size: 8px; color: #555;">
+                                    Series:
+                                    @foreach ($article->serials as $serial)
+                                        {{ $serial }}@if (!$loop->last), @endif
+                                    @endforeach
+                                </span>
+                            @endif
+                        </td>
                         <td style="text-align:center;">{{ $article->getQuantity() }}</td>
                         <td style="text-align:right;">{{ number_format($article->getUnitPrice(), 2) }}</td>
                         <td style="text-align:right;">{{ number_format($article->getSubtotal(), 2) }}</td>

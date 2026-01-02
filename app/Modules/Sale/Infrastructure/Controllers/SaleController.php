@@ -107,7 +107,7 @@ class SaleController extends Controller
 
         $saleUseCase = new FindAllSalesUseCase($this->saleRepository);
         $sales = $saleUseCase->execute($companyId, $startDate, $endDate, $description, $status, $paymentStatus);
-        
+
         $result = [];
         foreach ($sales as $sale) {
             $articles = $this->saleArticleRepository->findBySaleId($sale->getId());
@@ -146,7 +146,7 @@ class SaleController extends Controller
             if ($customer->getCustomerDocumentType()->getId() == 3 && $request->validated()['document_type_id'] == 1) {
                 return new JsonResponse(['message' => 'No se puede emitir una factura a un cliente con DNI'], 400);
             }
-            
+
             $saleDTO = new SaleDTO($request->validated());
             $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->documentNumberGeneratorService);
             $sale = $saleUseCase->execute($saleDTO);
@@ -344,8 +344,7 @@ class SaleController extends Controller
 
         $paddedCorrelative = str_pad($correlative, 8, '0', STR_PAD_LEFT);
 
-        if($documentTypeId == 9)
-        {
+        if ($documentTypeId == 9) {
             $dispatchNoteUseCase = new \App\Modules\DispatchNotes\Application\UseCases\FindByDocumentUseCase($this->dispatchNoteRepository);
             $dispatchNote = $dispatchNoteUseCase->execute($serie, $paddedCorrelative);
             if (!$dispatchNote) {
@@ -363,7 +362,7 @@ class SaleController extends Controller
                 'dispatch_note' => (new DispatchNoteResource($dispatchNote))->resolve(),
                 'articles' => DispatchArticleResource::collection($articles)->resolve()
             ]);
-        }else {
+        } else {
             $saleUseCase = new FindByDocumentSaleUseCase($this->saleRepository);
             $sale = $saleUseCase->execute($documentTypeId, $serie, $paddedCorrelative);
             if (!$sale) {
@@ -383,7 +382,7 @@ class SaleController extends Controller
             ]);
         }
 
-        
+
     }
 
     public function findSaleByDocumentForDebitNote(Request $request): JsonResponse
@@ -676,6 +675,12 @@ class SaleController extends Controller
         }
 
         $saleArticles = $this->saleArticleRepository->findBySaleId($sale->getId());
+        $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
+
+        $saleArticles = array_map(function ($article) use ($serialsByArticle) {
+            $article->serials = $serialsByArticle[$article->getArticle()->getId()] ?? [];
+            return $article;
+        }, $saleArticles);
 
         $transactionLogUseCase = new FindByDocumentUseCase($this->transactionLogRepository);
         $transactionLog = $transactionLogUseCase->execute($sale->getSerie(), $sale->getDocumentNumber());

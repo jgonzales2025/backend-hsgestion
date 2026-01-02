@@ -45,6 +45,11 @@ class SaleSunatController extends Controller
         }
         
         Log::info($response);
+
+        if (!isset($response['estado'])) {
+            return response()->json($response);
+        }
+
         $saleEloquent = EloquentSale::find($id);
         $saleEloquent->update([
             'estado_sunat' => $response['estado'],

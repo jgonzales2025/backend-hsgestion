@@ -266,7 +266,18 @@
                     <tr>
                         <td style="text-align:center;">{{ $detalle['quantity'] ?? 0 }}</td>
                         <td style="text-align:center;">{{ $detalle['unidad']['siglas'] ?? 'UND' }}</td>
-                        <td style="text-align:left; padding-left: 10px;">{{ $detalle['name'] ?? 'N/A' }}</td>
+                        <td style="text-align:left; padding-left: 10px;">
+                            {{ $detalle['name'] ?? 'N/A' }}
+                            @if (!empty($detalle['serials']))
+                                <br>
+                                <span style="font-size: 8px; color: #555;">
+                                    Series:
+                                    @foreach ($detalle['serials'] as $serial)
+                                        {{ $serial }}@if (!$loop->last), @endif
+                                    @endforeach
+                                </span>
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

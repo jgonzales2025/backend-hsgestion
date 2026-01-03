@@ -168,9 +168,16 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
         return $customers;
     }
 
-    public function saveCustomerBySunatApi(Customer $customer): ?Customer
+    public function saveCustomerBySunatApi(Customer $customer, string $document): ?Customer
     {
+        // Determinar record_type_id según el tipo de documento
+        $record_type_id = 1; // Valor por defecto para purchase
+        if ($document === 'sales' || $document === 'dispatch_note') {
+            $record_type_id = 2;
+        }
+
         $eloquentCustomer = EloquentCustomer::create([
+            'record_type_id' => $record_type_id,
             'customer_document_type_id' => $customer->getCustomerDocumentType()->getId(),
             'document_number' => $customer->getDocumentNumber(),
             'company_name' => $customer->getCompanyName(),

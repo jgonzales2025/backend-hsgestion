@@ -123,11 +123,11 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
                 'month' => $month,
                 'total_sales_pen' => round($salesSoles, 2),
                 'total_purchases_pen' => round($purchasesSoles, 2),
-                'utility_pen' => round($salesSoles - $purchasesSoles, 2),
+                'utility_pen' => round($salesSoles - $costsSoles, 2),
                 'cost_pen' => round($costsSoles, 2),
                 'total_sales_usd' => round($salesDollars, 2),
                 'total_purchases_usd' => round($purchasesDollars, 2),
-                'utility_usd' => round($salesDollars - $purchasesDollars, 2),
+                'utility_usd' => round($salesDollars - $costsDollars, 2),
                 'cost_usd' => round($costsDollars, 2)
             ];
         }

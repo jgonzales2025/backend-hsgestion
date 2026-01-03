@@ -33,7 +33,6 @@ class DispatchArticle
         $this->saldo = $saldo;
         $this->name = $name;
         $this->subtotal_weight = $subtotal_weight;
-
     }
     public function getId(): int|null
     {

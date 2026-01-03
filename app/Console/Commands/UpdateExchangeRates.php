@@ -62,7 +62,29 @@ class UpdateExchangeRates extends Command
                 return Command::SUCCESS;
             }
 
-            $this->error('Error al obtener datos de la API');
+            $this->warn('Error al obtener datos de la API. Intentando copiar del día anterior...');
+
+            $lastExchangeRate = DB::table('exchange_rates')
+                ->where('date', '<', $date)
+                ->orderBy('date', 'desc')
+                ->first();
+
+            if ($lastExchangeRate) {
+                DB::table('exchange_rates')->updateOrInsert(
+                    ['date' => $date],
+                    [
+                        'purchase_rate' => $lastExchangeRate->purchase_rate,
+                        'sale_rate' => $lastExchangeRate->sale_rate,
+                        'parallel_rate' => $lastExchangeRate->parallel_rate,
+                        'updated_at' => now()
+                    ]
+                );
+
+                $this->info('Tipo de cambio copiado del día anterior correctamente');
+                return Command::SUCCESS;
+            }
+
+            $this->error('Error al obtener datos de la API y no hay datos históricos');
             return Command::FAILURE;
         } catch (\Exception $e) {
             $this->error('Error: ' . $e->getMessage());

@@ -268,6 +268,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                             $subQ->where(function ($wordQuery) use ($term) {
                                 $wordQuery->where('description', 'like', "%{$term}%")
                                     ->orWhere('cod_fab', 'like', "%{$term}%")
+                                    ->orWhere('id', 'like', "%{$term}%")
                                     ->orWhereHas('referenceCodes', function ($r) use ($term) {
                                         $r->where('ref_code', 'like', "%{$term}%");
                                     });

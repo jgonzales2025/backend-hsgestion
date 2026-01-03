@@ -446,8 +446,16 @@ class SaleController extends Controller
     private function createSaleArticles($sale, array $articlesData): array
     {
         $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository, $this->articleRepository);
+        
+        // Calcular primero el subtotal_costo_neto total de todos los artículos
         $subtotal_costo_neto = 0;
-        return array_map(function ($article) use ($sale, $createSaleArticleUseCase, &$subtotal_costo_neto) {
+        foreach ($articlesData as $article) {
+            $subtotal_costo_neto += $article['purchase_price'] * $article['quantity'];
+        }
+        
+        // Procesar los artículos
+        $saleArticles = [];
+        foreach ($articlesData as $article) {
             $saleArticleDTO = new SaleArticleDTO([
                 'sale_id' => $sale->getId(),
                 'article_id' => $article['article_id'],
@@ -459,7 +467,7 @@ class SaleController extends Controller
                 'purchase_price' => $article['purchase_price'],
                 'costo_neto' => $article['purchase_price'] * $article['quantity']
             ]);
-            $subtotal_costo_neto += $saleArticleDTO->costo_neto;
+            
             $saleArticle = $createSaleArticleUseCase->execute($saleArticleDTO, $subtotal_costo_neto);
 
             // Array para almacenar los seriales
@@ -480,17 +488,25 @@ class SaleController extends Controller
 
             // Agregar los seriales al objeto saleArticle
             $saleArticle->serials = $serials;
-
-            return $saleArticle;
-        }, $articlesData);
+            $saleArticles[] = $saleArticle;
+        }
+        
+        return $saleArticles;
     }
 
     private function updateSaleArticles($sale, array $articlesData): array
     {
         $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository, $this->articleRepository);
+        
+        // Calcular primero el subtotal_costo_neto total de todos los artículos
         $subtotal_costo_neto = 0;
-
-        return array_map(function ($article) use ($sale, $createSaleArticleUseCase, $subtotal_costo_neto) {
+        foreach ($articlesData as $article) {
+            $subtotal_costo_neto += $article['purchase_price'] * $article['quantity'];
+        }
+        
+        // Procesar los artículos
+        $saleArticles = [];
+        foreach ($articlesData as $article) {
             $saleArticleDTO = new SaleArticleDTO([
                 'sale_id' => $sale->getId(),
                 'article_id' => $article['article_id'],
@@ -502,7 +518,6 @@ class SaleController extends Controller
                 'purchase_price' => $article['purchase_price'],
                 'costo_neto' => $article['purchase_price'] * $article['quantity']
             ]);
-            $subtotal_costo_neto += $saleArticleDTO->costo_neto;
 
             $saleArticle = $createSaleArticleUseCase->execute($saleArticleDTO, $subtotal_costo_neto);
 
@@ -523,9 +538,10 @@ class SaleController extends Controller
 
             // Agregar los seriales al objeto saleArticle
             $saleArticle->serials = $serials;
-
-            return $saleArticle;
-        }, $articlesData);
+            $saleArticles[] = $saleArticle;
+        }
+        
+        return $saleArticles;
     }
 
     private function logTransaction($request, $sale): void

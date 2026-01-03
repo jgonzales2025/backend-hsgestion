@@ -85,8 +85,30 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
             ->get()
             ->keyBy('month');
 
+        // Obtener costos (total_costo_neto) de ventas agrupados por mes
+        $costsData = EloquentSale::query()
+            ->where('company_id', $company_id)
+            ->where('status', 1)
+            ->whereBetween('date', [$start_date, $end_date])
+            ->select(
+                DB::raw('DATE_FORMAT(date, "%Y-%m") as month'),
+                DB::raw('SUM(CASE 
+                    WHEN currency_type_id = 1 THEN total_costo_neto 
+                    WHEN currency_type_id = 2 THEN total_costo_neto * parallel_rate 
+                    ELSE 0 
+                END) as total_costs_in_soles'),
+                DB::raw('SUM(CASE 
+                    WHEN currency_type_id = 2 THEN total_costo_neto 
+                    WHEN currency_type_id = 1 AND parallel_rate > 0 THEN total_costo_neto / parallel_rate 
+                    ELSE 0 
+                END) as total_costs_in_dollars')
+            )
+            ->groupBy('month')
+            ->get()
+            ->keyBy('month');
+
         // Combinar datos por mes
-        $months = $salesData->keys()->merge($purchasesData->keys())->unique()->sort()->values();
+        $months = $salesData->keys()->merge($purchasesData->keys())->merge($costsData->keys())->unique()->sort()->values();
 
         $monthlyData = [];
         foreach ($months as $month) {
@@ -94,17 +116,19 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
             $salesDollars = $salesData->get($month)->total_sales_in_dollars ?? 0;
             $purchasesSoles = $purchasesData->get($month)->total_purchases_in_soles ?? 0;
             $purchasesDollars = $purchasesData->get($month)->total_purchases_in_dollars ?? 0;
+            $costsSoles = $costsData->get($month)->total_costs_in_soles ?? 0;
+            $costsDollars = $costsData->get($month)->total_costs_in_dollars ?? 0;
 
             $monthlyData[] = [
                 'month' => $month,
                 'total_sales_pen' => round($salesSoles, 2),
                 'total_purchases_pen' => round($purchasesSoles, 2),
                 'utility_pen' => round($salesSoles - $purchasesSoles, 2),
-                'cost_pen' => 0,
+                'cost_pen' => round($costsSoles, 2),
                 'total_sales_usd' => round($salesDollars, 2),
                 'total_purchases_usd' => round($purchasesDollars, 2),
                 'utility_usd' => round($salesDollars - $purchasesDollars, 2),
-                'cost_usd' => 0
+                'cost_usd' => round($costsDollars, 2)
             ];
         }
 

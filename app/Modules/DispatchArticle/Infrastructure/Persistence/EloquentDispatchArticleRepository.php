@@ -69,7 +69,7 @@ class EloquentDispatchArticleRepository implements DispatchArticleRepositoryInte
             );
         })->toArray();
     }
-    
+
     public function deleteBySaleId(int $id): void
     {
         EloquentDispatchArticle::where('dispatch_id', $id)->delete();
@@ -78,7 +78,7 @@ class EloquentDispatchArticleRepository implements DispatchArticleRepositoryInte
     public function findByDispatchNoteId(int $id): ?array
     {
         $dispatchArticle = EloquentDispatchArticle::where('dispatch_id', $id)->get();
-        
+
         if (!$dispatchArticle) {
             return null;
         }
@@ -96,5 +96,4 @@ class EloquentDispatchArticleRepository implements DispatchArticleRepositoryInte
             );
         })->toArray();
     }
-
 }

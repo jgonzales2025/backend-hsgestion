@@ -105,10 +105,31 @@ class UpdateGuideRequest extends FormRequest
             );
         }
     }
-        public function messages()
+    public function messages()
     {
         return [
+            'company_id.required' => 'La compañia es obligatoria.',
             'currency_id.required' => 'La moneda es obligatoria.',
+            'branch_id.required' => 'La sucursal es obligatoria.',
+            'customer_id.required' => 'El cliente es obligatorio.',
+            'ingress_reason_id.required' => 'La razón de ingreso es obligatoria.',
+            'reference_document_id.required' => 'El documento de referencia es obligatorio.',
+            'entry_guide_articles.required' => 'Los artículos de la guía de ingreso son obligatorios.',
+            'entry_guide_articles.*.article_id.required' => 'El artículo es obligatorio.',
+            'entry_guide_articles.*.quantity.required' => 'La cantidad es obligatoria.',
+            // 'entry_guide_articles.*.serials.required' => 'Los números de serie son obligatorios.',
+            // 'entry_guide_articles.*.serials.*.required' => 'El número de serie es obligatorio.',
+            'entry_guide_articles.*.serials.*.distinct' => 'No se permiten números de serie duplicados.',
+            // 'entry_guide_articles.*.subtotal.required' => 'El subtotal es obligatorio.',
+            // 'entry_guide_articles.*.total.required' => 'El total es obligatorio.',
+            // 'entry_guide_articles.*.precio_costo.required' => 'El precio de costo es obligatorio.',
+            // 'entry_guide_articles.*.descuento.required' => 'El descuento es obligatorio.',
+            'document_entry_guide.reference_document_id.required' => 'El documento de referencia es obligatorio.',
+            // 'document_entry_guide.reference_serie.required' => 'La serie de referencia es obligatoria.',
+            // 'document_entry_guide.reference_correlative.required' => 'El correlativo de referencia es obligatorio.',
+            // 'document_entry_guide.reference_document_id.exists' => 'El documento de referencia no existe.',
+            // 'document_entry_guide.reference_serie.exists' => 'La serie de referencia no existe.',
+            // 'document_entry_guide.reference_correlative.exists' => 'El correlativo de referencia no existe.',
         ];
     }
 }

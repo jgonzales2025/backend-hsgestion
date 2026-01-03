@@ -293,6 +293,7 @@ class CustomerController extends Controller
     {
         return DB::transaction(function () use ($request) {
             $documentNumber = $request->query('document_number');
+            $document = $request->query('document');
 
             if (!$documentNumber) {
                 return response()->json(['error' => 'No ha enviado el número de documento'], 422);
@@ -324,7 +325,7 @@ class CustomerController extends Controller
             ]);
 
             $customerUseCase = new CreateCustomerSunatApiUseCase($this->customerRepository, $this->customerDocumentTypeRepository);
-            $customer = $customerUseCase->execute($customerDTO);
+            $customer = $customerUseCase->execute($customerDTO, $document);
 
             $address = null;
 

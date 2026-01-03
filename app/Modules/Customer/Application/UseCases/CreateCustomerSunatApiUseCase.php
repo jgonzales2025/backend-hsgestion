@@ -14,7 +14,7 @@ readonly class CreateCustomerSunatApiUseCase
     public function __construct(private readonly customerRepositoryInterface $customerRepository,
     private readonly CustomerDocumentTypeRepositoryInterface $customerDocumentTypeRepository){}
 
-    public function execute(CustomerDTO $customerDTO): Customer
+    public function execute(CustomerDTO $customerDTO, string $document): Customer
     {
 
         $customerDocumentTypeUseCases = new FindByIdCustomerDocumentTypeUseCase($this->customerDocumentTypeRepository);
@@ -39,6 +39,6 @@ readonly class CreateCustomerSunatApiUseCase
             addresses: null,
         );
 
-        return $this->customerRepository->saveCustomerBySunatApi($customer);
+        return $this->customerRepository->saveCustomerBySunatApi($customer, $document);
     }
 }

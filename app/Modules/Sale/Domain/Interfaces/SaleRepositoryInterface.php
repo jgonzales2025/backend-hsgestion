@@ -7,7 +7,7 @@ use App\Modules\Sale\Domain\Entities\SaleCreditNote;
 
 interface SaleRepositoryInterface
 {
-    public function findAll(int $companyId, ?string $start_date, ?string $end_date, ?string $description, ?int $status, ?int $payment_status);
+    public function findAll(int $companyId, ?string $start_date, ?string $end_date, ?string $description, ?int $status, ?int $payment_status, ?int $document_type_id);
     public function save(Sale $sale): ?Sale;
     public function saveCreditNote(SaleCreditNote $saleCreditNote): ?SaleCreditNote;
     public function getLastDocumentNumber(string $serie): ?string;

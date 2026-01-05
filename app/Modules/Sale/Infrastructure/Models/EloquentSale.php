@@ -8,6 +8,7 @@ use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\DocumentType\Infrastructure\Models\EloquentDocumentType;
 use App\Modules\NoteReason\Infrastructure\Models\EloquentNoteReason;
+use App\Modules\PaymentMethod\Infrastructure\Model\EloquentPaymentMethod;
 use App\Modules\PaymentType\Infrastructure\Models\EloquentPaymentType;
 use App\Modules\SaleArticle\Infrastructure\Models\EloquentSaleArticle;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
@@ -63,7 +64,8 @@ class EloquentSale extends Model
         'estado_sunat',
         'fecha_aceptacion',
         'respuesta_sunat',
-        'consignation_id'
+        'consignation_id',
+        'payment_method_id'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -132,4 +134,10 @@ class EloquentSale extends Model
     {
         return $this->belongsTo(EloquentNoteReason::class, 'note_reason_id');
     }
+    
+    public function paymentMethod(): BelongsTo
+    {
+        return $this->belongsTo(EloquentPaymentMethod::class, 'payment_method_id');
+    }
+
 }

@@ -220,7 +220,7 @@ class TransferOrderController extends Controller
             return response()->json(['message' => 'Orden de salida no encontrada'], 404);
         }
 
-        if ($transferOrder->getStatus() == 1) {
+        if ($transferOrder->getStage() == 1) {
             return response()->json(['message' => 'No se puede modificar una orden de salida que ya ha sido recibida.'], 400);
         }
 

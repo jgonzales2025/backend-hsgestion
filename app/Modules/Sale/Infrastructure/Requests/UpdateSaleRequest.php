@@ -36,6 +36,7 @@ class UpdateSaleRequest extends FormRequest
             'purchase_order' => 'nullable|string|max:10',
             'user_authorized_id' => 'nullable|integer|exists:users,id',
             'credit_amount' => 'required_if:payment_type_id,2|numeric|min:0',
+            'payment_method_id' => 'required|integer|exists:payment_methods,id',
 
             'installments' => 'nullable|array',
             'installments.*.installment_number' => 'required_if:payment_type_id,2|integer|min:1',

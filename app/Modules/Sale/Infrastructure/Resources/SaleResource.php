@@ -62,6 +62,10 @@ class SaleResource extends JsonResource
                 'id' => $this->resource->getPaymentType()->getId(),
                 'name' => $this->resource->getPaymentType()->getName(),
             ],
+            'payment_method' => [
+                'id' => $this->resource->getPaymentMethod()->getId(),
+                'name' => $this->resource->getPaymentMethod()->getDescription(),
+            ],
             'observations' => $this->resource->getObservations(),
             'currency_type' => [
                 'id' => $this->resource->getCurrencyType()->getId(),

@@ -14,6 +14,8 @@ use App\Modules\DocumentType\Application\UseCases\FindByIdDocumentTypeUseCase;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\NoteReason\Application\UseCases\FindByIdNoteReasonUseCase;
 use App\Modules\NoteReason\Domain\Interfaces\NoteReasonRepositoryInterface;
+use App\Modules\PaymentMethod\Application\UseCases\FindByIdPaymentMethodUseCase;
+use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
 use App\Modules\PaymentType\Application\UseCases\FindByIdPaymentTypeUseCase;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Sale\Application\DTOs\SaleDTO;
@@ -34,7 +36,8 @@ readonly class CreateSaleUseCase
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
-        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
+        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
+        private readonly PaymentMethodRepositoryInterface $paymentMethodRepository
     ){}
 
     public function execute(SaleDTO $saleDTO): ?Sale
@@ -68,6 +71,9 @@ readonly class CreateSaleUseCase
 
         $userAuthorizedUseCase = new GetUserByIdUseCase($this->userRepository);
         $userAuthorized = $userAuthorizedUseCase->execute($saleDTO->user_authorized_id);
+        
+        $paymentMethodUseCase = new FindByIdPaymentMethodUseCase($this->paymentMethodRepository);
+        $paymentMethod = $paymentMethodUseCase->execute($saleDTO->payment_method_id);
 
         $sale = new Sale(
             id: 0,
@@ -107,7 +113,8 @@ readonly class CreateSaleUseCase
             porretencion: $saleDTO->porretencion,
             impretens: $saleDTO->impretens,
             impretend: $saleDTO->impretend,
-            consignation_id: $saleDTO->consignation_id
+            consignation_id: $saleDTO->consignation_id,
+            payment_method: $paymentMethod,
         );
 
         return $this->saleRepository->save($sale);

@@ -69,6 +69,9 @@ class GenerateExcel implements FromArray, WithHeadings, WithEvents, WithCustomSt
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
+                if ($this->isEmpty()) {
+                    return;
+                }
                 $lastColumn = $sheet->getHighestDataColumn();
                 $sheet->setCellValue('A1', $this->title);
                 $sheet->mergeCells("A1:{$lastColumn}1");
@@ -85,5 +88,10 @@ class GenerateExcel implements FromArray, WithHeadings, WithEvents, WithCustomSt
                 $sheet->setAutoFilter($headerRange);
             },
         ];
+    }
+
+    public function isEmpty(): bool
+    {
+        return empty($this->rows);
     }
 }

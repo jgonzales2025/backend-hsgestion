@@ -5,11 +5,10 @@ namespace App\Modules\Sale\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
-use App\Modules\Collections\Infrastructure\Models\EloquentCollection;
+use App\Modules\Collections\Infrastructure\Models\EloquentCollection
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
-use App\Modules\Customer\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
 use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
@@ -26,7 +25,6 @@ use App\Modules\Installment\Domain\Interface\InstallmentRepositoryInterface;
 use App\Modules\NoteReason\Domain\Interfaces\NoteReasonRepositoryInterface;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
-use App\Modules\PurchaseItemSerials\Application\UseCases\FindBySerialUseCase;
 use App\Modules\Sale\Application\DTOs\SaleCreditNoteDTO;
 use App\Modules\Sale\Application\DTOs\SaleDTO;
 use App\Modules\Sale\Application\UseCases\CreateSaleCreditNoteUseCase;
@@ -35,7 +33,6 @@ use App\Modules\Sale\Application\UseCases\FindAllDocumentsByCustomerIdUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllNoteCreditsByCustomerUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllPendingSalesByCustomerIdUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllProformasUseCase;
-use App\Modules\Sale\Application\UseCases\FindAllSalesByCustomerIdUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllSalesUseCase;
 use App\Modules\Sale\Application\UseCases\FindSaleWithUpdatedQuantitiesUseCase;
 use App\Modules\Sale\Application\UseCases\FindByDocumentSaleUseCase;
@@ -45,7 +42,6 @@ use App\Modules\Sale\Application\UseCases\UpdateCreditNoteUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateSaleUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateStatusSalesUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
-use App\Modules\Sale\Infrastructure\Models\EloquentSale;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleCreditNoteRequest;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleRequest;
 use App\Modules\Sale\Infrastructure\Requests\UpdateSaleCreditNoteRequest;
@@ -70,7 +66,6 @@ use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class SaleController extends Controller
 {

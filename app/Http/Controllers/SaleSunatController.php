@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Company\Application\UseCases\FindByIdCompanyUseCase;
-use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
 use App\Modules\SaleArticle\Application\UseCases\FindBySaleIdUseCase;
 use App\Modules\SaleArticle\Domain\Interfaces\SaleArticleRepositoryInterface;
 use App\Services\SalesSunatService;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 
 class SaleSunatController extends Controller
@@ -30,17 +27,14 @@ class SaleSunatController extends Controller
         $saleArticles = $saleArticles->execute($id);
 
         if ($sale->getCoddetrac() === null && $sale->getStretencion() === null) {
-            Log::info("ESTOY AQUI");
             $response = $this->salesSunatService->saleGravada($sale, $saleArticles);
         }
 
         if ($sale->getCoddetrac() !== null) {
-            Log::info("ESTOY AQUI 2");
             $response = $this->salesSunatService->saleDetraccion($sale, $saleArticles);
         }
 
         if ($sale->getStretencion() !== null) {
-            Log::info("ESTOY AQUI 3");
             $response = $this->salesSunatService->saleRetencion($sale, $saleArticles);
         }
         

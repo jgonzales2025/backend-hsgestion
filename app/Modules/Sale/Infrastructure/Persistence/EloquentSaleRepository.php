@@ -548,7 +548,9 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             impretend: $eloquentSale->impretend,
             total_costo_neto: $eloquentSale->total_costo_neto,
             consignation_id: $eloquentSale->consignation_id,
-            note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason)
+            note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason),
+            sunat_status: $eloquentSale->estado_sunat,
+            fecha_aceptacion: $eloquentSale->fecha_aceptacion,
         );
     }
 

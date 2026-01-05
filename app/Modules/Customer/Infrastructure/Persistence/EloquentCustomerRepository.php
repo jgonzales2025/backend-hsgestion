@@ -133,7 +133,7 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
         return $this->buildCustomer($customerCompany, [], [], $addresses);
     }
 
-    public function findAllCustomerExceptionCompanies(?string $customerName, ?int $status, ?int $documentTypeId)
+    public function findAllCustomerExceptionCompanies(?string $customerName, ?int $status, ?int $documentTypeId, ?int $recordTypeId)
     {
         $customers = EloquentCustomer::query()
             ->when($customerName, function ($query, $name) {
@@ -150,6 +150,9 @@ readonly class EloquentCustomerRepository implements CustomerRepositoryInterface
             })
             ->when($documentTypeId, function ($query) use ($documentTypeId) {
                 return $query->where('customer_document_type_id', $documentTypeId);
+            })
+            ->when($recordTypeId, function ($query) use ($recordTypeId) {
+                return $query->where('record_type_id', $recordTypeId);
             })
             ->where('st_sales', 1)
             ->orderBy('created_at', 'desc')

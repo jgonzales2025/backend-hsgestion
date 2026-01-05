@@ -272,9 +272,10 @@ class CustomerController extends Controller
         $customerName = $request->query('customer_name');
         $status = $request->query('status') !== null ? (int) $request->query('status') : null;
         $documentTypeId = $request->query('document_type_id');
+        $recordTypeId = $request->query('record_type_id');
 
         $customersUseCase = new FindAllCustomersExcludingCompaniesUseCase($this->customerRepository);
-        $customers = $customersUseCase->execute($customerName, $status, $documentTypeId);
+        $customers = $customersUseCase->execute($customerName, $status, $documentTypeId, $recordTypeId);
 
         return new JsonResponse([
             'data' => CustomerAllResource::collection($customers)->resolve(),

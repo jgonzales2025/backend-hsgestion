@@ -174,6 +174,8 @@ class StoreSaleRequest extends FormRequest
             'correlative_prof.max' => 'El correlativo de proforma no puede exceder :max caracteres.',
             'purchase_order.max' => 'La orden de compra no puede exceder :max caracteres.',
             'user_authorized_id.exists' => 'El usuario autorizado seleccionado no existe.',
+            'payment_method_id.required' => 'El método de pago es obligatorio.',
+            'payment_method_id.exists' => 'El método de pago seleccionado no existe.',
             'sale_articles.required' => 'Debe agregar al menos un artículo.',
             'sale_articles.array' => 'Los artículos deben ser un arreglo.',
             'sale_articles.min' => 'Debe agregar al menos un artículo.',

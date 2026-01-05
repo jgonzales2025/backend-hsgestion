@@ -41,7 +41,7 @@ class StoreSaleRequest extends FormRequest
             'credit_amount' => 'required_if:payment_type_id,2|numeric|min:0',
             'payment_method_id' => 'required|integer|exists:payment_methods,id',
 
-            'installments' => 'nullable|array',
+            'installments' => 'required_if:payment_type_id,2|array',
             'installments.*.installment_number' => 'required_if:payment_type_id,2|integer|min:1',
             'installments.*.amount' => 'required_if:payment_type_id,2|numeric|min:0',
             'installments.*.due_date' => 'required_if:payment_type_id,2|date',

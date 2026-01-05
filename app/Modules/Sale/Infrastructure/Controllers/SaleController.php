@@ -271,18 +271,18 @@ class SaleController extends Controller
             if ($installments) {
                 $deleteInstallmentUseCase = new DeleteInstallmentUseCase($this->installmentRepository);
                 $deleteInstallmentUseCase->execute($saleUpdated->getId());
+            }
 
-                if (!empty($request->validated()['installments'])) {
-                    foreach ($request->validated()['installments'] as $installmentData) {
-                        $installmentDTO = new InstallmentDTO([
-                            'sale_id' => $sale->getId(),
-                            'installment_number' => $installmentData['installment_number'],
-                            'amount' => $installmentData['amount'],
-                            'due_date' => $installmentData['due_date'],
-                        ]);
-                        $installmentUseCase = new CreateInstallmentUseCase($this->installmentRepository);
-                        $installmentUseCase->execute($installmentDTO);
-                    }
+            if (!empty($request->validated()['installments'])) {
+                foreach ($request->validated()['installments'] as $installmentData) {
+                    $installmentDTO = new InstallmentDTO([
+                        'sale_id' => $sale->getId(),
+                        'installment_number' => $installmentData['installment_number'],
+                        'amount' => $installmentData['amount'],
+                        'due_date' => $installmentData['due_date'],
+                    ]);
+                    $installmentUseCase = new CreateInstallmentUseCase($this->installmentRepository);
+                    $installmentUseCase->execute($installmentDTO);
                 }
             }
 

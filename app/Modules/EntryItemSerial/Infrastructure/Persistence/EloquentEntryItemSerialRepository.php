@@ -89,7 +89,7 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
                 return $query->where('status', 1);
             })
             ->when($serial, function ($query, $serial) {
-                return $query->where('serial', 'like', "%{$serial}%");
+                return $query->where('serial',$serial);
             })
             ->get(['serial']);
 

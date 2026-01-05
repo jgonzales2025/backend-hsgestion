@@ -80,13 +80,14 @@ class KardexController extends Controller
     {
 
         $validated = $request->validate([
-            'product_id' => 'nullable|integer',
             'company_id' => 'nullable|integer',
             'branch_id'  => 'nullable|integer',
+            'product_id' => 'nullable|integer',
             'fecha'      => 'required|date',
             'fecha1'     => 'required|date',
             'categoria'  => 'nullable|integer',
             'marca'      => 'nullable|integer',
+            'consulta'   => 'nullable|integer',
         ]);
 
 
@@ -96,8 +97,8 @@ class KardexController extends Controller
 
 
         $kardex = $this->kardexRepository->getKardexByProductId(
-            productId: (int) ($validated['product_id'] ?? 1),
-            companyId: (int) $validated['company_id'],
+            companyId: (int) $validated['company_id'] ?? 1,
+            productId: (int) ($validated['product_id'] ?? 0),
             branchId: (int) ($validated['branch_id'] ?? 0),
             fecha: $validated['fecha'],
             fecha1: $validated['fecha1'],
@@ -105,6 +106,12 @@ class KardexController extends Controller
             marca: (int) ($validated['marca'] ?? 0),
             consulta: (int) ($validated['consulta'] ?? 1),
         );
+        if ($kardex === []) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontraron resultados',
+            ]);
+        }
 
         return response()->json([
             'success' => true,
@@ -146,6 +153,12 @@ class KardexController extends Controller
             consulta: isset($validated['consulta']) ? (int) $validated['consulta'] : 2,
             title: $title,
         );
+
+        if ($export->isEmpty()) {
+            return response()->json([
+                'message' => 'No se encontró información',
+            ], 404);
+        }
 
         $fileName = 'kardex_' . ($productId ?? 'general') . '_' . date('YmdHis') . '.xlsx';
         return Excel::download($export, $fileName);

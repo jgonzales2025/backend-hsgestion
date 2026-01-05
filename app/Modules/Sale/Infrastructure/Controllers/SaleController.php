@@ -5,7 +5,6 @@ namespace App\Modules\Sale\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
-use App\Modules\Collections\Infrastructure\Models\EloquentCollection
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;

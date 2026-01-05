@@ -145,7 +145,7 @@ class KardexController extends Controller
         $export = new GenerateExcel(
             companyId: $companyId ?? 1,
             branchId: isset($validated['branch_id']) ? (int) $validated['branch_id'] : 0,
-            productId: $productId ? (int) $productId : 1,
+            productId: $productId ? (int) $productId : 0,
             fecha: $fecha,
             fecha1: $fecha1,
             categoria: isset($validated['categoria']) ? (int) $validated['categoria'] : 0,

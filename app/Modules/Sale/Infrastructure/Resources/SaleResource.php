@@ -94,6 +94,8 @@ class SaleResource extends JsonResource
             'impretens' => $this->resource->getImpretens() ?? null,
             'impretend' => $this->resource->getImpretend() ?? null,
             'total_costo_neto' => $this->resource->getTotalCostoNeto() ?? null,
+            'estado_sunat' => $this->resource->getSunatStatus() ?? null,
+            'fecha_aceptacion' => $this->resource->getFechaAceptacion() ?? null
         ];
     }
 }

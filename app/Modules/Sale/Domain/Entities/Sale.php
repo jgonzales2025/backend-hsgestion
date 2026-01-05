@@ -54,6 +54,8 @@ class Sale
     private ?float $total_costo_neto;
     private ?int $consignation_id;
     private ?NoteReason $note_reason;
+    private ?string $sunat_status;
+    private ?string $fecha_aceptacion;
 
     public function __construct(
         int $id,
@@ -96,7 +98,9 @@ class Sale
         ?int $consignation_id,
         ?int $status = null,
         ?float $total_costo_neto = null,
-        ?NoteReason $note_reason = null
+        ?NoteReason $note_reason = null,
+        ?string $sunat_status = null,
+        ?string $fecha_aceptacion = null
     ) {
         $this->id = $id;
         $this->company = $company;
@@ -139,6 +143,8 @@ class Sale
         $this->total_costo_neto = $total_costo_neto;
         $this->consignation_id = $consignation_id;
         $this->note_reason = $note_reason;
+        $this->sunat_status = $sunat_status;
+        $this->fecha_aceptacion = $fecha_aceptacion;
     }
 
     public function getId(): int
@@ -304,5 +310,13 @@ class Sale
     public function getNoteReason(): ?NoteReason
     {
         return $this->note_reason;
+    }
+    public function getSunatStatus(): ?string
+    {
+        return $this->sunat_status;
+    }
+    public function getFechaAceptacion(): ?string
+    {
+        return $this->fecha_aceptacion;
     }
 }

@@ -260,6 +260,10 @@ class SaleController extends Controller
                 return response()->json(['message' => 'La venta no se puede actualizar por cierre de mes'], 200);
             }
 
+            if ($sale->getSunatStatus() === 'ACEPTADA') {
+                return response()->json(['message' => 'La venta no se puede actualizar por ser aceptada por SUNAT'], 200);
+            }
+
             $saleDTO = new SaleDTO($request->validated());
             $saleUseCase = new UpdateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository);
             $saleUpdated = $saleUseCase->execute($saleDTO, $sale);

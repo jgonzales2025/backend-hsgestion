@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class EloquentSaleRepository implements SaleRepositoryInterface
 {
-    public function findAll(int $companyId, ?string $start_date, ?string $end_date, ?string $description, ?int $status, ?int $payment_status)
+    public function findAll(int $companyId, ?string $start_date, ?string $end_date, ?string $description, ?int $status, ?int $payment_status, ?int $document_type_id)
     {
         $eloquentSale = EloquentSale::query()
             ->where('company_id', $companyId)
@@ -33,6 +33,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                     ->orWhere('lastname', 'like', "%{$description}%")))
             ->when($status !== null, fn($query) => $query->where('status', $status))
             ->when($payment_status !== null, fn($query) => $query->where('payment_status', $payment_status))
+            ->when($document_type_id !== null, fn($query) => $query->where('document_type_id', $document_type_id))
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
@@ -424,7 +425,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'porretencion' => $sale->getPorretencion(),
             'impretens' => $sale->getImpretens(),
             'impretend' => $sale->getImpretend(),
-            'consignation_id' => $sale->getConsignationId()
+            'consignation_id' => $sale->getConsignationId(),
+            'payment_method_id' => $sale->getPaymentMethod()?->getId()
         ];
     }
 
@@ -548,6 +550,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             impretend: $eloquentSale->impretend,
             total_costo_neto: $eloquentSale->total_costo_neto,
             consignation_id: $eloquentSale->consignation_id,
+            payment_method: $eloquentSale->paymentMethod?->toDomain($eloquentSale->paymentMethod),
             note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason),
             sunat_status: $eloquentSale->estado_sunat,
             fecha_aceptacion: $eloquentSale->fecha_aceptacion,
@@ -596,6 +599,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             impretens: $eloquentSale->impretens,
             impretend: $eloquentSale->impretend,
             consignation_id: $eloquentSale->consignation_id,
+            payment_method: $eloquentSale->paymentMethod?->toDomain($eloquentSale->paymentMethod),
             note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason)
         );
     }

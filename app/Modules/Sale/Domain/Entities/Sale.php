@@ -8,6 +8,7 @@ use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
 use App\Modules\Customer\Domain\Entities\Customer;
 use App\Modules\DocumentType\Domain\Entities\DocumentType;
 use App\Modules\NoteReason\Domain\Entities\NoteReason;
+use App\Modules\PaymentMethod\Domain\Entities\PaymentMethod;
 use App\Modules\PaymentType\Domain\Entities\PaymentType;
 use App\Modules\User\Domain\Entities\User;
 
@@ -56,6 +57,7 @@ class Sale
     private ?NoteReason $note_reason;
     private ?string $sunat_status;
     private ?string $fecha_aceptacion;
+    private PaymentMethod $payment_method;
 
     public function __construct(
         int $id,
@@ -96,6 +98,7 @@ class Sale
         ?float $impretens,
         ?float $impretend,
         ?int $consignation_id,
+        PaymentMethod $payment_method,
         ?int $status = null,
         ?float $total_costo_neto = null,
         ?NoteReason $note_reason = null,
@@ -140,6 +143,7 @@ class Sale
         $this->porretencion = $porretencion;
         $this->impretens = $impretens;
         $this->impretend = $impretend;
+        $this->payment_method = $payment_method;
         $this->total_costo_neto = $total_costo_neto;
         $this->consignation_id = $consignation_id;
         $this->note_reason = $note_reason;
@@ -298,6 +302,10 @@ class Sale
     public function getImpretend(): ?float
     {
         return $this->impretend;
+    }
+    public function getPaymentMethod(): PaymentMethod
+    {
+        return $this->payment_method;
     }
     public function getTotalCostoNeto(): ?float
     {

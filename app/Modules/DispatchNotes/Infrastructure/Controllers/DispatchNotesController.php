@@ -139,46 +139,7 @@ class DispatchNotesController extends Controller
 
             $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO);
 
-            $status = $dispatchNotes->getEmissionReason()->getId() == 1 ? 0 : 2;
-            $createDispatchArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
-            $dispatchArticles = array_map(function ($article) use ($dispatchNotes, $createDispatchArticleUseCase, $status) {
-                $dispatchArticleDTO = new DispatchArticleDTO([
-                    'dispatch_id' => $dispatchNotes->getId(),
-                    'article_id' => $article['article_id'],
-                    'quantity' => $article['quantity'],
-                    'weight' => $article['weight'],
-                    'saldo' => $article['saldo'],
-                    'name' => $article['name'],
-                    'subtotal_weight' => $article['subtotal_weight']
-                ]);
-
-                $dispatchArticle = $createDispatchArticleUseCase->execute($dispatchArticleDTO);
-
-                // Array para almacenar los seriales
-                $serials = [];
-
-                if (!empty($article['serials'])) {
-                    foreach ($article['serials'] as $serial) {
-                        $dispatchArticleSerialDTO = new DispatchArticleSerialDTO([
-                            'dispatch_note_id' => $dispatchNotes->getId(),
-                            'article_id' => $dispatchArticle->getArticleID(),
-                            'serial' => $serial,
-                            'emission_reasons_id' => $dispatchNotes->getEmissionReason()->getId(),
-                            'status' => $status,
-                            'origin_branch' => $dispatchNotes->getBranch(),
-                            'destination_branch' => $dispatchNotes->getDestinationBranch(),
-                        ]);
-                        $dispatchArticleSerialUseCase = new CreateDispatchArticleSerialUseCase($this->dispatchArticleSerialRepository, $this->articleRepository, $this->branchRepository, $this->dispatchNoteRepository);
-                        $dispatchArticleSerial = $dispatchArticleSerialUseCase->execute($dispatchArticleSerialDTO);
-                        $serials[] = $dispatchArticleSerial;
-                    }
-                }
-
-                //Agregar los seriales al objeto dispatchArticle
-                $dispatchArticle->serials = $serials;
-
-                return $dispatchArticle;
-            }, array: $store->validated()['dispatch_articles']);
+            $dispatchArticles = $this->createDispatchArticles($dispatchNotes, $store->validated()['dispatch_articles']);
 
             $this->logTransaction($store, $dispatchNotes);
 
@@ -267,7 +228,8 @@ class DispatchNotesController extends Controller
             );
             $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO, $dispatchNote);
 
-
+            $serials = $this->dispatchArticleSerialRepository->findSerialsByTransferOrderId($id);
+            $this->dispatchArticleSerialRepository->deleteByTransferOrderId($id, $serials);
             $this->dispatchArticleRepositoryInterface->deleteBySaleId($dispatchNotes->getId());
 
             $dispatchArticle = $this->createDispatchArticles($dispatchNotes, $store->validated()['dispatch_articles']);
@@ -307,14 +269,14 @@ class DispatchNotesController extends Controller
 
         ]);
     }
-    private function createDispatchArticles($sale, array $articlesData): array
+    private function createDispatchArticles($dispatchNote, array $articlesData): array
     {
+        $status = $dispatchNote->getEmissionReason()->getId() == 1 ? 0 : 2;
+        $createDispatchArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
 
-        $createSaleArticleUseCase = new CreateDispatchArticleUseCase($this->dispatchArticleRepositoryInterface);
-
-        return array_map(function ($article) use ($sale, $createSaleArticleUseCase) {
-            $saleArticleDTO = new DispatchArticleDTO([
-                'dispatch_id' => $sale->getId(),
+        return array_map(function ($article) use ($dispatchNote, $createDispatchArticleUseCase, $status) {
+            $dispatchArticleDTO = new DispatchArticleDTO([
+                'dispatch_id' => $dispatchNote->getId(),
                 'article_id' => $article['article_id'],
                 'quantity' => $article['quantity'],
                 'weight' => $article['weight'],
@@ -323,7 +285,32 @@ class DispatchNotesController extends Controller
                 'subtotal_weight' => $article['subtotal_weight']
             ]);
 
-            return $createSaleArticleUseCase->execute($saleArticleDTO);
+            $dispatchArticle = $createDispatchArticleUseCase->execute($dispatchArticleDTO);
+
+            // Array para almacenar los seriales
+            $serials = [];
+
+            if (!empty($article['serials'])) {
+                foreach ($article['serials'] as $serial) {
+                    $dispatchArticleSerialDTO = new DispatchArticleSerialDTO([
+                        'dispatch_note_id' => $dispatchNote->getId(),
+                        'article_id' => $dispatchArticle->getArticleID(),
+                        'serial' => $serial,
+                        'emission_reasons_id' => $dispatchNote->getEmissionReason()->getId(),
+                        'status' => $status,
+                        'origin_branch' => $dispatchNote->getBranch(),
+                        'destination_branch' => $dispatchNote->getDestinationBranch(),
+                    ]);
+                    $dispatchArticleSerialUseCase = new CreateDispatchArticleSerialUseCase($this->dispatchArticleSerialRepository, $this->articleRepository, $this->branchRepository, $this->dispatchNoteRepository);
+                    $dispatchArticleSerial = $dispatchArticleSerialUseCase->execute($dispatchArticleSerialDTO);
+                    $serials[] = $dispatchArticleSerial;
+                }
+            }
+
+            //Agregar los seriales al objeto dispatchArticle
+            $dispatchArticle->serials = $serials;
+
+            return $dispatchArticle;
         }, $articlesData);
     }
     public function updateStatus(int $id, Request $request)

@@ -12,6 +12,7 @@ use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DocumentType\Application\UseCases\FindByIdDocumentTypeUseCase;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
+use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
 use App\Modules\PaymentType\Application\UseCases\FindByIdPaymentTypeUseCase;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Sale\Application\DTOs\SaleDTO;
@@ -31,6 +32,7 @@ readonly class UpdateSaleUseCase
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
+        private readonly PaymentMethodRepositoryInterface $paymentMethodRepository,
     ){}
 
     public function execute(SaleDTO $saleDTO, Sale $sale): ?Sale
@@ -44,6 +46,7 @@ readonly class UpdateSaleUseCase
         $paymentType = $this->paymentTypeRepository->findById($saleDTO->payment_type_id);
         $currencyType = $this->currencyTypeRepository->findById($saleDTO->currency_type_id);
         $userAuthorized = $this->userRepository->findById($saleDTO->user_authorized_id);
+        $paymentMethod = $this->paymentMethodRepository->findById($saleDTO->payment_method_id);
 
         $sale = new Sale(
             id: $sale->getId(),
@@ -84,7 +87,8 @@ readonly class UpdateSaleUseCase
             porretencion: $saleDTO->porretencion,
             impretens: $saleDTO->impretens,
             impretend: $saleDTO->impretend,
-            consignation_id: $saleDTO->consignation_id
+            consignation_id: $saleDTO->consignation_id,
+            payment_method: $paymentMethod,
         );
 
         return $this->saleRepository->update($sale);

@@ -30,13 +30,13 @@ class UpdateCustomerRequest extends FormRequest
             'contact' => 'nullable|string|max:100',
             'is_withholding_applicable' => 'sometimes|boolean',
 
-            'phones' => 'sometimes|array|min:1',
-            'phones.*.phone' => 'sometimes|string|max:9',
-            'phones.*.status' => 'sometimes|integer|in:0,1',
+            'phones' => 'nullable|array',
+            'phones.*.phone' => 'nullable|string|max:9',
+            'phones.*.status' => 'nullable|integer|in:0,1',
 
-            'emails' => 'sometimes|array|min:1',
-            'emails.*.email' => 'sometimes|email',
-            'emails.*.status' => 'sometimes|integer|in:0,1',
+            'emails' => 'nullable|array',
+            'emails.*.email' => 'nullable|email',
+            'emails.*.status' => 'nullable|integer|in:0,1',
 
             'addresses' => 'sometimes|array|min:1',
             'addresses.*.address' => 'sometimes|string',

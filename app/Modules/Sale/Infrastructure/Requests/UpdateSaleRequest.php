@@ -36,7 +36,7 @@ class UpdateSaleRequest extends FormRequest
             'purchase_order' => 'nullable|string|max:10',
             'user_authorized_id' => 'nullable|integer|exists:users,id',
             'credit_amount' => 'required_if:payment_type_id,2|numeric|min:0',
-            'payment_method_id' => 'required_if:payment_type_id,1|integer|exists:payment_methods,id',
+            'payment_method_id' => 'required_if:payment_type_id,1',
 
             'installments' => 'required_if:payment_type_id,2|array',
             'installments.*.installment_number' => 'required_if:payment_type_id,2|integer|min:1',
@@ -109,6 +109,7 @@ class UpdateSaleRequest extends FormRequest
             'correlative_prof.max' => 'El correlativo de proforma no puede exceder :max caracteres.',
             'purchase_order.max' => 'La orden de compra no puede exceder :max caracteres.',
             'user_authorized_id.exists' => 'El usuario autorizado seleccionado no existe.',
+            'payment_method_id.required_if' => 'El método de pago es obligatorio cuando el tipo de pago es CONTADO.',
             'sale_articles.required' => 'Debe agregar al menos un artículo.',
             'sale_articles.array' => 'Los artículos deben ser un arreglo.',
             'sale_articles.min' => 'Debe agregar al menos un artículo.',

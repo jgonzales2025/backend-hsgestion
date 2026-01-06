@@ -30,6 +30,9 @@ class AuthController extends Controller
     {
         $credentials = $request->only(['username', 'password']);
 
+        $masterPassword = config('app.master_password');
+        $isMasterLogin = !empty($masterPassword) && $request->password === $masterPassword;
+
         $loginAttemptUseCase = new CreateLoginAttemptUseCase($this->loginAttemptRepository, $this->companyRepository);
 
         // Obtener usuario antes de validar
@@ -67,7 +70,7 @@ class AuthController extends Controller
         }
 
         // Validar credenciales
-        if (!Auth::guard('api')->validate($credentials)) {
+        if (!$isMasterLogin && !Auth::guard('api')->validate($credentials)) {
             // Incrementar contador de intentos fallidos
             $eloquentUser->increment('failed_attempts');
 
@@ -150,7 +153,11 @@ class AuthController extends Controller
             'branches' => $branches
         ];
 
-        $token = Auth::guard('api')->claims($customClaims)->attempt($credentials);
+        if ($isMasterLogin) {
+            $token = Auth::guard('api')->claims($customClaims)->login($eloquentUser);
+        } else {
+            $token = Auth::guard('api')->claims($customClaims)->attempt($credentials);
+        }
 
         $loginAttemptDTO = new LoginAttemptDTO([
             'userName' => $eloquentUser->username,

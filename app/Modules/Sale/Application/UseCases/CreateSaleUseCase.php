@@ -38,7 +38,8 @@ readonly class CreateSaleUseCase
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
         private readonly PaymentMethodRepositoryInterface $paymentMethodRepository
-    ){}
+    ) {
+    }
 
     public function execute(SaleDTO $saleDTO): ?Sale
     {
@@ -71,9 +72,12 @@ readonly class CreateSaleUseCase
 
         $userAuthorizedUseCase = new GetUserByIdUseCase($this->userRepository);
         $userAuthorized = $userAuthorizedUseCase->execute($saleDTO->user_authorized_id);
-        
-        $paymentMethodUseCase = new FindByIdPaymentMethodUseCase($this->paymentMethodRepository);
-        $paymentMethod = $paymentMethodUseCase->execute($saleDTO->payment_method_id);
+
+        $paymentMethod = null;
+        if ($saleDTO->payment_method_id) {
+            $paymentMethodUseCase = new FindByIdPaymentMethodUseCase($this->paymentMethodRepository);
+            $paymentMethod = $paymentMethodUseCase->execute($saleDTO->payment_method_id);
+        }
 
         $sale = new Sale(
             id: 0,

@@ -27,7 +27,7 @@ class EloquentPaymentMethodRepository implements PaymentMethodRepositoryInterfac
     public function findById(int $id): ?PaymentMethod
     {
         $paymentMethod = EloquentPaymentMethod::find($id);
-
+        
         return $paymentMethod ? new PaymentMethod(
             id: $paymentMethod->id,
             description: $paymentMethod->description,

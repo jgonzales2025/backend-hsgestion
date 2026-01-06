@@ -46,7 +46,10 @@ readonly class UpdateSaleUseCase
         $paymentType = $this->paymentTypeRepository->findById($saleDTO->payment_type_id);
         $currencyType = $this->currencyTypeRepository->findById($saleDTO->currency_type_id);
         $userAuthorized = $this->userRepository->findById($saleDTO->user_authorized_id);
-        $paymentMethod = $this->paymentMethodRepository->findById($saleDTO->payment_method_id);
+        $paymentMethod = null;
+        if ($saleDTO->payment_method_id) {
+            $paymentMethod = $this->paymentMethodRepository->findById($saleDTO->payment_method_id);
+        }
 
         $sale = new Sale(
             id: $sale->getId(),

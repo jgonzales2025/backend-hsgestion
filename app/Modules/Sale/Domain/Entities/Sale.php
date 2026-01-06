@@ -57,7 +57,7 @@ class Sale
     private ?NoteReason $note_reason;
     private ?string $sunat_status;
     private ?string $fecha_aceptacion;
-    private PaymentMethod $payment_method;
+    private ?PaymentMethod $payment_method;
 
     public function __construct(
         int $id,
@@ -98,7 +98,7 @@ class Sale
         ?float $impretens,
         ?float $impretend,
         ?int $consignation_id,
-        PaymentMethod $payment_method,
+        ?PaymentMethod $payment_method,
         ?int $status = null,
         ?float $total_costo_neto = null,
         ?NoteReason $note_reason = null,
@@ -303,7 +303,7 @@ class Sale
     {
         return $this->impretend;
     }
-    public function getPaymentMethod(): PaymentMethod
+    public function getPaymentMethod(): ?PaymentMethod
     {
         return $this->payment_method;
     }

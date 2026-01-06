@@ -79,7 +79,7 @@ class EloquentCustomerPortfolioRepository implements CustomerPortfolioRepository
     {
         $role = request()->get('role');
 
-        if ($role == 'Vendedor')
+        if ($role == 'Ventas')
         {
             $eloquentCustomerPortfolio = EloquentCustomerPortfolio::where('customer_id', $customerId)->first();
 

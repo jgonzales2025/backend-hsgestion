@@ -175,7 +175,7 @@ class EloquentUserRepository implements UserRepositoryInterface
     public function findAllUsersByVendedor(): array
     {
         $usersVendedor = EloquentUser::whereHas('roles', function ($query) {
-            $query->where('name', 'Vendedor');
+            $query->where('name', 'Ventas');
         })->get();
 
         return $usersVendedor->map(function ($user) {

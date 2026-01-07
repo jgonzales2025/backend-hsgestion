@@ -12,4 +12,5 @@ interface EntryItemSerialRepositoryInterface{
     public function findBySerial(string $serial): ?EntryItemSerial;
     public function findSerialByArticleId(int $articleId, int $branch_id, ?bool $updated , ?string $serial = null): ?array;
     public function findBranchBySerial(string $serial): ?array;
+    public function findSerialInDatabase(string $serial): ?bool;
 }

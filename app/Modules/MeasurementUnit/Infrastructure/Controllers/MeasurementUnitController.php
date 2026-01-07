@@ -27,10 +27,11 @@ class MeasurementUnitController extends Controller
         $this->measurementUnitRepository = $measurementUnitRepository;
     }
 
-    public function indexPaginateInfinite()
+    public function indexPaginateInfinite(Request $request)
     {
+        $description = $request->query('description');
         $measurementUnitUseCase = new FindAllPaginateInfiniteMeasurementUnitUseCase($this->measurementUnitRepository);
-        $measurementUnits = $measurementUnitUseCase->execute();
+        $measurementUnits = $measurementUnitUseCase->execute($description);
 
         return new JsonResponse([
             'data' => MeasurementUnitResource::collection($measurementUnits)->resolve(),

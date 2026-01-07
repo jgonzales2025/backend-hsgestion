@@ -10,8 +10,8 @@ class FindAllPaginateInfiniteMeasurementUnitUseCase
     {
     }
 
-    public function execute()
+    public function execute(?string $description)
     {
-        return $this->measurementUnitRepository->findAllPaginateInfinite();
+        return $this->measurementUnitRepository->findAllPaginateInfinite($description);
     }
 }

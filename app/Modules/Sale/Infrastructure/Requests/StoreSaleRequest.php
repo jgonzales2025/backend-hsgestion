@@ -75,7 +75,7 @@ class StoreSaleRequest extends FormRequest
     protected function validateSerials($validator)
     {
         $documentTypeId = $this->input('document_type_id');
-        if ((int) $documentTypeId === 16) {
+        if ((int) $documentTypeId === 16 || (int) $documentTypeId === 17) {
             return;
         }
 

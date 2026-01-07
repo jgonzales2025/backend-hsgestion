@@ -273,4 +273,50 @@ class SalesSunatService
 
         return $response->json();
     }
+
+    public function saleInvoiceAnulacion(Sale $sale)
+    {
+        $ubigeo = $sale->getCompany()->getUbigeo();
+        $coddep = substr($ubigeo, 0, 2);
+        $codprov = substr($ubigeo, 2, 2);
+        $coddist = substr($ubigeo, 4, 2);
+
+        $departmentUseCase = new FindByIdDepartmentUseCase($this->departmentRepository);
+        $department = $departmentUseCase->execute($coddep);
+
+        $provinceUseCase = new FindByIdProvinceUseCase($this->provinceRepository);
+        $province = $provinceUseCase->execute($coddep, $codprov);
+
+        $districtUseCase = new FindByIdDistrictUseCase($this->districtRepository);
+        $district = $districtUseCase->execute($coddep, $codprov, $coddist);
+
+        $data = [
+            "company" => [
+                "ruc" => $sale->getCompany()->getRuc(),
+                "razonSocial" => $sale->getCompany()->getCompanyName(),
+                "nombreComercial" => $sale->getCompany()->getCompanyName(),
+                "address" => [
+                    "ubigueo" => $ubigeo,
+                    "departamento" => $department->getNomdep(),
+                    "provincia" => $province->getNompro(),
+                    "distrito" => $district->getNomdis(),
+                    "urbanizacion" => '-',
+                    "direccion" => $sale->getCompany()->getAddress()
+                ]
+            ],
+            "tip_doc" => "0" . (string) $sale->getDocumentType()->getId(),
+            "serie" => $sale->getSerie(),
+            "correlativo" => $sale->getDocumentNumber(),
+            "motivo_baja" => "ERROR EN EL DOCUMENTO",
+            "fecha_emision" => "2026-01-03"
+        ];
+        /* Log::info($data);
+        $responseTicket = Http::withToken($this->token)->post("{$this->baseUrl}/voided/send", $data);
+        Log::info($responseTicket->json());
+        $ticket = $responseTicket->json('ticket'); */
+        
+        $response = Http::withToken($this->token)->get("{$this->baseUrl}/voided/check/2026010600384437991/{$sale->getCompany()->getRuc()}");
+        //dd($response->json());
+        return $response->json();
+    }
 }

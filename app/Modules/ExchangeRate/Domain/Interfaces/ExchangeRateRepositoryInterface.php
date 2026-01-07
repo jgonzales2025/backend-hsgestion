@@ -13,4 +13,14 @@ interface ExchangeRateRepositoryInterface
     public function update(ExchangeRate $exchangeRate): ?ExchangeRate;
 
     public function findAll(string $startDate, string $endDate);
+
+    public function updateAlmacen(int $id, bool $status): void;
+
+    public function updateCompras(int $id, bool $status): void;
+
+    public function updateVentas(int $id, bool $status): void;
+
+    public function updateCobranzas(int $id, bool $status): void;
+
+    public function updatePagos(int $id, bool $status): void;
 }

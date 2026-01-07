@@ -15,5 +15,5 @@ interface MeasurementUnitRepositoryInterface
     public function update(MeasurementUnit $measurementUnit): MeasurementUnit;
 
     public function updateStatus(int $measurementUnitId, int $status): void;
-    public function findAllPaginateInfinite();
+    public function findAllPaginateInfinite(?string $description);
 }

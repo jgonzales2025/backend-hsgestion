@@ -17,7 +17,7 @@ readonly class UpdateExchangeRateUseCase
             date: null,
             purchase_rate: null,
             sale_rate: null,
-            parallel_rate: $exchangeRateDTO->parallel_rate,
+            parallel_rate: $exchangeRateDTO->parallel_rate
         );
 
         return $this->exchangeRateRepository->update($exchangeRate);

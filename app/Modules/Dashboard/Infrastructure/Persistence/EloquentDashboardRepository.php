@@ -17,8 +17,9 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
             ->join('articles', 'sale_article.article_id', '=', 'articles.id')
             ->join('categories', 'articles.category_id', '=', 'categories.id')
             ->where('sales.status', 1)
+            ->where('sales.document_type_id', '!=', 16)
             ->where('sales.company_id', $company_id)
-            ->select('categories.name as category_name', DB::raw('SUM(sale_article.quantity) as total_quantity'))
+            ->select('categories.name as category_name', DB::raw('SUM(CASE WHEN sales.document_type_id = 7 THEN -sale_article.quantity ELSE sale_article.quantity END) as total_quantity'))
             ->groupBy('categories.name')
             ->get()
             ->toArray();
@@ -30,8 +31,9 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
             ->join('sales', 'sale_article.sale_id', '=', 'sales.id')
             ->join('articles', 'sale_article.article_id', '=', 'articles.id')
             ->where('sales.status', 1)
+            ->where('sales.document_type_id', '!=', 16)
             ->where('sales.company_id', $company_id)
-            ->select('articles.description as article_name', DB::raw('SUM(sale_article.quantity) as total_quantity'))
+            ->select('articles.description as article_name', DB::raw('SUM(CASE WHEN sales.document_type_id = 7 THEN -sale_article.quantity ELSE sale_article.quantity END) as total_quantity'))
             ->groupBy('articles.description')
             ->orderBy('total_quantity', 'desc')
             ->limit(10)
@@ -45,19 +47,20 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
         $salesData = EloquentSale::query()
             ->where('company_id', $company_id)
             ->where('status', 1)
+            ->where('document_type_id', '!=', 16)
             ->whereBetween('date', [$start_date, $end_date])
             ->select(
                 DB::raw('DATE_FORMAT(date, "%Y-%m") as month'),
-                DB::raw('SUM(CASE 
+                DB::raw('SUM((CASE WHEN document_type_id = 7 THEN -1 ELSE 1 END) * (CASE 
                     WHEN currency_type_id = 1 THEN total 
                     WHEN currency_type_id = 2 THEN total * parallel_rate 
                     ELSE 0 
-                END) as total_sales_in_soles'),
-                DB::raw('SUM(CASE 
+                END)) as total_sales_in_soles'),
+                DB::raw('SUM((CASE WHEN document_type_id = 7 THEN -1 ELSE 1 END) * (CASE 
                     WHEN currency_type_id = 2 THEN total 
                     WHEN currency_type_id = 1 AND parallel_rate > 0 THEN total / parallel_rate 
                     ELSE 0 
-                END) as total_sales_in_dollars')
+                END)) as total_sales_in_dollars')
             )
             ->groupBy('month')
             ->get()
@@ -89,19 +92,20 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
         $costsData = EloquentSale::query()
             ->where('company_id', $company_id)
             ->where('status', 1)
+            ->where('document_type_id', '!=', 16)
             ->whereBetween('date', [$start_date, $end_date])
             ->select(
                 DB::raw('DATE_FORMAT(date, "%Y-%m") as month'),
-                DB::raw('SUM(CASE 
+                DB::raw('SUM((CASE WHEN document_type_id = 7 THEN -1 ELSE 1 END) * (CASE 
                     WHEN currency_type_id = 1 THEN total_costo_neto 
                     WHEN currency_type_id = 2 THEN total_costo_neto * parallel_rate 
                     ELSE 0 
-                END) as total_costs_in_soles'),
-                DB::raw('SUM(CASE 
+                END)) as total_costs_in_soles'),
+                DB::raw('SUM((CASE WHEN document_type_id = 7 THEN -1 ELSE 1 END) * (CASE 
                     WHEN currency_type_id = 2 THEN total_costo_neto 
                     WHEN currency_type_id = 1 AND parallel_rate > 0 THEN total_costo_neto / parallel_rate 
                     ELSE 0 
-                END) as total_costs_in_dollars')
+                END)) as total_costs_in_dollars')
             )
             ->groupBy('month')
             ->get()
@@ -141,16 +145,17 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
             ->join('customers', 'sales.customer_id', '=', 'customers.id')
             ->where('sales.company_id', $company_id)
             ->where('sales.status', 1)
+            ->where('sales.document_type_id', '!=', 16)
             ->select(
                 DB::raw("CASE 
                     WHEN customers.company_name IS NOT NULL AND customers.company_name != '' THEN customers.company_name 
                     ELSE CONCAT(customers.name, ' ', customers.lastname) 
                 END as customer_name"),
-                DB::raw('SUM(CASE 
+                DB::raw('SUM((CASE WHEN sales.document_type_id = 7 THEN -1 ELSE 1 END) * (CASE 
                     WHEN sales.currency_type_id = 1 THEN sales.total 
                     WHEN sales.currency_type_id = 2 THEN sales.total * sales.parallel_rate 
                     ELSE 0 
-                END) as total_sales_in_soles')
+                END)) as total_sales_in_soles')
             )
             ->groupBy('customers.id', 'customers.company_name', 'customers.name', 'customers.lastname')
             ->orderBy('total_sales_in_soles', 'desc')

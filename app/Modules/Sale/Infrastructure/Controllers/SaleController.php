@@ -41,6 +41,7 @@ use App\Modules\Sale\Application\UseCases\UpdateCreditNoteUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateSaleUseCase;
 use App\Modules\Sale\Application\UseCases\UpdateStatusSalesUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
+use App\Modules\Sale\Infrastructure\Models\EloquentSale;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleCreditNoteRequest;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleRequest;
 use App\Modules\Sale\Infrastructure\Requests\UpdateSaleCreditNoteRequest;
@@ -62,6 +63,7 @@ use App\Modules\TransactionLog\Application\UseCases\FindByDocumentUseCase;
 use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
+use App\Services\SalesSunatService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -89,6 +91,7 @@ class SaleController extends Controller
         private readonly DispatchArticleRepositoryInterface $dispatchNoteArticleRepository,
         private readonly DispatchArticleSerialRepositoryInterface $dispatchArticleSerialRepository,
         private readonly PaymentMethodRepositoryInterface $paymentMethodRepository,
+        private readonly SalesSunatService $salesSunatService,
     ) {
     }
 
@@ -203,6 +206,13 @@ class SaleController extends Controller
             return response()->json(['message' => 'Venta no encontrada'], 404);
         }
 
+        $result = DB::select('CALL sp_bloqueo_diario(?, ?)', [
+            $sale->getDate(),
+            3
+        ]);
+
+        $bloqueado = $result[0]->bloqueado;
+
         $installmentsUseCase = new FindInstallmentBySaleIdUseCase($this->installmentRepository);
         $installments = $installmentsUseCase->execute($sale->getId());
 
@@ -220,6 +230,7 @@ class SaleController extends Controller
             [
                 'sale' => $saleResource->resolve(),
                 'articles' => SaleArticleResource::collection($articles)->resolve(),
+                'estado' => $bloqueado
             ]
         );
     }
@@ -741,12 +752,31 @@ class SaleController extends Controller
             'status' => 'required|integer|in:0,1',
         ]);
 
-        $updateStatusUseCase = new UpdateStatusSalesUseCase($this->saleRepository);
-        $updateStatusUseCase->execute($id, $status);
+        $result = DB::select('CALL sp_comunicacion_anulacion_baja(?)', [$id]);
 
-        return response()->json([
-            'message' => 'Estado de la venta actualizado correctamente'
-        ], 200);
+        $estado = $result[0]->estado;
+        $msg    = $result[0]->msg;
+
+        if ($estado == 0) {
+            return response()->json([
+                'message' => $msg
+            ], 200);
+        }
+
+        $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
+        $sale = $saleUseCase->execute($id);
+
+        if($sale->getDocumentType()->getId() == 1)
+        {
+            $response = $this->salesSunatService->saleInvoiceAnulacion($sale);
+        }
+
+        $saleEloquent = EloquentSale::find($id);
+        $saleEloquent->update([
+            'estado_sunat' => 'ANULADA',
+            'fecha_baja_sunat' => $response['fecha_respuesta'],
+            'hora_baja_sunat' => $response['hora_respuesta']
+        ]);
     }
 
 }

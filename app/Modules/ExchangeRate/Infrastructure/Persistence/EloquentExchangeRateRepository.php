@@ -16,13 +16,17 @@ class EloquentExchangeRateRepository implements ExchangeRateRepositoryInterface
         if ($exchangeRate === null) {
             return null;
         }
-
         return new ExchangeRate(
             id: $exchangeRate->id,
             date: $exchangeRate->date,
             purchase_rate: $exchangeRate->purchase_rate,
             sale_rate: $exchangeRate->sale_rate,
-            parallel_rate: $exchangeRate->parallel_rate
+            parallel_rate: $exchangeRate->parallel_rate,
+            almacen: $exchangeRate->almacen,
+            compras: $exchangeRate->compras,
+            ventas: $exchangeRate->ventas,
+            cobranzas: $exchangeRate->cobranzas,
+            pagos: $exchangeRate->pagos,
         );
     }
 
@@ -77,9 +81,49 @@ class EloquentExchangeRateRepository implements ExchangeRateRepositoryInterface
                 date: $exchangeRate->date,
                 purchase_rate: $exchangeRate->purchase_rate,
                 sale_rate: $exchangeRate->sale_rate,
-                parallel_rate: $exchangeRate->parallel_rate
+                parallel_rate: $exchangeRate->parallel_rate,
+                almacen: $exchangeRate->almacen,
+                compras: $exchangeRate->compras,
+                ventas: $exchangeRate->ventas,
+                cobranzas: $exchangeRate->cobranzas,
+                pagos: $exchangeRate->pagos,
             ));
 
         return $exchangeRates;
+    }
+
+    public function updateAlmacen(int $id, bool $status): void
+    {
+        EloquentExchangeRate::where('id', $id)->update([
+            'almacen' => $status
+        ]);
+    }
+
+    public function updateCompras(int $id, bool $status): void
+    {
+        EloquentExchangeRate::where('id', $id)->update([
+            'compras' => $status
+        ]);
+    }
+
+    public function updateVentas(int $id, bool $status): void
+    {
+        EloquentExchangeRate::where('id', $id)->update([
+            'ventas' => $status
+        ]);
+    }
+
+    public function updateCobranzas(int $id, bool $status): void
+    {
+        EloquentExchangeRate::where('id', $id)->update([
+            'cobranzas' => $status
+        ]);
+    }
+
+    public function updatePagos(int $id, bool $status): void
+    {
+        EloquentExchangeRate::where('id', $id)->update([
+            'pagos' => $status
+        ]);
     }
 }

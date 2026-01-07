@@ -640,7 +640,6 @@ class EloquentSaleRepository implements SaleRepositoryInterface
     private function updateSaleBalance(EloquentSale $sale): void
     {
         $sale = $sale->fresh();
-        Log::info('sale', $sale->toArray());
         DB::statement('CALL update_sale_balance(?, ?, ?, ?)', [
             $sale->company_id,
             $sale->document_type_id,

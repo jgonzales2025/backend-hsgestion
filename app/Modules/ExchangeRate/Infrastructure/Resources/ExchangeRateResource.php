@@ -15,6 +15,11 @@ class ExchangeRateResource extends JsonResource
             'purchase_rate' => $this->resource->getPurchaseRate(),
             'sale_rate' => $this->resource->getSaleRate(),
             'parallel_rate' => $this->resource->getParallelRate(),
+            'almacen' => $this->resource->getAlmacen() == 0 ? 0 : 1,
+            'compras' => $this->resource->getCompras() == 0 ? 0 : 1,
+            'ventas' => $this->resource->getVentas() == 0 ? 0 : 1,
+            'cobranzas' => $this->resource->getCobranzas() == 0 ? 0 : 1,
+            'pagos' => $this->resource->getPagos() == 0 ? 0 : 1,
         ];
     }
 }

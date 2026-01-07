@@ -436,6 +436,11 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('exchange-rates/current', [ExchangeRateController::class, 'current']);
     Route::get('exchange-rates/{id}', [ExchangeRateController::class, 'show']);
     Route::put('exchange-rates/{id}', [ExchangeRateController::class, 'update']);
+    Route::put('exchange-rates-almacen/{id}', [ExchangeRateController::class, 'updateAlmacen']);
+    Route::put('exchange-rates-compras/{id}', [ExchangeRateController::class, 'updateCompras']);
+    Route::put('exchange-rates-ventas/{id}', [ExchangeRateController::class, 'updateVentas']);
+    Route::put('exchange-rates-cobranzas/{id}', [ExchangeRateController::class, 'updateCobranzas']);
+    Route::put('exchange-rates-pagos/{id}', [ExchangeRateController::class, 'updatePagos']);
 
     Route::get('/payment-methods', [PaymentMethodController::class, 'findAllPaymentMethods']);
 

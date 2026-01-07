@@ -59,6 +59,16 @@ class UpdateExchangeRates extends Command
                 );
 
                 $this->info('Tipo de cambio actualizado correctamente');
+
+                // Actualizar registro del día anterior
+                $yesterday = now()->subDay()->format('Y-m-d');
+                DB::table('exchange_rates')
+                    ->where('date', $yesterday)
+                    ->update([
+                        'ventas' => 1,
+                        'cobranzas' => 1
+                    ]);
+
                 return Command::SUCCESS;
             }
 
@@ -81,6 +91,16 @@ class UpdateExchangeRates extends Command
                 );
 
                 $this->info('Tipo de cambio copiado del día anterior correctamente');
+
+                // Actualizar registro del día anterior
+                $yesterday = now()->subDay()->format('Y-m-d');
+                DB::table('exchange_rates')
+                    ->where('date', $yesterday)
+                    ->update([
+                        'ventas' => 1,
+                        'cobranzas' => 1
+                    ]);
+
                 return Command::SUCCESS;
             }
 

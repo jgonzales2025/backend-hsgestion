@@ -118,6 +118,14 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
         ];
     }
 
+    public function findSerialInDatabase(string $serial): ?bool
+    {
+        $entryItemSerial = EloquentEntryItemSerial::where('serial', $serial)->first();
+        if (!$entryItemSerial) {
+            return true;
+        };
+        return false;
+    }
 }
 
 

@@ -237,8 +237,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/purchase-orders/{id}', [PurchaseOrderController::class, 'update']);
     Route::get('/purchase-orders/{id}/pdf', [PurchaseOrderController::class, 'generatePdf']);
     Route::post('/purchase-orders-customer', [PurchaseOrderController::class, 'getBySupplier']);
+
     // Ruta para traer las series de un articulo
     Route::get('/entry-item-serial/{articleId}', [EntryItemSerialController::class, 'findSerialByArticleId']);
+    Route::get('/serial/consulta', [EntryItemSerialController::class, 'findSerialInDatabase']);
 
     // Ruta para traer los movimientos de transferencia de un articulo
     Route::get('/dispatch-serial-movements/{branchId}', [DispatchArticleSerialController::class, 'findAllMovements']);

@@ -27,17 +27,32 @@ class EloquentCustomerAddress extends Model
     {
         return $this->belongsTo(EloquentCustomer::class, 'customer_id');
     }
+
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(\App\Modules\Ubigeo\Departments\Infrastructure\Models\EloquentDepartment::class, 'department_id', 'coddep');
+    }
+
+    public function province(): BelongsTo
+    {
+        return $this->belongsTo(\App\Modules\Ubigeo\Provinces\Infrastructure\Models\EloquentProvince::class, 'province_id', 'codpro');
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(\App\Modules\Ubigeo\Districts\Infrastructure\Models\EloquentDistrict::class, 'district_id', 'coddis');
+    }
     public function toDomain(EloquentCustomerAddress $eloquentCustomerAddress): ?CustomerAddress
     {
         return new CustomerAddress(
-          id : $eloquentCustomerAddress->id,
-        customerId : $eloquentCustomerAddress->customerId,
-        address : $eloquentCustomerAddress->address,
-        department : $eloquentCustomerAddress->department,
-        province : $eloquentCustomerAddress->province,
-        district : $eloquentCustomerAddress->district,
-        status : $eloquentCustomerAddress->status,
-        st_principal : $eloquentCustomerAddress->st_principal
+            id: $eloquentCustomerAddress->id,
+            customerId: $eloquentCustomerAddress->customerId,
+            address: $eloquentCustomerAddress->address,
+            department: $eloquentCustomerAddress->department,
+            province: $eloquentCustomerAddress->province,
+            district: $eloquentCustomerAddress->district,
+            status: $eloquentCustomerAddress->status,
+            st_principal: $eloquentCustomerAddress->st_principal
         );
     }
 }

@@ -76,10 +76,44 @@ class ExcelNoteResource extends JsonResource
                     return [];
                 }
 
+                $parts = [];
+
+                // Fetch Department
+                if ($code->department_id) {
+                    $deptCode = str_pad((string)$code->department_id, 2, '0', STR_PAD_LEFT);
+                    $dept = \App\Modules\Ubigeo\Departments\Infrastructure\Models\EloquentDepartment::where('coddep', $deptCode)->first();
+                    if ($dept) $parts[] = $dept->nomdep;
+                }
+
+                // Fetch Province
+                if ($code->department_id && $code->province_id) {
+                    $deptCode = str_pad((string)$code->department_id, 2, '0', STR_PAD_LEFT);
+                    $provCode = str_pad((string)$code->province_id, 2, '0', STR_PAD_LEFT);
+                    $prov = \App\Modules\Ubigeo\Provinces\Infrastructure\Models\EloquentProvince::where('coddep', $deptCode)
+                        ->where('codpro', $provCode)
+                        ->first();
+                    if ($prov) $parts[] = $prov->nompro;
+                }
+
+                // Fetch District
+                if ($code->department_id && $code->province_id && $code->district_id) {
+                    $deptCode = str_pad((string)$code->department_id, 2, '0', STR_PAD_LEFT);
+                    $provCode = str_pad((string)$code->province_id, 2, '0', STR_PAD_LEFT);
+                    $distCode = str_pad((string)$code->district_id, 2, '0', STR_PAD_LEFT);
+                    $dist = \App\Modules\Ubigeo\Districts\Infrastructure\Models\EloquentDistrict::where('coddep', $deptCode)
+                        ->where('codpro', $provCode)
+                        ->where('coddis', $distCode)
+                        ->first();
+                    if ($dist) $parts[] = $dist->nomdis;
+                }
+
+                $locationString = implode(' - ', $parts);
+                $fullAddress = $code->address . ($locationString ? ' - ' . $locationString : '');
+
                 return [
                     'id' => $code->id,
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
-                    'name' => $code->address,
+                    'name' => $fullAddress,
                 ];
             })(),
 

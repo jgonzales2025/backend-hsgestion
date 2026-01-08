@@ -209,10 +209,6 @@ class DispatchNotesController extends Controller
                 return response()->json(['message' => 'Guía de remisión no encontrada'], 404);
             }
 
-            if ($dispatchNote->getEmissionReason()->getId() == 1) {
-                return response()->json(['message' => 'No se puede modificar una nota de despacho emitida con motivo de venta.'], 400);
-            }
-
             $dispatchNotesDTO = new DispatchNoteDTO($store->validated());
             $dispatchNoteUseCase = new UpdateDispatchNoteUseCase(
                 $this->dispatchNoteRepository,

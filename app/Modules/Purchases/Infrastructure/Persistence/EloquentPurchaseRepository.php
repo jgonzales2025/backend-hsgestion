@@ -7,6 +7,7 @@ use App\Modules\Purchases\Domain\Entities\Purchase;
 use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 use App\Modules\Purchases\Infrastructure\Models\EloquentPurchase;
 use App\Modules\ShoppingIncomeGuide\Infrastructure\Models\EloquentShoppingIncomeGuide;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class EloquentPurchaseRepository implements PurchaseRepositoryInterface
@@ -51,60 +52,22 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                             $p->where('name', 'like', "%{$description}%");
                         });
                 });
-            })
-
+            }) 
             ->when(
                 $num_doc,
                 fn($query) =>
                 $query->where('document_type_id', $num_doc)
-            )
-
+            ) 
             ->when(
                 $id_proveedr,
                 fn($query) =>
                 $query->where('supplier_id', $id_proveedr)
             )
-
-            ->orderByDesc('id')
+            ->orderByDesc('id') 
             ->paginate(10);
 
-        // Transform
-        $eloquentpurchase->getCollection()->transform(function ($purchase) {
-            return new Purchase(
-                id: $purchase->id,
-                company_id: $purchase->company_id,
-                branch: $purchase->branches->toDomain($purchase->branches),
-                supplier: $purchase->customers->toDomain($purchase->customers),
-                serie: $purchase->serie,
-                correlative: $purchase->correlative,
-                exchange_type: $purchase->exchange_type,
-                payment_type: $purchase->paymentType->toDomain($purchase->paymentType),
-                currency: $purchase->currencyType->toDomain($purchase->currencyType),
-                date: $purchase->date,
-                date_ven: $purchase->date_ven,
-                days: $purchase->days,
-                observation: $purchase->observation,
-                detraccion: $purchase->detraccion,
-                fech_detraccion: $purchase->fech_detraccion,
-                amount_detraccion: $purchase->amount_detraccion,
-                is_detracion: $purchase->is_detracion,
-                subtotal: $purchase->subtotal,
-                total_desc: $purchase->total_desc,
-                inafecto: $purchase->inafecto,
-                igv: $purchase->igv,
-                total: $purchase->total,
-                is_igv: $purchase->is_igv,
-                type_document_id: $purchase->documentType->toDomain($purchase->documentType),
-                reference_serie: $purchase->reference_serie,
-                reference_correlative: $purchase->reference_correlative,
-                saldo: $purchase->saldo,
-                det_compras_guia_ingreso: $purchase->detComprasGuiaIngreso
-                    ? $purchase->detComprasGuiaIngreso->map(fn($d) => $d->toDomain())->toArray()
-                    : [],
-                shopping_Income_Guide: $purchase->shoppingIncomeGuide
-                    ? $purchase->shoppingIncomeGuide->map(fn($d) => $d->toDomain())->toArray()
-                    : [],
-            );
+        $eloquentpurchase->getCollection()->transform(function ($purchase) { 
+            return $purchase->toDomain();
         });
 
         return $eloquentpurchase;
@@ -112,50 +75,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
 
     public function findById(int $id): ?Purchase
     {
-        $eloquentpurchase = EloquentPurchase::with([
-            'paymentType',
-            'branches',
-            'customers',
-            'currencyType',
-            'documentType',
-            'detComprasGuiaIngreso',
-            'shoppingIncomeGuide'
-        ])->find($id);
-
-        if (!$eloquentpurchase) {
-            return null;
-        }
-        return new Purchase(
-            id: $eloquentpurchase->id,
-            company_id: $eloquentpurchase->company_id,
-            branch: $eloquentpurchase->branches->toDomain($eloquentpurchase->branches),
-            supplier: $eloquentpurchase->customers->toDomain($eloquentpurchase->customers),
-            serie: $eloquentpurchase->serie,
-            correlative: $eloquentpurchase->correlative,
-            exchange_type: $eloquentpurchase->exchange_type,
-            payment_type: $eloquentpurchase->paymentType->toDomain($eloquentpurchase->paymentType),
-            currency: $eloquentpurchase->currencyType->toDomain($eloquentpurchase->currencyType),
-            date: $eloquentpurchase->date,
-            date_ven: $eloquentpurchase->date_ven,
-            days: $eloquentpurchase->days,
-            observation: $eloquentpurchase->observation,
-            detraccion: $eloquentpurchase->detraccion,
-            fech_detraccion: $eloquentpurchase->fech_detraccion,
-            amount_detraccion: $eloquentpurchase->amount_detraccion,
-            is_detracion: $eloquentpurchase->is_detracion,
-            subtotal: $eloquentpurchase->subtotal,
-            total_desc: $eloquentpurchase->total_desc,
-            inafecto: $eloquentpurchase->inafecto,
-            igv: $eloquentpurchase->igv,
-            total: $eloquentpurchase->total,
-            is_igv: $eloquentpurchase->is_igv,
-            type_document_id: $eloquentpurchase->documentType->toDomain($eloquentpurchase->documentType),
-            reference_serie: $eloquentpurchase->reference_serie,
-            reference_correlative: $eloquentpurchase->reference_correlative,
-            saldo: $eloquentpurchase->saldo,
-            det_compras_guia_ingreso: $eloquentpurchase->detComprasGuiaIngreso->map(fn($d) => $d->toDomain())->all(),
-            shopping_Income_Guide: $eloquentpurchase->shoppingIncomeGuide->map(fn($d) => $d->toDomain())->all(),
-        );
+        return $this->findWithRelations($id);
     }
 
     public function save(Purchase $purchase): ?Purchase
@@ -207,7 +127,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 DB::statement('CALL descontar_saldo_fifo(?,?,?,?,?,?,?)', [
                     $purchase->getCompanyId(),                  // cia
                     $purchase->getSupplier()->getId(),          // cliente
-                    $det->article_id,                           //  artículo correcto
+                    $det->article_id,                           // artículo correcto
                     $purchase->getTypeDocumentId()->getId(),    // tipo documento
                     $purchase->getReferenceSerie(),             // serie
                     $purchase->getReferenceCorrelative(),       // correlativo
@@ -220,8 +140,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                     'purchase_id'   => $eloquentpurchase->id,
                     'entry_guide_id' => $shopping_Income_Guide->entry_guide_id,
                 ]);
-            }
-
+            } 
 
             return $this->findWithRelations($eloquentpurchase->id);
         });
@@ -277,54 +196,10 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             return null;
         }
 
-        return new Purchase(
-            id: $eloquentpurchase->id,
-            company_id: $eloquentpurchase->company_id,
-            branch: $eloquentpurchase->branches->toDomain($eloquentpurchase->branches),
-            supplier: $eloquentpurchase->customers->toDomain($eloquentpurchase->customers),
-            serie: $eloquentpurchase->serie,
-            correlative: $eloquentpurchase->correlative,
-            exchange_type: $eloquentpurchase->exchange_type,
-            payment_type: $eloquentpurchase->paymentType->toDomain($eloquentpurchase->paymentType),
-            currency: $eloquentpurchase->currencyType->toDomain($eloquentpurchase->currencyType),
-            date: $eloquentpurchase->date,
-            date_ven: $eloquentpurchase->date_ven,
-            days: $eloquentpurchase->days,
-            observation: $eloquentpurchase->observation,
-            detraccion: $eloquentpurchase->detraccion,
-            fech_detraccion: $eloquentpurchase->fech_detraccion,
-            amount_detraccion: $eloquentpurchase->amount_detraccion,
-            is_detracion: $eloquentpurchase->is_detracion,
-            subtotal: $eloquentpurchase->subtotal,
-            total_desc: $eloquentpurchase->total_desc,
-            inafecto: $eloquentpurchase->inafecto,
-            igv: $eloquentpurchase->igv,
-            total: $eloquentpurchase->total,
-            is_igv: $eloquentpurchase->is_igv,
-            type_document_id: $eloquentpurchase->documentType->toDomain($eloquentpurchase->documentType),
-            reference_serie: $eloquentpurchase->reference_serie,
-            reference_correlative: $eloquentpurchase->reference_correlative,
-            saldo: $eloquentpurchase->saldo,
-            det_compras_guia_ingreso: $eloquentpurchase->detComprasGuiaIngreso->map(fn($item) => $item->toDomain()),
-            shopping_Income_Guide: $eloquentpurchase->shoppingIncomeGuide->map(fn($item) => $item->toDomain()),
-        );
-    }
-    public function findWithRelations(int $id): ?Purchase
-    {
-        $model = EloquentPurchase::with([
-            'paymentType',
-            'branches',
-            'customers',
-            'currencyType',
-            'documentType',
-            'detComprasGuiaIngreso',
-            'shoppingIncomeGuide'
-        ])->findOrFail($id);
-
-        return $model->toDomain();
+        return  $this->findWithRelations($eloquentpurchase->id);
     }
 
-    public function findAllExcel(?string $description, $num_doc, $id_proveedr): \Illuminate\Support\Collection
+    public function findAllExcel(?string $description, $num_doc, $id_proveedr): Collection
     {
         $companyId = request()->get('company_id');
 
@@ -359,37 +234,22 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             ->get();
 
         return $purchases->map(function ($purchase) {
-            return new Purchase(
-                id: $purchase->id,
-                company_id: $purchase->company_id,
-                branch: $purchase->branches->toDomain($purchase->branches),
-                supplier: $purchase->customers->toDomain($purchase->customers),
-                serie: $purchase->serie,
-                correlative: $purchase->correlative,
-                exchange_type: $purchase->exchange_type,
-                payment_type: $purchase->paymentType->toDomain($purchase->paymentType),
-                currency: $purchase->currencyType->toDomain($purchase->currencyType),
-                date: $purchase->date,
-                date_ven: $purchase->date_ven,
-                days: $purchase->days,
-                observation: $purchase->observation,
-                detraccion: $purchase->detraccion,
-                fech_detraccion: $purchase->fech_detraccion,
-                amount_detraccion: $purchase->amount_detraccion,
-                is_detracion: $purchase->is_detracion,
-                subtotal: $purchase->subtotal,
-                total_desc: $purchase->total_desc,
-                inafecto: $purchase->inafecto,
-                igv: $purchase->igv,
-                total: $purchase->total,
-                is_igv: $purchase->is_igv,
-                type_document_id: $purchase->documentType->toDomain($purchase->documentType),
-                reference_serie: $purchase->reference_serie,
-                reference_correlative: $purchase->reference_correlative,
-                saldo: $purchase->saldo,
-                det_compras_guia_ingreso: [],
-                shopping_Income_Guide: [],
-            );
+            return $purchase->toDomain();
         });
+    }
+
+    private function findWithRelations(int $id): ?Purchase
+    {
+        $model = EloquentPurchase::with([
+            'paymentType',
+            'branches',
+            'customers',
+            'currencyType',
+            'documentType',
+            'detComprasGuiaIngreso',
+            'shoppingIncomeGuide'
+        ])->find($id);
+
+        return $model?->toDomain();
     }
 }

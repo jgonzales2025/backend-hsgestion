@@ -109,7 +109,7 @@ class ControllerEntryGuide extends Controller
 
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
-            $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve() ;
+            $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
             $response['process_status'] = $this->calculateProcessStatus($articlesWithSerials);
             $result[] = $response;
@@ -210,7 +210,7 @@ class ControllerEntryGuide extends Controller
             //
             //   $findbyidobt = $this->entryGuideArticleRepositoryInterface->findByIdObj($entryGuide);
 
-              
+
 
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
 
@@ -448,10 +448,12 @@ class ControllerEntryGuide extends Controller
         }
 
         $customerHeader = null;
+        $currencyType = null;
         $articleMap = []; // Mapa para consolidar artículos por article_id
 
         foreach ($entryGuides as $entryGuide) {
             if ($customerHeader === null) {
+                $currencyType = $entryGuide->getCurrency();
                 $customerHeader = [
                     'id' => $entryGuide->getCustomer()?->getId(),
                     'name' => $entryGuide->getCustomer()?->getName() ?? $entryGuide->getCustomer()?->getCompanyName() . " " . $entryGuide->getCustomer()?->getLastname() . ' ' . $entryGuide->getCustomer()?->getSecondLastname() . ' / ' . $entryGuide->getCustomer()?->getDocumentNumber() . ' / ' . (
@@ -470,7 +472,7 @@ class ControllerEntryGuide extends Controller
                 // Get values from article line
                 $qty = (float) $article->getQuantity();
                 $saldo = (float) $article->getSaldo();
-                $precio = (float) $article->getTotalDescuento(); 
+                $precio = (float) $article->getTotalDescuento();
 
                 // Fallback to article purchase price if 0
                 if ($precio == 0) {
@@ -484,7 +486,7 @@ class ControllerEntryGuide extends Controller
 
                 $total = (float) $article->getTotal();
                 if ($total == 0 && $subtotal > 0) {
-                    $total = $subtotal; 
+                    $total = $subtotal;
                 }
 
                 $descuento = (float) $article->getDescuento();
@@ -521,7 +523,8 @@ class ControllerEntryGuide extends Controller
         return response()->json([
             'customer' => $customerHeader,
             'articles' => $aggregated,
-            'entry_guide' => $entryGuideHeader
+            'entry_guide' => $entryGuideHeader,
+            'currency_type' => $currencyType,
         ], 200);
     }
 
@@ -579,6 +582,4 @@ class ControllerEntryGuide extends Controller
 
         return response()->json(['message' => 'Estado actualizado correctamente']);
     }
-
-
-}
+} 

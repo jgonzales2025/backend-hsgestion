@@ -3,6 +3,7 @@
 namespace App\Modules\Purchases\Domain\Interface;
 
 use App\Modules\Purchases\Domain\Entities\Purchase;
+use Illuminate\Support\Collection;
 
 interface PurchaseRepositoryInterface
 {
@@ -12,6 +13,5 @@ interface PurchaseRepositoryInterface
     public function update(Purchase $purchase): ?Purchase;
     public function getLastDocumentNumber(int $company_id, int $branch_id, string $serie): ?string;
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?Purchase;
-    public function findWithRelations(int $id): ?Purchase;
-    public function findAllExcel(?string $description, $num_doc, $id_proveedr): \Illuminate\Support\Collection;
+    public function findAllExcel(?string $description, ?int $num_doc, ?int $id_proveedr): Collection;
 }

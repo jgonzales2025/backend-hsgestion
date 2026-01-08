@@ -23,7 +23,7 @@ class PurchaseResource extends JsonResource
                 'name' => $this->resource->getSupplier()->getCompanyName() ??
                     trim($this->resource->getSupplier()->getName() . ' ' .
                         $this->resource->getSupplier()->getLastName() . ' ' .
-                        $this->resource->getSupplier()->getSecondLastname()) ,
+                        $this->resource->getSupplier()->getSecondLastname()),
                 'ruc' => $this->resource->getSupplier()->getDocumentNumber() ?? "",
             ],
             'supplierdos' => [
@@ -70,7 +70,9 @@ class PurchaseResource extends JsonResource
             'process_status' => $this->calculateProcessStatus(),
 
             'det_compras_guia_ingreso' =>  DetailPurchaseGuideResource::collection($this->resource->getDetComprasGuiaIngreso()),
-            'shopping_Income_Guide' => ShoppingIncomeGuideResource::collection($this->resource->getShoppingIncomeGuide()),
+            'shopping_Income_Guide' => array_map(function ($item) {
+                return $item->getEntryGuideId();
+            }, $this->resource->getShoppingIncomeGuide()),
 
 
         ];
@@ -83,18 +85,18 @@ class PurchaseResource extends JsonResource
 
         if ($saldo >= $total) {
             return 'pendiente';
-        } 
+        }
         if ($saldo > 0) {
             return 'en proceso';
-        } 
+        }
         return 'facturado';
     }
 
     private function getSupplierAddress(): string
     {
         $addresses = $this->resource->getSupplier()->getAddresses() ?? [];
-        foreach ($addresses as $address) {   
-                return $address->getAddress(); 
+        foreach ($addresses as $address) {
+            return $address->getAddress();
         }
         return !empty($addresses) ? $addresses[0]->getAddress() : "";
     }

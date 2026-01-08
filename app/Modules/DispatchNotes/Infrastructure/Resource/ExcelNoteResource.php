@@ -70,7 +70,7 @@ class ExcelNoteResource extends JsonResource
                 'description' => $this->resource->getReferenceDocumentType()?->getDescription(),
             ],
             'destination_branch_client_id' => (function () {
-                $code = EloquentCustomer::where('id', $this->resource->getdestination_branch_client())->first();
+                $code = \App\Modules\CustomerAddress\Infrastructure\Models\EloquentCustomerAddress::where('id', $this->resource->getdestination_branch_client())->first();
 
                 if (!$code) {
                     return [];
@@ -79,8 +79,7 @@ class ExcelNoteResource extends JsonResource
                 return [
                     'id' => $code->id,
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
-                    'name' => data_get($code, 'address.0.address', ''),
-
+                    'name' => $code->address,
                 ];
             })(),
 
@@ -96,7 +95,7 @@ class ExcelNoteResource extends JsonResource
                 return [
                     'id' => $code->id,
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
-                    'name' => $code->name,
+                    'name' => $code->company_name ?: trim($code->name . ' ' . $code->lastname . ' ' . $code->second_lastname),
                     'ruc' => $code->document_number ?? '',
                     'address' => data_get($code, 'address.0.address', ''),
                 ];

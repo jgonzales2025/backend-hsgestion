@@ -151,7 +151,6 @@ class DispatchNotesController extends Controller
                 201
             );
         });
-        
     }
     public function generate(int $id)
     {
@@ -164,6 +163,9 @@ class DispatchNotesController extends Controller
                 echo $pdfContent;
             }, $filename, [
                 'Content-Type' => 'application/pdf',
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
             ]);
         } catch (\Throwable $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -199,9 +201,6 @@ class DispatchNotesController extends Controller
     public function update(RequestUpdate $store, $id): JsonResponse
     {
         return DB::transaction(function () use ($store, $id) {
-            if ($store->validated()['emission_reason_id'] == 1) {
-                return response()->json(['message' => 'No se puede modificar una nota de despacho emitida con motivo de venta.'], 400);
-            }
 
             $saleUseCase = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
             $dispatchNote = $saleUseCase->execute($id);
@@ -244,7 +243,6 @@ class DispatchNotesController extends Controller
                 201
             );
         });
-        
     }
 
     public function traerProovedores()

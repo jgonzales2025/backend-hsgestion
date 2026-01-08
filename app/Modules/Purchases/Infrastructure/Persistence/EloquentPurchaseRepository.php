@@ -66,9 +66,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             ->orderByDesc('id') 
             ->paginate(10);
 
-        $eloquentpurchase->getCollection()->transform(function ($purchase) { 
-            return $purchase->toDomain();
-        });
+        $eloquentpurchase->getCollection()->transform(fn ($purchase) => $purchase->toDomain());
 
         return $eloquentpurchase;
     }

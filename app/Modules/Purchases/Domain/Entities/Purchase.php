@@ -38,7 +38,7 @@ class Purchase
     private string $reference_serie;
     private string $reference_correlative;
     private float $saldo;
-    private array $det_compras_guia_ingreso; 
+    private array $det_compras_guia_ingreso;
     private array $shopping_Income_Guide;
 
     public function __construct(

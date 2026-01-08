@@ -207,13 +207,9 @@ class ControllerEntryGuide extends Controller
             $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
             $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
-            //
-            //   $findbyidobt = $this->entryGuideArticleRepositoryInterface->findByIdObj($entryGuide);
-
-
-
+ 
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
-
+ 
 
             $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
 
@@ -582,4 +578,5 @@ class ControllerEntryGuide extends Controller
 
         return response()->json(['message' => 'Estado actualizado correctamente']);
     }
-} 
+
+}

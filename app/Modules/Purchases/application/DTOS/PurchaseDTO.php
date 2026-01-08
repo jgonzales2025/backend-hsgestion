@@ -67,11 +67,10 @@ class PurchaseDTO
             return new DetailPurchaseGuideDTO($item);
         }, $array['det_compras_guia_ingreso']) ?? [];
 
-      $this->shopping_Income_Guide = array_map(function ($item) {
-    return new ShoppingIncomeGuideDTO([
-        'entry_guide_id' => $item          
-    ]);
-}, $array['entry_guide_id']);
-
+        $this->shopping_Income_Guide = array_map(function ($item) {
+            return new ShoppingIncomeGuideDTO([
+                'entry_guide_id' => $item
+            ]);
+        }, $array['entry_guide_id']);
     }
 }

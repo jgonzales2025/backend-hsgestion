@@ -188,7 +188,9 @@
             </tr>
             <tr>
                 <td class="label">DIRECCIÓN LLEGADA:</td>
-                <td colspan="3">{{ $dispatchNote['customer']['address'] ?? 'N/A' }}</td>
+                <td colspan="3">
+                    {{ !empty($dispatchNote['destination_branch_client_id']['name']) ? $dispatchNote['destination_branch_client_id']['name'] : ($dispatchNote['customer']['address'] ?? 'N/A') }}
+                </td>
             </tr>
         </table>
 
@@ -264,33 +266,22 @@
             </thead>
             <tbody>
                 @foreach($dispatchArticles as $detalle)
-<<<<<<< Updated upstream
-                    <tr>
-                        <td style="text-align:center;">{{ $detalle['quantity'] ?? 0 }}</td>
-                        <td style="text-align:center;">{{ $detalle['unidad']['siglas'] ?? 'UND' }}</td>
-                        <td style="text-align:left; padding-left: 10px;">
-                            {{ $detalle['name'] ?? 'N/A' }}
-                            @if (!empty($detalle['serials']))
-                                <br>
-                                <span style="font-size: 8px; color: #555;">
-                                    Series:
-                                    @foreach ($detalle['serials'] as $serial)
-                                        {{ $serial }}@if (!$loop->last), @endif
-                                    @endforeach
-                                </span>
-                            @endif
-                        </td>
-                    </tr>
-=======
                 <tr>
                     <td style="text-align:center;">{{ $detalle['quantity'] ?? 0 }}</td>
                     <td style="text-align:center;">{{ $detalle['unidad']['siglas'] ?? 'UND' }}</td>
                     <td style="text-align:left; padding-left: 10px;">
                         {{ $detalle['name'] ?? 'N/A' }}
-
+                        @if (!empty($detalle['serials']))
+                        <br>
+                        <span style="font-size: 8px; color: #555;">
+                            Series:
+                            @foreach ($detalle['serials'] as $serial)
+                            {{ $serial }}@if (!$loop->last), @endif
+                            @endforeach
+                        </span>
+                        @endif
                     </td>
                 </tr>
->>>>>>> Stashed changes
                 @endforeach
             </tbody>
         </table>

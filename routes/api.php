@@ -253,8 +253,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/purchases', [PurchaseController::class, 'store']);
     Route::get('/purchases/{id}', [PurchaseController::class, 'show']);
     Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
-    Route::get('/purchases-pdf/{id}', [PurchaseController::class, 'downloadPdf']);
-    Route::put('/purchase-supplier/{id}', [PurchaseController::class, 'updateDetail']);
+    Route::get('/purchases-pdf/{id}', [PurchaseController::class, 'downloadPdf']); 
     Route::get('/purchase-excel', [PurchaseController::class, 'exportExcel']);
 
     // Advances - Anticipos

@@ -83,22 +83,18 @@ class PurchaseResource extends JsonResource
 
         if ($saldo >= $total) {
             return 'pendiente';
-        }
-
+        } 
         if ($saldo > 0) {
             return 'en proceso';
-        }
-
+        } 
         return 'facturado';
     }
 
     private function getSupplierAddress(): string
     {
         $addresses = $this->resource->getSupplier()->getAddresses() ?? [];
-        foreach ($addresses as $address) {
-            if ($address->isPrincipal() === 1) {
-                return $address->getAddress();
-            }
+        foreach ($addresses as $address) {   
+                return $address->getAddress(); 
         }
         return !empty($addresses) ? $addresses[0]->getAddress() : "";
     }

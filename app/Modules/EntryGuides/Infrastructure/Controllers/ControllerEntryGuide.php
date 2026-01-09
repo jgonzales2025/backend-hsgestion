@@ -244,43 +244,45 @@ class ControllerEntryGuide extends Controller
 
     public function update(UpdateGuideRequest $request, $id): JsonResponse
     {
-        $entryGuideUseCase = new FindByIdEntryGuideUseCase($this->entryGuideRepositoryInterface);
-        $entryGuide = $entryGuideUseCase->execute($id);
+        return DB::transaction(function () use ($request, $id) {
+            $entryGuideUseCase = new FindByIdEntryGuideUseCase($this->entryGuideRepositoryInterface);
+            $entryGuide = $entryGuideUseCase->execute($id);
 
-        if (!$entryGuide) {
-            return response()->json(['message' => 'Guia de ingreso no encontrada'], 404);
-        }
+            if (!$entryGuide) {
+                return response()->json(['message' => 'Guia de ingreso no encontrada'], 404);
+            }
 
-        $entryGuideDTO = new EntryGuideDTO($request->validated());
-        $entryGuideUseCase = new UpdateEntryGuideUseCase(
-            $this->entryGuideRepositoryInterface,
-            $this->companyRepositoryInterface,
-            $this->branchRepositoryInterface,
-            $this->customerRepositoryInterface,
-            $this->ingressReasonRepositoryInterface,
-            $this->currencyTypeRepositoryInterface,
-        );
+            $entryGuideDTO = new EntryGuideDTO($request->validated());
+            $entryGuideUseCase = new UpdateEntryGuideUseCase(
+                $this->entryGuideRepositoryInterface,
+                $this->companyRepositoryInterface,
+                $this->branchRepositoryInterface,
+                $this->customerRepositoryInterface,
+                $this->ingressReasonRepositoryInterface,
+                $this->currencyTypeRepositoryInterface,
+            );
 
-        $entryGuide = $entryGuideUseCase->execute($entryGuideDTO, $id);
+            $entryGuide = $entryGuideUseCase->execute($entryGuideDTO, $id);
 
-        $this->entryItemSerialRepositoryInterface->deleteByIdEntryItemSerial($entryGuide->getId());
-        $this->entryGuideArticleRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
+            $this->entryItemSerialRepositoryInterface->deleteByIdEntryItemSerial($entryGuide->getId());
+            $this->entryGuideArticleRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
 
-        $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
-        $detEntryguidePurchaseOrder = $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
-        $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
+            $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
+            $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
+            $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
 
 
 
-        $this->logTransaction($request, $entryGuide);
+            $this->logTransaction($request, $entryGuide);
 
-        $response = (new EntryGuideResource($entryGuide))->resolve();
-        $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
-        $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve();
-        $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-        $response['process_status'] = $this->calculateProcessStatus($entryGuideArticle);
+            $response = (new EntryGuideResource($entryGuide))->resolve();
+            $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
+            $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve();
+            $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
+            $response['process_status'] = $this->calculateProcessStatus($entryGuideArticle);
 
-        return response()->json($response, 200);
+            return response()->json($response, 200);
+        });
     }
     private function createEntryGuideArticles($entryGuide, array $articlesData): array
     {
@@ -598,10 +600,10 @@ class ControllerEntryGuide extends Controller
 
     private function createPurchaseFromEntryGuide($entryGuide, array $data): void
     {
-    
+
         $serie = $this->serieRepositoryInterface->findByDocumentType(22, $entryGuide->getBranch()->getId(), null);
 
-     
+
         $serieNumber = $serie ? $serie->getSerieNumber() : '';
 
         $purchaseArticles = array_map(function ($article) {
@@ -614,7 +616,7 @@ class ControllerEntryGuide extends Controller
                 'sub_total' => $article['subtotal'] ?? 0,
                 'total' => $article['total'] ?? 0,
                 'cantidad_update' => $article['quantity'],
-                'process_status' => 'facturado', 
+                'process_status' => 'facturado',
             ];
         }, $data['entry_guide_articles']);
 

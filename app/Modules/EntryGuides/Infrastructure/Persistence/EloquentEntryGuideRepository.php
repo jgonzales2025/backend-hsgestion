@@ -88,8 +88,6 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 
         return $paginator;
     }
-
-
     public function findByCorrelative(?string $correlativo): ?EntryGuide
     {
 
@@ -186,7 +184,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 $eloquentEntryGuide->id,
             ]);
 
-            return new EntryGuide( 
+            return new EntryGuide(
                 id: $eloquentEntryGuide->id,
                 cia: $eloquentEntryGuide->company?->toDomain($eloquentEntryGuide->company),
                 branch: $eloquentEntryGuide->branch?->toDomain($eloquentEntryGuide->branch),
@@ -210,7 +208,6 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             );
         });
     }
-
     public function findById(int $id): ?EntryGuide
     {
         $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency'])->find($id);
@@ -258,22 +255,21 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
             'reference_serie' => $entryGuide->getReferenceSerie(),
             'reference_correlative' => $entryGuide->getReferenceCorrelative(),
-            'status' => 1,
-            'subtotal' => $entryGuide->getSubtotal(),
+            'subtotal' => $entryGuide->getSubtotal(), 
             'total_descuento' => $entryGuide->getTotalDescuento(),
             'total' => $entryGuide->getTotal(),
-            'update_price' => $entryGuide->getUpdatePrice(),
-            'includ_igv' => $entryGuide->getIncludIgv(),
+            'update_price' => $entryGuide->getUpdatePrice(), 
             'entry_igv' => $entryGuide->getEntryIgv(),
             'currency_id' => $entryGuide->getCurrency()->getId(),
+            'includ_igv' => $entryGuide->getIncludIgv(),
             'reference_document_id' => $entryGuide->getReferenceDocument(),
         ]);
 
- 
-            DB::statement('CALL sp_update_price_article_by_entry_guide(?,?)', [
-                $entryGuide->getCompany()->getId(),
-                $eloquentEntryGuide->id,
-            ]);
+
+        DB::statement('CALL sp_update_price_article_by_entry_guide(?,?)', [
+            $entryGuide->getCompany()->getId(),
+            $eloquentEntryGuide->id,
+        ]);
 
         return new EntryGuide(
             id: $eloquentEntryGuide->id,

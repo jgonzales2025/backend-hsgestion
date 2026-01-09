@@ -37,6 +37,10 @@ class UpdateGuideRequest extends FormRequest
             'entry_guide_articles.*.serials' => 'nullable|array',
             'entry_guide_articles.*.serials.*' => 'required|string|distinct',
             'entry_guide_articles.*.precio_costo' => 'nullable|numeric',
+            'entry_guide_articles.*.subtotal' => 'nullable|numeric',
+            'entry_guide_articles.*.total' => 'nullable|numeric',
+            'entry_guide_articles.*.descuento' => 'nullable|numeric',
+            'entry_guide_articles.*.saldo' => 'nullable|numeric',
             'order_purchase_id' => 'nullable|array',
             // 'order_purchase_id.*.entry_guide_id' => 'required|integer',
 

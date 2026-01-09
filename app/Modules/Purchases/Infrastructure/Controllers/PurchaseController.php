@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
-use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
@@ -19,27 +18,17 @@ use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 use App\Modules\Purchases\Infrastructure\Request\CreatePurchaseRequest;
 use App\Modules\Purchases\Infrastructure\Request\UpdatePurchaseRequest;
 use App\Modules\Purchases\Infrastructure\Resource\PurchaseResource;
-use App\Modules\ShoppingIncomeGuide\Domain\Interface\ShoppingIncomeGuideRepositoryInterface;
-use Illuminate\Http\JsonResponse;
-use App\Modules\Purchases\Application\UseCases\GeneratePurchasePdfUseCase;
-use App\Modules\Purchases\Domain\Interface\GeneratepdfRepositoryInterface;
+use Illuminate\Http\JsonResponse; 
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Facades\Excel; 
 use App\Modules\Purchases\Infrastructure\Persistence\PurchasesExport;
-use BaconQrCode\Renderer\Image\SvgImageBackEnd;
-use BaconQrCode\Renderer\ImageRenderer;
-use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-use BaconQrCode\Writer;
-use Barryvdh\DomPDF\Facade\Pdf;
+use Barryvdh\DomPDF\Facade\Pdf; 
 
 class PurchaseController extends Controller
 {
     public function __construct(
-        private readonly PurchaseRepositoryInterface $purchaseRepository,
-        private readonly ShoppingIncomeGuideRepositoryInterface $shoppingIncomeGuideRepository,
-        private readonly DetailPurchaseGuideRepositoryInterface $detailPurchaseGuideRepository,
+        private readonly PurchaseRepositoryInterface $purchaseRepository, 
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
@@ -133,6 +122,7 @@ class PurchaseController extends Controller
             200
         );
     }
+    
     public function downloadPdf(int $id)
     {
         $purchase = $this->purchaseRepository->dowloadPdf($id);

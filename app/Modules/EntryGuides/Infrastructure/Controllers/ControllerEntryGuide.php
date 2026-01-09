@@ -220,6 +220,7 @@ class ControllerEntryGuide extends Controller
 
             $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $data['entry_guide_articles']);
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $data['document_entry_guide']);
+
             if ($data['document_entry_guide']['reference_document_id'] == 1) {
                 $this->createPurchaseFromEntryGuide($entryGuide, $data);
             }
@@ -597,11 +598,11 @@ class ControllerEntryGuide extends Controller
 
     private function createPurchaseFromEntryGuide($entryGuide, array $data): void
     {
-        // 22: FACTURACION DE COMPRA (from SerieSeeder)
+    
         $serie = $this->serieRepositoryInterface->findByDocumentType(22, $entryGuide->getBranch()->getId(), null);
 
-        // Fallback defaults
-        $serieNumber = $serie ? $serie->getSerieNumber() : 'FC01';
+     
+        $serieNumber = $serie ? $serie->getSerieNumber() : '';
 
         $purchaseArticles = array_map(function ($article) {
             return [
@@ -613,8 +614,7 @@ class ControllerEntryGuide extends Controller
                 'sub_total' => $article['subtotal'] ?? 0,
                 'total' => $article['total'] ?? 0,
                 'cantidad_update' => $article['quantity'],
-                'process_status' => 'pendiente',
-                'purchase_id' => 1
+                'process_status' => 'pendiente', 
             ];
         }, $data['entry_guide_articles']);
 

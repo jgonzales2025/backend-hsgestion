@@ -43,7 +43,7 @@
 
         .company-name {
             font-weight: bold;
-            font-size: 11px;
+            font-size: 10px;
             margin-bottom: 3px;
         }
 
@@ -181,8 +181,10 @@
             <div class="header-right">
                 <div class="invoice-box">
                     <div class="electronic-label">FACTURA ELECTRÓNICA</div>
-                    <div class="invoice-type">{{ $purchase['reference_document_type']['description'] ?? 'FACTURA' }}</div>
-                    <div class="invoice-number">{{ $purchase['serie'] }}-{{ str_pad($purchase['correlative'], 8, '0', STR_PAD_LEFT) }}</div>
+                    <div class="invoice-type">{{ $purchase['reference_document_type']['description'] ?? 'FACTURA' }}
+                    </div>
+                    <div class="invoice-number">
+                        {{ $purchase['serie'] }}-{{ str_pad($purchase['correlative'], 8, '0', STR_PAD_LEFT) }}</div>
                 </div>
             </div>
         </div>
@@ -233,20 +235,21 @@
             </thead>
             <tbody>
                 @php
-                $subtotal = 0;
+                    $subtotal = 0;
                 @endphp
                 @foreach($details as $index => $item)
-                <tr>
-                    <td class="center">{{ $index + 1 }}</td>
-                    <td class="center">{{ $item['article_id'] }}</td>
-                    <td>{{ $item['description'] }}</td>
-                    <td class="center">{{ number_format($item['cantidad'], 2) }}</td>
-                    <td class="right">{{ number_format($item['precio_costo'], 2) }}</td>
-                    <td class="right">{{ number_format($item['total'] ?? ($item['cantidad'] * $item['precio_costo']), 2) }}</td>
-                </tr>
-                @php
-                $subtotal += $item['total'] ?? ($item['cantidad'] * $item['precio_costo']);
-                @endphp
+                    <tr>
+                        <td class="center">{{ $index + 1 }}</td>
+                        <td class="center">{{ $item['article_id'] }}</td>
+                        <td>{{ $item['description'] }}</td>
+                        <td class="center">{{ number_format($item['cantidad'], 2) }}</td>
+                        <td class="right">{{ number_format($item['precio_costo'], 2) }}</td>
+                        <td class="right">
+                            {{ number_format($item['total'] ?? ($item['cantidad'] * $item['precio_costo']), 2) }}</td>
+                    </tr>
+                    @php
+                        $subtotal += $item['total'] ?? ($item['cantidad'] * $item['precio_costo']);
+                    @endphp
                 @endforeach
             </tbody>
         </table>
@@ -255,9 +258,9 @@
         <div class="clearfix">
             <div class="totals-section">
                 @php
-                $igv_rate = 0.18;
-                $gravada = $subtotal / (1 + $igv_rate);
-                $igv = $subtotal - $gravada;
+                    $igv_rate = 0.18;
+                    $gravada = $subtotal / (1 + $igv_rate);
+                    $igv = $subtotal - $gravada;
                 @endphp
                 <div class="totals-row">
                     <div class="totals-label">GRAVADA:</div>
@@ -275,15 +278,15 @@
         </div>
 
         @if(isset($entry_guide) && count($entry_guide) > 0)
-        <!-- Entry Guides Section -->
-        <div style="margin-top: 60px; clear: both;">
-            <div style="font-weight: bold; font-size: 9px; margin-bottom: 5px;">GUÍAS DE INGRESO ASOCIADAS:</div>
-            <div style="font-size: 8px;">
-                @foreach($entry_guide as $id)
-                <span style="margin-right: 10px;">{{ $id }}</span>
-                @endforeach
+            <!-- Entry Guides Section -->
+            <div style="margin-top: 60px; clear: both;">
+                <div style="font-weight: bold; font-size: 9px; margin-bottom: 5px;">GUÍAS DE INGRESO ASOCIADAS:</div>
+                <div style="font-size: 8px;">
+                    @foreach($entry_guide as $id)
+                        <span style="margin-right: 10px;">{{ $id }}</span>
+                    @endforeach
+                </div>
             </div>
-        </div>
         @endif
     </div>
 </body>

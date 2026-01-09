@@ -50,7 +50,7 @@
 
         .company-name {
             font-weight: bold;
-            font-size: 11px;
+            font-size: 10px;
             margin-bottom: 3px;
         }
 
@@ -180,12 +180,13 @@
             display: table;
             clear: both;
         }
-       .electronic-label{
-        background-color: transparent;
-        color: #000;
-        font-weight: bold;
-        font-size: 8px;
-       }
+
+        .electronic-label {
+            background-color: transparent;
+            color: #000;
+            font-weight: bold;
+            font-size: 8px;
+        }
     </style>
 </head>
 
@@ -247,7 +248,7 @@
         <table class="items-table">
             <thead>
                 <tr>
-                    
+
                     <th style="width: 15%;">CUENTA</th>
                     <th style="width: 50%;">DESCRIPCIÓN</th>
                     <th style="width: 15%;">IMPORTE</th>
@@ -255,14 +256,14 @@
             </thead>
             <tbody>
                 @foreach($details as $index => $item)
-                <tr>
-                
-                    <td class="center">{{ $item['codcon'] }}</td>
-                    <td>{{ $item['glosa'] }}</td>
-                    <td class="right">
-                        {{ number_format( ($scVoucher['tipmon']['name'] == 'DOLARES' || $scVoucher['tipmon']['id'] == 2) ? $item['impdol'] : $item['impsol'], 2) }}
-                    </td>
-                </tr>
+                    <tr>
+
+                        <td class="center">{{ $item['codcon'] }}</td>
+                        <td>{{ $item['glosa'] }}</td>
+                        <td class="right">
+                            {{ number_format(($scVoucher['tipmon']['name'] == 'DOLARES' || $scVoucher['tipmon']['id'] == 2) ? $item['impdol'] : $item['impsol'], 2) }}
+                        </td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>

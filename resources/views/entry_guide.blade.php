@@ -45,8 +45,8 @@
         }
 
         .logo {
-            max-width: 180px;
-            max-height: 60px;
+            max-width: 250px;
+            max-height: 90px;
         }
 
         .company-info {
@@ -54,7 +54,7 @@
         }
 
         .company-name {
-            font-size: 14px;
+            font-size: 10px;
             font-weight: bold;
             color: #000;
         }
@@ -158,7 +158,8 @@
                     <div class="ruc-box">
                         <div class="ruc-number">R.U.C. {{ $company->getRuc() }}</div>
                         <div class="doc-title">GUÍA DE INGRESO</div>
-                        <div class="doc-number">{{ $entryGuide->getSerie() }} - {{ str_pad($entryGuide->getCorrelativo(), 8, '0', STR_PAD_LEFT) }}</div>
+                        <div class="doc-number">{{ $entryGuide->getSerie() }} -
+                            {{ str_pad($entryGuide->getCorrelativo(), 8, '0', STR_PAD_LEFT) }}</div>
                     </div>
                 </td>
             </tr>
@@ -174,31 +175,31 @@
         <div class="section-title">DATOS DEL PROVEEDOR</div>
         <table class="info-table">
             @php
-            $isCompany = $customer->getCustomerDocumentType()->getId() == 2;
+                $isCompany = $customer->getCustomerDocumentType()->getId() == 2;
             @endphp
 
             @if($isCompany)
-            <tr>
-                <td class="label">R.U.C.:</td>
-                <td>{{ $customer->getDocumentNumber() }}</td>
-                <td class="label">RAZÓN SOCIAL:</td>
-                <td>{{ $customer->getCompanyName() }}</td>
-            </tr>
+                <tr>
+                    <td class="label">R.U.C.:</td>
+                    <td>{{ $customer->getDocumentNumber() }}</td>
+                    <td class="label">RAZÓN SOCIAL:</td>
+                    <td>{{ $customer->getCompanyName() }}</td>
+                </tr>
             @else
-            <tr>
-                <td class="label">DNI:</td>
-                <td>{{ $customer->getDocumentNumber() }}</td>
-                <td class="label">NOMBRE:</td>
-                <td>{{ $customer->getName() }} {{ $customer->getLastname() }} {{ $customer->getSecondLastname() }}</td>
-            </tr>
+                <tr>
+                    <td class="label">DNI:</td>
+                    <td>{{ $customer->getDocumentNumber() }}</td>
+                    <td class="label">NOMBRE:</td>
+                    <td>{{ $customer->getName() }} {{ $customer->getLastname() }} {{ $customer->getSecondLastname() }}</td>
+                </tr>
             @endif
 
             <tr>
                 <td class="label">DIRECCIÓN:</td>
                 <td colspan="3">
                     @php
-                    $addresses = $customer->getAddresses();
-                    $address = $addresses && count($addresses) > 0 ? $addresses[0]->getAddress() : 'N/A';
+                        $addresses = $customer->getAddresses();
+                        $address = $addresses && count($addresses) > 0 ? $addresses[0]->getAddress() : 'N/A';
                     @endphp
                     {{ $address }}
                 </td>
@@ -209,8 +210,8 @@
                 <td class="label">TELÉFONO:</td>
                 <td>
                     @php
-                    $phones = $customer->getPhones();
-                    $phone = $phones && count($phones) > 0 ? $phones[0]->getPhone() : 'N/A';
+                        $phones = $customer->getPhones();
+                        $phone = $phones && count($phones) > 0 ? $phones[0]->getPhone() : 'N/A';
                     @endphp
                     {{ $phone }}
                 </td>
@@ -239,7 +240,9 @@
             <tr>
                 <td class="label">Documento de deferencia:</td>
                 <td colspan="5">
-                      {{ $document_entry_guide?->getReferenceDocument()->getDescription() }} {{ $document_entry_guide?->getReferenceSerie() }} - {{ $document_entry_guide?->getReferenceCorrelative() }}
+                    {{ $document_entry_guide?->getReferenceDocument()->getDescription() }}
+                    {{ $document_entry_guide?->getReferenceSerie() }} -
+                    {{ $document_entry_guide?->getReferenceCorrelative() }}
 
                 </td>
             </tr>
@@ -260,11 +263,11 @@
             </thead>
             <tbody>
                 @foreach($articles as $article)
-                <tr>
-                    <td style="text-align:center;">{{ $article->getArticle()->getCodFab() }}</td>
-                    <td style="text-align:left; padding-left: 10px;">{{ $article->getDescription() }}</td>
-                    <td style="text-align:center;">{{ $article->getQuantity() }}</td>
-                </tr>
+                    <tr>
+                        <td style="text-align:center;">{{ $article->getArticle()->getCodFab() }}</td>
+                        <td style="text-align:left; padding-left: 10px;">{{ $article->getDescription() }}</td>
+                        <td style="text-align:center;">{{ $article->getQuantity() }}</td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>

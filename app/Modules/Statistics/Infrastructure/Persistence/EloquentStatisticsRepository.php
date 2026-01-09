@@ -9,6 +9,8 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
 {
     public function getCustomerConsumedItems(int $company_id, ?int $branch_id, ?string $start_date, ?string $end_date, ?int $category_id, ?int $brand_id, ?int $customerId)
     {
+        $customerNameExpression = "COALESCE(NULLIF(c.company_name, ''), NULLIF(TRIM(CONCAT_WS(' ', c.name, c.lastname, c.second_lastname)), ''))";
+
         $query = DB::table('sales as s')
             ->join('sale_article as sa', 's.id', '=', 'sa.sale_id')
             ->join('articles as a', 'sa.article_id', '=', 'a.id')
@@ -24,7 +26,7 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
             ->whereIn('s.document_type_id', [1, 3]) // Facturas y Boletas
             ->select(
                 'c.id as customer_id',
-                'c.company_name as customer_name',
+                DB::raw("{$customerNameExpression} as customer_name"),
                 'c.document_number as customer_document',
                 'b.name as branch_name',
                 'dt.abbreviation as document_type',
@@ -64,7 +66,7 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
         }
 
         // Order by customer and date
-        $query->orderBy('c.company_name')
+        $query->orderByRaw($customerNameExpression)
             ->orderBy('s.date')
             ->orderBy('s.id');
 
@@ -73,6 +75,8 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
 
     public function getCustomerConsumedItemsPaginated(int $company_id, ?int $branch_id, ?string $start_date, ?string $end_date, ?int $category_id, ?int $brand_id, ?int $customerId, int $perPage = 15)
     {
+        $customerNameExpression = "COALESCE(NULLIF(c.company_name, ''), NULLIF(TRIM(CONCAT_WS(' ', c.name, c.lastname, c.second_lastname)), ''))";
+
         $query = DB::table('sales as s')
             ->join('sale_article as sa', 's.id', '=', 'sa.sale_id')
             ->join('articles as a', 'sa.article_id', '=', 'a.id')
@@ -88,7 +92,7 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
             ->whereIn('s.document_type_id', [1, 3]) // Facturas y Boletas
             ->select(
                 'c.id as customer_id',
-                'c.company_name as customer_name',
+                DB::raw("{$customerNameExpression} as customer_name"),
                 'c.document_number as customer_document',
                 'b.name as branch_name',
                 'dt.abbreviation as document_type',
@@ -128,7 +132,7 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
         }
 
         // Order by customer and date
-        $query->orderBy('c.company_name')
+        $query->orderByRaw($customerNameExpression)
             ->orderBy('s.date')
             ->orderBy('s.id');
 

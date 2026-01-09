@@ -3,6 +3,7 @@
 namespace App\Modules\EntryGuides\Infrastructure\Request;
 
 use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
+use App\Modules\EntryItemSerial\Infrastructure\Models\EloquentEntryItemSerial;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateGuideRequest extends FormRequest
@@ -63,6 +64,7 @@ class UpdateGuideRequest extends FormRequest
     protected function validateSerials($validator)
     {
         $entryGuideArticles = $this->input('entry_guide_articles', []);
+        $entryGuideId = $this->route('id');
         $allSerials = [];
 
         foreach ($entryGuideArticles as $index => $entryGuideArticle) {
@@ -88,6 +90,72 @@ class UpdateGuideRequest extends FormRequest
                         "El artículo '{$article->description}' requiere {$quantity} series, pero se proporcionaron " . count($serials) . "."
                     );
                 }
+
+                // Obtener series actuales de la base de datos para este artículo y guía
+                $existingSerialsInDb = EloquentEntryItemSerial::where('entry_guide_id', $entryGuideId)
+                    ->where('article_id', $article->id)
+                    ->get();
+
+                $existingSerialsList = $existingSerialsInDb->pluck('serial')->toArray();
+
+                // 1. Validar series QUE FALTAN (que se están eliminando)
+                $missingSerials = array_diff($existingSerialsList, $serials);
+
+                foreach ($missingSerials as $missingSerial) {
+                    // Buscar la serie en la colección traída de BD
+                    $dbSerial = $existingSerialsInDb->firstWhere('serial', $missingSerial);
+
+                    // Si la serie que se quiere borrar NO está en estado 1, error.
+                    if ($dbSerial && $dbSerial->status != 1) {
+                        $validator->errors()->add(
+                            "entry_guide_articles.{$index}.serials",
+                            "La serie '{$missingSerial}' no se puede eliminar porque ya ha sido usada."
+                        );
+                    }
+                }
+
+                // 2. Validar series QUE SE AGREGAN o QUE SE MANTIENEN (solo por integridad, aunque el usuario dijo "validar que solo permita actualizar las series que tienen estado 1")
+                // El requerimiento original decía: "validar que solo se permita actualizar las series que tienen estado 1"
+                // El nuevo requerimiento dice: "consultar el registro previamente, hacer una comparacion de que si hay series faltantes, y si las hay que recien entre en la validación las series que están faltando"
+                //
+                // Interpretación: 
+                // Si yo quito una serie, debo validar que esa serie sea "borrable/status=1".
+                // Si yo agrego/mantengo una serie, ¿debo validarla?
+                // El usuario dijo "el frontend me manda las series a actualizar... nunca va a entrar a validacion porque no me manda la serie borrada".
+                // Esto implica que su preocupación principal es evitar BORRAR series usadas.
+                // PERO, si yo incluyo una serie que YA ESTABA usada (status=0) y la mando de vuelta... el código anterior validaba que TODAS las series en el request tengan status 1. 
+                // Si una serie ya se usó (status=0), y yo la mando de nuevo en el request (porque no la borré), el código anterior fallaba diciendo "ya usada".
+                // ¿Es esto deseado? "validar que solo se permita actualizar las series que tienen estado 1" -> Si la serie ya se usó, ¿puedo mantenerla en la guía?
+                // Probablemente NO debería poder editar la guía si hay series usadas involucradas, O, debería permitir dejarlas quietas?
+                // Generalmente, si una serie ya se vendió, no deberías poder "tocarla" en la guía de ingreso original. 
+                // Pero si solo estoy cambiando la cantidad de OTRO artículo, y re-evío la serie usada... ¿debería fallar?
+                // El usuario dijo: "solo se permita actualizar las series que tienen estado 1, si tiene otro estado que no permita".
+                // Esto sugiere que NO se puede tocar (ni agregar ni quitar ni mantener?) series con status != 1.
+                //
+                // Sin embargo, el NUEVO comentario se enfoca en las BORRADAS. "nunca va a entrar a esa validación porque no me manda la serie borrada".
+                // Si la serie NO se borra (se manda en el request), mi código anterior fallaba si status != 1.
+                // Si la serie ESTÁ en la BD como usada, y la mando igual... Validar que "ya usada" bloquearía cualquier update.
+                // 
+                // Asumiré que el objetivo es PROTEGER series usadas de ser manipuladas.
+                // 1. Si intento BORRAR una serie usada -> ERROR (No puedo desvincularla porque ya se vendió).
+                // 2. Si intento AGREGAR una serie (que ya existe en otro lado y está usada) -> ERROR.
+                // 3. Si MANTENGO una serie usada (la mando igual que estaba) -> ¿Error o Pass?
+                //
+                // Si mi código anterior fallaba al encontrar status!=1 en el request, entonces bloqueaba MANTENER series usadas.
+                // Si el sistema re-guarda todo, idealmente no debería tocar lo que no cambia.
+                //
+                // Voy a mantener SOLO la validación de las FALTANTES como pidió explícitamente ahora, 
+                // Y quizás la validación de las PRESENTES solo si son NUEVAS? o "state of check".
+                //
+                // "validar que solo se permita actualizar las series que tienen estado 1" -> Esto puede significar "Solo puedes cambiar (CRUD) series en estado 1".
+                // Si una serie está en estado 0, debería ser inmutable. 
+                // Si la mando IGUAL, no la estoy actualizando en teoria (aunque el PUT pise todo).
+                // 
+                // Vamos con la lógica pedida: "hacer una comparación de que si hay series faltantes, y si las hay que recien entre en la validación las series que están faltando y muestre ese mensaje."
+                // Parece que QUIERE validar SOLO las faltantes.
+                // Pero si agrego una serie usada? Debería validarlo?
+                // Me limitaré estrictamente a las FALTANTES como pidió para solucionar SU problema específico.
+                // Pero dejaré la validación de duplicados global.
 
                 $allSerials = array_merge($allSerials, $serials);
             } else {

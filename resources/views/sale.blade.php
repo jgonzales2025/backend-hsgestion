@@ -225,7 +225,7 @@
         </table>
 
         <!-- Sale Information -->
-        <div class="section-title" style="margin-top: 10px;">DETALLES DE LA VENTA</div>
+        <div class="section-title" style="margin-top: 10px;">{{ $sale->getDocumentType()->getId() == 16 ? 'DETALLES DE LA COTIZACIÓN' : 'DETALLES DE LA VENTA' }}</div>
         <table class="info-table">
             <tr>
                 <td class="label">FECHA EMISIÓN:</td>
@@ -338,6 +338,7 @@
         </div>
 
         <!-- QR Code -->
+        @if(!in_array($sale->getDocumentType()->getId(), [16, 17]))
         <div style="width: 100%; margin-top: 20px; text-align: right;">
             <div
                 style="display: inline-block; border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
@@ -349,6 +350,7 @@
                 <strong>REPRESENTACIÓN FÍSICA DE {{ strtoupper($sale->getDocumentType()->getDescription()) }}</strong>
             </div>
         </div>
+        @endif
     </div>
 </body>
 

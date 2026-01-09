@@ -46,8 +46,8 @@
         }
 
         .logo {
-            max-width: 180px;
-            max-height: 60px;
+            max-width: 250px;
+            max-height: 90px;
         }
 
         .company-info {
@@ -55,7 +55,7 @@
         }
 
         .company-name {
-            font-size: 14px;
+            font-size: 10px;
             font-weight: bold;
             color: #000;
         }

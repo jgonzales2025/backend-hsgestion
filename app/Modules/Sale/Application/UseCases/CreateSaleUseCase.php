@@ -73,12 +73,6 @@ readonly class CreateSaleUseCase
         $userAuthorizedUseCase = new GetUserByIdUseCase($this->userRepository);
         $userAuthorized = $userAuthorizedUseCase->execute($saleDTO->user_authorized_id);
 
-        $paymentMethod = null;
-        if ($saleDTO->payment_method_id) {
-            $paymentMethodUseCase = new FindByIdPaymentMethodUseCase($this->paymentMethodRepository);
-            $paymentMethod = $paymentMethodUseCase->execute($saleDTO->payment_method_id);
-        }
-
         $sale = new Sale(
             id: 0,
             company: $company,
@@ -117,8 +111,7 @@ readonly class CreateSaleUseCase
             porretencion: $saleDTO->porretencion,
             impretens: $saleDTO->impretens,
             impretend: $saleDTO->impretend,
-            consignation_id: $saleDTO->consignation_id,
-            payment_method: $paymentMethod,
+            consignation_id: $saleDTO->consignation_id
         );
 
         return $this->saleRepository->save($sale);

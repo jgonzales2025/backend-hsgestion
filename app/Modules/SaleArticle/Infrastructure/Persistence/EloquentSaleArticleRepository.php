@@ -21,7 +21,8 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
             'public_price' => $saleArticle->getPublicPrice(),
             'subtotal' => $saleArticle->getSubtotal(),
             'purchase_price' => $saleArticle->getPurchasePrice(),
-            'costo_neto' => $saleArticle->getCostoNeto()
+            'costo_neto' => $saleArticle->getCostoNeto(),
+            'warranty' => $saleArticle->getWarranty()
         ]);
 
         EloquentSale::where('id', $saleArticle->getSaleId())->update([
@@ -39,7 +40,8 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
             public_price: $eloquentSaleArticle->public_price,
             subtotal: $eloquentSaleArticle->subtotal,
             purchase_price: $eloquentSaleArticle->purchase_price,
-            costo_neto: $eloquentSaleArticle->costo_neto
+            costo_neto: $eloquentSaleArticle->costo_neto,
+            warranty: $eloquentSaleArticle->warranty
         );
     }
 
@@ -61,7 +63,8 @@ class EloquentSaleArticleRepository implements SaleArticleRepositoryInterface
                 state_modify_article: $eloquentSaleArticle->article->state_modify_article,
                 series_enabled: $eloquentSaleArticle->article->series_enabled,
                 purchase_price: $eloquentSaleArticle->purchase_price,
-                costo_neto: $eloquentSaleArticle->costo_neto
+                costo_neto: $eloquentSaleArticle->costo_neto,
+                warranty: $eloquentSaleArticle->warranty
             );
         })->toArray();
     }

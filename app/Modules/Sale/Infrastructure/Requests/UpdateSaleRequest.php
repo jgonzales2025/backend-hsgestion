@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sale\Infrastructure\Requests;
 
+use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateSaleRequest extends FormRequest
@@ -37,7 +38,6 @@ class UpdateSaleRequest extends FormRequest
             'purchase_order' => 'nullable|string|max:10',
             'user_authorized_id' => 'nullable|integer|exists:users,id',
             'credit_amount' => 'required_if:payment_type_id,2|numeric|min:0',
-            'payment_method_id' => 'required_if:payment_type_id,1',
 
             'installments' => 'required_if:payment_type_id,2|array',
             'installments.*.installment_number' => 'required_if:payment_type_id,2|integer|min:1',
@@ -61,9 +61,73 @@ class UpdateSaleRequest extends FormRequest
             'sale_articles.*.public_price' => 'required|numeric|min:0',
             'sale_articles.*.subtotal' => 'required|numeric|min:0',
             'sale_articles.*.purchase_price' => 'required|numeric',
+            'sale_articles.*.warranty' => 'nullable|string',
             'sale_articles.*.serials' => 'nullable|array',
             'sale_articles.*.serials.*' => 'string|distinct',
         ];
+    }
+
+        public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $this->validateSerials($validator);
+        });
+    }
+
+    protected function validateSerials($validator)
+    {
+        $documentTypeId = $this->input('document_type_id');
+        if ((int) $documentTypeId === 16) {
+            return;
+        }
+
+        $saleArticles = $this->input('sale_articles', []);
+        $allSerials = [];
+
+        foreach ($saleArticles as $index => $saleArticle) {
+            $article = EloquentArticle::find($saleArticle['article_id']);
+
+            if (!$article) {
+                continue;
+            }
+
+            $serials = $saleArticle['serials'] ?? [];
+            $quantity = $saleArticle['quantity'];
+
+            // Validar artículos que requieren serie
+            if ($article->series_enabled) {
+                if (empty($serials)) {
+                    $validator->errors()->add(
+                        "sale_articles.{$index}.serials",
+                        "El artículo '{$article->description}' requiere series."
+                    );
+                } elseif (count($serials) !== $quantity) {
+                    $validator->errors()->add(
+                        "sale_articles.{$index}.serials",
+                        "El artículo '{$article->description}' requiere {$quantity} series, pero se proporcionaron " . count($serials) . "."
+                    );
+                }
+
+                $allSerials = array_merge($allSerials, $serials);
+            } else {
+                // Validar que artículos sin serie no tengan series
+                if (!empty($serials)) {
+                    $validator->errors()->add(
+                        "sale_articles.{$index}.serials",
+                        "El artículo '{$article->description}' no maneja series."
+                    );
+                }
+            }
+        }
+
+        // Validar que no haya series duplicadas en toda la venta
+        if (count($allSerials) !== count(array_unique($allSerials))) {
+            $validator->errors()->add(
+                'sale_articles',
+                'Hay números de serie duplicados en la venta.'
+            );
+        }
+
     }
 
     public function messages(): array

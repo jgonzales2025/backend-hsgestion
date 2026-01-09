@@ -31,7 +31,8 @@ readonly class CreateSaleArticleUseCase
             public_price: $saleArticleDTO->public_price,
             subtotal: $saleArticleDTO->subtotal,
             purchase_price: $saleArticleDTO->purchase_price,
-            costo_neto: $saleArticleDTO->costo_neto
+            costo_neto: $saleArticleDTO->costo_neto,
+            warranty: $saleArticleDTO->warranty
         );
 
         return $this->saleArticleRepository->save($saleArticle, $subtotal_costo_neto);

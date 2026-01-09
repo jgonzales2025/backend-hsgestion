@@ -389,13 +389,20 @@ class AuthController extends Controller
             ],
             [
                 'id' => 2,
+                'label' => 'Cotizaciones',
+                'link' => config('app.frontend_url') . '/mantenimiento/cotizacion',
+                'icon' => 'FileText',
+                'permission' => 'mantenimiento.cotizacion'
+            ],
+            [
+                'id' => 3,
                 'label' => 'Clientes',
                 'link' => config('app.frontend_url') . '/clientes',
                 'icon' => 'Users',
                 'permission' => 'tablas.clientes'
             ],
             [
-                'id' => 3,
+                'id' => 4,
                 'label' => 'Articulos',
                 'link' => config('app.frontend_url') . '/tablas/articulos',
                 'icon' => 'Package',

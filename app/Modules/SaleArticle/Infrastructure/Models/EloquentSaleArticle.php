@@ -20,7 +20,8 @@ class EloquentSaleArticle extends Model
         'public_price',
         'subtotal',
         'purchase_price',
-        'costo_neto'
+        'costo_neto',
+        'warranty'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

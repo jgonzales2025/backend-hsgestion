@@ -13,6 +13,7 @@ class SaleArticleDTO
     public $subtotal;
     public $purchase_price;
     public $costo_neto;
+    public ?string $warranty;
 
     public function __construct(array $data)
     {
@@ -25,5 +26,6 @@ class SaleArticleDTO
         $this->subtotal = $data['subtotal'];
         $this->purchase_price = $data['purchase_price'];
         $this->costo_neto = $data['costo_neto'];
+        $this->warranty = $data['warranty'];
     }
 }

@@ -8,3 +8,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 \Illuminate\Support\Facades\Schedule::command('exchange:update')->dailyAt('09:15');
+\Illuminate\Support\Facades\Schedule::command('pdfs:clean')->daily();

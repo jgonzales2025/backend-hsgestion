@@ -77,7 +77,7 @@ class EloquentEntryGuide extends Model
     public function toDomain(EloquentEntryGuide $eloquentEntryGuide): EntryGuide
     {
         return new EntryGuide(
-            id: $eloquentEntryGuide->id,
+            id: $eloquentEntryGuide->id ,
             cia: $eloquentEntryGuide->company->toDomain($eloquentEntryGuide->company),
             branch: $eloquentEntryGuide->branch->toDomain($eloquentEntryGuide->branch),
             serie: $eloquentEntryGuide->serie,
@@ -85,9 +85,9 @@ class EloquentEntryGuide extends Model
             date: $eloquentEntryGuide->date,
             customer: $eloquentEntryGuide->customer->toDomain($eloquentEntryGuide->customer) ,
             observations: $eloquentEntryGuide->observations,
-            ingressReason: $eloquentEntryGuide->ingressReason->toDomain($eloquentEntryGuide->ingressReason),
+            ingressReason: $eloquentEntryGuide->ingressReason->toDomain($eloquentEntryGuide->ingressReason) ,
             reference_serie: $eloquentEntryGuide->reference_serie,
-            reference_correlative: $eloquentEntryGuide->reference_correlative ,   
+            reference_correlative: $eloquentEntryGuide->reference_correlative,
             status: $eloquentEntryGuide->status,
             subtotal: $eloquentEntryGuide->subtotal,
             total_descuento: $eloquentEntryGuide->total_descuento,

@@ -119,7 +119,7 @@ class ControllerEntryGuide extends Controller
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
             $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-            $response['process_status'] = $this->calculateProcessStatus($articlesWithSerials);
+            $response['process_status'] = $this->calculateProcessStatus($articlesWithSerials, $documentEntryGuide);
             $result[] = $response;
         }
 
@@ -157,10 +157,12 @@ class ControllerEntryGuide extends Controller
                 return $article;
             }, $articles);
 
+            $docEntryGuide = $this->documentEntryGuideRepositoryInterface->findByIdObj($entryGuide->getId());
+
             $response = (new EntryGuideResource($entryGuide))->resolve();
             $response['articles'] = EntryGuideArticleResource::collection($articlesWithSerials)->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-            $response['process_status'] = $this->calculateProcessStatus($articlesWithSerials);
+            $response['process_status'] = $this->calculateProcessStatus($articlesWithSerials, $docEntryGuide);
             $result[] = $response;
         }
 
@@ -192,7 +194,7 @@ class ControllerEntryGuide extends Controller
         $response['articles'] = EntryGuideArticleResource::collection($entryArticles)->resolve();
         $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve();
         $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-        $response['process_status'] = $this->calculateProcessStatus($entryArticles);
+        $response['process_status'] = $this->calculateProcessStatus($entryArticles, $documentEntryGuide);
 
         return response()->json($response, 200);
     }
@@ -218,10 +220,12 @@ class ControllerEntryGuide extends Controller
             );
             $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
-            $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $data['entry_guide_articles']);
+            $isFactura = (isset($data['document_entry_guide']['reference_document_id']) && $data['document_entry_guide']['reference_document_id'] == 1);
+
+            $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $data['entry_guide_articles'], $isFactura);
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $data['document_entry_guide']);
 
-            if ($data['document_entry_guide']['reference_document_id'] == 1) {
+            if ($isFactura) {
                 $this->createPurchaseFromEntryGuide($entryGuide, $data);
             }
 
@@ -234,7 +238,7 @@ class ControllerEntryGuide extends Controller
             $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
             $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-            $response['process_status'] = $this->calculateProcessStatus($entryGuideArticle);
+            $response['process_status'] = $this->calculateProcessStatus($entryGuideArticle, $documentEntryGuide);
 
 
             return response()->json($response, 201);
@@ -269,7 +273,9 @@ class ControllerEntryGuide extends Controller
             $this->detEntryguidePurchaseOrderRepository->deleteByEntryGuideId($entryGuide->getId());
 
 
-            $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
+            $isFactura = (isset($request->validated()['document_entry_guide']['reference_document_id']) && $request->validated()['document_entry_guide']['reference_document_id'] == 1);
+
+            $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles'], $isFactura);
             $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
 
@@ -281,22 +287,22 @@ class ControllerEntryGuide extends Controller
             $response['articles'] = EntryGuideArticleResource::collection($entryGuideArticle)->resolve();
             $response['document_entry_guide'] = (new DocumentEntryGuideResource($documentEntryGuide))->resolve();
             $response['order_purchase_id'] = DetEntryguidePurchaseOrderResource::collection($detEntryguidePurchaseOrder)->resolve();
-            $response['process_status'] = $this->calculateProcessStatus($entryGuideArticle);
+            $response['process_status'] = $this->calculateProcessStatus($entryGuideArticle, $documentEntryGuide);
 
             return response()->json($response, 200);
         });
     }
-    private function createEntryGuideArticles($entryGuide, array $articlesData): array
+    private function createEntryGuideArticles($entryGuide, array $articlesData, bool $isFactura = false): array
     {
 
         $createEntryGuideArticleUseCase = new CreateEntryGuideArticle($this->entryGuideArticleRepositoryInterface, $this->articleRepositoryInterface);
-        return array_map(function ($q) use ($entryGuide, $createEntryGuideArticleUseCase) {
+        return array_map(function ($q) use ($entryGuide, $createEntryGuideArticleUseCase, $isFactura) {
             $entryGuideArticleDTO = new EntryGuideArticleDTO([
                 'entry_guide_id' => $entryGuide->getId(),
                 'article_id' => $q['article_id'],
                 'description' => $q['description'],
                 'quantity' => $q['quantity'],
-                'saldo' => $q['saldo'] ?? $q['quantity'],
+                'saldo' => $isFactura ? 0 : ($q['saldo'] ?? $q['quantity']),
                 'subtotal' => $q['subtotal'] ?? 0,
                 'total' => $q['total'] ?? 0,
                 'precio_costo' => $q['precio_costo'] ?? 0,
@@ -357,8 +363,12 @@ class ControllerEntryGuide extends Controller
         return $result;
     }
 
-    private function calculateProcessStatus(array $articles): string
+    private function calculateProcessStatus(array $articles, $documentEntryGuide = null): string
     {
+        if ($documentEntryGuide && $documentEntryGuide->getReferenceDocument()?->getId() == 1) {
+            return 'facturado';
+        }
+
         $totalQuantity = 0;
         $totalSaldo = 0;
 

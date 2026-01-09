@@ -135,7 +135,7 @@ class PurchaseController extends Controller
         $pdf = Pdf::loadView('purchase_pdf', [
             'purchase' => $purchase,
             'company' => $company,
-        ]); 
+        ]);
 
         $fileName = $purchase->getSerie() . '_' . $purchase->getCorrelative() . '.pdf';
         $path = 'purchases/' . $fileName;
@@ -144,7 +144,8 @@ class PurchaseController extends Controller
 
         return response()->json([
             'url' => asset('storage/' . $path),
-            'fileName' => $fileName
+            'fileName' => $fileName,
+            'pdf_base64' => base64_encode($pdf->output())
         ]);
     }
 

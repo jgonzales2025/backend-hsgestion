@@ -70,9 +70,8 @@ class PurchaseResource extends JsonResource
             'process_status' => $this->calculateProcessStatus(),
 
             'det_compras_guia_ingreso' =>  DetailPurchaseGuideResource::collection($this->resource->getDetComprasGuiaIngreso()),
-            'entry_guide' => array_map(fn ($item) => $item->getEntryGuideId(), $this->resource->getShoppingIncomeGuide()),
-
-
+            'entry_guide' => array_map(fn($item) => $item->getEntryGuideId(), $this->resource->getShoppingIncomeGuide()),
+            'pdf_base64' => $this->generatePdfBase64($request),
         ];
     }
 
@@ -97,5 +96,28 @@ class PurchaseResource extends JsonResource
             return $address->getAddress();
         }
         return !empty($addresses) ? $addresses[0]->getAddress() : "";
+    }
+
+    private function generatePdfBase64(Request $request): ?string
+    {
+        // Solo generar base64 si es una petición individual para no afectar el rendimiento del listado
+        // O si se solicita explícitamente vía query param
+        if ($request->routeIs('*.show') || $request->routeIs('*.store') || $request->routeIs('*.update') || $request->has('include_pdf')) {
+            try {
+                $companyRepository = app(\App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface::class);
+                $company = $companyRepository->findById($this->resource->getCompanyId());
+
+                $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('purchase_pdf', [
+                    'purchase' => $this->resource,
+                    'company' => $company,
+                ]);
+
+                return base64_encode($pdf->output());
+            } catch (\Exception $e) {
+                return null;
+            }
+        }
+
+        return null;
     }
 }

@@ -555,9 +555,12 @@ class ControllerEntryGuide extends Controller
                 return response()->json(['message' => 'PDF no encontrado'], 404);
             }
 
+            $content = Storage::disk('public')->get($path);
+
             return response()->json([
                 'url' => asset('storage/' . $path),
-                'fileName' => basename($path)
+                'fileName' => basename($path),
+                'pdf_base64' => base64_encode($content)
             ]);
         } catch (\Throwable $e) {
             return response()->json(['error' => $e->getMessage()], 500);

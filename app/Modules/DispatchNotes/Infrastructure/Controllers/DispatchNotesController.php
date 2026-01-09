@@ -179,7 +179,8 @@ class DispatchNotesController extends Controller
 
             return response()->json([
                 'url' => asset('storage/' . $path),
-                'fileName' => $filename
+                'fileName' => $filename,
+                'pdf_base64' => base64_encode($pdfContent)
             ]);
 
         } catch (\Throwable $e) {

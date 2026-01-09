@@ -747,11 +747,13 @@ class SaleController extends Controller
         $fileName = $documentTypeName . '_' . $sale->getSerie() . '-' . $sale->getDocumentNumber() . '.pdf';
 
         $path = 'pdf/' . $fileName;
-        Storage::disk('public')->put($path, $pdf->output());
+        $content = $pdf->output();
+        Storage::disk('public')->put($path, $content);
 
         return response()->json([
             'url' => asset('storage/' . $path),
-            'fileName' => $fileName
+            'fileName' => $fileName,
+            'pdf_base64' => base64_encode($content)
         ]);
     }
 

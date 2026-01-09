@@ -52,21 +52,21 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                             $p->where('name', 'like', "%{$description}%");
                         });
                 });
-            }) 
+            })
             ->when(
                 $num_doc,
                 fn($query) =>
                 $query->where('document_type_id', $num_doc)
-            ) 
+            )
             ->when(
                 $id_proveedr,
                 fn($query) =>
                 $query->where('supplier_id', $id_proveedr)
             )
-            ->orderByDesc('id') 
+            ->orderByDesc('id')
             ->paginate(10);
 
-        $eloquentpurchase->getCollection()->transform(fn ($purchase) => $purchase->toDomain());
+        $eloquentpurchase->getCollection()->transform(fn($purchase) => $purchase->toDomain());
 
         return $eloquentpurchase;
     }
@@ -138,49 +138,76 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                     'purchase_id'   => $eloquentpurchase->id,
                     'entry_guide_id' => $shopping_Income_Guide->entry_guide_id,
                 ]);
-            } 
+            }
 
             return $this->findWithRelations($eloquentpurchase->id);
         });
     }
- 
+
     public function update(Purchase $purchase): ?Purchase
     {
-        $purchaseUpdtate = EloquentPurchase::find($purchase->getId());
-        if (!$purchaseUpdtate) {
-            return null;
-        }
+        return DB::transaction(function () use ($purchase) {
+            $eloquentpurchase = EloquentPurchase::find($purchase->getId());
 
-        $purchaseUpdtate->update([
-            'branch_id' => $purchase->getBranch()->getId(),
-            'supplier_id' => $purchase->getSupplier()->getId(),
-            'serie' => $purchase->getSerie(),
-            'correlative' => $purchase->getCorrelative(),
-            'exchange_type' => $purchase->getExchangeType(),
-            'payment_type_id' => $purchase->getPaymentType()->getId(),
-            'currency' => $purchase->getCurrency()->getId(),
-            'date' => $purchase->getDate(),
-            'date_ven' => $purchase->getDateVen(),
-            'days' => $purchase->getDays(),
-            'observation' => $purchase->getObservation(),
-            'detraccion' => $purchase->getDetraccion(),
-            'fech_detraccion' => $purchase->getFechDetraccion(),
-            'amount_detraccion' => $purchase->getAmountDetraccion(),
-            'is_detracion' => $purchase->getIsDetracion(),
-            'subtotal' => $purchase->getSubtotal(),
-            'total_desc' => $purchase->getTotalDesc(),
-            'inafecto' => $purchase->getInafecto(),
-            'igv' => $purchase->getIgv(),
-            'total' => $purchase->getTotal(),
-            'is_igv' => $purchase->getIsIgv(),
-            'document_type_id' => $purchase->getTypeDocumentId()->getId(),
-            'reference_serie' => $purchase->getReferenceSerie(),
-            'reference_correlative' => $purchase->getReferenceCorrelative(),
-            'company_id' => $purchase->getCompanyId(),
-            'saldo' => $purchase->getTotal(),
-        ]);
- 
-        return $this->findWithRelations($purchaseUpdtate->id);
+            if (!$eloquentpurchase) {
+                return null;
+            }
+
+            $eloquentpurchase->update([
+                'branch_id' => $purchase->getBranch()->getId(),
+                'supplier_id' => $purchase->getSupplier()->getId(),
+                'serie' => $purchase->getSerie(),
+                'correlative' => $purchase->getCorrelative(),
+                'exchange_type' => $purchase->getExchangeType(),
+                'payment_type_id' => $purchase->getPaymentType()->getId(),
+                'currency' => $purchase->getCurrency()->getId(),
+                'date' => $purchase->getDate(),
+                'date_ven' => $purchase->getDateVen(),
+                'days' => $purchase->getDays(),
+                'observation' => $purchase->getObservation(),
+                'detraccion' => $purchase->getDetraccion(),
+                'fech_detraccion' => $purchase->getFechDetraccion(),
+                'amount_detraccion' => $purchase->getAmountDetraccion(),
+                'is_detracion' => $purchase->getIsDetracion(),
+                'subtotal' => $purchase->getSubtotal(),
+                'total_desc' => $purchase->getTotalDesc(),
+                'inafecto' => $purchase->getInafecto(),
+                'igv' => $purchase->getIgv(),
+                'total' => $purchase->getTotal(),
+                'is_igv' => $purchase->getIsIgv(),
+                'document_type_id' => $purchase->getTypeDocumentId()->getId(),
+                'reference_serie' => $purchase->getReferenceSerie(),
+                'reference_correlative' => $purchase->getReferenceCorrelative(),
+                'company_id' => $purchase->getCompanyId(),
+                'saldo' => $purchase->getTotal(),
+            ]);
+
+            EloquentDetailPurchaseGuide::where('purchase_id', $eloquentpurchase->id)->delete();
+            foreach ($purchase->getDetComprasGuiaIngreso() as $det) {
+                EloquentDetailPurchaseGuide::create([
+                    'purchase_id'     => $eloquentpurchase->id,
+                    'article_id'      => $det->article_id,
+                    'description'     => $det->description,
+                    'cantidad'        => $det->cantidad,
+                    'precio_costo'    => $det->precio_costo,
+                    'descuento'       => $det->descuento,
+                    'sub_total'       => $det->sub_total,
+                    'total'           => $det->total,
+                    'cantidad_update' => $det->cantidad,
+                    'process_status'  => $det->process_status,
+                ]);
+            }
+
+            EloquentShoppingIncomeGuide::where('purchase_id', $eloquentpurchase->id)->delete();
+            foreach ($purchase->getShoppingIncomeGuide() as $shopping_Income_Guide) {
+                EloquentShoppingIncomeGuide::create([
+                    'purchase_id'   => $eloquentpurchase->id,
+                    'entry_guide_id' => $shopping_Income_Guide->entry_guide_id,
+                ]);
+            }
+
+            return $this->findWithRelations($eloquentpurchase->id);
+        });
     }
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?Purchase
     {
@@ -234,7 +261,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         });
     }
 
-    public function dowloadPdf(int $id):?Purchase
+    public function dowloadPdf(int $id): ?Purchase
     {
         $purchase = $this->findWithRelations($id);
         if (!$purchase) {

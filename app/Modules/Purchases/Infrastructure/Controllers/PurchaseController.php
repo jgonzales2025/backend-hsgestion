@@ -5,9 +5,10 @@ namespace App\Modules\Purchases\Infrastructure\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
-use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface; 
-use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface; 
+use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
+use App\Modules\DetailPurchaseGuides\Domain\Interface\DetailPurchaseGuideRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
+use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
 use App\Modules\Purchases\Application\UseCases\CreatePurchaseUseCase;
@@ -18,15 +19,20 @@ use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 use App\Modules\Purchases\Infrastructure\Request\CreatePurchaseRequest;
 use App\Modules\Purchases\Infrastructure\Request\UpdatePurchaseRequest;
 use App\Modules\Purchases\Infrastructure\Resource\PurchaseResource;
-use App\Modules\ShoppingIncomeGuide\Domain\Interface\ShoppingIncomeGuideRepositoryInterface; 
+use App\Modules\ShoppingIncomeGuide\Domain\Interface\ShoppingIncomeGuideRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use App\Modules\Purchases\Application\UseCases\GeneratePurchasePdfUseCase;
 use App\Modules\Purchases\Domain\Interface\GeneratepdfRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response; 
+use Illuminate\Http\Response;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Modules\Purchases\Infrastructure\Persistence\PurchasesExport;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PurchaseController extends Controller
 {
@@ -40,6 +46,7 @@ class PurchaseController extends Controller
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
+        private readonly CompanyRepositoryInterface $companyRepository,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -126,20 +133,21 @@ class PurchaseController extends Controller
             200
         );
     }
-    public function downloadPdf(int $id): Response
+    public function downloadPdf(int $id)
     {
-        $useCase = new GeneratePurchasePdfUseCase(
-            $this->purchaseRepository,
-            $this->detailPurchaseGuideRepository,
-            $this->shoppingIncomeGuideRepository,
-            app(GeneratepdfRepositoryInterface::class)
-        );
-        $purchase = $this->purchaseRepository->findById($id);
+        $purchase = $this->purchaseRepository->dowloadPdf($id);
         if (!$purchase) {
-            dd("ID recibido: $id. No se encontró en la base de datos.");
+            return response()->json(['message' => 'Compra no encontrada'], 404);
         }
-        return $useCase->execute($id);
-    } 
+        $company = $this->companyRepository->findById($purchase->getCompanyId());
+
+        $pdf = Pdf::loadView('purchase_pdf', [
+            'purchase' => $purchase,
+            'company' => $company,
+    
+        ]);
+        return $pdf->stream($purchase->getSerie() . '_' . $purchase->getCorrelative() . '.pdf');
+    }
 
     public function exportExcel(Request $request)
     {

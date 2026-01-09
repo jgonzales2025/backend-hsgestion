@@ -143,8 +143,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             return $this->findWithRelations($eloquentpurchase->id);
         });
     }
-
-
+ 
     public function update(Purchase $purchase): ?Purchase
     {
         $purchaseUpdtate = EloquentPurchase::find($purchase->getId());
@@ -180,8 +179,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'company_id' => $purchase->getCompanyId(),
             'saldo' => $purchase->getTotal(),
         ]);
-
-
+ 
         return $this->findWithRelations($purchaseUpdtate->id);
     }
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?Purchase
@@ -234,6 +232,15 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         return $purchases->map(function ($purchase) {
             return $purchase->toDomain();
         });
+    }
+
+    public function dowloadPdf(int $id):?Purchase
+    {
+        $purchase = $this->findWithRelations($id);
+        if (!$purchase) {
+            return null;
+        }
+        return $purchase;
     }
 
     private function findWithRelations(int $id): ?Purchase

@@ -26,6 +26,6 @@ class SaleArticleDTO
         $this->subtotal = $data['subtotal'];
         $this->purchase_price = $data['purchase_price'];
         $this->costo_neto = $data['costo_neto'];
-        $this->warranty = $data['warranty'];
+        $this->warranty = $data['warranty'] ?? null;
     }
 }

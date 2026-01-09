@@ -83,7 +83,7 @@ class EloquentEntryGuide extends Model
             serie: $eloquentEntryGuide->serie,
             correlative: $eloquentEntryGuide->correlative,
             date: $eloquentEntryGuide->date,
-            customer: $eloquentEntryGuide->customer->toDomain($eloquentEntryGuide->customer),
+            customer: $eloquentEntryGuide->customer->toDomain($eloquentEntryGuide->customer) ,
             observations: $eloquentEntryGuide->observations,
             ingressReason: $eloquentEntryGuide->ingressReason->toDomain($eloquentEntryGuide->ingressReason) ,
             reference_serie: $eloquentEntryGuide->reference_serie,

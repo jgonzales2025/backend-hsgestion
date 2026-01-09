@@ -18,6 +18,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
     {
         $eloquentSale = EloquentSale::query()
             ->where('company_id', $companyId)
+            ->where('document_type_id', '!=', 16)
             ->when($start_date && $end_date, fn($query) => $query->whereBetween('date', [
                 Carbon::parse($start_date)->startOfDay(),
                 Carbon::parse($end_date)->endOfDay()
@@ -425,8 +426,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'porretencion' => $sale->getPorretencion(),
             'impretens' => $sale->getImpretens(),
             'impretend' => $sale->getImpretend(),
-            'consignation_id' => $sale->getConsignationId(),
-            'payment_method_id' => $sale->getPaymentMethod()?->getId()
+            'consignation_id' => $sale->getConsignationId()
         ];
     }
 
@@ -550,7 +550,6 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             impretend: $eloquentSale->impretend,
             total_costo_neto: $eloquentSale->total_costo_neto,
             consignation_id: $eloquentSale->consignation_id,
-            payment_method: $eloquentSale->paymentMethod?->toDomain($eloquentSale->paymentMethod),
             note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason),
             sunat_status: $eloquentSale->estado_sunat,
             fecha_aceptacion: $eloquentSale->fecha_aceptacion,
@@ -599,7 +598,6 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             impretens: $eloquentSale->impretens,
             impretend: $eloquentSale->impretend,
             consignation_id: $eloquentSale->consignation_id,
-            payment_method: $eloquentSale->paymentMethod?->toDomain($eloquentSale->paymentMethod),
             note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason)
         );
     }

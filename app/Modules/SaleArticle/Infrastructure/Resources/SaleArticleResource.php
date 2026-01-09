@@ -23,6 +23,7 @@ class SaleArticleResource extends JsonResource
             'subtotal_weight' => $this->resource->getArticle()->getWeight() * $this->resource->getQuantity(),
             'purchase_price' => $this->resource->getPurchasePrice(),
             'costo_neto' => $this->resource->getCostoNeto(),
+            'warranty' => $this->resource->getWarranty(),
             'series_enabled' => $this->resource->getSeriesEnabled(),
             'serials' => array_map(
                 fn($itemSerial) => method_exists($itemSerial, 'getSerial') ? $itemSerial->getSerial() : $itemSerial,

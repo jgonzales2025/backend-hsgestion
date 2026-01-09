@@ -65,7 +65,6 @@ class EloquentSale extends Model
         'fecha_aceptacion',
         'respuesta_sunat',
         'consignation_id',
-        'payment_method_id',
         'fecha_baja_sunat',
         'hora_baja_sunat'
     ];

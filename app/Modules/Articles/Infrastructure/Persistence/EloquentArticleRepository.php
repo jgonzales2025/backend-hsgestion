@@ -306,6 +306,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                     $q->where('branch_id', $branchId);
                 });
             })
+            ->where('status', 1)
             ->orderByDesc('created_at')
             ->paginate(10);
         // Transform the items in the paginator

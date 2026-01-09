@@ -41,7 +41,6 @@ class SaleDTO
     public ?float $impretens;
     public ?float $impretend;
     public ?int $consignation_id;
-    public ?int $payment_method_id;
 
     public function __construct(array $data)
     {
@@ -98,6 +97,5 @@ class SaleDTO
                 : round($data['total'] * ($this->porretencion / 100) / $data['parallel_rate'], 2))
             : null;
         $this->consignation_id = $data['consignation_id'] ?? null;
-        $this->payment_method_id = $data['payment_method_id'] ?? null;
     }
 }

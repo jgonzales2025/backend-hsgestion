@@ -19,8 +19,8 @@ class EntryGuide
     private ?Customer $customer;
     private ?string $observations;
     private ?IngressReason $ingressReason;
-    private ?string $reference_po_serie; //opcional purchase order
-    private ?string $reference_po_correlative; //opcional purchase order
+    private ?string $reference_serie; //opcional purchase order
+    private ?string $reference_correlative; //opcional purchase order
     private ?bool $status;
     private float $subtotal;
     private float $total_descuento;
@@ -41,8 +41,8 @@ class EntryGuide
         ?Customer $customer,
         ?string $observations,
         ?IngressReason $ingressReason,
-        ?string $reference_po_serie, //opcional purchase order
-        ?string $reference_po_correlative, //opcional purchase order
+        ?string $reference_serie, //opcional purchase order
+        ?string $reference_correlative, //opcional purchase order
         ?bool $status,
         float $subtotal,
         float $total_descuento,
@@ -62,8 +62,8 @@ class EntryGuide
         $this->customer = $customer;
         $this->observations = $observations;
         $this->ingressReason = $ingressReason;
-        $this->reference_po_serie = $reference_po_serie;
-        $this->reference_po_correlative = $reference_po_correlative;
+        $this->reference_serie = $reference_serie;
+        $this->reference_correlative = $reference_correlative;
         $this->status = $status;
         $this->subtotal = $subtotal;
         $this->total_descuento = $total_descuento;
@@ -97,11 +97,11 @@ class EntryGuide
     }
     public function getReferenceSerie(): string|null
     {
-        return $this->reference_po_serie;
+        return $this->reference_serie;
     }
     public function getReferenceCorrelative(): string|null
     {
-        return $this->reference_po_correlative;
+        return $this->reference_correlative;
     }
     public function getStatus(): ?bool
     {

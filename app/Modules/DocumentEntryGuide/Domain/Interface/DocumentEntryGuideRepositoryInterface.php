@@ -11,4 +11,5 @@ interface DocumentEntryGuideRepositoryInterface
     public function findById(int $id): array;
     public function findByIdObj(int $id): ?DocumentEntryGuide;
     public function findAll(): array;
+    public function deleteByEntryGuideId(int $id): void;
 }

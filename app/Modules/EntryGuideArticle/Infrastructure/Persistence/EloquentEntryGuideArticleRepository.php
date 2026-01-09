@@ -59,10 +59,11 @@ class EloquentEntryGuideArticleRepository implements EntryGuideArticleRepository
             );
         })->toArray();
     }
-    public function findByIdObj(int $entryGuideId): ?EntryGuideArticle
+    public function findByIdObj(int $entryGuideId, int $articleId): ?EntryGuideArticle
     {
 
-        $eloquent = EloquentEntryGuideArticle::where('article_id', $entryGuideId)
+        $eloquent = EloquentEntryGuideArticle::where('entry_guide_id', $entryGuideId)
+            ->where('article_id', $articleId)
             ->first();
 
         if (!$eloquent) {

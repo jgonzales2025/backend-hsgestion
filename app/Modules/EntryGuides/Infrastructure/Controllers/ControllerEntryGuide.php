@@ -73,8 +73,7 @@ class ControllerEntryGuide extends Controller
         private readonly PurchaseRepositoryInterface $purchaseRepositoryInterface,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepositoryInterface,
         private readonly SerieRepositoryInterface $serieRepositoryInterface,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -266,6 +265,9 @@ class ControllerEntryGuide extends Controller
 
             $this->entryItemSerialRepositoryInterface->deleteByIdEntryItemSerial($entryGuide->getId());
             $this->entryGuideArticleRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
+            $this->documentEntryGuideRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
+            $this->detEntryguidePurchaseOrderRepository->deleteByEntryGuideId($entryGuide->getId());
+
 
             $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
             $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
@@ -294,6 +296,7 @@ class ControllerEntryGuide extends Controller
                 'article_id' => $q['article_id'],
                 'description' => $q['description'],
                 'quantity' => $q['quantity'],
+                'saldo' => $q['saldo'] ?? $q['quantity'],
                 'subtotal' => $q['subtotal'] ?? 0,
                 'total' => $q['total'] ?? 0,
                 'precio_costo' => $q['precio_costo'] ?? 0,
@@ -473,8 +476,8 @@ class ControllerEntryGuide extends Controller
                     'id' => $entryGuide->getCustomer()?->getId(),
                     'name' => $entryGuide->getCustomer()?->getName() ?? $entryGuide->getCustomer()?->getCompanyName() . " " . $entryGuide->getCustomer()?->getLastname() . ' ' . $entryGuide->getCustomer()?->getSecondLastname() . ' / ' . $entryGuide->getCustomer()?->getDocumentNumber() . ' / ' . (
                         collect($entryGuide->getCustomer()?->getAddresses())
-                            ->first()
-                                ?->getAddress()
+                        ->first()
+                        ?->getAddress()
                         ?: 'no hay direccion'
                     )
                 ];

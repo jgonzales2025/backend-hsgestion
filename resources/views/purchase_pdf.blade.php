@@ -3,292 +3,295 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Compra {{ $purchase['serie'] }}-{{ $purchase['correlative'] }}</title>
+    <title>{{ $purchase->getTypeDocumentId() ? $purchase->getTypeDocumentId()->getDescription() : 'FACTURA ELECTRÓNICA' }} {{ $purchase->getSerie() }}-{{ $purchase->getCorrelative() }}</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @page {
+            margin: 0cm 0cm;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            font-size: 9px;
-            color: #000;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .header {
-            display: table;
-            width: 100%;
-            margin-bottom: 15px;
-            /* border: 1px solid #000; */
-        }
-
-
-        .header-right {
-            /* display: table-cell; */
-            width: 50%;
-            padding: 10px;
-            vertical-align: top;
-            text-align: center;
-        }
-
-        .company-name {
-            font-weight: bold;
+            font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 10px;
-            margin-bottom: 3px;
+            color: #333;
+            margin-top: 3cm;
+            margin-bottom: 2cm;
+            margin-left: 1.5cm;
+            margin-right: 1.5cm;
+        }
+
+        header {
+            position: fixed;
+            top: 0cm;
+            left: 0cm;
+            right: 0cm;
+            height: 3cm;
+            background-color: #fff;
+            padding-top: 0.5cm;
+            padding-left: 1.5cm;
+            padding-right: 1.5cm;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0cm;
+            left: 0cm;
+            right: 0cm;
+            height: 2cm;
+            background-color: #fff;
+            text-align: center;
+            line-height: 1.5cm;
+            font-size: 9px;
+            border-top: 1px solid #ddd;
+            width: 100%;
+        }
+
+        .logo {
+            max-width: 250px;
+            max-height: 90px;
         }
 
         .company-info {
-            font-size: 8px;
-            line-height: 1.4;
+            text-align: left;
         }
 
-        .invoice-box {
-            border: 2px solid #000;
-            padding: 8px;
-            text-align: center;
-        }
-
-        .invoice-type {
-            font-weight: bold;
+        .company-name {
             font-size: 10px;
-            margin-bottom: 5px;
+            font-weight: bold;
+            color: #000;
         }
 
-        .electronic-label {
-            /* background: #000; */
+        .company-address {
+            font-size: 9px;
+            color: #555;
+        }
+
+        .ruc-box {
+            border: 1px solid #000;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .ruc-number {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .doc-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin: 5px 0;
+            background-color: #333;
             color: #fff;
-            padding: 3px 8px;
-            font-size: 8px;
-            display: inline-block;
-            margin-bottom: 5px;
+            padding: 2px;
+            text-transform: uppercase;
         }
 
-        .invoice-number {
+        .doc-number {
+            font-size: 14px;
             font-weight: bold;
+        }
+
+        .section-title {
             font-size: 11px;
-            margin-top: 5px;
-        }
-
-        .info-section {
-            margin-bottom: 10px;
-        }
-
-        .info-row {
-            display: table;
-            width: 100%;
-            margin-bottom: 3px;
-        }
-
-        .info-label {
-            display: table-cell;
-            width: 30%;
             font-weight: bold;
-            font-size: 8px;
+            background-color: #eee;
+            padding: 5px;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #ccc;
+            color: #000;
         }
 
-        .info-value {
-            display: table-cell;
-            width: 70%;
-            font-size: 8px;
-        }
-
-        .items-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 10px;
             margin-bottom: 10px;
         }
 
-        .items-table th {
-            background: #f0f0f0;
-            border: 1px solid #000;
-            padding: 5px;
-            font-size: 8px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .items-table td {
-            border: 1px solid #000;
+        .info-table td {
             padding: 4px;
-            font-size: 8px;
+            vertical-align: top;
         }
 
-        .items-table td.center {
+        .label {
+            font-weight: bold;
+            color: #444;
+            width: 120px;
+        }
+
+        .products-table th {
+            background-color: #333;
+            color: #fff;
+            padding: 6px;
+            font-size: 9px;
             text-align: center;
         }
 
-        .items-table td.right {
-            text-align: right;
+        .products-table td {
+            border-bottom: 1px solid #ddd;
+            padding: 6px;
+            font-size: 9px;
+            vertical-align: middle;
         }
 
-        .totals-section {
+        .products-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .page-number:before {
+            content: "Página " counter(page);
+        }
+
+        .totals-table {
+            width: 250px;
             float: right;
-            width: 200px;
             margin-top: 10px;
         }
 
-        .totals-row {
-            display: table;
-            width: 100%;
-            margin-bottom: 3px;
+        .totals-table td {
+            padding: 4px;
+            border: 1px solid #ddd;
         }
 
         .totals-label {
-            display: table-cell;
-            width: 60%;
+            font-weight: bold;
+            background-color: #f9f9f9;
             text-align: right;
-            padding-right: 10px;
-            font-size: 8px;
         }
 
         .totals-value {
-            display: table-cell;
-            width: 40%;
             text-align: right;
-            border: 1px solid #000;
-            padding: 3px 5px;
-            font-size: 8px;
-        }
-
-        .totals-value.bold {
-            font-weight: bold;
-        }
-
-        .clearfix::after {
-            content: "";
-            display: table;
-            clear: both;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-
-            <div class="header-right">
-                <div class="invoice-box">
-                    <div class="electronic-label">FACTURA ELECTRÓNICA</div>
-                    <div class="invoice-type">{{ $purchase['reference_document_type']['description'] ?? 'FACTURA' }}
+    <header>
+        <table style="width: 100%;">
+            <tr>
+                <td style="width: 60%; vertical-align: top;">
+                    <div class="company-info" style="margin-top: 5px;">
+                        <div class="company-name">{{ $company ? $company->getCompanyName() : 'CYBERHOUSE TEC S.A.C.' }}</div>
+                        <div class="company-address">
+                            {{ $purchase->getBranch() ? $purchase->getBranch()->getAddress() : ($company ? $company->getAddress() : 'N/A') }}
+                        </div>
+                        <div class="company-address">TELF: N/A</div>
+                        <div class="company-address">CORREO: N/A</div>
                     </div>
-                    <div class="invoice-number">
-                        {{ $purchase['serie'] }}-{{ str_pad($purchase['correlative'], 8, '0', STR_PAD_LEFT) }}</div>
-                </div>
-            </div>
-        </div>
+                </td>
+                <td style="width: 40%; vertical-align: top;">
+                    <div class="ruc-box">
+                        <div class="doc-title">{{ $purchase->getTypeDocumentId() ? $purchase->getTypeDocumentId()->getDescription() : 'FACTURA ELECTRÓNICA' }}</div>
+                        <div class="doc-number">{{ $purchase->getReferenceSerie() ?? 'N/A' }} -
+                            {{ str_pad($purchase->getReferenceCorrelative() ?? 0, 8, '0', STR_PAD_LEFT) }}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </header>
 
+    <footer>
+        <div class="page-number"></div>
+    </footer>
+
+    <div class="content" style="margin-top: 0.5cm;">
         <!-- Supplier Information -->
-        <div class="info-section">
-            <div class="info-row">
-                <div class="info-label">PROVEEDOR:</div>
-                <div class="info-value">{{ $purchase['supplier']['name'] }}</div>
-            </div>
-        </div>
+        <div class="section-title">DATOS DEL PROVEEDOR</div>
+        <table class="info-table">
+            <tr>
+                <td class="label">R.U.C. / DNI:</td>
+                <td>{{ $purchase->getSupplier()->getDocumentNumber() ?? 'N/A' }}</td>
+                <td class="label">RAZÓN SOCIAL:</td>
+                <td>{{ $purchase->getSupplier()->getCompanyName() ?? $purchase->getSupplier()->getName() ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">DIRECCIÓN:</td>
+                <td colspan="3">
+                    @if(!empty($purchase->getSupplier()->getAddresses()) && isset($purchase->getSupplier()->getAddresses()[0]))
+                    {{ $purchase->getSupplier()->getAddresses()[0]->getAddress() }}
+                    @else
+                    N/A
+                    @endif
+                </td>
+            </tr>
+        </table>
 
         <!-- Purchase Information -->
-        <div class="info-section">
-            <div class="info-row">
-                <div class="info-label">FECHA EMISIÓN:</div>
-                <div class="info-value">{{ date('d/m/Y', strtotime($purchase['date'])) }}</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">FECHA VENCIMIENTO:</div>
-                <div class="info-value">{{ date('d/m/Y', strtotime($purchase['date_ven'])) }}</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">FORMA PAGO:</div>
-                <div class="info-value">{{ $purchase['paymentType']['name'] }}</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">MONEDA:</div>
-                <div class="info-value">{{ $purchase['currency']['name'] }}</div>
-            </div>
-            <div class="info-row">
-                <div class="info-label">OBSERVACIÓN:</div>
-                <div class="info-value">{{ $purchase['observation'] ?? '' }}</div>
-            </div>
-        </div>
+        <div class="section-title" style="margin-top: 10px;">DATOS DE LA COMPRA</div>
+        <table class="info-table">
+            <tr>
+                <td class="label">FECHA EMISIÓN:</td>
+                <td>{{ $purchase->getDate() ?? 'N/A' }}</td>
+                <td class="label">FECHA VENC.:</td>
+                <td>{{ $purchase->getDateVen() ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">TIPO PAGO:</td>
+                <td>{{ $purchase->getPaymentType()->getName() ?? 'N/A' }}</td>
+                <td class="label">MONEDA:</td>
+                <td>{{ $purchase->getCurrency()->getName() ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td class="label">OBSERVACIONES:</td>
+                <td colspan="3">{{ $purchase->getObservation() ?? '-' }}</td>
+            </tr>
+        </table>
 
-        <!-- Items Table -->
-        <table class="items-table">
+        <!-- Articles -->
+        <table class="products-table" style="margin-top: 15px;">
             <thead>
                 <tr>
-                    <th style="width: 5%;">ITEM</th>
-                    <th style="width: 10%;">CÓDIGO</th>
-                    <th style="width: 35%;">DESCRIPCIÓN</th>
-                    <th style="width: 8%;">CANT.</th>
-                    <th style="width: 8%;">P. UNIT</th>
-                    <th style="width: 8%;">TOTAL</th>
+                    <th style="width: 10%;">CANT</th>
+                    <th style="width: 15%;">UNIDAD</th>
+                    <th style="width: 50%; text-align: left; padding-left: 10px;">DESCRIPCIÓN</th>
+                    <th style="width: 12.5%;">P. UNIT</th>
+                    <th style="width: 12.5%;">TOTAL</th>
                 </tr>
             </thead>
             <tbody>
-                @php
-                    $subtotal = 0;
-                @endphp
-                @foreach($details as $index => $item)
-                    <tr>
-                        <td class="center">{{ $index + 1 }}</td>
-                        <td class="center">{{ $item['article_id'] }}</td>
-                        <td>{{ $item['description'] }}</td>
-                        <td class="center">{{ number_format($item['cantidad'], 2) }}</td>
-                        <td class="right">{{ number_format($item['precio_costo'], 2) }}</td>
-                        <td class="right">
-                            {{ number_format($item['total'] ?? ($item['cantidad'] * $item['precio_costo']), 2) }}</td>
-                    </tr>
-                    @php
-                        $subtotal += $item['total'] ?? ($item['cantidad'] * $item['precio_costo']);
-                    @endphp
+                @foreach($purchase->getDetComprasGuiaIngreso() as $detalle)
+                <tr>
+                    <td style="text-align:center;">{{ $detalle->getCantidad() ?? 0 }}</td>
+                    <td style="text-align:center;">UND</td>
+                    <td style="text-align:left; padding-left: 10px;">
+                        {{ $detalle->getDescription() ?? 'N/A' }}
+                    </td>
+                    <td style="text-align:right;">{{ number_format($detalle->getPrecioCosto(), 2) }}</td>
+                    <td style="text-align:right;">{{ number_format($detalle->getTotal(), 2) }}</td>
+                </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <!-- Totals Section -->
-        <div class="clearfix">
-            <div class="totals-section">
-                @php
-                    $igv_rate = 0.18;
-                    $gravada = $subtotal / (1 + $igv_rate);
-                    $igv = $subtotal - $gravada;
-                @endphp
-                <div class="totals-row">
-                    <div class="totals-label">GRAVADA:</div>
-                    <div class="totals-value">S/. {{ number_format($gravada, 2) }}</div>
-                </div>
-                <div class="totals-row">
-                    <div class="totals-label">I.G.V.:</div>
-                    <div class="totals-value">S/. {{ number_format($igv, 2) }}</div>
-                </div>
-                <div class="totals-row">
-                    <div class="totals-label">TOTAL:</div>
-                    <div class="totals-value bold">S/. {{ number_format($subtotal, 2) }}</div>
-                </div>
-            </div>
-        </div>
+        <!-- Totals -->
+        <table class="totals-table">
+            <tr>
+                <td class="totals-label">SUBTOTAL:</td>
+                <td class="totals-value">{{ number_format($purchase->getSubtotal(), 2) }}</td>
+            </tr>
+            <tr>
+                <td class="totals-label">IGV (18%):</td>
+                <td class="totals-value">{{ number_format($purchase->getIgv(), 2) }}</td>
+            </tr>
+            <tr>
+                <td class="totals-label">TOTAL:</td>
+                <td class="totals-value" style="font-weight: bold;">{{ number_format($purchase->getTotal(), 2) }}</td>
+            </tr>
+        </table>
 
-        @if(isset($entry_guide) && count($entry_guide) > 0)
-            <!-- Entry Guides Section -->
-            <div style="margin-top: 60px; clear: both;">
-                <div style="font-weight: bold; font-size: 9px; margin-bottom: 5px;">GUÍAS DE INGRESO ASOCIADAS:</div>
-                <div style="font-size: 8px;">
-                    @foreach($entry_guide as $id)
-                        <span style="margin-right: 10px;">{{ $id }}</span>
-                    @endforeach
-                </div>
+        <div style="clear: both;"></div>
+
+        <div style="width: 100%; margin-top: 20px; text-align: right;">
+            @if(isset($qrCode))
+            <div style="display: inline-block; border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
+                <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code" style="width: 50px; height: 50px;">
+                <div style="font-size: 8px; margin-top: 5px; color: #666;">Escanea para verificar</div>
             </div>
-        @endif
-    </div>
+            @endif
+        </div>
+    </div> 
 </body>
 
 </html>

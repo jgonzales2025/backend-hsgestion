@@ -614,7 +614,7 @@ class ControllerEntryGuide extends Controller
                 'sub_total' => $article['subtotal'] ?? 0,
                 'total' => $article['total'] ?? 0,
                 'cantidad_update' => $article['quantity'],
-                'process_status' => 'pendiente', 
+                'process_status' => 'facturado', 
             ];
         }, $data['entry_guide_articles']);
 

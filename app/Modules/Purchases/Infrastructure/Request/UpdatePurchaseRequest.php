@@ -22,13 +22,13 @@ class UpdatePurchaseRequest extends FormRequest
   {
     return [
       'company_id' => 'nullable|integer',
-      'branch_id' => 'required|integer',
-      'supplier_id' => 'required|integer',
+      'branch_id' => 'required|integer|exists:branches,id',
+      'supplier_id' => 'required|integer|exists:customers,id',
       'serie' => 'required|string',
       "entry_guide_id" => 'numeric',
       'exchange_type' => 'required|numeric',
       'payment_type_id' => 'required|numeric|exists:payment_types,id',
-      'currency_id' => 'required|numeric',
+      'currency_id' => 'required|numeric|exists:currency_types,id',
       'date' => 'required|string',
       'date_ven' => 'required|string',
       'days' => 'required|integer',
@@ -42,7 +42,6 @@ class UpdatePurchaseRequest extends FormRequest
       'inafecto' => 'required|numeric',
       'igv' => 'required|numeric',
       'total' => 'required|numeric',
-      'reference_document_type_id' => 'nullable|integer',
       'det_compras_guia_ingreso' => 'required|array',
       'det_compras_guia_ingreso.*.article_id' => 'required|integer|exists:articles,id',
       'det_compras_guia_ingreso.*.description' => 'required|string',
@@ -51,15 +50,14 @@ class UpdatePurchaseRequest extends FormRequest
       'det_compras_guia_ingreso.*.descuento' => 'required|numeric|min:0',
       'det_compras_guia_ingreso.*.sub_total' => 'required|numeric|gt:0',
       'det_compras_guia_ingreso.*.total' => 'required|numeric|gt:0',
-      'det_compras_guia_ingreso.*.cantidad_update' => 'nullable|numeric|', 
+      'det_compras_guia_ingreso.*.cantidad_update' => 'nullable|numeric', 
       'det_compras_guia_ingreso.*.process_status' => 'nullable|string',
-      'entry_guide' => 'required|array',
-      'entry_guide.*' => 'required|integer|exists:entry_guides,id',
+      'entry_guide_id' => 'required|array',
+      'entry_guide_id.*' => 'required|integer|exists:entry_guides,id',
       'is_igv' => 'required|boolean',
-      'type_document_id' => 'nullable|integer',
+      'reference_document_type_id' => 'required|integer',
       'reference_serie' => 'required|string',
-      'reference_correlative' => 'required|string',
-
+      'reference_correlative' => 'required|string', 
     ];
   }
   public function messages(): array

@@ -46,6 +46,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use App\Modules\Purchases\Application\UseCases\CreatePurchaseUseCase;
+use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
+use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
+use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
+use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
 
 class ControllerEntryGuide extends Controller
 {
@@ -65,6 +70,9 @@ class ControllerEntryGuide extends Controller
         private readonly DocumentEntryGuideRepositoryInterface $documentEntryGuideRepositoryInterface,
         private readonly DetEntryguidePurchaseOrderRepositoryInterface $detEntryguidePurchaseOrderRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepositoryInterface,
+        private readonly PurchaseRepositoryInterface $purchaseRepositoryInterface,
+        private readonly PaymentTypeRepositoryInterface $paymentTypeRepositoryInterface,
+        private readonly SerieRepositoryInterface $serieRepositoryInterface,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -194,7 +202,11 @@ class ControllerEntryGuide extends Controller
 
         return DB::transaction(function () use ($request) {
 
-            $entryGuideDTO = new EntryGuideDTO($request->validated());
+            $data = $request->validated();
+            $data['reference_document_id'] = $data['reference_document_id'] ?? 0;
+            $data['document_entry_guide']['reference_document_id'] = $data['document_entry_guide']['reference_document_id'] ?? 0;
+
+            $entryGuideDTO = new EntryGuideDTO($data);
             $entryGuideUseCase = new CreateEntryGuideUseCase(
                 $this->entryGuideRepositoryInterface,
                 $this->companyRepositoryInterface,
@@ -206,10 +218,11 @@ class ControllerEntryGuide extends Controller
             );
             $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
-            $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
- 
-            $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
- 
+            $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $data['entry_guide_articles']);
+            $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $data['document_entry_guide']);
+            if ($data['document_entry_guide']['reference_document_id'] == 1) {
+                $this->createPurchaseFromEntryGuide($entryGuide, $data);
+            }
 
             $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
 
@@ -323,10 +336,12 @@ class ControllerEntryGuide extends Controller
     {
         $createDocumentEntryGuideUseCase = new CreateDocumentEntryGuide($this->documentEntryGuideRepositoryInterface, $this->documentTypeRepository);
 
+        $referenceDocumentId = $data['reference_document_id'] ?? ($data['reference_document']['id'] ?? ($data['reference_document'] ?? 0));
+
         $documentEntryGuide = new DocumentEntryGuideDTO([
             'entry_guide_id' => $shooping->getId(),
 
-            'reference_document_id' => $data['reference_document_id'],
+            'reference_document_id' => $referenceDocumentId,
             'reference_serie' => $data['reference_serie'] ?? '',
             'reference_correlative' => $data['reference_correlative'] ?? '',
         ]);
@@ -579,4 +594,70 @@ class ControllerEntryGuide extends Controller
         return response()->json(['message' => 'Estado actualizado correctamente']);
     }
 
+
+    private function createPurchaseFromEntryGuide($entryGuide, array $data): void
+    {
+        // 22: FACTURACION DE COMPRA (from SerieSeeder)
+        $serie = $this->serieRepositoryInterface->findByDocumentType(22, $entryGuide->getBranch()->getId(), null);
+
+        // Fallback defaults
+        $serieNumber = $serie ? $serie->getSerieNumber() : 'FC01';
+
+        $purchaseArticles = array_map(function ($article) {
+            return [
+                'article_id' => $article['article_id'],
+                'description' => $article['description'],
+                'cantidad' => $article['quantity'],
+                'precio_costo' => $article['precio_costo'] ?? 0,
+                'descuento' => $article['descuento'] ?? 0,
+                'sub_total' => $article['subtotal'] ?? 0,
+                'total' => $article['total'] ?? 0,
+                'cantidad_update' => $article['quantity'],
+                'process_status' => 'pendiente',
+                'purchase_id' => 1
+            ];
+        }, $data['entry_guide_articles']);
+
+        $purchaseDTO = new PurchaseDTO([
+            'company_id' => $entryGuide->getCompany()->getId(),
+            'branch_id' => $entryGuide->getBranch()->getId(),
+            'supplier_id' => $entryGuide->getCustomer()->getId(),
+            'serie' => $serieNumber,
+            'correlative' => '',
+            'exchange_type' => 1,
+            'payment_type_id' => 1,
+            'currency_id' => $entryGuide->getCurrency()->getId(),
+            'date' => $data['date'] ?? date('Y-m-d'),
+            'date_ven' => $data['date'] ?? date('Y-m-d'),
+            'days' => 0,
+            'observation' => $data['observations'] ?? '',
+            'detraccion' => null,
+            'fech_detraccion' => $data['date'] ?? date('Y-m-d'),
+            'amount_detraccion' => 0,
+            'is_detracion' => false,
+            'subtotal' => $data['subtotal'] ?? 0,
+            'total_desc' => $data['total_descuento'] ?? 0,
+            'inafecto' => 0,
+            'igv' => $data['entry_igv'] ?? 0,
+            'total' => $data['total'] ?? 0,
+            'is_igv' => $data['includ_igv'] ?? true,
+            'reference_document_type_id' => 1,
+            'reference_serie' => $data['document_entry_guide']['reference_serie'] ?? '',
+            'reference_correlative' => $data['document_entry_guide']['reference_correlative'] ?? '',
+            'det_compras_guia_ingreso' => $purchaseArticles,
+            'entry_guide_id' => [$entryGuide->getId()],
+        ]);
+
+        $createPurchaseUseCase = new CreatePurchaseUseCase(
+            $this->purchaseRepositoryInterface,
+            $this->paymentTypeRepositoryInterface,
+            $this->branchRepositoryInterface,
+            $this->customerRepositoryInterface,
+            $this->currencyTypeRepositoryInterface,
+            $this->documentNumberGeneratorService,
+            $this->documentTypeRepository
+        );
+
+        $createPurchaseUseCase->execute($purchaseDTO);
+    }
 }

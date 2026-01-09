@@ -55,25 +55,26 @@ use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
 class ControllerEntryGuide extends Controller
 {
     public function __construct(
-        private readonly EntryGuideRepositoryInterface        $entryGuideRepositoryInterface,
-        private readonly CompanyRepositoryInterface           $companyRepositoryInterface,
-        private readonly BranchRepositoryInterface            $branchRepositoryInterface,
-        private readonly CustomerRepositoryInterface          $customerRepositoryInterface,
+        private readonly EntryGuideRepositoryInterface $entryGuideRepositoryInterface,
+        private readonly CompanyRepositoryInterface $companyRepositoryInterface,
+        private readonly BranchRepositoryInterface $branchRepositoryInterface,
+        private readonly CustomerRepositoryInterface $customerRepositoryInterface,
         private readonly EntryGuideArticleRepositoryInterface $entryGuideArticleRepositoryInterface,
-        private readonly EntryItemSerialRepositoryInterface   $entryItemSerialRepositoryInterface,
-        private readonly IngressReasonRepositoryInterface    $ingressReasonRepositoryInterface,
-        private readonly ArticleRepositoryInterface          $articleRepositoryInterface,
-        private readonly DocumentNumberGeneratorService      $documentNumberGeneratorService,
-        private readonly TransactionLogRepositoryInterface   $transactionLogRepositoryInterface,
-        private readonly UserRepositoryInterface             $userRepository,
-        private readonly DocumentTypeRepositoryInterface     $documentTypeRepository,
+        private readonly EntryItemSerialRepositoryInterface $entryItemSerialRepositoryInterface,
+        private readonly IngressReasonRepositoryInterface $ingressReasonRepositoryInterface,
+        private readonly ArticleRepositoryInterface $articleRepositoryInterface,
+        private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
+        private readonly TransactionLogRepositoryInterface $transactionLogRepositoryInterface,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly DocumentEntryGuideRepositoryInterface $documentEntryGuideRepositoryInterface,
         private readonly DetEntryguidePurchaseOrderRepositoryInterface $detEntryguidePurchaseOrderRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepositoryInterface,
         private readonly PurchaseRepositoryInterface $purchaseRepositoryInterface,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepositoryInterface,
         private readonly SerieRepositoryInterface $serieRepositoryInterface,
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): JsonResponse
     {
@@ -224,7 +225,7 @@ class ControllerEntryGuide extends Controller
                 $this->createPurchaseFromEntryGuide($entryGuide, $data);
             }
 
-            $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
+            $detEntryguidePurchaseOrder = $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
 
 
             $this->logTransaction($request, $entryGuide);
@@ -265,7 +266,7 @@ class ControllerEntryGuide extends Controller
         $this->entryGuideArticleRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
 
         $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles']);
-        $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
+        $detEntryguidePurchaseOrder = $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
         $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
 
 
@@ -443,8 +444,8 @@ class ControllerEntryGuide extends Controller
 
                 $entryGuideHeader = [
                     'reference_document_id' => $refDocumentType,
-                    'reference_serie'        => $refSerie,
-                    'reference_correlative'  => $refCorrelative,
+                    'reference_serie' => $refSerie,
+                    'reference_correlative' => $refCorrelative,
                 ];
 
                 $firstIter = false;
@@ -469,8 +470,8 @@ class ControllerEntryGuide extends Controller
                     'id' => $entryGuide->getCustomer()?->getId(),
                     'name' => $entryGuide->getCustomer()?->getName() ?? $entryGuide->getCustomer()?->getCompanyName() . " " . $entryGuide->getCustomer()?->getLastname() . ' ' . $entryGuide->getCustomer()?->getSecondLastname() . ' / ' . $entryGuide->getCustomer()?->getDocumentNumber() . ' / ' . (
                         collect($entryGuide->getCustomer()?->getAddresses())
-                        ->first()
-                        ?->getAddress()
+                            ->first()
+                                ?->getAddress()
                         ?: 'no hay direccion'
                     )
                 ];
@@ -554,11 +555,10 @@ class ControllerEntryGuide extends Controller
                 return response()->json(['message' => 'PDF no encontrado'], 404);
             }
 
-            return response()->download(
-                $fullPath,
-                basename($path),
-                ['Content-Type' => 'application/pdf']
-            );
+            return response()->json([
+                'url' => asset('storage/' . $path),
+                'fileName' => basename($path)
+            ]);
         } catch (\Throwable $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

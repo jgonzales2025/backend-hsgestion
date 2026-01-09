@@ -49,6 +49,7 @@ use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class DispatchNotesController extends Controller
@@ -72,7 +73,8 @@ class DispatchNotesController extends Controller
         private readonly DispatchArticleSerialRepositoryInterface $dispatchArticleSerialRepository,
         private readonly ArticleRepositoryInterface $articleRepository,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
-    ) {}
+    ) {
+    }
 
     public function index(Request $request): JsonResponse
     {
@@ -157,16 +159,29 @@ class DispatchNotesController extends Controller
         try {
             $pdfContent = $this->generatePdfUseCase->execute((int) $id);
 
-            $filename = 'factura_electronica_' . $id . '.pdf';
+            // We need to fetch the dispatch note to get the correct filename components if possible, 
+            // but generatePdfUseCase only returns string content. 
+            // Assuming we want to keep a consistent naming convention or use a generic one if object not available here easily without query.
+            // However, looking at index method, we can see how to retrieve it if needed, but let's stick to the ID based or simple one if that's what was there, 
+            // OR better, let's fetch it to be consistent with other controllers if we want the series/correlative.
+            // But the previous code just used 'factura_electronica_' . $id. 
+            // Let's stick to a safe name with the ID as before but saving it.
 
-            return response()->streamDownload(function () use ($pdfContent) {
-                echo $pdfContent;
-            }, $filename, [
-                'Content-Type' => 'application/pdf',
-                'Cache-Control' => 'no-cache, no-store, must-revalidate',
-                'Pragma' => 'no-cache',
-                'Expires' => '0',
+            // To be more consistent with the user request "make it the same", 
+            // I should probably try to use the series/correlative if I can, but the tool use case returns raw content.
+            // The previous code used: $filename = 'factura_electronica_' . $id . '.pdf';
+            // I will use that for now but ensuring no spaces (which it doesn't have).
+
+            $filename = 'factura_electronica_' . $id . '.pdf';
+            $path = 'pdf/' . $filename;
+
+            Storage::disk('public')->put($path, $pdfContent);
+
+            return response()->json([
+                'url' => asset('storage/' . $path),
+                'fileName' => $filename
             ]);
+
         } catch (\Throwable $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

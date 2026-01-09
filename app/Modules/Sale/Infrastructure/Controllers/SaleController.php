@@ -67,6 +67,7 @@ use App\Services\SalesSunatService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class SaleController extends Controller
 {
@@ -104,7 +105,7 @@ class SaleController extends Controller
         $status = $request->query('status') !== null ? $request->query('status') : null;
         $paymentStatus = $request->query('payment_status') !== null ? $request->query('payment_status') : null;
         $documentTypeId = $request->query('document_type_id');
-        
+
         $saleUseCase = new FindAllSalesUseCase($this->saleRepository);
         $sales = $saleUseCase->execute($companyId, $startDate, $endDate, $description, $status, $paymentStatus, $documentTypeId);
 
@@ -458,13 +459,13 @@ class SaleController extends Controller
     private function createSaleArticles($sale, array $articlesData): array
     {
         $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository, $this->articleRepository);
-        
+
         // Calcular primero el subtotal_costo_neto total de todos los artículos
         $subtotal_costo_neto = 0;
         foreach ($articlesData as $article) {
             $subtotal_costo_neto += $article['purchase_price'] * $article['quantity'];
         }
-        
+
         // Procesar los artículos
         $saleArticles = [];
         foreach ($articlesData as $article) {
@@ -479,7 +480,7 @@ class SaleController extends Controller
                 'purchase_price' => $article['purchase_price'],
                 'costo_neto' => $article['purchase_price'] * $article['quantity']
             ]);
-            
+
             $saleArticle = $createSaleArticleUseCase->execute($saleArticleDTO, $subtotal_costo_neto);
 
             // Array para almacenar los seriales
@@ -502,20 +503,20 @@ class SaleController extends Controller
             $saleArticle->serials = $serials;
             $saleArticles[] = $saleArticle;
         }
-        
+
         return $saleArticles;
     }
 
     private function updateSaleArticles($sale, array $articlesData): array
     {
         $createSaleArticleUseCase = new CreateSaleArticleUseCase($this->saleArticleRepository, $this->articleRepository);
-        
+
         // Calcular primero el subtotal_costo_neto total de todos los artículos
         $subtotal_costo_neto = 0;
         foreach ($articlesData as $article) {
             $subtotal_costo_neto += $article['purchase_price'] * $article['quantity'];
         }
-        
+
         // Procesar los artículos
         $saleArticles = [];
         foreach ($articlesData as $article) {
@@ -552,7 +553,7 @@ class SaleController extends Controller
             $saleArticle->serials = $serials;
             $saleArticles[] = $saleArticle;
         }
-        
+
         return $saleArticles;
     }
 
@@ -693,7 +694,7 @@ class SaleController extends Controller
         return response()->json(array_values($creditNotes), 200);
     }
 
-    public function generatePdf(int $id)
+    public function generatePdf(int $id): JsonResponse
     {
         $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
         $sale = $saleUseCase->execute($id);
@@ -742,8 +743,16 @@ class SaleController extends Controller
             'transactionLog' => $transactionLog
         ]);
 
-        $documentTypeName = $sale->getDocumentType()->getDescription();
-        return $pdf->stream($documentTypeName . '_' . $sale->getSerie() . '-' . $sale->getDocumentNumber() . '.pdf');
+        $documentTypeName = str_replace(' ', '_', $sale->getDocumentType()->getDescription());
+        $fileName = $documentTypeName . '_' . $sale->getSerie() . '-' . $sale->getDocumentNumber() . '.pdf';
+
+        $path = 'pdf/' . $fileName;
+        Storage::disk('public')->put($path, $pdf->output());
+
+        return response()->json([
+            'url' => asset('storage/' . $path),
+            'fileName' => $fileName
+        ]);
     }
 
     public function updateStatus(Request $request, int $id)
@@ -755,7 +764,7 @@ class SaleController extends Controller
         $result = DB::select('CALL sp_comunicacion_anulacion_baja(?)', [$id]);
 
         $estado = $result[0]->estado;
-        $msg    = $result[0]->msg;
+        $msg = $result[0]->msg;
 
         if ($estado == 0) {
             return response()->json([
@@ -766,8 +775,7 @@ class SaleController extends Controller
         $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
         $sale = $saleUseCase->execute($id);
 
-        if($sale->getDocumentType()->getId() == 1)
-        {
+        if ($sale->getDocumentType()->getId() == 1) {
             $response = $this->salesSunatService->saleInvoiceAnulacion($sale);
         }
 

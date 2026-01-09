@@ -18,17 +18,18 @@ use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 use App\Modules\Purchases\Infrastructure\Request\CreatePurchaseRequest;
 use App\Modules\Purchases\Infrastructure\Request\UpdatePurchaseRequest;
 use App\Modules\Purchases\Infrastructure\Resource\PurchaseResource;
-use Illuminate\Http\JsonResponse; 
+use Illuminate\Http\JsonResponse;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\Request;
-use Maatwebsite\Excel\Facades\Excel; 
+use Maatwebsite\Excel\Facades\Excel;
 use App\Modules\Purchases\Infrastructure\Persistence\PurchasesExport;
-use Barryvdh\DomPDF\Facade\Pdf; 
+use Illuminate\Support\Facades\Storage;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PurchaseController extends Controller
 {
     public function __construct(
-        private readonly PurchaseRepositoryInterface $purchaseRepository, 
+        private readonly PurchaseRepositoryInterface $purchaseRepository,
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
@@ -122,7 +123,7 @@ class PurchaseController extends Controller
             200
         );
     }
-    
+
     public function downloadPdf(int $id)
     {
         $purchase = $this->purchaseRepository->dowloadPdf($id);
@@ -134,9 +135,17 @@ class PurchaseController extends Controller
         $pdf = Pdf::loadView('purchase_pdf', [
             'purchase' => $purchase,
             'company' => $company,
-    
+        ]); 
+
+        $fileName = $purchase->getSerie() . '_' . $purchase->getCorrelative() . '.pdf';
+        $path = 'purchases/' . $fileName;
+
+        Storage::disk('public')->put($path, $pdf->output());
+
+        return response()->json([
+            'url' => asset('storage/' . $path),
+            'fileName' => $fileName
         ]);
-        return $pdf->stream($purchase->getSerie() . '_' . $purchase->getCorrelative() . '.pdf');
     }
 
     public function exportExcel(Request $request)

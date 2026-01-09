@@ -11,7 +11,7 @@ interface EntryGuideArticleRepositoryInterface
       public function findAll(): array;
       public function findById(int $id): array;
       public function deleteByEntryGuideId(int $id): void;
-      public function findByIdObj(int $entryGuideId): ?EntryGuideArticle;
+      public function findByIdObj(int $entryGuideId, int $articleId): ?EntryGuideArticle;
       public function update(EntryGuideArticle $article): void;
       public function updateQuantity(int $articleId, int $quantity): void;
 }

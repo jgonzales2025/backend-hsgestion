@@ -6,7 +6,8 @@ use App\Modules\DetEntryguidePurchaseOrder\Domain\Entities\DetEntryguidePurchase
 use App\Modules\DetEntryguidePurchaseOrder\Domain\Interface\DetEntryguidePurchaseOrderRepositoryInterface;
 use App\Modules\DetEntryguidePurchaseOrder\Infrastrucutre\Models\EloquentDetEntryguidePurchaseOrder;
 
-class EloquentDetEntryguidePurchaseOrderRepository implements DetEntryguidePurchaseOrderRepositoryInterface{
+class EloquentDetEntryguidePurchaseOrderRepository implements DetEntryguidePurchaseOrderRepositoryInterface
+{
 
     public function create(DetEntryguidePurchaseOrder $detEntryguidePurchaseOrder): DetEntryguidePurchaseOrder
     {
@@ -70,4 +71,8 @@ class EloquentDetEntryguidePurchaseOrderRepository implements DetEntryguidePurch
         })->toArray();
     }
 
+    public function deleteByEntryGuideId(int $id): void
+    {
+        EloquentDetEntryguidePurchaseOrder::where('entry_guide_id', $id)->delete();
+    }
 }

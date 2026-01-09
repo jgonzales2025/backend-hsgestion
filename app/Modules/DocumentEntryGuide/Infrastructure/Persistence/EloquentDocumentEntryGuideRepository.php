@@ -72,4 +72,9 @@ class EloquentDocumentEntryGuideRepository implements DocumentEntryGuideReposito
             reference_correlative: $eloquentEntryGuide->reference_correlative,
         );
     }
+
+    public function deleteByEntryGuideId(int $id): void
+    {
+        EloquentDocumentEntryGuide::where('entry_guide_id', $id)->delete();
+    }
 }

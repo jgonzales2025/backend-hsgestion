@@ -87,7 +87,7 @@ class EloquentEntryGuide extends Model
             observations: $eloquentEntryGuide->observations,
             ingressReason: $eloquentEntryGuide->ingressReason->toDomain($eloquentEntryGuide->ingressReason),
             reference_serie: $eloquentEntryGuide->reference_serie,
-            reference_correlative: $eloquentEntryGuide->reference_correlative,
+            reference_correlative: $eloquentEntryGuide->reference_correlative ,   
             status: $eloquentEntryGuide->status,
             subtotal: $eloquentEntryGuide->subtotal,
             total_descuento: $eloquentEntryGuide->total_descuento,

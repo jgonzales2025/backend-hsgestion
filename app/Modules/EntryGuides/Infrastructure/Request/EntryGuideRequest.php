@@ -26,7 +26,7 @@ class EntryGuideRequest extends FormRequest
             'ingress_reason_id' => 'required|integer|exists:ingress_reasons,id',
             'reference_po_serie' => 'string',
             'reference_po_correlative' => 'string',
-            'reference_document_id' => 'required|integer|exists:document_types,id',
+            'reference_document_id' => 'nullable',
             'subtotal' => 'nullable|numeric',
             'total_descuento' => 'nullable|numeric',
             'total' => 'nullable|numeric',
@@ -46,7 +46,7 @@ class EntryGuideRequest extends FormRequest
 
 
             'document_entry_guide' => 'required|array',
-            'document_entry_guide.reference_document_id' => 'required|integer|exists:document_types,id',
+            'document_entry_guide.reference_document_id' => 'nullable',
             'document_entry_guide.reference_serie' => 'nullable|string',
             'document_entry_guide.reference_correlative' => 'nullable|string',
             'currency_id' => 'required|integer|exists:currency_types,id',

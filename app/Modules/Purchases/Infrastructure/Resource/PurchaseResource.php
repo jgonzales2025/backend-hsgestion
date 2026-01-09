@@ -70,9 +70,7 @@ class PurchaseResource extends JsonResource
             'process_status' => $this->calculateProcessStatus(),
 
             'det_compras_guia_ingreso' =>  DetailPurchaseGuideResource::collection($this->resource->getDetComprasGuiaIngreso()),
-            'shopping_Income_Guide' => array_map(function ($item) {
-                return $item->getEntryGuideId();
-            }, $this->resource->getShoppingIncomeGuide()),
+            'entry_guide' => array_map(fn ($item) => $item->getEntryGuideId(), $this->resource->getShoppingIncomeGuide()),
 
 
         ];

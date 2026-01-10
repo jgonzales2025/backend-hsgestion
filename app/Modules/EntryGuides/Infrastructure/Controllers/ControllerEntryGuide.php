@@ -448,13 +448,16 @@ class ControllerEntryGuide extends Controller
 
         $entryGuides = $this->entryGuideRepositoryInterface->findByIds($ids);
 
-        
+
         $refSerie = null;
         $refCorrelative = null;
         $refDocumentType = null;
         $entryGuideHeader = null;
+        $isIgv = null;
+        $date = null;
         $firstIter = true;
 
+        $allDatesSame = true;
         foreach ($entryGuides as $guide) {
             $docEntryGuide = $this->documentEntryGuideRepositoryInterface->findByIdObj($guide->getId());
 
@@ -462,12 +465,15 @@ class ControllerEntryGuide extends Controller
                 $refSerie = $docEntryGuide?->getReferenceSerie();
                 $refCorrelative = $docEntryGuide?->getReferenceCorrelative();
                 $refDocumentType = $docEntryGuide?->getReferenceDocument()?->getId();
+                $date = $guide->getDate();
+                $isIgv = $guide->getIncludIgv();
 
                 $entryGuideHeader = [
                     'reference_document_id' => $refDocumentType,
                     'reference_serie' => $refSerie,
                     'reference_correlative' => $refCorrelative,
                 ];
+
 
                 $firstIter = false;
             } else {
@@ -477,7 +483,14 @@ class ControllerEntryGuide extends Controller
                 if (($docEntryGuide?->getReferenceDocument()?->getId()) !== $refDocumentType) {
                     return response()->json(['message' => 'Todos los documentos deben tener el mismo tipo de documento de referencia'], 422);
                 }
+                if ($guide->getDate() !== $date) {
+                    $allDatesSame = false;
+                }
             }
+        }
+
+        if (!$allDatesSame) {
+            $date = date('Y-m-d');
         }
 
         $customerHeader = null;
@@ -502,7 +515,6 @@ class ControllerEntryGuide extends Controller
             foreach ($articles as $article) {
                 $articleId = $article->getArticle()->getId();
 
-                // Get values from article line
                 $qty = (float) $article->getQuantity();
                 $saldo = (float) $article->getSaldo();
                 $precio = (float) $article->getTotalDescuento();
@@ -558,6 +570,8 @@ class ControllerEntryGuide extends Controller
             'articles' => $aggregated,
             'entry_guide' => $entryGuideHeader,
             'currency_type' => $currencyType,
+            'date' => $date,
+            'is_igv' => $isIgv,
         ], 200);
     }
 
@@ -732,7 +746,7 @@ class ControllerEntryGuide extends Controller
                         'sub_total' => 0,
                         'total' => 0,
                         'cantidad_update' => 0,
-                        'process_status' => 'facturado',
+                        'process_status' => 'completado',
                     ];
                 }
                 $consolidatedArticles[$articleId]['cantidad'] += (float)$article->getQuantity();
@@ -741,7 +755,6 @@ class ControllerEntryGuide extends Controller
                 $consolidatedArticles[$articleId]['sub_total'] += (float)$article->getSubtotal();
                 $consolidatedArticles[$articleId]['total'] += (float)$article->getTotal();
             }
-
         }
 
         foreach ($consolidatedArticles as $art) {
@@ -765,7 +778,6 @@ class ControllerEntryGuide extends Controller
                 $referenceCorrelative = $data['document_entry_guide']['reference_correlative'] ?? '';
                 $currencyId = $guide->getCurrency()->getId();
             } else {
-
             }
         }
 

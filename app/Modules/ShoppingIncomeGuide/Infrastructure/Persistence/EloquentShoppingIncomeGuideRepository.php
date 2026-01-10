@@ -6,6 +6,7 @@ use App\Modules\ShoppingIncomeGuide\Domain\Entities\ShoppingIncomeGuide;
 use App\Modules\ShoppingIncomeGuide\Domain\Interface\ShoppingIncomeGuideRepositoryInterface;
 use App\Modules\ShoppingIncomeGuide\Infrastructure\Models\EloquentShoppingIncomeGuide;
 use PHPUnit\Framework\MockObject\Stub\ReturnReference;
+
 class EloquentShoppingIncomeGuideRepository implements ShoppingIncomeGuideRepositoryInterface
 {
   public function findAll(): array
@@ -18,11 +19,10 @@ class EloquentShoppingIncomeGuideRepository implements ShoppingIncomeGuideReposi
         entry_guide_id: $item->entry_guide_id
       );
     })->toArray();
-
   }
   public function findById(int $id): array
   {
-    $eloquentShoppingIncomeGuide = EloquentShoppingIncomeGuide::where('purchase_id',$id)->get();
+    $eloquentShoppingIncomeGuide = EloquentShoppingIncomeGuide::where('purchase_id', $id)->get();
     return $eloquentShoppingIncomeGuide->map(function ($item) {
       return new ShoppingIncomeGuide(
         id: $item->id,
@@ -30,7 +30,17 @@ class EloquentShoppingIncomeGuideRepository implements ShoppingIncomeGuideReposi
         entry_guide_id: $item->entry_guide_id
       );
     })->toArray();
-
+  }
+  public function findByEntryGuideId(int $id): array
+  {
+    $eloquentShoppingIncomeGuide = EloquentShoppingIncomeGuide::where('entry_guide_id', $id)->get();
+    return $eloquentShoppingIncomeGuide->map(function ($item) {
+      return new ShoppingIncomeGuide(
+        id: $item->id,
+        purchase_id: $item->purchase_id,
+        entry_guide_id: $item->entry_guide_id
+      );
+    })->toArray();
   }
   public function save(ShoppingIncomeGuide $shoppingIncomeGuide): ?ShoppingIncomeGuide
   {
@@ -48,6 +58,5 @@ class EloquentShoppingIncomeGuideRepository implements ShoppingIncomeGuideReposi
   public function deletedBy(int $id): void
   {
     EloquentShoppingIncomeGuide::where('purchase_id', $id)->delete();
-  
   }
 }

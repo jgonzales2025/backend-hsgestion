@@ -27,7 +27,7 @@ class CreatePurchaseRequest extends FormRequest
       'supplier_id' => 'required|integer|exists:customers,id',
       'serie' => 'required|string',
       "entry_guide_id" => 'numeric',
-      'exchange_type' => 'required|numeric',
+      'exchange_type' => 'nullable|numeric',
       'payment_type_id' => 'required|numeric|exists:payment_types,id',
       'currency_id' => 'required|numeric|exists:currency_types,id',
       'date' => 'required|string',
@@ -51,7 +51,7 @@ class CreatePurchaseRequest extends FormRequest
       'det_compras_guia_ingreso.*.descuento' => 'required|numeric|min:0',
       'det_compras_guia_ingreso.*.sub_total' => 'required|numeric|gt:0',
       'det_compras_guia_ingreso.*.total' => 'required|numeric|gt:0',
-      'det_compras_guia_ingreso.*.cantidad_update' => 'nullable|numeric', 
+      'det_compras_guia_ingreso.*.cantidad_update' => 'nullable|numeric',
       'det_compras_guia_ingreso.*.process_status' => 'nullable|string',
       'entry_guide_id' => 'required|array',
       'entry_guide_id.*' => 'required|integer|exists:entry_guides,id',
@@ -68,7 +68,7 @@ class CreatePurchaseRequest extends FormRequest
       'type_document_id.required' => 'El tipo de documento es obligatorio',
       'det_compras_guia_ingreso.*.precio_costo.gt' => 'El precio de costo debe ser mayor a 0',
       'det_compras_guia_ingreso.*.total.gt' => 'El total debe ser mayor a 0',
-      'payment_type_id.required' => 'El tipo de pago es obligatorio', 
+      'payment_type_id.required' => 'El tipo de pago es obligatorio',
     ];
   }
 }

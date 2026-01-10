@@ -42,7 +42,7 @@ class PurchaseDTO
         $this->supplier_id = $array['supplier_id'];
         $this->serie = $array['serie'];
         $this->correlative = $array['correlative'] ?? '';
-        $this->exchange_type = $array['exchange_type'];
+        $this->exchange_type = $array['exchange_type'] ?? null;
         $this->payment_type_id = $array['payment_type_id'];
         $this->currency = $array['currency_id'];
         $this->date = $array['date'];

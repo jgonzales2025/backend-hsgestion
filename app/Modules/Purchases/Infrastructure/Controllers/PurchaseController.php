@@ -14,6 +14,7 @@ use App\Modules\Purchases\Application\UseCases\CreatePurchaseUseCase;
 use App\Modules\Purchases\Application\UseCases\FindAllPurchaseUseCase;
 use App\Modules\Purchases\Application\UseCases\FindByIdPurchaseUseCase;
 use App\Modules\Purchases\Application\UseCases\UpdatePurchaseUseCase;
+use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
 use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 use App\Modules\Purchases\Infrastructure\Request\CreatePurchaseRequest;
 use App\Modules\Purchases\Infrastructure\Request\UpdatePurchaseRequest;
@@ -37,6 +38,7 @@ class PurchaseController extends Controller
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly CompanyRepositoryInterface $companyRepository,
+        private readonly ExchangeRateRepositoryInterface $exchangeRateRepository,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -89,7 +91,8 @@ class PurchaseController extends Controller
             $this->customerRepository,
             $this->currencyRepository,
             $this->documentNumberGeneratorService,
-            $this->documentTypeRepository
+            $this->documentTypeRepository,
+            $this->exchangeRateRepository
         );
 
         $purchase = $cretaePurchaseUseCase->execute($purchaseDTO);
@@ -110,7 +113,8 @@ class PurchaseController extends Controller
             $this->customerRepository,
             $this->currencyRepository,
             $this->documentNumberGeneratorService,
-            $this->documentTypeRepository
+            $this->documentTypeRepository,
+            $this->exchangeRateRepository
         );
         $purchase = $updatePurchaseUseCase->execute($purchaseDTO, $id);
 

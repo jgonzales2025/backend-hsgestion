@@ -7,8 +7,8 @@ use App\Modules\ShoppingIncomeGuide\Domain\Entities\ShoppingIncomeGuide;
 interface ShoppingIncomeGuideRepositoryInterface
 {
     public function findAll(): array;
-    public function findById(int $id):array;
-    public function save(ShoppingIncomeGuide $shoppingIncomeGuide):?ShoppingIncomeGuide;
-   public function deletedBy(int $id):void;
-
+    public function findById(int $id): array;
+    public function findByEntryGuideId(int $id): array;
+    public function save(ShoppingIncomeGuide $shoppingIncomeGuide): ?ShoppingIncomeGuide;
+    public function deletedBy(int $id): void;
 }

@@ -16,6 +16,7 @@ use App\Modules\DocumentEntryGuide\application\DTOS\DocumentEntryGuideDTO;
 use App\Modules\DocumentEntryGuide\application\UseCases\CreateDocumentEntryGuide;
 use App\Modules\DocumentEntryGuide\Domain\Interface\DocumentEntryGuideRepositoryInterface;
 use App\Modules\DocumentEntryGuide\Infrastructure\Resource\DocumentEntryGuideResource;
+use App\Modules\ShoppingIncomeGuide\Domain\Interface\ShoppingIncomeGuideRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\EntryGuideArticle\Application\DTOS\EntryGuideArticleDTO;
 use App\Modules\EntryGuideArticle\Application\UseCases\CreateEntryGuideArticle;
@@ -51,6 +52,7 @@ use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
+use App\Modules\Purchases\Application\UseCases\UpdatePurchaseUseCase;
 use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
 
 class ControllerEntryGuide extends Controller
@@ -75,6 +77,7 @@ class ControllerEntryGuide extends Controller
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepositoryInterface,
         private readonly SerieRepositoryInterface $serieRepositoryInterface,
         private readonly ExchangeRateRepositoryInterface $exchangeRateRepositoryInterface,
+        private readonly ShoppingIncomeGuideRepositoryInterface $shoppingIncomeGuideRepositoryInterface,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -281,7 +284,7 @@ class ControllerEntryGuide extends Controller
             $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
 
-
+            $this->syncPurchaseFromEntryGuide($entryGuide, array_merge($request->validated(), ['id' => $id]));
 
             $this->logTransaction($request, $entryGuide);
 
@@ -445,7 +448,7 @@ class ControllerEntryGuide extends Controller
 
         $entryGuides = $this->entryGuideRepositoryInterface->findByIds($ids);
 
-
+        
         $refSerie = null;
         $refCorrelative = null;
         $refDocumentType = null;
@@ -680,5 +683,140 @@ class ControllerEntryGuide extends Controller
         );
 
         $createPurchaseUseCase->execute($purchaseDTO);
+    }
+
+    private function syncPurchaseFromEntryGuide($entryGuide, array $data): void
+    {
+        $isFactura = (isset($data['document_entry_guide']['reference_document_id']) && $data['document_entry_guide']['reference_document_id'] == 1);
+
+        $shoppingIncomeGuides = $this->shoppingIncomeGuideRepositoryInterface->findByEntryGuideId($entryGuide->getId());
+
+        if (empty($shoppingIncomeGuides)) {
+            if ($isFactura) {
+                $this->createPurchaseFromEntryGuide($entryGuide, $data);
+            }
+            return;
+        }
+
+        // Si ya hay compras vinculadas, actualizar la primera vinculada (usualmente es 1:1 o consolidado)
+        foreach ($shoppingIncomeGuides as $sig) {
+            $purchaseId = $sig->getPurchaseId();
+            $this->updateAssociatedPurchase($purchaseId, $data);
+        }
+    }
+
+    private function updateAssociatedPurchase(int $purchaseId, array $data): void
+    {
+        $allSigs = $this->shoppingIncomeGuideRepositoryInterface->findById($purchaseId);
+        $entryGuideIds = array_map(fn($sig) => $sig->getEntryGuideId(), $allSigs);
+
+        $consolidatedArticles = [];
+        $totalSubtotal = 0;
+        $totalIgv = 0;
+        $totalTotal = 0;
+        $totalDescuento = 0;
+
+        foreach ($entryGuideIds as $egId) {
+            $guide = $this->entryGuideRepositoryInterface->findById($egId);
+            $articles = $this->entryGuideArticleRepositoryInterface->findById($egId);
+
+            foreach ($articles as $article) {
+                $articleId = $article->getArticle()->getId();
+                if (!isset($consolidatedArticles[$articleId])) {
+                    $consolidatedArticles[$articleId] = [
+                        'article_id' => $articleId,
+                        'description' => $article->getDescription(),
+                        'cantidad' => 0,
+                        'precio_costo' => $article->getTotalDescuento() ?: (float)$article->getArticle()->getPurchasePrice(),
+                        'descuento' => 0,
+                        'sub_total' => 0,
+                        'total' => 0,
+                        'cantidad_update' => 0,
+                        'process_status' => 'facturado',
+                    ];
+                }
+                $consolidatedArticles[$articleId]['cantidad'] += (float)$article->getQuantity();
+                $consolidatedArticles[$articleId]['cantidad_update'] += (float)$article->getQuantity();
+                $consolidatedArticles[$articleId]['descuento'] += (float)$article->getDescuento();
+                $consolidatedArticles[$articleId]['sub_total'] += (float)$article->getSubtotal();
+                $consolidatedArticles[$articleId]['total'] += (float)$article->getTotal();
+            }
+
+        }
+
+        foreach ($consolidatedArticles as $art) {
+            $totalSubtotal += $art['sub_total'];
+            $totalTotal += $art['total'];
+            $totalDescuento += $art['descuento'];
+        }
+
+        $totalIgv = 0;
+        $referenceSerie = '';
+        $referenceCorrelative = '';
+        $currencyId = 1;
+
+        foreach ($entryGuideIds as $egId) {
+            $docEntryGuide = $this->documentEntryGuideRepositoryInterface->findByIdObj($egId);
+            $guide = $this->entryGuideRepositoryInterface->findById($egId);
+
+            if ($egId == $data['id']) {
+                $totalIgv += (float)($data['entry_igv'] ?? 0);
+                $referenceSerie = $data['document_entry_guide']['reference_serie'] ?? '';
+                $referenceCorrelative = $data['document_entry_guide']['reference_correlative'] ?? '';
+                $currencyId = $guide->getCurrency()->getId();
+            } else {
+
+            }
+        }
+
+        $isIgv = $data['includ_igv'] ?? true;
+        if ($totalIgv == 0 && $isIgv) {
+            $totalIgv = $totalTotal - $totalSubtotal;
+        }
+
+        $purchase = $this->purchaseRepositoryInterface->findById($purchaseId);
+
+        $purchaseDTO = new PurchaseDTO([
+            'company_id' => $purchase->getCompanyId(),
+            'branch_id' => $purchase->getBranch()->getId(),
+            'supplier_id' => $purchase->getSupplier()->getId(),
+            'serie' => $purchase->getSerie(),
+            'correlative' => $purchase->getCorrelative(),
+            'exchange_type' => $purchase->getExchangeType(),
+            'payment_type_id' => $purchase->getPaymentType()->getId(),
+            'currency_id' => $purchase->getCurrency()->getId(),
+            'date' => $purchase->getDate(),
+            'date_ven' => $purchase->getDateVen(),
+            'days' => $purchase->getDays(),
+            'observation' => $purchase->getObservation(),
+            'detraccion' => $purchase->getDetraccion(),
+            'fech_detraccion' => $purchase->getFechDetraccion(),
+            'amount_detraccion' => $purchase->getAmountDetraccion(),
+            'is_detracion' => $purchase->getIsDetracion(),
+            'subtotal' => $totalSubtotal,
+            'total_desc' => $totalDescuento,
+            'inafecto' => $purchase->getInafecto(),
+            'igv' => $totalIgv,
+            'total' => $totalTotal,
+            'is_igv' => $isIgv,
+            'reference_document_type_id' => 1,
+            'reference_serie' => $referenceSerie ?: $purchase->getReferenceSerie(),
+            'reference_correlative' => $referenceCorrelative ?: $purchase->getReferenceCorrelative(),
+            'det_compras_guia_ingreso' => array_values($consolidatedArticles),
+            'entry_guide_id' => $entryGuideIds,
+        ]);
+
+        $updatePurchaseUseCase = new UpdatePurchaseUseCase(
+            $this->purchaseRepositoryInterface,
+            $this->paymentTypeRepositoryInterface,
+            $this->branchRepositoryInterface,
+            $this->customerRepositoryInterface,
+            $this->currencyTypeRepositoryInterface,
+            $this->documentNumberGeneratorService,
+            $this->documentTypeRepository,
+            $this->exchangeRateRepositoryInterface
+        );
+
+        $updatePurchaseUseCase->execute($purchaseDTO, $purchaseId);
     }
 }

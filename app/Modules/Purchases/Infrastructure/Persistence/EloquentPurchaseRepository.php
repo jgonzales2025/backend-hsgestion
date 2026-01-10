@@ -85,7 +85,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 'supplier_id' => $purchase->getSupplier()->getId(),
                 'serie' => $purchase->getSerie(),
                 'correlative' => $purchase->getCorrelative(),
-                'exchange_type' => $purchase->getExchangeType(),
+                'exchange_type' => $purchase->getExchangeType() ,
                 'payment_type_id' => $purchase->getPaymentType()->getId(),
                 'currency' => $purchase->getCurrency()->getId(),
                 'date' => $purchase->getDate(),
@@ -125,7 +125,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 DB::statement('CALL descontar_saldo_fifo(?,?,?,?,?,?,?)', [
                     $purchase->getCompanyId(),                  // cia
                     $purchase->getSupplier()->getId(),          // cliente
-                    $det->article_id,                           // artículo correcto
+                    $det->article_id,                           // artículo
                     $purchase->getTypeDocumentId()->getId(),    // tipo documento
                     $purchase->getReferenceSerie(),             // serie
                     $purchase->getReferenceCorrelative(),       // correlativo

@@ -17,6 +17,7 @@ use App\Modules\PaymentType\Application\UseCases\FindByIdPaymentTypeUseCase;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
 use App\Modules\Purchases\Domain\Entities\Purchase;
+use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
 use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 
@@ -29,11 +30,12 @@ class UpdatePurchaseUseCase
         private readonly CustomerRepositoryInterface $customerRepository,
         private readonly CurrencyTypeRepositoryInterface $currencyRepository,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
-        private readonly DocumentTypeRepositoryInterface $documentTypeRepository
+        private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
+        private readonly ExchangeRateRepositoryInterface $exchangeRateRepository,
 
     ) {}
 
-    public function execute(PurchaseDTO $purchaseDTO , int $id)
+    public function execute(PurchaseDTO $purchaseDTO, int $id)
     {
         $lastDocumentNumber = $this->purchaseRepository->getLastDocumentNumber($purchaseDTO->company_id, $purchaseDTO->branch_id, $purchaseDTO->serie);
 
@@ -53,6 +55,11 @@ class UpdatePurchaseUseCase
 
         $documentType = new FindByIdDocumentTypeUseCase($this->documentTypeRepository);
         $documentType = $documentType->execute($purchaseDTO->type_document_id);
+
+        if ($purchaseDTO->exchange_type === null || $purchaseDTO->exchange_type == 0) {
+            $exchangeRate = $this->exchangeRateRepository->find();
+            $purchaseDTO->exchange_type = $exchangeRate ? $exchangeRate->getParallelRate() : 0;
+        }
 
         $puchaseCreate = new Purchase(
             id: $id,

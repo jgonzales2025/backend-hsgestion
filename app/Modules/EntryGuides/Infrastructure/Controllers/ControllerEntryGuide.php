@@ -51,6 +51,7 @@ use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
+use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
 
 class ControllerEntryGuide extends Controller
 {
@@ -73,6 +74,7 @@ class ControllerEntryGuide extends Controller
         private readonly PurchaseRepositoryInterface $purchaseRepositoryInterface,
         private readonly PaymentTypeRepositoryInterface $paymentTypeRepositoryInterface,
         private readonly SerieRepositoryInterface $serieRepositoryInterface,
+        private readonly ExchangeRateRepositoryInterface $exchangeRateRepositoryInterface,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -366,7 +368,7 @@ class ControllerEntryGuide extends Controller
     private function calculateProcessStatus(array $articles, $documentEntryGuide = null): string
     {
         if ($documentEntryGuide && $documentEntryGuide->getReferenceDocument()?->getId() == 1) {
-            return 'facturado';
+            return 'completado';
         }
 
         $totalQuantity = 0;
@@ -642,7 +644,7 @@ class ControllerEntryGuide extends Controller
             'supplier_id' => $entryGuide->getCustomer()->getId(),
             'serie' => $serieNumber,
             'correlative' => '',
-            'exchange_type' => 1,
+            'exchange_type' => null,
             'payment_type_id' => 1,
             'currency_id' => $entryGuide->getCurrency()->getId(),
             'date' => $data['date'] ?? date('Y-m-d'),
@@ -673,7 +675,8 @@ class ControllerEntryGuide extends Controller
             $this->customerRepositoryInterface,
             $this->currencyTypeRepositoryInterface,
             $this->documentNumberGeneratorService,
-            $this->documentTypeRepository
+            $this->documentTypeRepository,
+            $this->exchangeRateRepositoryInterface
         );
 
         $createPurchaseUseCase->execute($purchaseDTO);

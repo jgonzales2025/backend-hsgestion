@@ -126,7 +126,6 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/sales/{id}/pdf', [SaleController::class, 'generatePdf']);
     Route::get('/documents-by-customer', [SaleController::class, 'findAllDocumentsByCustomerId']);
     Route::put('/sales-status/{id}', [SaleController::class, 'updateStatus']);
-
     // Ruta para cobranzas
     Route::get('/collections', [CollectionController::class, 'index']);
     Route::post('/collections', [CollectionController::class, 'store']);
@@ -237,7 +236,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/purchase-orders/{id}', [PurchaseOrderController::class, 'update']);
     Route::get('/purchase-orders/{id}/pdf', [PurchaseOrderController::class, 'generatePdf']);
     Route::post('/purchase-orders-customer', [PurchaseOrderController::class, 'getBySupplier']);
-
+    
     // Ruta para traer las series de un articulo
     Route::get('/entry-item-serial/{articleId}', [EntryItemSerialController::class, 'findSerialByArticleId']);
     Route::get('/serial/consulta', [EntryItemSerialController::class, 'findSerialInDatabase']);
@@ -255,7 +254,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
     Route::get('/purchases-pdf/{id}', [PurchaseController::class, 'downloadPdf']); 
     Route::get('/purchase-excel', [PurchaseController::class, 'exportExcel']);
-
+    Route::post('/purchase-reporte', [PurchaseController::class, 'reporteVentasCompras']);
     // Advances - Anticipos
     Route::get('/advances', [AdvanceController::class, 'index']);
     Route::get('/advances/{customerId}', [AdvanceController::class, 'showAdvancesByCustomer']);

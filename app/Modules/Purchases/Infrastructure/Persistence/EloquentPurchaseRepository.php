@@ -284,4 +284,16 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
 
         return $model?->toDomain();
     }
+    public function sp_registro_ventas_compras(int $company_id, string $date_start, string $date_end, int $tipo_doc, int $nrodoc_cli_pro,int $tipo_register){
+      $datos = DB::select('CALL sp_registro_ventas_compras(?,?,?,?,?,?)', [
+          $company_id,
+          $date_start,
+          $date_end,
+          $tipo_doc,
+          $nrodoc_cli_pro,
+          $tipo_register
+      ]);
+
+      return $datos;
+    }
 }

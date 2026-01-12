@@ -366,8 +366,7 @@ class ControllerEntryGuide extends Controller
 
         $result = $createDocumentEntryGuideUseCase->execute($documentEntryGuide);
         return $result;
-    }
-
+    } 
     private function calculateProcessStatus(array $articles, $documentEntryGuide = null): string
     {
         if ($documentEntryGuide && $documentEntryGuide->getReferenceDocument()?->getId() == 1) {
@@ -400,9 +399,7 @@ class ControllerEntryGuide extends Controller
         }
 
         return 'en proceso';
-    }
-
-
+    } 
     private function logTransaction($request, $entryGuide): void
     {
         $transactionLogs = new CreateTransactionLogUseCase(
@@ -495,7 +492,7 @@ class ControllerEntryGuide extends Controller
 
         $customerHeader = null;
         $currencyType = null;
-        $articleMap = []; // Mapa para consolidar artículos por article_id
+        $articleMap = []; 
 
         foreach ($entryGuides as $entryGuide) {
             if ($customerHeader === null) {
@@ -573,8 +570,7 @@ class ControllerEntryGuide extends Controller
             'date' => $date,
             'is_igv' => $isIgv,
         ], 200);
-    }
-
+    } 
     public function downloadPdf($id)
     {
         try {
@@ -630,9 +626,7 @@ class ControllerEntryGuide extends Controller
         $updateStatusUseCase->execute($id, $status);
 
         return response()->json(['message' => 'Estado actualizado correctamente']);
-    }
-
-
+    } 
     private function createPurchaseFromEntryGuide($entryGuide, array $data): void
     {
 

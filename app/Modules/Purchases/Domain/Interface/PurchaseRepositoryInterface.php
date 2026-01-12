@@ -15,4 +15,5 @@ interface PurchaseRepositoryInterface
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?Purchase;
     public function findAllExcel(?string $description, ?int $num_doc, ?int $id_proveedr): Collection;
     public function dowloadPdf(int $id): ?Purchase;
+    public function sp_registro_ventas_compras(int $company_id, string $date_start, string $date_end, int $tipo_doc, int $nrodoc_cli_pro,int $tipo_register);
 }

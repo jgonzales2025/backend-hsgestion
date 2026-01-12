@@ -4,6 +4,7 @@ namespace App\Modules\Purchases\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\Collections\Domain\Entities\Collection;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
@@ -24,6 +25,7 @@ use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Modules\Purchases\Infrastructure\Persistence\PurchasesExport;
+use App\Modules\Purchases\Infrastructure\Persistence\GenericExport;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -162,5 +164,34 @@ class PurchaseController extends Controller
         $purchases = $this->purchaseRepository->findAllExcel($description, $num_doc, $id_proveedr);
 
         return Excel::download(new PurchasesExport($purchases), 'compras.xlsx');
+    }
+    public function reporteVentasCompras(Request $request)
+    {
+        $companyId = request()->get('company_id');
+
+        $validated = $request->validate([
+            'date_start' => 'required|string',
+            'date_end' => 'required|string',
+            'tipo_doc' => 'nullable|integer',
+            'nrodoc_cli_pro' => 'nullable|integer',
+            'tipo_register' => 'nullable|integer',
+        ]);
+
+        $validated['company_id'] = $companyId;
+
+        $purchases = $this->purchaseRepository->sp_registro_ventas_compras(
+            $validated['company_id'],
+            $validated['date_start'],
+            $validated['date_end'],
+            $validated['tipo_doc'] ?? 0,
+            $validated['nrodoc_cli_pro'] ?? 0,
+            $validated['tipo_register'] ?? 2
+        );
+
+        $tipoRegister = $validated['tipo_register'] ?? 2;
+        $title = $tipoRegister == 1 ? 'REPORTE DE VENTA' : 'REPORTE DE COMPRA';
+        $fileName = $tipoRegister == 1 ? 'reporte_ventas.xlsx' : 'reporte_compras.xlsx';
+
+        return Excel::download(new GenericExport(collect($purchases), $title), $fileName);
     }
 }

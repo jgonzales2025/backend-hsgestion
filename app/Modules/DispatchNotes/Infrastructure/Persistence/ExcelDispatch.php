@@ -44,7 +44,7 @@ class ExcelDispatch implements FromCollection, WithHeadings, WithMapping, WithSt
     }
 
     public function map($dispatchNote): array
-    {         
+    {
         return [
             $dispatchNote->getId(),
             $dispatchNote->getCreatedFecha(),
@@ -67,7 +67,7 @@ class ExcelDispatch implements FromCollection, WithHeadings, WithMapping, WithSt
             })()->document_number,
             $dispatchNote->getEmissionReason() ? $dispatchNote->getEmissionReason()->getDescription() : '',
             $dispatchNote->getBranch() ? $dispatchNote->getBranch()->getAddress() : '',
-            (function ()use($dispatchNote) {
+            (function () use ($dispatchNote) {
                 $code = EloquentCustomerAddress::where('id', $dispatchNote->getdestination_branch_client())->first();
                 if ($code) {
                     return $code->address;
@@ -99,6 +99,7 @@ class ExcelDispatch implements FromCollection, WithHeadings, WithMapping, WithSt
                 $sheet->freezePane('A2');
                 $sheet->setAutoFilter("A1:{$highestColumn}{$highestRow}");
 
+                // Encabezado
                 $headerRange = "A1:{$highestColumn}1";
                 $sheet->getStyle($headerRange)
                     ->getFill()
@@ -106,10 +107,13 @@ class ExcelDispatch implements FromCollection, WithHeadings, WithMapping, WithSt
                     ->getStartColor()
                     ->setARGB('FFE6F0FF');
 
-                $sheet->getStyle($headerRange)
+                // 🔹 Centrar TODO
+                $sheet->getStyle("A1:{$highestColumn}{$highestRow}")
                     ->getAlignment()
-                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                    ->setHorizontal(Alignment::HORIZONTAL_CENTER)
+                    ->setVertical(Alignment::VERTICAL_CENTER);
             },
+
         ];
     }
 }

@@ -52,7 +52,8 @@ class EloquentArticle extends Model
         'filt_NameEsp',
         'status_Esp',
         'state_modify_article',
-        'url_supplier'
+        'url_supplier',
+        'article_type_id'
     ];
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -132,7 +133,7 @@ class EloquentArticle extends Model
             filtNameEsp: $eloquentArticle->filt_NameEsp,
             statusEsp: $eloquentArticle->status_Esp,
             state_modify_article: $eloquentArticle->state_modify_article,
+            article_type_id: $eloquentArticle->article_type_id ?? 1
         );
     }
-
 }

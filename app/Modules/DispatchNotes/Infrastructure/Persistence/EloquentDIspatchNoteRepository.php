@@ -6,10 +6,11 @@ use App\Modules\DispatchNotes\Domain\Entities\DispatchNote;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Models\EloquentDispatchNote;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
 {
-    public function findAll(?string $description, ?int $status, ?int $emissionReasonId): LengthAwarePaginator
+    public function findAll(?string $description, ?int $status, ?int $emissionReasonId, ?string $estadoSunat = null): LengthAwarePaginator
     {
         $dispatchNotes = EloquentDispatchNote::with([
             'company',
@@ -45,6 +46,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             ->when($emissionReasonId, function ($query) use ($emissionReasonId) {
                 return $query->where('emission_reason_id', $emissionReasonId);
             })
+            ->when($estadoSunat, fn($q) => $q->where('estado_sunat', $estadoSunat))
             ->paginate(10);
 
         $dispatchNotes->getCollection()->transform(
@@ -52,6 +54,38 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
         );
 
         return $dispatchNotes;
+    }
+    public function findAllExcel(
+        ?string $description,
+        ?int $status,
+        ?int $emissionReasonId,
+        ?string $estadoSunat = null
+    ): Collection {
+        return EloquentDispatchNote::with([
+            'company',
+            'branch',
+            'destination_branch',
+            'emission_reason',
+            'transport',
+            'conductor',
+            'document_type',
+            'supplier',
+            'address_supplier',
+            'referenceDocumentType',
+        ])
+            ->orderByDesc('id')
+            ->where('document_type_id', '!=', 21)
+            ->when($description, function ($query) use ($description) {
+                $query->where(function ($q) use ($description) {
+                    $q->where('correlativo', 'like', "%$description%")
+                        ->orWhere('license_plate', 'like', "%$description%");
+                });
+            })
+            ->when($status !== null, fn($q) => $q->where('status', $status))
+            ->when($emissionReasonId, fn($q) => $q->where('emission_reason_id', $emissionReasonId))
+            ->when($estadoSunat, fn($q) => $q->where('estado_sunat', $estadoSunat))
+            ->get()
+            ->map(fn($dispatchNote) => $this->mapToDomain($dispatchNote));
     }
 
 
@@ -125,7 +159,8 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             supplier: $dispatchNote->supplier?->toDomain($dispatchNote->supplier),
             address_supplier: $dispatchNote->address_supplier?->toDomain($dispatchNote->address_supplier),
             reference_document_type: $dispatchNote->referenceDocumentType?->toDomain($dispatchNote->referenceDocumentType),
-            created_at: $dispatchNote->created_at ? $dispatchNote->created_at->format('Y-m-d H:i:s') : null
+            created_at: $dispatchNote->created_at ? $dispatchNote->created_at->format('Y-m-d H:i:s') : null,
+            estado_sunat: $dispatchNote->estado_sunat
         );
     }
     private function buildDomainDispatchNote(EloquentDispatchNote $eloquentDispatchNote, DispatchNote $dispatchNote): DispatchNote
@@ -197,10 +232,10 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
     public function findByDocument(string $serie, string $correlative): ?DispatchNote
     {
         $dispatchNote = EloquentDispatchNote::where('serie', $serie)->where('correlativo', $correlative)
-        ->whereIn('emission_reason_id', [1, 5])
-        ->whereNull('doc_referencia')
-        ->whereNull('num_referencia')
-        ->first();
+            ->whereIn('emission_reason_id', [1, 5])
+            ->whereNull('doc_referencia')
+            ->whereNull('num_referencia')
+            ->first();
 
         if (!$dispatchNote) {
             return null;

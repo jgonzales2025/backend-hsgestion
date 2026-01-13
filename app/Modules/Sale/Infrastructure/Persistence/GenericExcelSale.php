@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Purchases\Infrastructure\Persistence;
+namespace App\Modules\Sale\Infrastructure\Persistence;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -14,16 +14,13 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Illuminate\Support\Collection;
 
-class GenericExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithEvents, ShouldAutoSize
+class GenericExcelSale implements FromCollection, WithHeadings, WithMapping, WithStyles, WithEvents, ShouldAutoSize
 {
-    public function __construct(
-        private Collection $purchases,
-        private string $title = 'Registro'
-    ) {}
+    public function __construct(private Collection $sales) {}
 
     public function collection(): Collection
     {
-        return $this->purchases;
+        return $this->sales;
     }
 
     public function headings(): array
@@ -45,12 +42,15 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithSt
         ];
     }
 
-    public function map($purchases): array
+    /**
+     * @param mixed $sale
+     */
+    public function map($sale): array
     {
         // Convertimos a array para manejar tanto objetos stdClass como arrays asociativos
-        $data = is_object($purchases) ? get_object_vars($purchases) : (array)$purchases;
+        $data = is_object($sale) ? get_object_vars($sale) : (array)$sale;
 
-        // Limpiamos los valores de caracteres nulos y formateamos
+        // Limpiamos los valores de caracteres nulos
         $cleanData = array_map(function ($value) {
             if ($value === null) return '';
             if (is_string($value)) {
@@ -60,16 +60,29 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithSt
             return $value;
         }, $data);
 
-        // Retornamos solo los valores en el orden que vienen del SP
-        // Esto asegura que si el SP devuelve 13 columnas, se llenen las 13 cabeceras asignadas
-        return array_values($cleanData);
+        // Mapeamos según los nombres de las columnas que devuelve el SP 'sp_registro_ventas_compras'
+        // NOTA: Ajusta estos nombres si el SP usa otros diferentes (ej. 'Serie' en lugar de 'serie')
+        return [
+            $cleanData['id'] ?? $cleanData['ID'] ?? '',
+            $cleanData['serie'] ?? $cleanData['SERIE'] ?? '',
+            $cleanData['correlativo'] ?? $cleanData['CORRELATIVO'] ?? '',
+            $cleanData['fecha'] ?? $cleanData['FECHA'] ?? '',
+            $cleanData['nrodoc_cli_pro'] ?? $cleanData['NRODOC_CLI_PRO'] ?? '',
+            $cleanData['razon_social'] ?? $cleanData['RAZON_SOCIAL'] ?? '',
+            $cleanData['tipo_cambio'] ?? $cleanData['TIPO_CAMBIO'] ?? '',
+            $cleanData['valor_soles'] ?? $cleanData['VALOR_SOLES'] ?? '',
+            $cleanData['igv_soles'] ?? $cleanData['IGV_SOLES'] ?? '',
+            $cleanData['total_soles'] ?? $cleanData['TOTAL_SOLES'] ?? '',
+            $cleanData['valor_usd'] ?? $cleanData['VALOR_USD'] ?? '',
+            $cleanData['igv_usd'] ?? $cleanData['IGV_USD'] ?? '',
+            $cleanData['total_usd'] ?? $cleanData['TOTAL_USD'] ?? '',
+        ];
     }
 
     public function styles(Worksheet $sheet)
     {
         return [
-            // El encabezado ahora está en la fila 2 si hay título
-            2 => ['font' => ['bold' => true]],
+            1 => ['font' => ['bold' => true]],
         ];
     }
 
@@ -78,32 +91,13 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithSt
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $highestColumn = $sheet->getHighestColumn();
                 $highestRow = $sheet->getHighestRow();
+                $highestColumn = $sheet->getHighestColumn();
 
-                // Insertar título en la primera fila
-                $sheet->insertNewRowBefore(1, 1);
-                $sheet->mergeCells("A1:{$highestColumn}1");
-                $sheet->setCellValue('A1', mb_strtoupper($this->title));
+                $sheet->freezePane('A2');
+                $sheet->setAutoFilter("A1:{$highestColumn}{$highestRow}");
 
-                // Estilo del título
-                $sheet->getStyle('A1')->applyFromArray([
-                    'font' => [
-                        'bold' => true,
-                        'size' => 14,
-                        'color' => ['rgb' => '000000'],
-                    ],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                    ],
-                ]);
-
-                // Ajustar fila de encabezados (ahora es la 2)
-                $sheet->freezePane('A3');
-                $sheet->setAutoFilter("A2:{$highestColumn}{$highestRow}");
-
-                $headerRange = "A2:{$highestColumn}2";
+                $headerRange = "A1:{$highestColumn}1";
                 $sheet->getStyle($headerRange)
                     ->getFill()
                     ->setFillType(Fill::FILL_SOLID)
@@ -113,9 +107,6 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithSt
                 $sheet->getStyle($headerRange)
                     ->getAlignment()
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
-                // Ajustar altura de la fila del título
-                $sheet->getRowDimension(1)->setRowHeight(30);
             },
         ];
     }

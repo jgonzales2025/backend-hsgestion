@@ -84,6 +84,12 @@ class CreateDispatchNoteUseCase
 
     $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepositoryInterface);
     $referenceDocumentType = $data->reference_document_type_id ? $documentTypeUseCase->execute($data->reference_document_type_id) : null;
+    if ($data->destination_branch_client != null) {
+      $destination_branch_clients = new FindByIdBranchUseCase($this->branchRepository);
+      $destination_branch_clientss = $destination_branch_clients->execute($data->destination_branch_client);
+    } else {
+      $destination_branch_clientss = null;
+    }
 
 
 
@@ -108,13 +114,13 @@ class CreateDispatchNoteUseCase
       total_weight: $data->total_weight,
       transfer_type: $data->transfer_type,
       vehicle_type: $data->vehicle_type,
-      destination_branch_client: $data->destination_branch_client,
+      destination_branch_client: $destination_branch_clientss,
       customer_id: $data->customer_id,
       supplier: $supplier,
       address_supplier: $supplierAddress,
       reference_document_type: $referenceDocumentType,
-      created_at: ''
-
+      created_at: '',
+      estado_sunat: null
     );
     return $this->dispatchNoteRepository->save($dispatchNote);
   }

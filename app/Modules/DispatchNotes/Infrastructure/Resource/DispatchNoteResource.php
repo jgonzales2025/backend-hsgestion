@@ -51,7 +51,7 @@ class DispatchNoteResource extends JsonResource
             'reference_document_type' => [
                 'id' => $this->resource->getReferenceDocumentType()?->getId(),
                 'status' => $this->resource->getReferenceDocumentType()?->getStatus() == 1 ? 'Activo' : 'Inactivo',
-                 'name' => $this->resource->getReferenceDocumentType()?->getDescription()
+                'name' => $this->resource->getReferenceDocumentType()?->getDescription()
             ],
             'status' => $this->resource->getStatus() == "true" ? "Activo" : "Inactivo",
             'conductor' => [
@@ -90,6 +90,7 @@ class DispatchNoteResource extends JsonResource
                     'id' => $code->id,
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
                     'name' => $code->name,
+                    'document_number' => $code->document_number,
 
                 ];
             })(),
@@ -105,7 +106,7 @@ class DispatchNoteResource extends JsonResource
                 'name' => $this->resource->getAddressSupplier()?->getName(),
             ],
             'created_at' => $this->resource->getCreatedFecha(),
-
+            'estado_sunat' => $this->resource->getEstadoSunat()
         ];
     }
 }

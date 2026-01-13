@@ -37,6 +37,7 @@ class ArticleDTO
     public string $filtNameEsp;
     public bool $statusEsp;
     public string $url_supplier;
+    public int $article_type_id;
 
 
 
@@ -72,5 +73,6 @@ class ArticleDTO
         $this->filtNameEsp = $data['filtNameEsp'] ?? '';
         $this->statusEsp = isset($data['statusEsp']) ? filter_var($data['statusEsp'], FILTER_VALIDATE_BOOLEAN) : false;
         $this->url_supplier = $data['url_supplier'] ?? '';
- }
+        $this->article_type_id = (int) ($data['article_type_id'] ?? 1);
+    }
 }

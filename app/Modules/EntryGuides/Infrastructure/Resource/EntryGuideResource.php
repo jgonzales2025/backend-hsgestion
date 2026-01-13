@@ -34,6 +34,8 @@ class EntryGuideResource extends JsonResource
                     trim($this->resource->getCustomer()->getName() . ' ' .
                         $this->resource->getCustomer()->getLastname() . ' ' .
                         $this->resource->getCustomer()->getSecondLastname()),
+                'document_number' => $this->resource->getCustomer()->getDocumentNumber() ?? $this->getCustomer()->getLastname(),
+
             ],
             'ingress_reason' => [
                 'id' => $this->resource->getIngressReason()->getId(),

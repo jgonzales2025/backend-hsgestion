@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Modules\DocumentEntryGuide\Infrastructure\Models\EloquentDocumentEntryGuide;
+use App\Modules\EntryGuideArticle\Infrastructure\Models\EloquentEntryGuideArticle;
 
 class EloquentEntryGuide extends Model
 {
@@ -74,18 +75,23 @@ class EloquentEntryGuide extends Model
         return $this->belongsTo(EloquentCurrencyType::class, 'currency_id');
     }
 
+    public function entryGuideArticles(): HasMany
+    {
+        return $this->hasMany(EloquentEntryGuideArticle::class, 'entry_guide_id');
+    }
+
     public function toDomain(EloquentEntryGuide $eloquentEntryGuide): EntryGuide
     {
         return new EntryGuide(
-            id: $eloquentEntryGuide->id ,
+            id: $eloquentEntryGuide->id,
             cia: $eloquentEntryGuide->company->toDomain($eloquentEntryGuide->company),
             branch: $eloquentEntryGuide->branch->toDomain($eloquentEntryGuide->branch),
             serie: $eloquentEntryGuide->serie,
             correlative: $eloquentEntryGuide->correlative,
             date: $eloquentEntryGuide->date,
-            customer: $eloquentEntryGuide->customer->toDomain($eloquentEntryGuide->customer) ,
+            customer: $eloquentEntryGuide->customer->toDomain($eloquentEntryGuide->customer),
             observations: $eloquentEntryGuide->observations,
-            ingressReason: $eloquentEntryGuide->ingressReason->toDomain($eloquentEntryGuide->ingressReason) ,
+            ingressReason: $eloquentEntryGuide->ingressReason->toDomain($eloquentEntryGuide->ingressReason),
             reference_serie: $eloquentEntryGuide->reference_serie,
             reference_correlative: $eloquentEntryGuide->reference_correlative,
             status: $eloquentEntryGuide->status,

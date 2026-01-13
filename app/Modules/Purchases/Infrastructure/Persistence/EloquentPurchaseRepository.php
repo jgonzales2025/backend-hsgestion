@@ -2,6 +2,7 @@
 
 namespace App\Modules\Purchases\Infrastructure\Persistence;
 
+use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\DetailPurchaseGuides\Infrastructure\Models\EloquentDetailPurchaseGuide;
 use App\Modules\Purchases\Domain\Entities\Purchase;
 use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
@@ -24,7 +25,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         return $purchase?->correlative;
     }
 
-    public function findAll(?string $description, $num_doc, $id_proveedr)
+    public function findAll(?string $description, $num_doc, $id_proveedr, ?string $reference_correlative,  ?string $reference_serie)
     {
         $eloquentpurchase = EloquentPurchase::with([
             'paymentType',
@@ -63,6 +64,16 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 fn($query) =>
                 $query->where('supplier_id', $id_proveedr)
             )
+            ->when(
+                $reference_correlative,
+                fn($query) =>
+                $query->where('reference_correlative', $reference_correlative)
+            )
+            ->when(
+                $reference_serie,
+                fn($query) =>
+                $query->where('reference_serie', $reference_serie)
+            )
             ->orderByDesc('id')
             ->paginate(10);
 
@@ -85,7 +96,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 'supplier_id' => $purchase->getSupplier()->getId(),
                 'serie' => $purchase->getSerie(),
                 'correlative' => $purchase->getCorrelative(),
-                'exchange_type' => $purchase->getExchangeType() ,
+                'exchange_type' => $purchase->getExchangeType(),
                 'payment_type_id' => $purchase->getPaymentType()->getId(),
                 'currency' => $purchase->getCurrency()->getId(),
                 'date' => $purchase->getDate(),
@@ -122,15 +133,18 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                     'process_status'  => $det->process_status,
                 ]);
 
-                DB::statement('CALL descontar_saldo_fifo(?,?,?,?,?,?,?)', [
-                    $purchase->getCompanyId(),                  // cia
-                    $purchase->getSupplier()->getId(),          // cliente
-                    $det->article_id,                           // artículo
-                    $purchase->getTypeDocumentId()->getId(),    // tipo documento
-                    $purchase->getReferenceSerie(),             // serie
-                    $purchase->getReferenceCorrelative(),       // correlativo
-                    $det->cantidad                              // cantidad
-                ]);
+                $article = EloquentArticle::find($det->article_id);
+                if ($article && $article->article_type_id == 1) {
+                    DB::statement('CALL descontar_saldo_fifo(?,?,?,?,?,?,?)', [
+                        $purchase->getCompanyId(),                  // cia
+                        $purchase->getSupplier()->getId(),          // cliente
+                        $det->article_id,                           // artículo
+                        $purchase->getTypeDocumentId()->getId(),    // tipo documento
+                        $purchase->getReferenceSerie(),             // serie
+                        $purchase->getReferenceCorrelative(),       // correlativo
+                        $det->cantidad                              // cantidad
+                    ]);
+                }
             }
 
             foreach ($purchase->getShoppingIncomeGuide() as $shopping_Income_Guide) {
@@ -284,16 +298,17 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
 
         return $model?->toDomain();
     }
-    public function sp_registro_ventas_compras(int $company_id, string $date_start, string $date_end, int $tipo_doc, int $nrodoc_cli_pro,int $tipo_register){
-      $datos = DB::select('CALL sp_registro_ventas_compras(?,?,?,?,?,?)', [
-          $company_id,
-          $date_start,
-          $date_end,
-          $tipo_doc,
-          $nrodoc_cli_pro,
-          $tipo_register
-      ]);
+    public function sp_registro_ventas_compras(int $company_id, string $date_start, string $date_end, int $tipo_doc, int $nrodoc_cli_pro, int $tipo_register)
+    {
+        $datos = DB::select('CALL sp_registro_ventas_compras(?,?,?,?,?,?)', [
+            $company_id,
+            $date_start,
+            $date_end,
+            $tipo_doc,
+            $nrodoc_cli_pro,
+            $tipo_register
+        ]);
 
-      return $datos;
+        return $datos;
     }
 }

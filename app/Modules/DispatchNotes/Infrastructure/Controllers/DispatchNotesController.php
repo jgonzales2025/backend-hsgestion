@@ -32,6 +32,7 @@ use App\Modules\DispatchNotes\Application\UseCases\UpdateDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\UpdateStatusDispatchNoteUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\UpdateStatusDispatchUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
+use App\Modules\DispatchNotes\Infrastructure\Persistence\ExcelDispatch;
 use App\Modules\DispatchNotes\Infrastructure\Requests\RequestStore;
 use App\Modules\DispatchNotes\Infrastructure\Requests\RequestUpdate;
 use App\Modules\DispatchNotes\Infrastructure\Resource\DispatchNoteResource;
@@ -50,6 +51,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class DispatchNotesController extends Controller
@@ -73,18 +76,18 @@ class DispatchNotesController extends Controller
         private readonly DispatchArticleSerialRepositoryInterface $dispatchArticleSerialRepository,
         private readonly ArticleRepositoryInterface $articleRepository,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService
-    ) {
-    }
+    ) {}
 
     public function index(Request $request): JsonResponse
     {
 
         $description = $request->query('description');
         $status = $request->query('status') !== null ? (int) $request->query('status') : null;
-        $emissionReasonId = $request->query('emission_reason_id');
+        $emissionReasonId = $request->query('emission_reason_id') !== null ? (int) $request->query('emission_reason_id') : null;
+        $estadoSunat = $request->query('estado_sunat');
 
-        $dispatchNoteUseCase = new FindAllDispatchNotesUseCase($this->dispatchNoteRepository);
-        $dispatchNotes = $dispatchNoteUseCase->execute($description, $status, $emissionReasonId);
+        $dispatchUseCase = new FindAllDispatchNotesUseCase($this->dispatchNoteRepository);
+        $dispatchNotes = $dispatchUseCase->execute($description, $status, $emissionReasonId, $estadoSunat);
 
         $result = [];
         foreach ($dispatchNotes as $articlesNote) {
@@ -182,7 +185,6 @@ class DispatchNotesController extends Controller
                 'fileName' => $filename,
                 'pdf_base64' => base64_encode($pdfContent)
             ]);
-
         } catch (\Throwable $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
@@ -362,5 +364,10 @@ class DispatchNotesController extends Controller
         ]);
 
         $transactionLogs->execute($transactionDTO);
+    }
+    public function excelDowload()
+    {
+        $findAllExcel = $this->dispatchNoteRepository->findAllExcel(null, null, null);
+        return Excel::download(new ExcelDispatch(collect($findAllExcel), "guia de remision"), "guia_de_remision.xlsx");
     }
 }

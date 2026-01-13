@@ -9,6 +9,8 @@ use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Articles\Infrastructure\Persistence\ArticlesExport;
 use App\Modules\Articles\Infrastructure\Persistence\EloquentArticleRepository;
 use App\Modules\Articles\Infrastructure\Persistence\ExcelArticleExporter;
+use App\Modules\ArticleType\Domain\Interface\ArticleTypeRepositoryInterface;
+use App\Modules\ArticleType\Infrastructure\Persistence\EloquentArticleTypeRepository;
 use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface;
 use App\Modules\Bank\Infrastructure\Persistence\EloquentBankRepository;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
@@ -260,6 +262,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PaymentConceptRepositoryInterface::class, EloquentPaymentConceptRepository::class);
         $this->app->bind(\App\Modules\ScVoucher\Domain\Interface\PdfGeneratorInterface::class, \App\Modules\ScVoucher\Infrastructure\Pdf\DomPdfScVoucherGenerator::class);
        $this->app->bind(KardexRepositoryInterface::class, EloquenKardexRepository::class);
+       $this->app->bind(ArticleTypeRepositoryInterface::class, EloquentArticleTypeRepository::class);
     }
 
     /**

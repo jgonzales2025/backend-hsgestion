@@ -30,6 +30,7 @@ class EntryGuide
     private ?CurrencyType $currency;
     private bool $includ_igv;
     private ?int $reference_document_id;
+    private float $saldo;
 
     public function __construct(
         ?int $id,
@@ -52,6 +53,7 @@ class EntryGuide
         ?CurrencyType $currency,
         bool $includ_igv,
         ?int $reference_document_id,
+        float $saldo = 0,
     ) {
         $this->id = $id;
         $this->cia = $cia;
@@ -73,6 +75,7 @@ class EntryGuide
         $this->currency = $currency;
         $this->includ_igv = $includ_igv;
         $this->reference_document_id = $reference_document_id;
+        $this->saldo = $saldo;
     }
     public function getId(): int|null
     {
@@ -140,17 +143,32 @@ class EntryGuide
     {
         return $this->update_price;
     }
-    public function getEntryIgv(){
+    public function getEntryIgv()
+    {
         return $this->entry_igv;
     }
-    public function getCurrency():?CurrencyType{
+    public function getCurrency(): ?CurrencyType
+    {
         return $this->currency;
     }
-    public function getIncludIgv(){
+    public function getIncludIgv()
+    {
         return $this->includ_igv;
     }
-    public function getReferenceDocument():int|null
+    public function getReferenceDocument(): int|null
     {
         return $this->reference_document_id;
+    }
+    public function getIgv(): float
+    {
+        return $this->entry_igv;
+    }
+    public function getSupplier(): Customer|null
+    {
+        return $this->customer;
+    }
+    public function getSaldo(): float
+    {
+        return $this->saldo;
     }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('detail_purchase_guides', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('article_id')->constrained('articles');
+            $table->foreignId('article_id')->nullable()->constrained('articles');
             $table->foreignId('purchase_id')->constrained('purchase');
             $table->string('description');
             $table->integer('cantidad');

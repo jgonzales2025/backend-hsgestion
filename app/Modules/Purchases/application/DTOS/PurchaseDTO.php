@@ -71,6 +71,6 @@ class PurchaseDTO
             return new ShoppingIncomeGuideDTO([
                 'entry_guide_id' => $item
             ]);
-        }, $array['entry_guide_id']);
+        }, $array['entry_guide_id']) ?? [];
     }
 }

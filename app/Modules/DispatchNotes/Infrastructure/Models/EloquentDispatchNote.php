@@ -50,7 +50,8 @@ class EloquentDispatchNote extends Model
         'address_supplier_id',
         'pdf',
         'transfer_date',
-        'arrival_date'
+        'arrival_date',
+        'estado_sunat'
     ];
     public $timestamps = true;
 
@@ -133,6 +134,8 @@ class EloquentDispatchNote extends Model
             $dispatchNote->transfer_type,
             $dispatchNote->vehicle_type,
             $dispatchNote->reference_document_type?->toDomain($dispatchNote->reference_document_type),
+            $dispatchNote->created_at ? $dispatchNote->created_at->format('Y-m-d H:i:s') : null,
+            $dispatchNote->estado_sunat,
             $dispatchNote->destination_branch_client,
             $dispatchNote->customer_id,
             $dispatchNote->supplier?->toDomain($dispatchNote->supplier),

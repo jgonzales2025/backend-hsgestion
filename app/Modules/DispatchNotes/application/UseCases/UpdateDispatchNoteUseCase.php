@@ -107,6 +107,7 @@ class UpdateDispatchNoteUseCase
       customer_id: $data->customer_id,
       supplier: $supplier,
       address_supplier: $supplierAddress,
+      estado_sunat: null,
       created_at: ''
     );
     return $this->dispatchNoteRepository->update($dispatchNote);

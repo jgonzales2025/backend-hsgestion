@@ -35,6 +35,7 @@ use App\Modules\EntryGuideArticle\Infrastructure\Resource\EntryGuideArticleResou
 use App\Modules\EntryGuides\Application\UseCases\GeneratePDF;
 use App\Modules\EntryGuides\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuidePDF;
+use App\Modules\EntryGuides\Infrastructure\Persistence\ExcelEntryGuide;
 use App\Modules\EntryItemSerial\Application\DTOS\EntryItemSerialDTO;
 use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
 use App\Modules\EntryItemSerial\Application\UseCases\CreateEntryItemSerialUseCase;
@@ -54,6 +55,8 @@ use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Purchases\Application\DTOS\PurchaseDTO;
 use App\Modules\Purchases\Application\UseCases\UpdatePurchaseUseCase;
 use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class ControllerEntryGuide extends Controller
 {
@@ -824,5 +827,9 @@ class ControllerEntryGuide extends Controller
         );
 
         $updatePurchaseUseCase->execute($purchaseDTO, $purchaseId);
+    }
+    public function excelDowload(){
+        $entryGuides = $this->entryGuideRepositoryInterface->findAllExcel();
+        return Excel::download(new ExcelEntryGuide($entryGuides, "Reporte de Guías de Ingreso"), 'entry_guides.xlsx');
     }
 }

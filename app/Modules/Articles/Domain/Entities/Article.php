@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\Articles\Domain\Entities;
 
 use App\Modules\Brand\Domain\Entities\Brand;
@@ -46,6 +47,7 @@ class Article
     private ?int $state_modify_article;
     private ?string $filtNameEsp;
     private ?bool $statusEsp;
+    private int $article_type_id;
 
 
 
@@ -82,6 +84,7 @@ class Article
         ?bool $statusEsp,
         ?int $status = 1,
         ?string $url_supplier = '',
+        int $article_type_id = 1,
 
 
     ) {
@@ -119,6 +122,7 @@ class Article
         $this->filtNameEsp = $filtNameEsp;
         $this->statusEsp = $statusEsp;
         $this->url_supplier = $url_supplier;
+        $this->article_type_id = $article_type_id;
     }
 
     public function calculatePrecioIGV(): float
@@ -256,5 +260,13 @@ class Article
     public function getIsCombo(): string|null
     {
         return $this->url_supplier;
+    }
+    public function getArticleTypeId(): int
+    {
+        return $this->article_type_id;
+    }
+    public function setArticleTypeId(int $article_type_id): void
+    {
+        $this->article_type_id = $article_type_id;
     }
 }

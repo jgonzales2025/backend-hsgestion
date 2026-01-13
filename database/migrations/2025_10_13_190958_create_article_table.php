@@ -55,6 +55,7 @@ return new class extends Migration
             $table->string('url_supplier')->nullable();
             
             $table->timestamp('date_at')->useCurrent();
+            $table->integer('article_type_id')->default(1);
             $table->timestamps();
         });
     }

@@ -44,9 +44,7 @@ class ExcelDispatch implements FromCollection, WithHeadings, WithMapping, WithSt
     }
 
     public function map($dispatchNote): array
-    {
-        $supplier = $dispatchNote->getSupplier();
-        
+    {         
         return [
             $dispatchNote->getId(),
             $dispatchNote->getCreatedFecha(),

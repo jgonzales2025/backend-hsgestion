@@ -89,7 +89,7 @@ class DispatchNoteResource extends JsonResource
                 return (object) [
                     'id' => $code->id,
                     'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
-                    'name' => $code->name,
+                    'name' => $code->name ?? $code->company_name,
                     'document_number' => $code->document_number,
 
                 ];

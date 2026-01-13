@@ -41,7 +41,10 @@ class EloquentEntryGuide extends Model
         'includ_igv',
         'entry_igv',
         'currency_id',
-        'reference_document_id'
+        'reference_document_id',
+        'nc_document_id',
+        'nc_reference_serie',
+        'nc_reference_correlative',
     ];
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -103,6 +106,9 @@ class EloquentEntryGuide extends Model
             entry_igv: $eloquentEntryGuide->entry_igv,
             currency: $eloquentEntryGuide->currency->toDomain($eloquentEntryGuide->currency),
             reference_document_id: $eloquentEntryGuide->reference_document_id,
+            nc_document_id: $eloquentEntryGuide->nc_document_id,
+            nc_reference_serie: $eloquentEntryGuide->nc_reference_serie,
+            nc_reference_correlative: $eloquentEntryGuide->nc_reference_correlative,
         );
     }
 }

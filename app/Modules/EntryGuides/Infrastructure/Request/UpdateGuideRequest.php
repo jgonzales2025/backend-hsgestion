@@ -42,6 +42,10 @@ class UpdateGuideRequest extends FormRequest
             'entry_guide_articles.*.descuento' => 'nullable|numeric',
             'entry_guide_articles.*.saldo' => 'nullable|numeric',
             'order_purchase_id' => 'nullable|array',
+
+            'nc_document_id' => 'nullable|integer',
+            'nc_reference_serie' => 'nullable|string',
+            'nc_reference_correlative' => 'nullable|string',
             // 'order_purchase_id.*.entry_guide_id' => 'required|integer',
 
             'document_entry_guide' => 'required|array',

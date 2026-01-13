@@ -34,6 +34,9 @@ class PurchaseDTO
     public string $reference_correlative;
     public array $det_compras_guia_ingreso;
     public array $shopping_Income_Guide;
+    public ?int $nc_document_id;
+    public ?string $nc_reference_serie;
+    public ?string $nc_reference_correlative;
 
     public function __construct(array $array)
     {
@@ -72,5 +75,9 @@ class PurchaseDTO
                 'entry_guide_id' => $item
             ]);
         }, $array['entry_guide_id']) ?? [];
+
+        $this->nc_document_id = $array['nc_document_id'] ?? null;
+        $this->nc_reference_serie = $array['nc_reference_serie'] ?? null;
+        $this->nc_reference_correlative = $array['nc_reference_correlative'] ?? null;
     }
 }

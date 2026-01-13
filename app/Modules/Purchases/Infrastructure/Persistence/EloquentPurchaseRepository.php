@@ -117,6 +117,9 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 'reference_serie' => $purchase->getReferenceSerie(),
                 'reference_correlative' => $purchase->getReferenceCorrelative(),
                 'saldo' => $purchase->getTotal(),
+                'nc_document_id' => $purchase->getNcDocumentId(),
+                'nc_reference_serie' => $purchase->getNcReferenceSerie(),
+                'nc_reference_correlative' => $purchase->getNcReferenceCorrelative(),
             ]);
 
             foreach ($purchase->getDetComprasGuiaIngreso() as $det) {
@@ -193,6 +196,9 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 'reference_serie' => $purchase->getReferenceSerie(),
                 'reference_correlative' => $purchase->getReferenceCorrelative(),
                 'company_id' => $purchase->getCompanyId(),
+                'nc_document_id' => $purchase->getNcDocumentId(),
+                'nc_reference_serie' => $purchase->getNcReferenceSerie(),
+                'nc_reference_correlative' => $purchase->getNcReferenceCorrelative(),
                 'saldo' => $purchase->getTotal(),
             ]);
 

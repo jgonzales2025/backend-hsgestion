@@ -68,6 +68,9 @@ class PurchaseResource extends JsonResource
             'saldo_soles' => $currencyId == 1 ? $this->resource->getSaldo() : (float)number_format($this->resource->getSaldo() * $this->resource->getExchangeType(), 4),
             'saldo_dolares' => $currencyId == 2 ? $this->resource->getSaldo() : (float)number_format($this->resource->getSaldo() / $this->resource->getExchangeType(), 4),
             'process_status' => $this->calculateProcessStatus(),
+            'nc_document_id' => $this->resource?->getNcDocumentId(),
+            'nc_reference_serie' => $this->resource?->getNcReferenceSerie(),
+            'nc_reference_correlative' => $this->resource?->getNcReferenceCorrelative(),
 
             'det_compras_guia_ingreso' =>  DetailPurchaseGuideResource::collection($this->resource->getDetComprasGuiaIngreso()),
             'entry_guide' => array_map(fn($item) => $item->getEntryGuideId(), $this->resource->getShoppingIncomeGuide()),

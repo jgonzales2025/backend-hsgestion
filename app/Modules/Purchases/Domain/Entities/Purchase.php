@@ -5,7 +5,6 @@ namespace App\Modules\Purchases\Domain\Entities;
 use App\Modules\Branch\Domain\Entities\Branch;
 use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
 use App\Modules\Customer\Domain\Entities\Customer;
-use App\Modules\PaymentMethod\Domain\Entities\PaymentMethod;
 use App\Modules\PaymentType\Domain\Entities\PaymentType;
 use App\Modules\DocumentType\Domain\Entities\DocumentType;
 
@@ -40,6 +39,9 @@ class Purchase
     private float $saldo;
     private array $det_compras_guia_ingreso;
     private array $shopping_Income_Guide;
+    private ?int $nc_document_id;
+    private ?string $nc_reference_serie;
+    private ?string $nc_reference_correlative;
 
     public function __construct(
         ?int $id,
@@ -70,7 +72,10 @@ class Purchase
         int $company_id,
         float $saldo = 0,
         array $det_compras_guia_ingreso = [],
-        array $shopping_Income_Guide = []
+        array $shopping_Income_Guide = [],
+        ?int $nc_document_id,
+        ?string $nc_reference_serie,
+        ?string $nc_reference_correlative 
     ) {
         $this->id = $id;
         $this->branch = $branch;
@@ -101,6 +106,9 @@ class Purchase
         $this->saldo = $saldo;
         $this->det_compras_guia_ingreso = $det_compras_guia_ingreso;
         $this->shopping_Income_Guide = $shopping_Income_Guide;
+        $this->nc_document_id = $nc_document_id;
+        $this->nc_reference_serie = $nc_reference_serie;
+        $this->nc_reference_correlative = $nc_reference_correlative;
     }
 
     public function getId(): int|null
@@ -218,5 +226,17 @@ class Purchase
     public function getShoppingIncomeGuide(): array
     {
         return $this->shopping_Income_Guide;
+    }
+    public function getNcDocumentId(): int|null
+    {
+        return $this->nc_document_id;
+    }
+    public function getNcReferenceSerie(): string|null
+    {
+        return $this->nc_reference_serie;
+    }
+    public function getNcReferenceCorrelative(): string|null
+    {
+        return $this->nc_reference_correlative;
     }
 }

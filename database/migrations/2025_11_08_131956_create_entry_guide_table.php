@@ -40,6 +40,10 @@ return new class extends Migration
             $table->boolean('includ_igv')->default(false);
             $table->decimal('entry_igv', 10, 2)->default(0.00);
             $table->foreignId('currency_id')->constrained('currency_types');
+            $table->foreignId('reference_document_id')->constrained('reference_documents');
+            $table->foreignId('nc_document_id')->constrained('nc_documents');
+            $table->string('nc_reference_serie', 20)->nullable();
+            $table->string('nc_reference_correlative', 20)->nullable();
         });
     }
 

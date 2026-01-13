@@ -22,6 +22,9 @@ class EntryGuideDTO
     public int $currency_id;
     public bool $includ_igv;
     public int $reference_document_id;
+    public ?int $nc_document_id;
+    public ?string $nc_reference_serie;
+    public ?string $nc_reference_correlative;
 
 
 
@@ -45,5 +48,8 @@ class EntryGuideDTO
         $this->currency_id = $array['currency_id'];
         $this->includ_igv = (bool) ($array['includ_igv'] ?? false);
         $this->reference_document_id = $array['reference_document_id'];
+        $this->nc_document_id = $array['nc_document_id'] ?? null;
+        $this->nc_reference_serie = $array['nc_reference_serie'] ?? null;
+        $this->nc_reference_correlative = $array['nc_reference_correlative'] ?? null;
     }
 }

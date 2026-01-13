@@ -572,6 +572,9 @@ class ControllerEntryGuide extends Controller
             'currency_type' => $currencyType,
             'date' => $date,
             'is_igv' => $isIgv,
+            'nc_document_id' => $entryGuide->getNcDocumentId(),
+            'nc_reference_serie' => $entryGuide->getNcReferenceSerie(),
+            'nc_reference_correlative' => $entryGuide->getNcReferenceCorrelative(),
         ], 200);
     } 
     public function downloadPdf($id)

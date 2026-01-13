@@ -123,6 +123,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                     includ_igv: $entryGuide->includ_igv,
                     reference_document_id: $entryGuide->reference_document_id,
                     saldo: (float) ($entryGuide->entryGuideArticles->sum('saldo')),
+                    nc_document_id: $entryGuide->nc_document_id,
+                    nc_reference_serie: $entryGuide->nc_reference_serie,
+                    nc_reference_correlative: $entryGuide->nc_reference_correlative,
                 );
             });
     }
@@ -158,6 +161,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             includ_igv: $entryGuide->includ_igv,
             reference_document_id: $entryGuide->reference_document_id,
             saldo: (float) ($entryGuide->entryGuideArticles->sum('saldo')),
+            nc_document_id: $entryGuide->nc_document_id,
+            nc_reference_serie: $entryGuide->nc_reference_serie,
+            nc_reference_correlative: $entryGuide->nc_reference_correlative,
         );
     }
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide
@@ -193,6 +199,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             includ_igv: $entryGuide->includ_igv,
             reference_document_id: $entryGuide->reference_document_id,
             saldo: (float) ($entryGuide->entryGuideArticles->sum('saldo')),
+            nc_document_id: $entryGuide->nc_document_id,
+            nc_reference_serie: $entryGuide->nc_reference_serie,
+            nc_reference_correlative: $entryGuide->nc_reference_correlative,
         );
     }
     public function save(EntryGuide $entryGuide): ?EntryGuide
@@ -218,6 +227,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 'currency_id' => $entryGuide->getCurrency()->getId(),
                 'includ_igv' => $entryGuide->getIncludIgv(),
                 'reference_document_id' => $entryGuide->getReferenceDocument(),
+                'nc_document_id' => $entryGuide->getNcDocumentId(),
+                'nc_reference_serie' => $entryGuide->getNcReferenceSerie(),
+                'nc_reference_correlative' => $entryGuide->getNcReferenceCorrelative(),
             ]);
 
             DB::statement('CALL sp_update_price_article_by_entry_guide(?,?)', [
@@ -247,6 +259,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 includ_igv: $eloquentEntryGuide->includ_igv,
                 reference_document_id: $eloquentEntryGuide->reference_document_id,
                 saldo: (float) ($eloquentEntryGuide->entryGuideArticles ? $eloquentEntryGuide->entryGuideArticles->sum('saldo') : 0),
+                nc_document_id: $eloquentEntryGuide->nc_document_id,
+                nc_reference_serie: $eloquentEntryGuide->nc_reference_serie,
+                nc_reference_correlative: $eloquentEntryGuide->nc_reference_correlative,
             );
         });
     }
@@ -278,6 +293,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             currency: $eloquentEntryGuide->currency?->toDomain($eloquentEntryGuide->currency),
             includ_igv: $eloquentEntryGuide->includ_igv,
             reference_document_id: $eloquentEntryGuide->reference_document_id,
+            nc_document_id: $eloquentEntryGuide->nc_document_id,
+            nc_reference_serie: $eloquentEntryGuide->nc_reference_serie,
+            nc_reference_correlative: $eloquentEntryGuide->nc_reference_correlative,
         );
     }
     public function update(EntryGuide $entryGuide): EntryGuide|null
@@ -305,6 +323,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'currency_id' => $entryGuide->getCurrency()->getId(),
             'includ_igv' => $entryGuide->getIncludIgv(),
             'reference_document_id' => $entryGuide->getReferenceDocument(),
+            'nc_document_id' => $entryGuide->getNcDocumentId(),
+            'nc_reference_serie' => $entryGuide->getNcReferenceSerie(),
+            'nc_reference_correlative' => $entryGuide->getNcReferenceCorrelative(),
         ]);
 
 
@@ -334,6 +355,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             currency: $eloquentEntryGuide->currency?->toDomain($eloquentEntryGuide->currency),
             includ_igv: $eloquentEntryGuide->includ_igv,
             reference_document_id: $eloquentEntryGuide->reference_document_id,
+            nc_document_id: $eloquentEntryGuide->nc_document_id,
+            nc_reference_serie: $eloquentEntryGuide->nc_reference_serie,
+            nc_reference_correlative: $eloquentEntryGuide->nc_reference_correlative,
         );
     }
 
@@ -384,6 +408,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 includ_igv: $entryGuide->includ_igv,
                 reference_document_id: $entryGuide->reference_document_id,
                 saldo: (float) ($entryGuide->entryGuideArticles->sum('saldo')),
+                nc_document_id: $entryGuide->nc_document_id,
+                nc_reference_serie: $entryGuide->nc_reference_serie,
+                nc_reference_correlative: $entryGuide->nc_reference_correlative,
             );
         })->toArray();
     }

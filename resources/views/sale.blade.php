@@ -225,7 +225,9 @@
         </table>
 
         <!-- Sale Information -->
-        <div class="section-title" style="margin-top: 10px;">{{ $sale->getDocumentType()->getId() == 16 ? 'DETALLES DE LA COTIZACIÓN' : 'DETALLES DE LA VENTA' }}</div>
+        <div class="section-title" style="margin-top: 10px;">
+            {{ $sale->getDocumentType()->getId() == 16 ? 'DETALLES DE LA COTIZACIÓN' : 'DETALLES DE LA VENTA' }}
+        </div>
         <table class="info-table">
             <tr>
                 <td class="label">FECHA EMISIÓN:</td>
@@ -339,20 +341,103 @@
             <div style="clear: both;"></div>
         </div>
 
-        <!-- QR Code -->
-        @if(!in_array($sale->getDocumentType()->getId(), [16, 17]))
-        <div style="width: 100%; margin-top: 20px; text-align: right;">
-            <div
-                style="display: inline-block; border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
-                <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code" style="width: 50px; height: 50px;">
-                <div style="font-size: 8px; margin-top: 5px; color: #666;">Escanea para verificar</div>
+        <!-- Bank Accounts Information and QR Code -->
+        <div style="width: 100%; margin-top: 10px;">
+            <!-- Bank Accounts Section (Left) -->
+            <div style="float: left; width: 60%; border: 1px solid #333; padding: 5px; background-color: #f9f9f9;">
+                <div class="section-title" style="margin-bottom: 5px; font-size: 9px; padding: 3px;">CUENTAS BANCARIAS
+                </div>
+
+                <table style="width: 100%; margin-bottom: 5px;">
+                    <tr>
+                        <td style="width: 50%; vertical-align: top; padding-right: 5px;">
+                            <div style="font-weight: bold; font-size: 8px; margin-bottom: 2px; color: #000;">CUENTAS EN
+                                SOLES:</div>
+                            <div style="font-size: 8px; margin-bottom: 1px;">
+                                <span style="font-weight: bold;">Banco BBVA:</span> 001101750100099775
+                            </div>
+                            <div style="font-size: 8px; margin-bottom: 1px;">
+                                <span style="font-weight: bold;">Banco BCP:</span> 1917319236075
+                            </div>
+                            <div style="font-size: 8px; margin-bottom: 1px;">
+                                <span style="font-weight: bold;">Yape:</span> 981206097
+                            </div>
+                        </td>
+                        <td style="width: 50%; vertical-align: top; padding-left: 5px; border-left: 1px solid #ddd;">
+                            <div style="font-weight: bold; font-size: 8px; margin-bottom: 2px; color: #000;">CUENTAS EN
+                                DÓLARES:</div>
+                            <div style="font-size: 8px; margin-bottom: 1px;">
+                                <span style="font-weight: bold;">Banco BBVA:</span> 001101750100099783
+                            </div>
+                            <div style="font-size: 8px; margin-bottom: 1px;">
+                                <span style="font-weight: bold;">Banco BCP:</span> 1917320109103
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+
+                <div style="border-top: 1px solid #ddd; padding-top: 5px; margin-top: 5px;">
+                    <div style="font-weight: bold; font-size: 8px; margin-bottom: 2px; color: #000;">CUENTAS
+                        INTERBANCARIAS (CCI):</div>
+
+                    <table style="width: 100%; margin-bottom: 5px;">
+                        <tr>
+                            <td style="width: 50%; vertical-align: top; padding-right: 5px;">
+                                <div style="font-weight: bold; font-size: 7px; margin-bottom: 1px; color: #333;">Soles:
+                                </div>
+                                <div style="font-size: 7px; margin-bottom: 1px;">
+                                    <span style="font-weight: bold;">Banco BBVA:</span> 01117500010009977577
+                                </div>
+                                <div style="font-size: 7px; margin-bottom: 1px;">
+                                    <span style="font-weight: bold;">Banco BCP:</span> 00219100731923607555
+                                </div>
+                            </td>
+                            <td
+                                style="width: 50%; vertical-align: top; padding-left: 5px; border-left: 1px solid #ddd;">
+                                <div style="font-weight: bold; font-size: 7px; margin-bottom: 1px; color: #333;">
+                                    Dólares:</div>
+                                <div style="font-size: 7px; margin-bottom: 1px;">
+                                    <span style="font-weight: bold;">Banco BBVA:</span> 01117500010009978371
+                                </div>
+                                <div style="font-size: 7px; margin-bottom: 1px;">
+                                    <span style="font-weight: bold;">Banco BCP:</span> 00219100732010910357
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div
+                        style="background-color: #fff3cd; border: 1px solid #ffc107; padding: 4px; margin-top: 4px; border-radius: 3px;">
+                        <div style="font-size: 7px; color: #856404; line-height: 1.2;">
+                            <strong>IMPORTANTE:</strong> Transferir sólo si es inmediato. <strong>OJO:</strong>
+                            Verificar antes de confirmar abono que indique <strong>CYBERHOUSE TEC SAC</strong> en su
+                            aplicación, caso contrario la mercadería será entregada una vez verificado el abono en
+                            nuestras cuentas.
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div
-                style="display: inline-block; margin-left: 10px; vertical-align: top; font-size: 9px; color: #333; max-width: 150px; text-align: left;">
-                <strong>REPRESENTACIÓN FÍSICA DE {{ strtoupper($sale->getDocumentType()->getDescription()) }}</strong>
-            </div>
+
+            <!-- QR Code Section (Right) -->
+            @if(!in_array($sale->getDocumentType()->getId(), [16, 17]))
+                <div style="float: right; width: 35%; text-align: center; padding-top: 0px;">
+                    <div
+                        style="border: 1px solid #ddd; padding: 5px; border-radius: 5px; background-color: #f9f9f9; width: 100%; box-sizing: border-box;">
+                        <div style="margin-bottom: 5px;">
+                            <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code"
+                                style="width: 60px; height: 60px;">
+                        </div>
+                        <div style="font-size: 7px; margin-top: 2px; color: #666;">Escanea para verificar</div>
+                        <div style="font-size: 7px; color: #333; margin-top: 4px; line-height: 1.2;">
+                            <strong>REPRESENTACIÓN FÍSICA DE
+                                {{ strtoupper($sale->getDocumentType()->getDescription()) }}</strong>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <div style="clear: both;"></div>
         </div>
-        @endif
     </div>
 </body>
 

@@ -47,7 +47,7 @@ class EloquentArticleResource extends JsonResource
             'tariff_rate' => $this->resource->tariff_rate,
             'igv_applicable' => $this->resource->igv_applicable,
             'plastic_bag_applicable' => $this->resource->plastic_bag_applicable,
-            'min_stock' => $this->resource->min_stock, 
+            'min_stock' => $this->resource->min_stock,
             'purchase_price' => $this->resource->purchase_price,
             'public_price' => $this->resource->public_price,
             'distributor_price' => $this->resource->distributor_price,
@@ -62,14 +62,18 @@ class EloquentArticleResource extends JsonResource
                 'status' => ($this->resource->company->status) == 1 ? 'Activo' : 'Inactivo',
                 'branches' => EloquentBranch::where('cia_id', $this->resource->company->id)
                     ->pluck('id'),
-            ], 
+            ],
 
             'image_url' => $this->resource->image_url
                 ? url($this->resource->image_url)
                 : '',
             'is_visible' => ($this->resource->state_modify_article) === true ? 'Activo' : 'Inactivo',
             'state_modify_article' => $this->resource->state_modify_article,
-            'is_combo' => $this->resource->is_combo ,
+            'is_combo' => $this->resource->is_combo,
+            'article_type' => [
+                'id' => $this->resource->article_type_id,
+                'name' => (int)$this->resource->article_type_id == 1 ? 'Mercadería' : 'Servicio',
+            ],
         ];
     }
 }

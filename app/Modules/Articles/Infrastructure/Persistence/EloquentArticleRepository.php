@@ -493,6 +493,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             'filtNameEsp' => $article->getFiltNameEsp(),
             'statusEsp' => $article->getStatusEsp(),
             'url_supplier' => $article->getIsCombo(),
+            'article_type_id' => $article->getArticleTypeId(),
         ];
     }
     private function buildDomainSale(EloquentArticle $Eloquentarticle, Article $article): Article
@@ -530,6 +531,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             filtNameEsp: $Eloquentarticle->filtNameEsp,
             statusEsp: $Eloquentarticle->statusEsp,
             url_supplier: $Eloquentarticle->url_supplier,
+            article_type_id: $Eloquentarticle->article_type_id ?? 1,
         );
     }
     private function mapToDomain(EloquentArticle $article): Article
@@ -567,6 +569,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             filtNameEsp: $article->filtNameEsp,
             statusEsp: $article->statusEsp,
             url_supplier: $article->url_supplier,
+            article_type_id: $article->article_type_id ?? 1,
         );
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Modules\Articles\Infrastructure\Resource;
 
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
@@ -47,7 +48,7 @@ class ArticleResource extends JsonResource
             'warranty' => $this->getWarranty(),
             'tariff_rate' => $this->getTariffRate(),
             'igv_applicable' => $this->getIgvApplicable(),
-            'min_stock' => $this->getMinStock(), 
+            'min_stock' => $this->getMinStock(),
             'purchase_price' => $this->getPurchasePrice(),
             'public_price' => $this->getPublicPrice(),
             'distributor_price' => $this->getDistributorPrice(),
@@ -62,16 +63,16 @@ class ArticleResource extends JsonResource
                 'status' => ($this->resource->getCompany()?->getStatus()) == 1 ? 'Activo' : 'Inactivo',
                 'branches' => EloquentBranch::where('cia_id', $this->resource->getCompany()?->getId())
                     ->pluck('id'),
-            ], 
+            ],
 
             'image_url' => $this->resource->getImageURL()
                 ? url($this->resource->getImageURL())
                 : '',
             'is_visible' => ($this->resource->getstateModifyArticle()) === true ? 'Activo' : 'Inactivo',
             'state_modify_article' => $this->resource->getstateModifyArticle(),
-            'url_supplier' => $this->resource->getIsCombo() ,
+            'url_supplier' => $this->resource->getIsCombo(),
+            'article_type_id' => $this->resource->getArticleTypeId()
 
         ];
-
     }
 }

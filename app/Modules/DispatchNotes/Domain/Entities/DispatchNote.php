@@ -35,7 +35,8 @@ class DispatchNote
     private ?bool $vehicle_type;
     private ?int $destination_branch_client;
     private ?int $customer_id;
-    private string $created_at = "";
+    private ?string $created_at;
+    private ?string $estado_sunat;
     private ?Customer $supplier;
     private ?Customer $address_supplier;
     private ?DocumentType $reference_document_type;
@@ -67,7 +68,9 @@ class DispatchNote
         ?Customer $supplier,
         ?Customer $address_supplier,
         ?DocumentType $reference_document_type,
-        ?string $created_at
+        ?string $created_at,
+        ?string $estado_sunat = null
+
 
     ) {
         $this->id = $id;
@@ -96,6 +99,7 @@ class DispatchNote
         $this->address_supplier = $address_supplier;
         $this->reference_document_type = $reference_document_type;
         $this->created_at = $created_at;
+        $this->estado_sunat = $estado_sunat;
     }
 
     // Getters
@@ -191,9 +195,19 @@ class DispatchNote
     {
         return $this->created_at;
     }
-    public function setCreatedAt(?string $date): void
+    public function setCreatedAt(?string $created_at): void
     {
-        $this->created_at = $date;
+        $this->created_at = $created_at;
+    }
+
+    public function getEstadoSunat(): ?string
+    {
+        return $this->estado_sunat;
+    }
+
+    public function setEstadoSunat(?string $estado_sunat): void
+    {
+        $this->estado_sunat = $estado_sunat;
     }
     public function getSupplier(): ?Customer
     {

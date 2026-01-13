@@ -6,6 +6,7 @@ use App\Modules\Articles\Infrastructure\Controllers\ArticleController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SaleSunatController;
 use App\Modules\Advance\Infrastructure\Controllers\AdvanceController;
+use App\Modules\ArticleType\Infrastructure\Controllers\ControllerArticleTypeModel;
 use App\Modules\Auth\Infrastructure\Controllers\AuthController;
 use App\Modules\Bank\Infrastructure\Controllers\BankController;
 use App\Modules\Branch\Infrastructure\Controllers\BranchController;
@@ -142,6 +143,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('dispatchNote-PDF/{id}', [DispatchNotesController::class, 'generate']);
     Route::get('dispatchNote-proveedor', [DispatchNotesController::class, 'traerProovedores']);
     Route::put('dispatchNote-status/{id}', [DispatchNotesController::class, 'updateStatus']);
+    Route::get('dispatchNote-excel', [DispatchNotesController::class, 'excelDowload']);
     Route::post('transfer-orders', [TransferOrderController::class, 'store']);
     Route::get('transfer-orders', [TransferOrderController::class, 'index']);
     Route::get('transfer-orders/{id}', [TransferOrderController::class, 'show']);
@@ -163,6 +165,10 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     // Ruta para traer los motivos de notas de credito o debito
     Route::get('/note-reasons', [NoteReasonController::class, 'index']);
 
+    Route::get('/article-types', [ControllerArticleTypeModel::class, 'index']);
+    Route::get('/article-types/{id}', [ControllerArticleTypeModel::class, 'show']);
+
+
     //Entry Guide
     Route::get('/entry-guides', [ControllerEntryGuide::class, 'index']);
     Route::get('/entryp', [ControllerEntryGuide::class, 'indexC']);
@@ -173,6 +179,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/entry-guide-pdf/{id}', [ControllerEntryGuide::class, 'downloadPdf']);
     Route::put('/entry-guides-status/{id}', [ControllerEntryGuide::class, 'updateStatus']);
     Route::post('/entry-guides-procedure-fifo', [ControllerEntryGuide::class, 'getProcedureFIFO']);
+    Route::get('/entry-guides-excel', [ControllerEntryGuide::class, 'excelDowload']);
     //PettyCashReceipt
     Route::get('/pettyCashReceipt', [PettyCashReceiptController::class, 'index']);
     Route::post('/pettyCashReceipt', [PettyCashReceiptController::class, 'store']);

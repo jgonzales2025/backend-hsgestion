@@ -4,6 +4,7 @@ namespace App\Modules\EntryGuides\Domain\Interfaces;
 
 use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 interface EntryGuideRepositoryInterface
 {
@@ -18,8 +19,7 @@ interface EntryGuideRepositoryInterface
       public function findByIds(array $ids): array;
       public function allBelongToSameCustomer(array $ids): bool;
       public function updateStatus(int $id, int $status): void;
-
-
-      public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide;
+      public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide; 
+      public function findAllExcel(): ?Collection;
 
 }

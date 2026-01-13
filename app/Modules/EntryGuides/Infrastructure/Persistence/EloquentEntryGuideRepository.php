@@ -6,6 +6,7 @@ use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
 use App\Modules\EntryGuides\Infrastructure\Models\EloquentEntryGuide;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
@@ -13,7 +14,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 
     public function findAll(?string $description, ?int $status, ?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id): LengthAwarePaginator
     {
-        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency'])
+        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency', 'entryGuideArticles'])
             ->when(
                 $description,
                 fn($query) => $query->whereHas(
@@ -83,15 +84,53 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 currency: $entryGuide->currency?->toDomain($entryGuide->currency),
                 includ_igv: $entryGuide->includ_igv,
                 reference_document_id: $entryGuide->reference_document_id,
+                saldo: (float) ($entryGuide->entryGuideArticles->sum('saldo')),
             );
         });
 
         return $paginator;
     }
+
+    public function findAllExcel(): Collection
+    {
+        return EloquentEntryGuide::with([
+            'branch',
+            'customer',
+            'ingressReason',
+            'documentEntryGuides',
+            'entryGuideArticles'
+        ])->get()
+            ->map(function ($entryGuide) {
+                return new EntryGuide(
+                    id: $entryGuide->id,
+                    cia: $entryGuide->company?->toDomain($entryGuide->company),
+                    branch: $entryGuide->branch?->toDomain($entryGuide->branch),
+                    serie: $entryGuide->serie,
+                    correlative: $entryGuide->correlative,
+                    date: $entryGuide->date,
+                    customer: $entryGuide->customer?->toDomain($entryGuide->customer),
+                    observations: $entryGuide->observations,
+                    ingressReason: $entryGuide->ingressReason?->toDomain($entryGuide->ingressReason),
+                    reference_serie: $entryGuide->reference_serie,
+                    reference_correlative: $entryGuide->reference_correlative,
+                    status: $entryGuide->status,
+                    subtotal: $entryGuide->subtotal,
+                    total_descuento: $entryGuide->total_descuento,
+                    total: $entryGuide->total,
+                    update_price: (bool) $entryGuide->update_price,
+                    entry_igv: $entryGuide->entry_igv,
+                    currency: $entryGuide->currency?->toDomain($entryGuide->currency),
+                    includ_igv: $entryGuide->includ_igv,
+                    reference_document_id: $entryGuide->reference_document_id,
+                    saldo: (float) ($entryGuide->entryGuideArticles->sum('saldo')),
+                );
+            });
+    }
+
     public function findByCorrelative(?string $correlativo): ?EntryGuide
     {
 
-        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides']);
+        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'entryGuideArticles']);
         $query->where('correlative', $correlativo);
         $entryGuide = $query->first();
         if (!$entryGuide) {
@@ -118,11 +157,12 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             currency: $entryGuide->currency_id,
             includ_igv: $entryGuide->includ_igv,
             reference_document_id: $entryGuide->reference_document_id,
+            saldo: (float) ($entryGuide->entryGuideArticles->sum('saldo')),
         );
     }
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide
     {
-        $entryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'currency'])
+        $entryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'currency', 'entryGuideArticles'])
             ->where('reference_serie', $serie)
             ->where('reference_correlative', $correlative)
             ->first();
@@ -152,6 +192,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             currency: $entryGuide->currency?->toDomain($entryGuide->currency),
             includ_igv: $entryGuide->includ_igv,
             reference_document_id: $entryGuide->reference_document_id,
+            saldo: (float) ($entryGuide->entryGuideArticles->sum('saldo')),
         );
     }
     public function save(EntryGuide $entryGuide): ?EntryGuide
@@ -205,12 +246,13 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 currency: $eloquentEntryGuide->currency?->toDomain($eloquentEntryGuide->currency),
                 includ_igv: $eloquentEntryGuide->includ_igv,
                 reference_document_id: $eloquentEntryGuide->reference_document_id,
+                saldo: (float) ($eloquentEntryGuide->entryGuideArticles ? $eloquentEntryGuide->entryGuideArticles->sum('saldo') : 0),
             );
         });
     }
     public function findById(int $id): ?EntryGuide
     {
-        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency'])->find($id);
+        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency', 'entryGuideArticles'])->find($id);
 
         if (!$eloquentEntryGuide) {
             return null;
@@ -240,7 +282,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     }
     public function update(EntryGuide $entryGuide): EntryGuide|null
     {
-        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides'])->find($entryGuide->getId());
+        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'entryGuideArticles'])->find($entryGuide->getId());
 
         if (!$eloquentEntryGuide) {
             return null;
@@ -255,10 +297,10 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'ingress_reason_id' => $entryGuide->getIngressReason()->getId(),
             'reference_serie' => $entryGuide->getReferenceSerie(),
             'reference_correlative' => $entryGuide->getReferenceCorrelative(),
-            'subtotal' => $entryGuide->getSubtotal(), 
+            'subtotal' => $entryGuide->getSubtotal(),
             'total_descuento' => $entryGuide->getTotalDescuento(),
             'total' => $entryGuide->getTotal(),
-            'update_price' => $entryGuide->getUpdatePrice(), 
+            'update_price' => $entryGuide->getUpdatePrice(),
             'entry_igv' => $entryGuide->getEntryIgv(),
             'currency_id' => $entryGuide->getCurrency()->getId(),
             'includ_igv' => $entryGuide->getIncludIgv(),
@@ -310,7 +352,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             return [];
         }
 
-        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency'])
+        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency', 'entryGuideArticles'])
             ->whereIn('id', $ids)
             ->orderByDesc('id')
             ->get();
@@ -341,6 +383,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 currency: $entryGuide->currency?->toDomain($entryGuide->currency),
                 includ_igv: $entryGuide->includ_igv,
                 reference_document_id: $entryGuide->reference_document_id,
+                saldo: (float) ($entryGuide->entryGuideArticles->sum('saldo')),
             );
         })->toArray();
     }

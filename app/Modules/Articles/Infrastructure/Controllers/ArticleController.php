@@ -70,8 +70,7 @@ class ArticleController extends Controller
     private BranchRepositoryInterface $branchRepository,
     private ReferenceCodeRepositoryInterface $referenceCodeRepository,
     private DetailPcCompatibleRepositoryInterface $detailPcCompatibleRepository
-  ) {
-  }
+  ) {}
   public function export()
   {
     try {
@@ -103,11 +102,11 @@ class ArticleController extends Controller
 
     $articleUseCase = new FindAllArticleUseCase($this->articleRepository);
 
-    $articles = $articleUseCase->execute($name, $branchId, $brand_id, $category_id,$status,$medida);
+    $articles = $articleUseCase->execute($name, $branchId, $brand_id, $category_id, $status, $medida);
 
     // Return paginated response
     return new JsonResponse([
-      'data' => ArticleResource::collection($articles->items())->resolve(),
+      'data'  => ArticleResource::collection($articles->items())->resolve(),
       'current_page' => $articles->currentPage(),
       'per_page' => $articles->perPage(),
       'total' => $articles->total(),

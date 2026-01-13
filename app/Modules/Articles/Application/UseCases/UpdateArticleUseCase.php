@@ -18,7 +18,7 @@ use App\Modules\MeasurementUnit\Domain\Interfaces\MeasurementUnitRepositoryInter
 use App\Modules\SubCategory\Application\UseCases\FindByIdSubCategoryUseCase;
 use App\Modules\SubCategory\Domain\Interfaces\SubCategoryRepositoryInterface;
 use App\Modules\User\Application\UseCases\GetUserByIdUseCase;
-use App\Modules\User\Domain\Interfaces\UserRepositoryInterface; 
+use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 
 readonly class UpdateArticleUseCase
 {
@@ -33,8 +33,7 @@ readonly class UpdateArticleUseCase
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private readonly SubCategoryRepositoryInterface $subCategoryRepository,
         private readonly CompanyRepositoryInterface $companyRepository,
-    ) {
-    }
+    ) {}
     public function execute(int $id, ArticleDTO $articleDTO): Article
     {
         $categoryUseCase = new FindByIdCategoryUseCase($this->categoryRepository);
@@ -59,7 +58,7 @@ readonly class UpdateArticleUseCase
         $companyType = $CompanyUseCase->execute($articleDTO->company_type_id);
 
         $article = new Article(
-             id: $id,
+            id: $id,
             cod_fab: $articleDTO->cod_fab,
             description: $articleDTO->description,
             weight: $articleDTO->weight,
@@ -90,6 +89,7 @@ readonly class UpdateArticleUseCase
             filtNameEsp: $articleDTO->filtNameEsp,
             statusEsp: $articleDTO->statusEsp,
             url_supplier: $articleDTO->url_supplier,
+            article_type_id: $articleDTO->article_type_id,
 
         );
 

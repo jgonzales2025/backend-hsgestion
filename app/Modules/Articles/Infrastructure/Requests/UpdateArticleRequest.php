@@ -35,6 +35,7 @@ class UpdateArticleRequest extends FormRequest
             'authorized_price' => isset($this->authorized_price) ? (float) $this->authorized_price : 0,
             'state_modify_article' => isset($this->state_modify_article) ? (int) $this->state_modify_article : 0,
             'url_supplier' => isset($this->url_supplier) ? (string) $this->url_supplier : '',
+            'article_type_id' => isset($this->article_type_id) ? (int) $this->article_type_id : 1,
         ]);
     }
 
@@ -94,6 +95,7 @@ class UpdateArticleRequest extends FormRequest
             'url_supplier' => 'nullable|string',
             'reference_code' => 'nullable|array',
             'detail_pc_compatible' => 'nullable|array',
+            'article_type_id' => 'nullable|integer',
         ];
     }
 

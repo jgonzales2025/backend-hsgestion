@@ -216,6 +216,9 @@ class ControllerEntryGuide extends Controller
             $data['reference_document_id'] = $data['reference_document_id'] ?? 0;
             $data['document_entry_guide']['reference_document_id'] = $data['document_entry_guide']['reference_document_id'] ?? 0;
 
+
+
+
             $entryGuideDTO = new EntryGuideDTO($data);
             $entryGuideUseCase = new CreateEntryGuideUseCase(
                 $this->entryGuideRepositoryInterface,
@@ -229,11 +232,13 @@ class ControllerEntryGuide extends Controller
             $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
             $isFactura = (isset($data['document_entry_guide']['reference_document_id']) && $data['document_entry_guide']['reference_document_id'] == 1);
+            $iscredito = (isset($data['document_entry_guide']['reference_document_id']) && $data['document_entry_guide']['reference_document_id'] == 7);
+            $isdebito = (isset($data['document_entry_guide']['reference_document_id']) && $data['document_entry_guide']['reference_document_id'] == 8);
 
-            $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $data['entry_guide_articles'], $isFactura);
+            $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $data['entry_guide_articles'], ($isFactura || $iscredito || $isdebito));
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $data['document_entry_guide']);
 
-            if ($isFactura) {
+            if ($isFactura || $iscredito || $isdebito) {
                 $this->createPurchaseFromEntryGuide($entryGuide, $data);
             }
 
@@ -282,8 +287,10 @@ class ControllerEntryGuide extends Controller
 
 
             $isFactura = (isset($request->validated()['document_entry_guide']['reference_document_id']) && $request->validated()['document_entry_guide']['reference_document_id'] == 1);
+            $iscredito = (isset($request->validated()['document_entry_guide']['reference_document_id']) && $request->validated()['document_entry_guide']['reference_document_id'] == 7);
+            $isdebito = (isset($request->validated()['document_entry_guide']['reference_document_id']) && $request->validated()['document_entry_guide']['reference_document_id'] == 8);
 
-            $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles'], $isFactura);
+            $entryGuideArticle = $this->createEntryGuideArticles($entryGuide, $request->validated()['entry_guide_articles'], ($isFactura || $iscredito || $isdebito));
             $detEntryguidePurchaseOrder =  $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $request->validated()['document_entry_guide']);
 
@@ -372,7 +379,7 @@ class ControllerEntryGuide extends Controller
     } 
     private function calculateProcessStatus(array $articles, $documentEntryGuide = null): string
     {
-        if ($documentEntryGuide && $documentEntryGuide->getReferenceDocument()?->getId() == 1) {
+        if ($documentEntryGuide && in_array($documentEntryGuide->getReferenceDocument()?->getId(), [1, 7, 8])) {
             return 'completado';
         }
 
@@ -678,7 +685,7 @@ class ControllerEntryGuide extends Controller
             'igv' => $data['entry_igv'] ?? 0,
             'total' => $data['total'] ?? 0,
             'is_igv' => $data['includ_igv'] ?? true,
-            'reference_document_type_id' => 1,
+            'reference_document_type_id' => $data['document_entry_guide']['reference_document_id'] ?? 1,
             'reference_serie' => $data['document_entry_guide']['reference_serie'] ?? '',
             'reference_correlative' => $data['document_entry_guide']['reference_correlative'] ?? '',
             'det_compras_guia_ingreso' => $purchaseArticles,
@@ -702,11 +709,13 @@ class ControllerEntryGuide extends Controller
     private function syncPurchaseFromEntryGuide($entryGuide, array $data): void
     {
         $isFactura = (isset($data['document_entry_guide']['reference_document_id']) && $data['document_entry_guide']['reference_document_id'] == 1);
+        $iscredito = (isset($data['document_entry_guide']['reference_document_id']) && $data['document_entry_guide']['reference_document_id'] == 7);
+        $isdebito = (isset($data['document_entry_guide']['reference_document_id']) && $data['document_entry_guide']['reference_document_id'] == 8);
 
         $shoppingIncomeGuides = $this->shoppingIncomeGuideRepositoryInterface->findByEntryGuideId($entryGuide->getId());
 
         if (empty($shoppingIncomeGuides)) {
-            if ($isFactura) {
+            if ($isFactura || $iscredito || $isdebito) {
                 $this->createPurchaseFromEntryGuide($entryGuide, $data);
             }
             return;
@@ -811,7 +820,7 @@ class ControllerEntryGuide extends Controller
             'igv' => $totalIgv,
             'total' => $totalTotal,
             'is_igv' => $isIgv,
-            'reference_document_type_id' => 1,
+            'reference_document_type_id' => $data['document_entry_guide']['reference_document_id'] ?? 1,
             'reference_serie' => $referenceSerie ?: $purchase->getReferenceSerie(),
             'reference_correlative' => $referenceCorrelative ?: $purchase->getReferenceCorrelative(),
             'det_compras_guia_ingreso' => array_values($consolidatedArticles),

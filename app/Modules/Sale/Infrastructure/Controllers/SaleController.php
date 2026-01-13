@@ -33,6 +33,7 @@ use App\Modules\Sale\Application\UseCases\FindAllNoteCreditsByCustomerUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllPendingSalesByCustomerIdUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllProformasUseCase;
 use App\Modules\Sale\Application\UseCases\FindAllSalesUseCase;
+use App\Modules\Sale\Application\UseCases\FindByDocumentReferenceUseCase;
 use App\Modules\Sale\Application\UseCases\FindSaleWithUpdatedQuantitiesUseCase;
 use App\Modules\Sale\Application\UseCases\FindByDocumentSaleUseCase;
 use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
@@ -141,6 +142,13 @@ class SaleController extends Controller
     public function store(StoreSaleRequest $request): JsonResponse
     {
         return DB::transaction(function () use ($request) {
+
+            $date = now()->format('Y-m-d');
+            if ($request['date'] != $date)
+            {
+                return new JsonResponse(['message' => 'Solo se pueden emitir ventas con la fecha actual.'], 400);
+            }
+
             $customerUseCase = new FindByIdCustomerUseCase($this->customerRepository);
             $customer = $customerUseCase->execute($request->validated()['customer_id']);
 
@@ -261,6 +269,9 @@ class SaleController extends Controller
             $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
             $sale = $saleUseCase->execute($id);
 
+            $documentReferenceUseCase = new FindByDocumentReferenceUseCase($this->saleRepository);
+            $documentReference = $documentReferenceUseCase->execute($sale->getDocumentType()->getId(), $sale->getSerie(), $sale->getDocumentNumber());
+
             if (!$sale) {
                 return response()->json(['message' => 'Venta no encontrada'], 404);
             }
@@ -271,6 +282,15 @@ class SaleController extends Controller
 
             if ($sale->getSunatStatus() === 'ACEPTADA') {
                 return response()->json(['message' => 'La venta no se puede actualizar por ser aceptada por SUNAT'], 200);
+            }
+
+            if ($sale->getSaldo() != $sale->getTotal())
+            {
+                return response()->json(['message' => 'La venta no se puede actualizar porque ya tiene pagos registrados.'], 200);
+            }
+
+            if ($documentReference) {
+                return response()->json(['message' => 'La venta no se puede actualizar porque ya tiene notas de crédito'], 200);
             }
 
             $saleDTO = new SaleDTO($request->validated());
@@ -776,6 +796,15 @@ class SaleController extends Controller
 
         $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
         $sale = $saleUseCase->execute($id);
+
+        /* if ($sale->getSaldo() != $sale->getTotal())
+            {
+                return response()->json(['message' => 'La venta no se puede anular porque ya tiene pagos registrados.'], 200);
+            } DESCOMENTAR CUANDO TERMINE JEREMY XD*/ 
+
+            /* if ($documentReference) {
+                return response()->json(['message' => 'La venta no se puede anular porque ya tiene notas de crédito'], 200);
+            } DESCOMENTAR CUANDO TERMINE JEREMY XD*/ 
 
         if ($sale->getDocumentType()->getId() == 1) {
             $response = $this->salesSunatService->saleInvoiceAnulacion($sale);

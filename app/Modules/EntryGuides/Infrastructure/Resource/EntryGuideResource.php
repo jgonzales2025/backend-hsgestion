@@ -53,6 +53,9 @@ class EntryGuideResource extends JsonResource
             ],
             'includ_igv' => $this->resource?->getIncludIgv(),
             'reference_document_id' => $this->resource?->getReferenceDocument(),
+            'nc_document_id' => $this->resource?->getNcDocumentId(),
+            'nc_reference_serie' => $this->resource?->getNcReferenceSerie(),
+            'nc_reference_correlative' => $this->resource?->getNcReferenceCorrelative(),
         ];
     }
 }

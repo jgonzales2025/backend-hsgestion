@@ -66,6 +66,9 @@ class UpdateEntryGuideUseCase
             currency: $currency,
             includ_igv: $entryGuideDTO->includ_igv,
             reference_document_id: $entryGuideDTO->reference_document_id,
+            nc_document_id: $entryGuideDTO->nc_document_id,
+            nc_reference_serie: $entryGuideDTO->nc_reference_serie,
+            nc_reference_correlative: $entryGuideDTO->nc_reference_correlative,
         );
         return $this->entryGuideRepositoryInterface->update($entryGuide);
     }

@@ -31,6 +31,9 @@ class EntryGuide
     private bool $includ_igv;
     private ?int $reference_document_id;
     private float $saldo;
+    private ?int $nc_document_id;
+    private ?string $nc_reference_serie;
+    private ?string $nc_reference_correlative;
 
     public function __construct(
         ?int $id,
@@ -54,6 +57,9 @@ class EntryGuide
         bool $includ_igv,
         ?int $reference_document_id,
         float $saldo = 0,
+        ?int $nc_document_id = null,
+        ?string $nc_reference_serie = null,
+        ?string $nc_reference_correlative = null
     ) {
         $this->id = $id;
         $this->cia = $cia;
@@ -76,10 +82,27 @@ class EntryGuide
         $this->includ_igv = $includ_igv;
         $this->reference_document_id = $reference_document_id;
         $this->saldo = $saldo;
+        $this->nc_document_id = $nc_document_id;
+        $this->nc_reference_serie = $nc_reference_serie;
+        $this->nc_reference_correlative = $nc_reference_correlative;
     }
     public function getId(): int|null
     {
         return $this->id;
+    }
+    public function getNcDocumentId(): ?int
+    {
+        return $this->nc_document_id;
+    }
+
+    public function getNcReferenceSerie(): ?string
+    {
+        return $this->nc_reference_serie;
+    }
+
+    public function getNcReferenceCorrelative(): ?string
+    {
+        return $this->nc_reference_correlative;
     }
     public function getSerie(): ?string
     {

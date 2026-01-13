@@ -47,6 +47,9 @@ class EloquentPurchase extends Model
         'reference_serie',
         'reference_correlative',
         'saldo',
+        'nc_document_id',
+        'nc_reference_serie',
+        'nc_reference_correlative',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -114,6 +117,9 @@ class EloquentPurchase extends Model
             reference_correlative: $this->reference_correlative,
             det_compras_guia_ingreso: $this->detComprasGuiaIngreso?->map(fn($d) => $d->toDomain())->toArray() ?? [],
             shopping_Income_Guide: $this->shoppingIncomeGuide?->map(fn($d) => $d->toDomain())->toArray() ?? [],
+            nc_document_id: $this->nc_document_id,
+            nc_reference_serie: $this->nc_reference_serie,
+            nc_reference_correlative: $this->nc_reference_correlative,
         );
     }
 }

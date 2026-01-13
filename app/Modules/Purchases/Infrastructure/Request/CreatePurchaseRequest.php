@@ -43,6 +43,10 @@ class CreatePurchaseRequest extends FormRequest
       'inafecto' => 'required|numeric',
       'igv' => 'required|numeric',
       'total' => 'required|numeric',
+      'nc_document_id' => 'nullable|numeric',
+      'nc_reference_serie' => 'nullable|string',
+      'nc_reference_correlative' => 'nullable|string',
+
       'det_compras_guia_ingreso' => 'nullable|array',
       'det_compras_guia_ingreso.*.article_id' => 'nullable|integer|exists:articles,id',
       'det_compras_guia_ingreso.*.description' => 'nullable|string',
@@ -53,8 +57,10 @@ class CreatePurchaseRequest extends FormRequest
       'det_compras_guia_ingreso.*.total' => 'nullable|numeric|gt:0',
       'det_compras_guia_ingreso.*.cantidad_update' => 'nullable|numeric',
       'det_compras_guia_ingreso.*.process_status' => 'nullable|string',
+
       'entry_guide_id' => 'nullable|array',
       'entry_guide_id.*' => 'nullable|integer|exists:entry_guides,id',
+
       'is_igv' => 'required|boolean',
       'reference_document_type_id' => 'required|integer',
       'reference_serie' => 'required|string',

@@ -91,6 +91,9 @@ class UpdatePurchaseUseCase
             saldo: $purchaseDTO->total,
             det_compras_guia_ingreso: $purchaseDTO->det_compras_guia_ingreso,
             shopping_Income_Guide: $purchaseDTO->shopping_Income_Guide,
+            nc_document_id: $purchaseDTO->nc_document_id,
+            nc_reference_serie: $purchaseDTO->nc_reference_serie,
+            nc_reference_correlative: $purchaseDTO->nc_reference_correlative,
         );
         return $this->purchaseRepository->update($puchaseCreate);
     }

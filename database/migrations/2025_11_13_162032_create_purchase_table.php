@@ -39,6 +39,9 @@ return new class extends Migration
             $table->foreignId('document_type_id')->constrained('document_types');
             $table->string('reference_serie');
             $table->string('reference_correlative');
+            $table->foreignId('nc_document_id')->nullable();
+            $table->string('nc_reference_serie')->nullable();
+            $table->string('nc_reference_correlative')->nullable();
             $table->timestamps();
         });
     }

@@ -13,7 +13,8 @@ class DocumentEntryGuideResource extends JsonResource
             'entry_guide_id' => $this->resource->getEntryGuideId(),
             'reference_document' => [
                 'id' => $this->resource->getReferenceDocument()->getId(),
-                'name' => $this->resource->getReferenceDocument()->getDescription(),
+                'name' => $this->resource->getReferenceDocument()->getAbbreviation(),
+                
             ],
             'reference_serie' => $this->resource->getReferenceSerie(),
             'reference_correlative' => $this->resource->getReferenceCorrelative(),

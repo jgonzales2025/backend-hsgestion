@@ -62,6 +62,7 @@ class PurchaseResource extends JsonResource
             'reference_document_type' => [
                 'id' => $this->resource->getTypeDocumentId()->getId(),
                 'description' => $this->resource->getTypeDocumentId()->getDescription(),
+                'name' => $this->resource->getTypeDocumentId()?->getAbbreviation(),
             ],
             'reference_serie' => $this->resource->getReferenceSerie(),
             'reference_correlative' => $this->resource->getReferenceCorrelative(),

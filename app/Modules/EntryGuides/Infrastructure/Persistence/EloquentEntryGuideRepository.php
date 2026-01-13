@@ -5,6 +5,7 @@ namespace App\Modules\EntryGuides\Infrastructure\Persistence;
 use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
 use App\Modules\EntryGuides\Infrastructure\Models\EloquentEntryGuide;
+use App\Modules\Purchases\Infrastructure\Models\EloquentPurchase;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -206,6 +207,17 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     }
     public function save(EntryGuide $entryGuide): ?EntryGuide
     {
+        if ($entryGuide->getReferenceDocument() === 7 || $entryGuide->getReferenceDocument() === 8) {
+            $exists = EloquentPurchase::where('nc_document_id', $entryGuide->getNcDocumentId())
+                ->where('nc_reference_serie', $entryGuide->getNcReferenceSerie())
+                ->where('nc_reference_correlative', $entryGuide->getNcReferenceCorrelative())
+                ->exists();
+
+            if (!$exists) {
+                throw new \Exception("El documento de referencia no existe en las notas de credito/debito.");
+            }
+        }
+        
         return DB::transaction(function () use ($entryGuide) {
 
             $eloquentEntryGuide = EloquentEntryGuide::create([
@@ -302,9 +314,20 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     {
         $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'entryGuideArticles'])->find($entryGuide->getId());
 
-        if (!$eloquentEntryGuide) {
-            return null;
-        }
+        // if (!$eloquentEntryGuide) {
+        //     return null;
+        // }
+        //         if ($entryGuide->getReferenceDocument() === 7 || $entryGuide->getReferenceDocument() === 8) {
+        //     $exists = EloquentPurchase::where('document_type_id', $entryGuide->getNcDocumentId())
+        //         ->where('nc_document_id', $entryGuide->getNcDocumentId())
+        //         ->where('nc_reference_serie', $entryGuide->getNcReferenceSerie())
+        //         ->where('nc_reference_correlative', $entryGuide->getNcReferenceCorrelative())
+        //         ->exists();
+
+        //     if (!$exists) {
+        //         throw new \Exception("El documento de referencia no existe en las compras.");
+        //     }
+        // }
 
         $eloquentEntryGuide->update([
             'cia_id' => $entryGuide->getCompany()->getId(),

@@ -22,4 +22,5 @@ interface SaleRepositoryInterface
     public function findAllPendingSalesByCustomerId(int $customerId): ?array;
     public function findAllDocumentsByCustomerId(int $customerId, ?int $payment_status, ?int $user_sale_id, ?string $start_date, ?string $end_date, ?int $document_type_id);
     public function updateStatus(int $id, int $status): void;
+    public function findByDocumentReference(int $document_type_id, string $serie, string $correlative): bool;
 }

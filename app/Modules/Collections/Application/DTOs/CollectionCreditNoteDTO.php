@@ -23,7 +23,7 @@ class CollectionCreditNoteDTO
         $this->sale_document_type_id = $data['sale_document_type_id'];
         $this->sale_serie = $data['sale_serie'];
         $this->sale_correlative = $data['sale_correlative'];
-        $this->payment_method_id = $data['payment_method_id'];
+        $this->payment_method_id = 5;
         $this->payment_date = $data['payment_date'];
         $this->amount = $data['amount'];
         $this->credit_document_type_id = $data['credit_document_type_id'] ?? null;

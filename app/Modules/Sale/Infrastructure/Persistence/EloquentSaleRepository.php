@@ -78,6 +78,18 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         return $this->buildDomainSale($eloquentSale, $sale);
     }
 
+    public function findByDocumentReference(int $document_type_id, string $serie, string $correlative): bool
+    {
+        $count = EloquentSale::where('reference_document_type_id', $document_type_id)
+            ->where('reference_serie', $serie)
+            ->where('reference_correlative', $correlative)
+            ->where('document_type_id', 7)
+            ->where('payment_status', 1)
+            ->count();
+
+        return $count > 0;
+    }
+
     public function saveCreditNote(SaleCreditNote $saleCreditNote): ?SaleCreditNote
     {
         $eloquentSaleCreditNote = EloquentSale::create($this->mapToArrayCreditNote($saleCreditNote));

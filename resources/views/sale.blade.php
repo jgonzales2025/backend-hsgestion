@@ -267,8 +267,9 @@
         <table class="products-table" style="margin-top: 15px;">
             <thead>
                 <tr>
-                    <th style="width: 15%;">CÓDIGO</th>
-                    <th style="width: 45%; text-align: left; padding-left: 10px;">DESCRIPCIÓN</th>
+                    <th style="width: 10%;">CÓDIGO</th>
+                    <th style="width: 55%; text-align: left; padding-left: 10px;">DESCRIPCIÓN</th>
+                    <th style="width: 15%;">GARANTÍA</th>
                     <th style="width: 10%;">CANT</th>
                     <th style="width: 10%;">P. UNIT</th>
                     <th style="width: 10%;">TOTAL</th>
@@ -290,6 +291,7 @@
                                 </span>
                             @endif
                         </td>
+                        <td style="text-align:center;">{{ $article->getWarranty() }}</td>
                         <td style="text-align:center;">{{ $article->getQuantity() }}</td>
                         <td style="text-align:right;">{{ number_format($article->getUnitPrice(), 2) }}</td>
                         <td style="text-align:right;">{{ number_format($article->getSubtotal(), 2) }}</td>

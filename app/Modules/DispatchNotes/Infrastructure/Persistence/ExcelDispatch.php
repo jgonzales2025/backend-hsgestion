@@ -2,6 +2,7 @@
 
 namespace App\Modules\DispatchNotes\Infrastructure\Persistence;
 
+use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\CustomerAddress\Infrastructure\Models\EloquentCustomerAddress;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\FromCollection;
@@ -31,7 +32,6 @@ class ExcelDispatch implements FromCollection, WithHeadings, WithMapping, WithSt
             'Fecha',
             'Serie',
             'Correlativo',
-            'Destinatario',
             'RUC Destinatario',
             'Motivo de Traslado',
             'Punto de Partida',
@@ -50,8 +50,21 @@ class ExcelDispatch implements FromCollection, WithHeadings, WithMapping, WithSt
             $dispatchNote->getCreatedFecha(),
             $dispatchNote->getSerie(),
             $dispatchNote->getCorrelativo(),
-            $dispatchNote->getAddressSupplier()?->getName() ?? 'N/A',
-            $dispatchNote->getAddressSupplier()?->getDocumentNumber() ?? 'N/A',
+            (function () use ($dispatchNote) {
+                $code = EloquentCustomer::where('id', $dispatchNote->getCustomerId())->first();
+
+                if (!$code) {
+                    return [];
+                }
+
+                return (object) [
+                    'id' => $code->id,
+                    'status' => $code->status == 1 ? 'Activo' : 'Inactivo',
+                    'name' => $code->name ?? $code->company_name,
+                    'document_number' => $code->document_number,
+
+                ];
+            })()->document_number,
             $dispatchNote->getEmissionReason() ? $dispatchNote->getEmissionReason()->getDescription() : '',
             $dispatchNote->getBranch() ? $dispatchNote->getBranch()->getAddress() : '',
             (function ()use($dispatchNote) {

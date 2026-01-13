@@ -549,7 +549,8 @@ class SaleController extends Controller
                 'public_price' => $article['public_price'],
                 'subtotal' => $article['subtotal'],
                 'purchase_price' => $article['purchase_price'],
-                'costo_neto' => $article['purchase_price'] * $article['quantity']
+                'costo_neto' => $article['purchase_price'] * $article['quantity'],
+                'warranty' => $article['warranty']
             ]);
 
             $saleArticle = $createSaleArticleUseCase->execute($saleArticleDTO, $subtotal_costo_neto);

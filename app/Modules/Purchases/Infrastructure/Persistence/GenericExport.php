@@ -13,6 +13,8 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Illuminate\Support\Collection;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+
 
 class GenericExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithEvents, ShouldAutoSize
 {
@@ -99,7 +101,7 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithSt
                     ],
                 ]);
 
-                // Ajustar fila de encabezados (ahora es la 2)
+                // Ajustar encabezados
                 $sheet->freezePane('A3');
                 $sheet->setAutoFilter("A2:{$highestColumn}{$highestRow}");
 
@@ -116,7 +118,32 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithSt
 
                 // Ajustar altura de la fila del título
                 $sheet->getRowDimension(1)->setRowHeight(30);
-            },
+
+                $sheet->getStyle("H3:H{$highestRow}")
+                    ->getNumberFormat()
+                    ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+
+                $sheet->getStyle("I3:I{$highestRow}")
+                    ->getNumberFormat()
+                    ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+
+                $sheet->getStyle("J3:J{$highestRow}")
+                    ->getNumberFormat()
+                    ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+
+                $sheet->getStyle("K3:K{$highestRow}")
+                    ->getNumberFormat()
+                    ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+
+                $sheet->getStyle("L3:L{$highestRow}")
+                    ->getNumberFormat()
+                    ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+
+                $sheet->getStyle("M3:M{$highestRow}")
+                    ->getNumberFormat()
+                    ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
+            }
+
         ];
     }
 }

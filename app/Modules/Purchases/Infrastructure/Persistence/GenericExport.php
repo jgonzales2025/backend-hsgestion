@@ -45,7 +45,7 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
         ];
     }
 
-    public function map($purchases): array 
+    public function map($purchases): array
     {
         return [
             $purchases->{'T/D'} ?? '',
@@ -69,28 +69,35 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $highestRow = $sheet->getHighestRow();
-                $highestColumn = $sheet->getHighestColumn();
+                $highestColumn = $sheet->getHighestColumn(); 
 
+                //  Insertar fila para el título
                 $sheet->insertNewRowBefore(1, 1);
                 $sheet->mergeCells("A1:{$highestColumn}1");
                 $sheet->setCellValue('A1', mb_strtoupper($this->title));
 
+                //  Estilo del título
                 $sheet->getStyle('A1')->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'size' => 20,
-                        'color' => ['rgb' => '000000'],
-                    ],
+                    ], 
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
                         'vertical'   => Alignment::VERTICAL_CENTER,
                     ],
                 ]);
 
+                // Recalcular filas DESPUÉS de insertar
+                $highestRow = $sheet->getHighestRow();
+
+                // Freeze
                 $sheet->freezePane('A3');
+
+                // AutoFilter (encabezados en fila 2)
                 $sheet->setAutoFilter("A2:{$highestColumn}{$highestRow}");
 
+                // Estilo encabezados
                 $headerRange = "A2:{$highestColumn}2";
                 $sheet->getStyle($headerRange)
                     ->getFill()
@@ -102,15 +109,20 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
                     ->getAlignment()
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
+                // Formato numérico (2 decimales)
                 $sheet->getStyle("H3:M{$highestRow}")
                     ->getNumberFormat()
                     ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
 
-                $sheet->getStyle("A3:M{$highestRow}")
+                // Alineaciones
+                $sheet->getStyle("A3:G{$highestRow}")
                     ->getAlignment()
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            },
 
+                $sheet->getStyle("H3:M{$highestRow}")
+                    ->getAlignment()
+                    ->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+            },
         ];
     }
 }

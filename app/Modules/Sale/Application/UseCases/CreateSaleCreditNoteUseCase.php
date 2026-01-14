@@ -48,9 +48,7 @@ readonly class CreateSaleCreditNoteUseCase
 
         $saleUseCase = new FindByDocumentSaleUseCase($this->saleRepository);
         $sale = $saleUseCase->execute($saleCreditNoteDTO->reference_document_type_id, $saleCreditNoteDTO->reference_serie, $saleCreditNoteDTO->reference_correlative);
-        Log::info($saleCreditNoteDTO->reference_document_type_id);
-        Log::info($saleCreditNoteDTO->reference_serie);
-        Log::info($saleCreditNoteDTO->reference_correlative);
+
         $companyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
         $company = $companyUseCase->execute($saleCreditNoteDTO->company_id);
 

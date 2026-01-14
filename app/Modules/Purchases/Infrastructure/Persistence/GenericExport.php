@@ -87,6 +87,7 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
                         'vertical'   => Alignment::VERTICAL_CENTER,
                     ],
                 ]);
+                //--
                 // Recalcular filas DESPUÉS de insertar
                 $highestRow = $sheet->getHighestRow();
 

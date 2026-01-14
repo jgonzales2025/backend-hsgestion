@@ -304,13 +304,53 @@
 
         <!-- Totals -->
         <div style="width: 100%;">
-            <div style="float: left; width: 60%;">
-                <div class="amount-in-words">
+            <div style="width: 100%; margin-bottom: 10px;">
+                <div class="amount-in-words" style="border-top: 1px solid #ccc; padding-top: 5px;">
+                    <span style="font-weight: bold;">SON : </span>
                     {{ \App\Shared\Infrastructure\Helpers\NumberToWords::convert($sale->getTotal(), $sale->getCurrencyType()->getName()) }}
                 </div>
             </div>
+
+            <div style="float: left; width: 55%; padding-right: 10px;">
+                @if($sale->getPorretencion() > 0)
+                    <div style="border: 1px solid #000; padding: 5px; font-size: 9px;">
+                        <div style="font-weight: bold; text-decoration: underline; margin-bottom: 2px;">Información de la
+                            retención</div>
+                        <div><span style="font-weight: bold;">Base imponible de la retención :</span>
+                            {{ $sale->getCurrencyType()->getCommercialSymbol() }} {{ number_format($sale->getTotal(), 2) }}
+                        </div>
+                        <div><span style="font-weight: bold;">Porcentaje de Retención:</span>
+                            {{ number_format($sale->getPorretencion(), 2) }} %</div>
+                        @php
+                            $retentionAmount = $sale->getCurrencyType()->getId() == 1 ? $sale->getImpretens() : $sale->getImpretend();
+                        @endphp
+                        <div><span style="font-weight: bold;">Monto de la Retención :</span>
+                            {{ $sale->getCurrencyType()->getCommercialSymbol() }} {{ number_format($retentionAmount, 2) }}
+                        </div>
+                    </div>
+                @elseif($sale->getCoddetrac())
+                    <div style="border: 1px solid #000; padding: 5px; font-size: 8px;">
+                        <div style="font-weight: bold; text-decoration: underline; margin-bottom: 2px;">Información de la
+                            detracción</div>
+                        <div style="margin-bottom: 2px;"><span style="font-weight: bold;">Leyenda :</span> Operación sujeta
+                            a Sistema de Pago de Obligaciones Tributarias con el Gobierno Central</div>
+                        @php
+                            $detractionDesc = $sale->getCoddetrac() == 22 ? '022 OTROS SERVICIOS GENERALES' : $sale->getCoddetrac();
+                         @endphp
+                        <div><span style="font-weight: bold;">Bien o Servicio :</span> {{ $detractionDesc }}</div>
+                        <div><span style="font-weight: bold;">Medio de Pago :</span> 001 Depósito en cuenta.</div>
+                        <div><span style="font-weight: bold;">Nro.Cta de la Nación :</span>
+                            {{ $sale->getCompany()->getDetracCtaBanco() }}</div>
+                        <div><span style="font-weight: bold;">Porcentaje de Detracción:</span>
+                            {{ number_format($sale->getPordetrac(), 2) }} %</div>
+                        <div><span style="font-weight: bold;">Monto de Detracción :</span> S/
+                            {{ number_format($sale->getImpdetracs(), 2) }}</div>
+                    </div>
+                @endif
+            </div>
+
             <div style="float: right; width: 40%;">
-                <table style="width: 100%; border: 1px solid #333; margin-top: 10px;">
+                <table style="width: 100%; border: 1px solid #333; margin-top: 0px;">
                     <thead>
                         <tr style="background-color: #333; color: #fff;">
                             <th style="padding: 6px; text-align: center; font-size: 9px;">GRAVADO</th>

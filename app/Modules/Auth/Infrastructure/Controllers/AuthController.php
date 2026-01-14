@@ -374,7 +374,7 @@ class AuthController extends Controller
 
             return $menuArray;
         })->reject(function ($menu) {
-            $hiddenLabels = ['Garantías', 'Actualizaciones', 'SFS-SUNAT'];
+            $hiddenLabels = ['Actualizaciones', 'SFS-SUNAT'];
             return in_array($menu['label'], $hiddenLabels);
         })->values();
 

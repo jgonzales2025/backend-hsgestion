@@ -143,7 +143,6 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithSt
                     ->getNumberFormat()
                     ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
             }
-
         ];
     }
 }

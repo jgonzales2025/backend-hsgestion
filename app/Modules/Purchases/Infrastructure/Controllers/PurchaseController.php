@@ -188,7 +188,7 @@ class PurchaseController extends Controller
             $validated['nrodoc_cli_pro'] ?? 0,
             $validated['tipo_register'] ?? 2
         );
-
+     
         $tipoRegister = $validated['tipo_register'] ?? 2;
         $title = $tipoRegister == 1 ? 'REGISTRO DE VENTA' : 'REGISTRO DE COMPRA';
         $fileName = $tipoRegister == 1 ? 'registro_ventas.xlsx' : 'registro_compras.xlsx';

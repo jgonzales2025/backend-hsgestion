@@ -314,20 +314,20 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     {
         $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'entryGuideArticles'])->find($entryGuide->getId());
 
-        // if (!$eloquentEntryGuide) {
-        //     return null;
-        // }
-        //         if ($entryGuide->getReferenceDocument() === 7 || $entryGuide->getReferenceDocument() === 8) {
-        //     $exists = EloquentPurchase::where('document_type_id', $entryGuide->getNcDocumentId())
-        //         ->where('nc_document_id', $entryGuide->getNcDocumentId())
-        //         ->where('nc_reference_serie', $entryGuide->getNcReferenceSerie())
-        //         ->where('nc_reference_correlative', $entryGuide->getNcReferenceCorrelative())
-        //         ->exists();
+        if (!$eloquentEntryGuide) {
+            return null;
+        }
+                if ($entryGuide->getReferenceDocument() === 7 || $entryGuide->getReferenceDocument() === 8) {
+            $exists = EloquentPurchase::where('document_type_id', $entryGuide->getNcDocumentId())
+                ->where('nc_document_id', $entryGuide->getNcDocumentId())
+                ->where('nc_reference_serie', $entryGuide->getNcReferenceSerie())
+                ->where('nc_reference_correlative', $entryGuide->getNcReferenceCorrelative())
+                ->exists();
 
-        //     if (!$exists) {
-        //         throw new \Exception("El documento de referencia no existe en las compras.");
-        //     }
-        // }
+            if (!$exists) {
+                throw new \Exception("El documento de referencia no existe en las notas de credito/debito.");
+            }
+        }
 
         $eloquentEntryGuide->update([
             'cia_id' => $entryGuide->getCompany()->getId(),

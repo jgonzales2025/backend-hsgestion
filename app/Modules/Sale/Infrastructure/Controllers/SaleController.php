@@ -483,7 +483,7 @@ class SaleController extends Controller
         // Calcular primero el subtotal_costo_neto total de todos los artículos
         $subtotal_costo_neto = 0;
         foreach ($articlesData as $article) {
-            $subtotal_costo_neto += $article['purchase_price'] * $article['quantity'];
+            $subtotal_costo_neto += $article['purchase_price'] ?? 0 * $article['quantity'];
         }
 
         // Procesar los artículos
@@ -497,8 +497,8 @@ class SaleController extends Controller
                 'unit_price' => $article['unit_price'],
                 'public_price' => $article['public_price'],
                 'subtotal' => $article['subtotal'],
-                'purchase_price' => $article['purchase_price'],
-                'costo_neto' => $article['purchase_price'] * $article['quantity']
+                'purchase_price' => $article['purchase_price'] ?? 0,
+                'costo_neto' => $article['purchase_price'] ?? 0 * $article['quantity']
             ]);
 
             $saleArticle = $createSaleArticleUseCase->execute($saleArticleDTO, $subtotal_costo_neto);

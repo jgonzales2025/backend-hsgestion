@@ -318,10 +318,9 @@ class ArticleController extends Controller
 
     $validatedData = $request->validate([
       'date' => 'date|required',
-      'branch_id' => 'integer|required',
+      'branch_id' => 'nullable',
     ], [
-      'date.required' => 'La fecha es obligatoria',
-      'branch_id.required' => 'El id de la sucursal es obligatorio',
+      'date.required' => 'La fecha es obligatoria'
     ]);
 
     $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);
@@ -335,7 +334,7 @@ class ArticleController extends Controller
 
       if (!$entrySerial) {
         return response()->json([
-          "message" => "La serie es incorrecta"
+          "message" => "No se encuentró ningún artículo."
         ], 404);
       }
 

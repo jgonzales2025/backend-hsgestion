@@ -58,6 +58,7 @@ readonly class UpdateCreditNoteUseCase
             due_date: $saleCreditNoteDTO->due_date,
             days: $saleCreditNoteDTO->days,
             user: $user,
+            user_sale: $user,
             paymentType: null,
             currencyType: null,
             subtotal: $saleCreditNoteDTO->subtotal,

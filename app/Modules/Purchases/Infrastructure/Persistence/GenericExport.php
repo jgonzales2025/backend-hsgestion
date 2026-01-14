@@ -69,7 +69,7 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $highestColumn = $sheet->getHighestColumn(); 
+                $highestColumn = $sheet->getHighestColumn();
 
                 //  Insertar fila para el título
                 $sheet->insertNewRowBefore(1, 1);
@@ -81,13 +81,12 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
                     'font' => [
                         'bold' => true,
                         'size' => 20,
-                    ], 
+                    ],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
                         'vertical'   => Alignment::VERTICAL_CENTER,
                     ],
                 ]);
-
                 // Recalcular filas DESPUÉS de insertar
                 $highestRow = $sheet->getHighestRow();
 
@@ -99,16 +98,20 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
 
                 // Estilo encabezados
                 $headerRange = "A2:{$highestColumn}2";
-                $sheet->getStyle($headerRange)
-                    ->getFill()
-                    ->setFillType(Fill::FILL_SOLID)
-                    ->getStartColor()
-                    ->setARGB('FFE6F0FF');
-
-                $sheet->getStyle($headerRange)
-                    ->getAlignment()
-                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
+                $sheet->getStyle($headerRange)->applyFromArray([
+                    'font' => [
+                        'bold'  => true,
+                        'color' => ['rgb' => 'FFFFFF'],
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical'   => Alignment::VERTICAL_CENTER,
+                    ],
+                    'fill' => [
+                        'fillType'   => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => '4472C4'],
+                    ],
+                ]);
                 // Formato numérico (2 decimales)
                 $sheet->getStyle("H3:M{$highestRow}")
                     ->getNumberFormat()

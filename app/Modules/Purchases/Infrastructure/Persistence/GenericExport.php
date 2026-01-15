@@ -55,12 +55,12 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
             $purchases->{'RUC/DNI'} ?? '',
             $purchases->{'RAZÓN SOCIAL'} ?? '',
             (float) ($purchases->{'T/C'} ?? 0),
-            (float) ($purchases->{'VALOR  S/'} ?? 0),
+            (float) ($purchases->{'VALOR S/'} ?? 0),
             (float) ($purchases->{'IGV S/'} ?? 0),
-            (float) ($purchases->{'TOTAL  S/'} ?? 0),
-            (float) ($purchases->{'VALOR  USD'} ?? 0),
+            (float) ($purchases->{'TOTAL S/'} ?? 0),
+            (float) ($purchases->{'VALOR USD'} ?? 0),
             (float) ($purchases->{'IGV USD'} ?? 0),
-            (float) ($purchases->{'TOTAL  USD'} ?? 0),
+            (float) ($purchases->{'TOTAL USD'} ?? 0),
         ];
     }
 
@@ -87,6 +87,7 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
                         'vertical'   => Alignment::VERTICAL_CENTER,
                     ],
                 ]);
+                //--
                 // Recalcular filas DESPUÉS de insertar
                 $highestRow = $sheet->getHighestRow();
 

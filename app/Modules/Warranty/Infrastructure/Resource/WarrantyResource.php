@@ -2,97 +2,103 @@
 
 namespace App\Modules\Warranty\Infrastructure\Resource;
 
+use App\Modules\DocumentType\Application\UseCases\FindByIdDocumentTypeUseCase;
+use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
+use App\Modules\Warranty\Domain\Entities\Warranty;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class WarrantyResource extends JsonResource
 {
+    public function __construct(
+        private readonly Warranty $warranty,
+        private readonly DocumentTypeRepositoryInterface $documentRepository
+    )
+    {}
+
     public function toArray($request): array
     {
-        $customer = $this->resource->getCustomer();
-        $supplier = $this->resource->getSupplier();
-        $isCompany = $customer->getCustomerDocumentType()->getId() == 2;
-        $isSupplierCompany = $supplier->getCustomerDocumentType()->getId() == 2;
+        $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentRepository);
+        $documentTypes = $documentTypeUseCase->execute($this->warranty->getEntryGuide()->getReferenceDocument());
 
         return [
-            'id' => $this->resource->getId(),
-            'document_type_warranty_id' => $this->resource->getDocumentTypeWarrantyId(),
+            'id' => $this->warranty->getId(),
+            'document_type_warranty_id' => $this->warranty->getDocumentTypeWarrantyId(),
             'company' => [
-                'id' => $this->resource->getCompany()->getId(),
-                'name' => $this->resource->getCompany()->getCompanyName(),
+                'id' => $this->warranty->getCompany()->getId(),
+                'name' => $this->warranty->getCompany()->getCompanyName(),
             ],
             'branch' => [
-                'id' => $this->resource->getBranch()->getId(),
-                'name' => $this->resource->getBranch()->getName(),
+                'id' => $this->warranty->getBranch()->getId(),
+                'name' => $this->warranty->getBranch()->getName(),
             ],
             'branch_sale' => [
-                'id' => $this->resource->getBranchSale()->getId(),
-                'name' => $this->resource->getBranchSale()->getName(),
+                'id' => $this->warranty->getBranchSale()->getId(),
+                'name' => $this->warranty->getBranchSale()->getName(),
             ],
-            'serie' => $this->resource->getSerie(),
-            'correlative' => $this->resource->getCorrelative(),
+            'serie' => $this->warranty->getSerie(),
+            'correlative' => $this->warranty->getCorrelative(),
             'article' => [
-                'id' => $this->resource->getArticle()->getId(),
-                'description' => $this->resource->getArticle()->getDescription(),
+                'id' => $this->warranty->getArticle()->getId(),
+                'description' => $this->warranty->getArticle()->getDescription(),
             ],
-            'serie_art' => $this->resource->getSerieArt(),
-            'date' => $this->resource->getDate(),
+            'serie_art' => $this->warranty->getSerieArt(),
+            'date' => $this->warranty->getDate(),
             'reference_sale' => [
-                'id' => $this->resource->getReferenceSale()->getId(),
+                'id' => $this->warranty->getReferenceSale()->getId(),
                 'reference_document_type' => [
-                    'id' => $this->resource->getReferenceSale()->getDocumentType()->getId(),
-                    'name' => $this->resource->getReferenceSale()->getDocumentType()->getDescription(),
+                    'id' => $this->warranty->getReferenceSale()->getDocumentType()->getId(),
+                    'name' => $this->warranty->getReferenceSale()->getDocumentType()->getDescription(),
+                    'abbreviation' => $this->warranty->getReferenceSale()->getDocumentType()->getAbbreviation(),
                 ],
-                'serie' => $this->resource->getReferenceSale()->getSerie(),
-                'correlative' => $this->resource->getReferenceSale()->getDocumentNumber(),
+                'serie' => $this->warranty->getReferenceSale()->getSerie(),
+                'correlative' => $this->warranty->getReferenceSale()->getDocumentNumber(),
+                'date' => Carbon::parse($this->warranty->getReferenceSale()->getDate())->format('d/m/Y'),
             ],
             'customer' => [
-                'id' => $this->resource->getCustomer()->getId(),
-                ...($isCompany ? [
-                    'document_number' => $customer->getDocumentNumber(),
-                    'business_name' => $customer->getCompanyName(),
-                ] : [
-                    'document_number' => $customer->getDocumentNumber(),
-                    'name' => $customer->getName(),
-                    'lastname' => $customer->getLastName(),
-                    'second_lastname' => $customer->getSecondLastName(),
-                ]),
+                'id' => $this->warranty->getCustomer()->getId(),
+                'name' => $this->warranty->getCustomer()->getCompanyName() ??
+                    trim($this->warranty->getCustomer()->getName() . ' ' .
+                        $this->warranty->getCustomer()->getLastname() . ' ' .
+                        $this->warranty->getCustomer()->getSecondLastname()),
             ],
-            'customer_phone' => $this->resource->getCustomerPhone(),
-            'customer_email' => $this->resource->getCustomerEmail(),
-            'failure_description' => $this->resource->getFailureDescription(),
-            'observations' => $this->resource->getObservations(),
-            'diagnosis' => $this->resource->getDiagnosis(),
+            'customer_phone' => $this->warranty->getCustomerPhone(),
+            'customer_email' => $this->warranty->getCustomerEmail(),
+            'failure_description' => $this->warranty->getFailureDescription(),
+            'observations' => $this->warranty->getObservations(),
+            'diagnosis' => $this->warranty->getDiagnosis(),
             'supplier' => [
-                'id' => $this->resource->getSupplier()->getId(),
-                ...($isSupplierCompany ? [
-                    'document_number' => $supplier->getDocumentNumber(),
-                    'business_name' => $supplier->getCompanyName(),
-                ] : [
-                    'document_number' => $supplier->getDocumentNumber(),
-                    'name' => $supplier->getName(),
-                    'lastname' => $supplier->getLastName(),
-                    'second_lastname' => $supplier->getSecondLastName(),
-                ]),
+                'id' => $this->warranty->getSupplier()->getId(),
+                'name' => $this->warranty->getCustomer()->getCompanyName() ??
+                    trim($this->warranty->getCustomer()->getName() . ' ' .
+                        $this->warranty->getCustomer()->getLastname() . ' ' .
+                        $this->warranty->getCustomer()->getSecondLastname()),
             ],
             'entry_guide' => [
-                'id' => $this->resource->getEntryGuide()->getId(),
-                'serie' => $this->resource->getEntryGuide()->getSerie(),
-                'correlative' => $this->resource->getEntryGuide()->getCorrelativo(),
+                'id' => $this->warranty->getEntryGuide()->getId(),
+                'serie' => $this->warranty->getEntryGuide()->getSerie(),
+                'correlative' => $this->warranty->getEntryGuide()->getCorrelativo(),
+                'date' => $this->warranty->getEntryGuide()->getDate(),
+                'reference_purchase_document_id' => $this->warranty->getEntryGuide()->getReferenceDocument(),
+                'reference_purchase_abbreviation' => $documentTypes->getAbbreviation(),
+                'reference_purchase_description' => $documentTypes->getDescription(),
+                'reference_purchase_serie' => $this->warranty->getEntryGuide()->getReferenceSerie(),
+                'reference_purchase_correlative' => $this->warranty->getEntryGuide()->getReferenceCorrelative(),
             ],
-            'contact' => $this->resource->getContact(),
-            'follow_up_diagnosis' => $this->resource->getFollowUpDiagnosis(),
-            'follow_up_status' => $this->resource->getFollowUpStatus(),
-            'solution' => $this->resource->getSolution(),
-            'warranty_status' => $this->resource->getWarrantyStatus(),
-            'solution_date' => $this->resource->getSolutionDate(),
-            'delivery_description' => $this->resource->getDeliveryDescription(),
-            'delivery_serie_art' => $this->resource->getDeliverySerieArt(),
-            'credit_note_serie' => $this->resource->getCreditNoteSerie(),
-            'credit_note_correlative' => $this->resource->getCreditNoteCorrelative(),
-            'delivery_date' => $this->resource->getDeliveryDate(),
-            'dispatch_note_serie' => $this->resource->getDispatchNoteSerie(),
-            'dispatch_note_correlative' => $this->resource->getDispatchNoteCorrelative(),
-            'dispatch_note_date' => $this->resource->getDispatchNoteDate(),
+            'contact' => $this->warranty->getContact(),
+            'follow_up_diagnosis' => $this->warranty->getFollowUpDiagnosis(),
+            'follow_up_status' => $this->warranty->getFollowUpStatus(),
+            'solution' => $this->warranty->getSolution(),
+            'warranty_status' => $this->warranty->getWarrantyStatus(),
+            'solution_date' => $this->warranty->getSolutionDate(),
+            'delivery_description' => $this->warranty->getDeliveryDescription(),
+            'delivery_serie_art' => $this->warranty->getDeliverySerieArt(),
+            'credit_note_serie' => $this->warranty->getCreditNoteSerie(),
+            'credit_note_correlative' => $this->warranty->getCreditNoteCorrelative(),
+            'delivery_date' => Carbon::parse($this->warranty->getDeliveryDate())->format('d/m/Y'),
+            'dispatch_note_serie' => $this->warranty->getDispatchNoteSerie(),
+            'dispatch_note_correlative' => $this->warranty->getDispatchNoteCorrelative(),
+            'dispatch_note_date' => Carbon::parse($this->warranty->getDispatchNoteDate())->format('d/m/Y'),
         ];
     }
 }

@@ -68,11 +68,11 @@ class WarrantyController
 
         $data = $warranties->map(function ($warranty) {
             if ($warranty->document_type_warranty_id == 1) {
-                return new WarrantyResource($warranty);
+                return new WarrantyResource($warranty, $this->documentTypeRepository);
             } elseif ($warranty->document_type_warranty_id == 2) {
                 return new TechnicalSupportResource($warranty);
             }
-            return new WarrantyResource($warranty);
+            return new WarrantyResource($warranty, $this->documentTypeRepository);
         });
 
         return response()->json([
@@ -115,7 +115,7 @@ class WarrantyController
         if ($warranty->getDocumentTypeWarrantyId() == 2) {
             return response()->json(new TechnicalSupportResource($warranty));
         } else {
-            return response()->json(new WarrantyResource($warranty));
+            return response()->json(new WarrantyResource($warranty, $this->documentTypeRepository));
         }
     }
 

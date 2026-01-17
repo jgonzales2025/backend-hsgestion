@@ -44,6 +44,8 @@ use App\Modules\Ubigeo\Departments\Infrastructure\Controllers\DepartmentControll
 use App\Modules\Ubigeo\Provinces\Infrastructure\Controllers\ProvinceController;
 use App\Modules\User\Infrastructure\Controllers\UserController;
 use App\Modules\VisibleArticles\Infrastructure\Controllers\VisibleArticleController;
+use App\Modules\Warranty\Infrastructure\Controller\WarrantyController;
+use App\Modules\WarrantyStatus\Infrastructure\Controller\WarrantyStatusController;
 use Illuminate\Support\Facades\Route;
 use App\Modules\Ubigeo\Districts\Infrastructure\Controllers\DistrictController;
 use App\Modules\PaymentMethod\Infrastructure\Controllers\PaymentMethodController;
@@ -494,6 +496,16 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // Logs de sesion
     Route::get('logs-login', [LoginAttemptController::class, 'index']);
+
+    // Warranty Status
+    Route::get('warranty-statuses', [WarrantyStatusController::class, 'index']);
+
+    // Warranties
+    Route::get('warranties', [WarrantyController::class,'index']);
+    Route::post('warranties', [WarrantyController::class, 'store']);
+    Route::get('warranties/{id}', [WarrantyController::class, 'show']);
+    Route::get('warranties/documents/serial', [WarrantyController::class, 'findDocumentsBySerial']);
+    Route::get('warranties/pdf/{id}', [WarrantyController::class, 'generatePdf']);
 });
 
 Route::middleware('auth:api')->group(function () {

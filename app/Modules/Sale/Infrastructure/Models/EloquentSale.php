@@ -10,6 +10,7 @@ use App\Modules\DocumentType\Infrastructure\Models\EloquentDocumentType;
 use App\Modules\NoteReason\Infrastructure\Models\EloquentNoteReason;
 use App\Modules\PaymentMethod\Infrastructure\Model\EloquentPaymentMethod;
 use App\Modules\PaymentType\Infrastructure\Models\EloquentPaymentType;
+use App\Modules\Sale\Domain\Entities\Sale;
 use App\Modules\SaleArticle\Infrastructure\Models\EloquentSaleArticle;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Carbon\Carbon;
@@ -139,6 +140,54 @@ class EloquentSale extends Model
     public function paymentMethod(): BelongsTo
     {
         return $this->belongsTo(EloquentPaymentMethod::class, 'payment_method_id');
+    }
+
+    public function toDomain(EloquentSale $sale): Sale
+    {
+        return new Sale(
+            id: $sale->id,
+            company: $sale->company->toDomain($sale->company),
+            branch: $sale->branch->toDomain($sale->branch),
+            documentType: $sale->documentType->toDomain($sale->documentType),
+            serie: $sale->serie,
+            document_number: $sale->document_number,
+            parallel_rate: $sale->parallel_rate,
+            customer: $sale->customer->toDomain($sale->customer),
+            date: $sale->date,
+            due_date: $sale->due_date,
+            days: $sale->days,
+            user: $sale->user->toDomain($sale->user),
+            user_sale: $sale->userSale->toDomain($sale->userSale),
+            paymentType: $sale->paymentType->toDomain($sale->paymentType),
+            observations: $sale->observations,
+            currencyType: $sale->currencyType->toDomain($sale->currencyType),
+            subtotal: $sale->subtotal,
+            igv: $sale->igv,
+            total: $sale->total,
+            saldo: $sale->saldo,
+            amount_amortized: $sale->amount_amortized,
+            status: $sale->status,
+            payment_status: $sale->payment_status,
+            is_locked: $sale->is_locked,
+            user_authorized: $sale->userAuthorized?->toDomain($sale->userAuthorized),
+            reference_document_type_id: $sale->reference_document_type_id,
+            reference_serie: $sale->reference_serie,
+            reference_correlative: $sale->reference_correlative,
+            credit_amount: $sale->credit_amount,
+            coddetrac: $sale->coddetrac,
+            pordetrac: $sale->pordetrac,
+            impdetracs: $sale->impdetracs,
+            impdetracd: $sale->impdetracd,
+            stretencion: $sale->stretencion,
+            porretencion: $sale->porretencion,
+            impretens: $sale->impretens,
+            impretend: $sale->impretend,
+            total_costo_neto: $sale->total_costo_neto,
+            sunat_status: $sale->estado_sunat,
+            fecha_aceptacion: $sale->fecha_aceptacion,
+            consignation_id: $sale->consignation_id,
+            purchase_order: $sale->purchase_order,
+        );
     }
 
 }

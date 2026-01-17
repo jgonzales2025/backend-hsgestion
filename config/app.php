@@ -127,4 +127,6 @@ return [
 
     'master_password' => env('MASTER_PASSWORD', 'master1234'),
 
+    'frontend_decryption_key' => env('APP_FRONTEND_DECRYPTION_KEY', ''),
+
 ];

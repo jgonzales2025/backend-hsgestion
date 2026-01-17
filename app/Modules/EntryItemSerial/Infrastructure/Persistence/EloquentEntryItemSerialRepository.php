@@ -3,11 +3,17 @@
 namespace App\Modules\EntryItemSerial\Infrastructure\Persistence;
 
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
+use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
+use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\EntryItemSerial\Domain\Entities\EntryItemSerial;
 use App\Modules\EntryItemSerial\Infrastructure\Models\EloquentEntryItemSerial;
 
 class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInterface{
+
+    public function __construct(
+        private EntryGuideRepositoryInterface $entryGuideRepository
+    ){}
 
     public function save(EntryItemSerial $entryItemSerial):?EntryItemSerial{
 
@@ -125,6 +131,15 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
             return true;
         };
         return false;
+    }
+
+    public function findEntryGuideBySerial(string $serial): EntryGuide|null
+    {
+        $entryItemSerial = EloquentEntryItemSerial::where('serial', $serial)->first();
+        if (!$entryItemSerial) {
+            return null;
+        }
+        return $this->entryGuideRepository->findById($entryItemSerial->entry_guide_id);
     }
 }
 

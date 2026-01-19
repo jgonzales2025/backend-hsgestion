@@ -295,7 +295,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/statistics/article-id-sold/{id}', [StatisticsController::class, 'getArticleIdSold']);
     Route::get('/statistics/article-id-purchase/{id}', [StatisticsController::class, 'getArticleIdPurchase']);
     Route::get('/statistics/article-id-purchase/{id}/export', [StatisticsController::class, 'exportArticleIdPurchase']);
-
+    Route::get('/statistics/lista-precios/export', [StatisticsController::class, 'getListaPrecios']);
     // Ruta para envío sunat de venta
     Route::post('/sale-sunat-send/{id}', [SaleSunatController::class, 'store']);
     Route::get('/roles', [RoleController::class, 'index']);

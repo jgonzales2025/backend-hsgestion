@@ -465,27 +465,26 @@
                         </div>
                     </div>
                 @endif
+
+                <!-- QR Code Section -->
+                @if(!in_array($sale->getDocumentType()->getId(), [16, 17]))
+                    <div style="width: 100%; text-align: center; margin-top: 8px;">
+                        <div style="display: inline-block; border: 1px solid #ddd; padding: 4px; border-radius: 5px; background-color: #f9f9f9;">
+                            <div style="margin-bottom: 2px;">
+                                <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code"
+                                    style="width: 50px; height: 50px;">
+                            </div>
+                            <div style="font-size: 5px; margin-top: 2px; color: #666;">Escanea para verificar</div>
+                            <div style="font-size: 5px; color: #333; margin-top: 2px; line-height: 1.2;">
+                                <strong>REPRESENTACIÓN FÍSICA DE
+                                    {{ strtoupper($sale->getDocumentType()->getDescription()) }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
             <div style="clear: both;"></div>
         </div>
-        <!-- QR Code Section (Bottom Left) -->
-        @if(!in_array($sale->getDocumentType()->getId(), [16, 17]))
-            <div style="width: 100%; page-break-inside: avoid; margin-top: 0px;">
-                <div style="width: 90px; text-align: center;">
-                    <div style="border: 1px solid #ddd; padding: 4px; border-radius: 5px; background-color: #f9f9f9;">
-                        <div style="margin-bottom: 2px;">
-                            <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code"
-                                style="width: 50px; height: 50px;">
-                        </div>
-                        <div style="font-size: 5px; margin-top: 2px; color: #666;">Escanea para verificar</div>
-                        <div style="font-size: 5px; color: #333; margin-top: 2px; line-height: 1.2;">
-                            <strong>REPRESENTACIÓN FÍSICA DE
-                                {{ strtoupper($sale->getDocumentType()->getDescription()) }}</strong>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
     </div>
 </body>
 

@@ -470,7 +470,7 @@
         </div>
         <!-- QR Code Section (Bottom Left) -->
         @if(!in_array($sale->getDocumentType()->getId(), [16, 17]))
-            <div style="width: 100%; page-break-inside: avoid; margin-top: -15px;">
+            <div style="width: 100%; page-break-inside: avoid; margin-top: 0px;">
                 <div style="width: 90px; text-align: center;">
                     <div style="border: 1px solid #ddd; padding: 4px; border-radius: 5px; background-color: #f9f9f9;">
                         <div style="margin-bottom: 2px;">

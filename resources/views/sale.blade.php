@@ -382,7 +382,7 @@
         </div>
 
         <!-- Bank Accounts Information and QR Code -->
-        <div style="width: 100%; margin-top: 10px;">
+        <div style="width: 100%; margin-top: 10px; page-break-inside: avoid;">
             <!-- Bank Accounts Section (Left) -->
             <div style="float: left; width: 60%; border: 1px solid #333; padding: 5px; background-color: #f9f9f9;">
                 <div class="section-title" style="margin-bottom: 5px; font-size: 9px; padding: 3px;">CUENTAS BANCARIAS

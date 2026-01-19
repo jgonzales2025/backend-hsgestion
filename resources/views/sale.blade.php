@@ -44,10 +44,10 @@
             bottom: 0cm;
             left: 0cm;
             right: 0cm;
-            height: 2cm;
+            height: 1cm;
             background-color: #fff;
             text-align: center;
-            line-height: 1.5cm;
+            line-height: 0.5cm;
             font-size: 9px;
             border-top: 1px solid #ddd;
         }

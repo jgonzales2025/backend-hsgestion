@@ -7,17 +7,16 @@
     </title>
     <style>
         @page {
-            margin: 0cm 0cm;
+            margin-top: 3cm;
+            margin-bottom: 2cm;
+            margin-left: 1.5cm;
+            margin-right: 1.5cm;
         }
 
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 10px;
             color: #333;
-            margin-top: 3cm;
-            margin-bottom: 2cm;
-            margin-left: 1.5cm;
-            margin-right: 1.5cm;
         }
 
         header {

@@ -7,7 +7,7 @@
     </title>
     <style>
         @page {
-            margin: 0cm 0cm;
+            margin: 0cm;
         }
 
         body {
@@ -383,85 +383,76 @@
         </div>
 
         <!-- Bank Accounts Information and QR Code -->
-        <div style="width: 100%; margin-top: 10px; page-break-inside: avoid;">
+        <div style="width: 100%; margin-top: 5px; page-break-inside: avoid;">
             <table style="width: 100%; border-collapse: collapse;">
                 <tr>
                     <!-- Bank Accounts Section (Left) -->
                     <td style="width: 60%; vertical-align: top; padding-right: 5px;">
-                        <div style="border: 1px solid #333; padding: 5px; background-color: #f9f9f9;">
-                            <div class="section-title" style="margin-bottom: 5px; font-size: 9px; padding: 3px;">CUENTAS
-                                BANCARIAS
+                        <div style="border: 1px solid #333; padding: 4px; background-color: #f9f9f9;">
+                            <div class="section-title" style="margin-bottom: 3px; font-size: 8px; padding: 2px;">
+                                CUENTAS BANCARIAS
                             </div>
 
-                            <table style="width: 100%; margin-bottom: 5px;">
+                            <table style="width: 100%; margin-bottom: 3px;">
                                 <tr>
                                     <td style="width: 50%; vertical-align: top; padding-right: 5px;">
-                                        <div
-                                            style="font-weight: bold; font-size: 8px; margin-bottom: 2px; color: #000;">
-                                            CUENTAS EN
-                                            SOLES:</div>
-                                        <div style="font-size: 8px; margin-bottom: 1px;">
+                                        <div style="font-weight: bold; font-size: 7px; margin-bottom: 1px; color: #000;">
+                                            CUENTAS EN SOLES:</div>
+                                        <div style="font-size: 7px; margin-bottom: 0px;">
                                             <span style="font-weight: bold;">Banco BBVA:</span> 001101750100099775
                                         </div>
-                                        <div style="font-size: 8px; margin-bottom: 1px;">
+                                        <div style="font-size: 7px; margin-bottom: 0px;">
                                             <span style="font-weight: bold;">Banco BCP:</span> 1917319236075
                                         </div>
-                                        <div style="font-size: 8px; margin-bottom: 1px;">
+                                        <div style="font-size: 7px; margin-bottom: 0px;">
                                             <span style="font-weight: bold;">Yape:</span> 981206097
                                         </div>
                                     </td>
-                                    <td
-                                        style="width: 50%; vertical-align: top; padding-left: 5px; border-left: 1px solid #ddd;">
-                                        <div
-                                            style="font-weight: bold; font-size: 8px; margin-bottom: 2px; color: #000;">
-                                            CUENTAS EN
-                                            DÓLARES:</div>
-                                        <div style="font-size: 8px; margin-bottom: 1px;">
+                                    <td style="width: 50%; vertical-align: top; padding-left: 5px; border-left: 1px solid #ddd;">
+                                        <div style="font-weight: bold; font-size: 7px; margin-bottom: 1px; color: #000;">
+                                            CUENTAS EN DÓLARES:</div>
+                                        <div style="font-size: 7px; margin-bottom: 0px;">
                                             <span style="font-weight: bold;">Banco BBVA:</span> 001101750100099783
                                         </div>
-                                        <div style="font-size: 8px; margin-bottom: 1px;">
+                                        <div style="font-size: 7px; margin-bottom: 0px;">
                                             <span style="font-weight: bold;">Banco BCP:</span> 1917320109103
                                         </div>
                                     </td>
                                 </tr>
                             </table>
 
-                            <div style="border-top: 1px solid #ddd; padding-top: 5px; margin-top: 5px;">
-                                <div style="font-weight: bold; font-size: 8px; margin-bottom: 2px; color: #000;">CUENTAS
+                            <div style="border-top: 1px solid #ddd; padding-top: 4px; margin-top: 4px;">
+                                <div style="font-weight: bold; font-size: 7px; margin-bottom: 1px; color: #000;">CUENTAS
                                     INTERBANCARIAS (CCI):</div>
 
-                                <table style="width: 100%; margin-bottom: 5px;">
+                                <table style="width: 100%; margin-bottom: 3px;">
                                     <tr>
                                         <td style="width: 50%; vertical-align: top; padding-right: 5px;">
-                                            <div
-                                                style="font-weight: bold; font-size: 7px; margin-bottom: 1px; color: #333;">
+                                            <div style="font-weight: bold; font-size: 6px; margin-bottom: 1px; color: #333;">
                                                 Soles:
                                             </div>
-                                            <div style="font-size: 7px; margin-bottom: 1px;">
+                                            <div style="font-size: 6px; margin-bottom: 0px;">
                                                 <span style="font-weight: bold;">Banco BBVA:</span> 01117500010009977577
                                             </div>
-                                            <div style="font-size: 7px; margin-bottom: 1px;">
+                                            <div style="font-size: 6px; margin-bottom: 0px;">
                                                 <span style="font-weight: bold;">Banco BCP:</span> 00219100731923607555
                                             </div>
                                         </td>
-                                        <td
-                                            style="width: 50%; vertical-align: top; padding-left: 5px; border-left: 1px solid #ddd;">
-                                            <div
-                                                style="font-weight: bold; font-size: 7px; margin-bottom: 1px; color: #333;">
+                                        <td style="width: 50%; vertical-align: top; padding-left: 5px; border-left: 1px solid #ddd;">
+                                            <div style="font-weight: bold; font-size: 6px; margin-bottom: 1px; color: #333;">
                                                 Dólares:</div>
-                                            <div style="font-size: 7px; margin-bottom: 1px;">
+                                            <div style="font-size: 6px; margin-bottom: 0px;">
                                                 <span style="font-weight: bold;">Banco BBVA:</span> 01117500010009978371
                                             </div>
-                                            <div style="font-size: 7px; margin-bottom: 1px;">
+                                            <div style="font-size: 6px; margin-bottom: 0px;">
                                                 <span style="font-weight: bold;">Banco BCP:</span> 00219100732010910357
                                             </div>
                                         </td>
                                     </tr>
                                 </table>
 
-                                <div
-                                    style="background-color: #fff3cd; border: 1px solid #ffc107; padding: 4px; margin-top: 4px; border-radius: 3px;">
-                                    <div style="font-size: 7px; color: #856404; line-height: 1.2;">
+                                <div style="background-color: #fff3cd; border: 1px solid #ffc107; padding: 3px; margin-top: 3px; border-radius: 3px;">
+                                    <div style="font-size: 6px; color: #856404; line-height: 1.1;">
                                         <strong>IMPORTANTE:</strong> Transferir sólo si es inmediato.
                                         <strong>OJO:</strong>
                                         Verificar antes de confirmar abono que indique <strong>CYBERHOUSE TEC
@@ -478,14 +469,13 @@
                     <!-- QR Code Section (Right) -->
                     @if(!in_array($sale->getDocumentType()->getId(), [16, 17]))
                         <td style="width: 35%; vertical-align: top; padding-left: 5px; text-align: center;">
-                            <div
-                                style="border: 1px solid #ddd; padding: 5px; border-radius: 5px; background-color: #f9f9f9;">
-                                <div style="margin-bottom: 5px;">
+                            <div style="border: 1px solid #ddd; padding: 4px; border-radius: 5px; background-color: #f9f9f9;">
+                                <div style="margin-bottom: 3px;">
                                     <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code"
-                                        style="width: 60px; height: 60px;">
+                                        style="width: 50px; height: 50px;">
                                 </div>
-                                <div style="font-size: 7px; margin-top: 2px; color: #666;">Escanea para verificar</div>
-                                <div style="font-size: 7px; color: #333; margin-top: 4px; line-height: 1.2;">
+                                <div style="font-size: 6px; margin-top: 2px; color: #666;">Escanea para verificar</div>
+                                <div style="font-size: 6px; color: #333; margin-top: 3px; line-height: 1.1;">
                                     <strong>REPRESENTACIÓN FÍSICA DE
                                         {{ strtoupper($sale->getDocumentType()->getDescription()) }}</strong>
                                 </div>

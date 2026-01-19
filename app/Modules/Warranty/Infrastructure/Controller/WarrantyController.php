@@ -170,7 +170,7 @@ class WarrantyController
 
         return response()->json([
             'url' => asset('storage/' . $path),
-            'filename' => $fileName,
+            'fileName' => $fileName,
             'pdf_base64' => base64_encode($content)
         ]);
     }

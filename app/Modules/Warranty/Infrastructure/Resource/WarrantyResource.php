@@ -53,7 +53,7 @@ class WarrantyResource extends JsonResource
                 ],
                 'serie' => $this->warranty->getReferenceSale()->getSerie(),
                 'correlative' => $this->warranty->getReferenceSale()->getDocumentNumber(),
-                'date' => Carbon::parse($this->warranty->getReferenceSale()->getDate())->format('d/m/Y'),
+                'date' => $this->warranty->getReferenceSale()->getDate(),
             ],
             'customer' => [
                 'id' => $this->warranty->getCustomer()->getId(),
@@ -95,10 +95,10 @@ class WarrantyResource extends JsonResource
             'delivery_serie_art' => $this->warranty->getDeliverySerieArt(),
             'credit_note_serie' => $this->warranty->getCreditNoteSerie(),
             'credit_note_correlative' => $this->warranty->getCreditNoteCorrelative(),
-            'delivery_date' => Carbon::parse($this->warranty->getDeliveryDate())->format('d/m/Y'),
+            'delivery_date' => $this->warranty->getDeliveryDate(),
             'dispatch_note_serie' => $this->warranty->getDispatchNoteSerie(),
             'dispatch_note_correlative' => $this->warranty->getDispatchNoteCorrelative(),
-            'dispatch_note_date' => Carbon::parse($this->warranty->getDispatchNoteDate())->format('d/m/Y'),
+            'dispatch_note_date' => $this->warranty->getDispatchNoteDate(),
         ];
     }
 }

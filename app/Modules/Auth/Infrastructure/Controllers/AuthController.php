@@ -424,15 +424,15 @@ class AuthController extends Controller
                 'icon' => 'FileText',
                 'permission' => 'mantenimiento.cotizacion'
             ],
-            [
+            /*[
                 'id' => 3,
                 'label' => 'Clientes',
                 'link' => config('app.frontend_url') . '/clientes',
                 'icon' => 'Users',
                 'permission' => 'tablas.clientes'
-            ],
+            ],*/
             [
-                'id' => 4,
+                'id' => 3,
                 'label' => 'Articulos',
                 'link' => config('app.frontend_url') . '/tablas/articulos',
                 'icon' => 'Package',
@@ -446,28 +446,28 @@ class AuthController extends Controller
                 'permission' => 'reportes.reporte_series'
             ], */
             [
-                'id' => 5,
+                'id' => 4,
                 'label' => 'Consignaciones',
                 'link' => config('app.frontend_url') . '/tablas/consignaciones',
                 'icon' => 'FileBox',
                 'permission' => 'tablas.lista_consignaciones'
             ],
             [
-                'id' => 6,
+                'id' => 5,
                 'label' => 'Traslados',
                 'link' => config('app.frontend_url') . '/tablas/movimiento-traslado',
                 'icon' => 'Truck',
                 'permission' => 'tablas.lista_movimientos_traslado'
             ],
             [
-                'id' => 7,
+                'id' => 6,
                 'label' => 'Guía de remisión',
                 'link' => config('app.frontend_url') . '/mantenimiento/guias-remision',
                 'icon' => 'FileText',
                 'permission' => 'mantenimiento.guias_remision'
             ],
             [
-                'id' => 8,
+                'id' => 7,
                 'label' => 'Guía de ingreso',
                 'link' => config('app.frontend_url') . '/almacen/guia-ingreso',
                 'icon' => 'ClipboardPlus',

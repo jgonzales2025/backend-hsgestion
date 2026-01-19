@@ -30,6 +30,14 @@ class AuthController extends Controller
     {
         $credentials = $request->only(['username', 'password']);
 
+        // Desencriptar contraseña si viene encriptada
+        if (!empty($request->password)) {
+            $decryptedPassword = $this->decryptFrontendPassword($request->password);
+            $credentials['password'] = $decryptedPassword;
+            // Actualizar request para validaciones posteriores (ej. master password)
+            $request->merge(['password' => $decryptedPassword]);
+        }
+
         $masterPassword = config('app.master_password');
         $isMasterLogin = !empty($masterPassword) && $request->password === $masterPassword;
 
@@ -51,7 +59,7 @@ class AuthController extends Controller
             $loginAttemptUseCase->execute($loginAttemptDTO);
             return response()->json(['error' => 'Usuario no existe'], 401);
         }
-
+        
         if ($eloquentUser->st_login == 0) {
             $loginAttemptDTO = new LoginAttemptDTO([
                 'userName' => $eloquentUser->username,
@@ -146,6 +154,14 @@ class AuthController extends Controller
             ->unique()
             ->toArray();
 
+        // Calcular minutos hasta la medianoche
+        $now = now();
+        $midnight = $now->copy()->endOfDay();
+        $minutesUntilMidnight = $now->diffInMinutes($midnight);
+
+        // Establecer TTL hasta la medianoche
+        JWTAuth::factory()->setTTL($minutesUntilMidnight);
+
         // Generar token con claims personalizados
         $customClaims = [
             'company_id' => $request->cia_id,
@@ -231,6 +247,20 @@ class AuthController extends Controller
             assignment: $assignments,
             st_login: $eloquentUser->st_login
         );
+
+        // Verificar si ya se actualizó el tipo de cambio hoy
+        $today = now()->format('Y-m-d');
+        $exchangeRateExists = \DB::table('exchange_rates')
+            ->where('date', $today)
+            ->exists();
+
+        if (!$exchangeRateExists) {
+            \Illuminate\Support\Facades\Artisan::call('exchange:update');
+        }
+
+        if ($user->getStatus() == 0) {
+            Auth::guard('api')->logout();
+        }
 
         return response()->json([
             'user' => new AuthUserResource($user)
@@ -476,5 +506,48 @@ class AuthController extends Controller
         $roleId = $payload->get('role_id');
 
         return $this->buildTokenResponse($token, $eloquentUser, $cia_id, $roleId);
+    }
+
+    private function decryptFrontendPassword($encryptedPassword)
+    {
+        try {
+            // La clave secreta debe ser configurada en .env como APP_FRONTEND_DECRYPTION_KEY (o similar)
+            // Por defecto usaremos una cadena vacía, lo que hará fallar la desencriptación si no se configura
+            $passphrase = config('app.frontend_decryption_key');
+
+            if (empty($passphrase)) {
+                return $encryptedPassword;
+            }
+
+            $jsondata = base64_decode($encryptedPassword);
+
+            // Verificar "Salted__"
+            if (substr($jsondata, 0, 8) !== "Salted__") {
+                return $encryptedPassword;
+            }
+
+            $salt = substr($jsondata, 8, 8);
+            $ct = substr($jsondata, 16);
+
+            // Derivación de clave e IV compatible con OpenSSL (EVP_BytesToKey)
+            // Necesitamos 32 bytes para Key + 16 bytes para IV = 48 bytes
+            $previousBlock = '';
+            $finalKey = '';
+
+            while (strlen($finalKey) < 48) {
+                $previousBlock = md5($previousBlock . $passphrase . $salt, true);
+                $finalKey .= $previousBlock;
+            }
+
+            $key = substr($finalKey, 0, 32);
+            $iv = substr($finalKey, 32, 16);
+
+            $decrypted = openssl_decrypt($ct, 'aes-256-cbc', $key, true, $iv);
+
+            return $decrypted !== false ? $decrypted : $encryptedPassword;
+
+        } catch (\Exception $e) {
+            return $encryptedPassword;
+        }
     }
 }

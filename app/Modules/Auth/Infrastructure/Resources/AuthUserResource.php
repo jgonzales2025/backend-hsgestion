@@ -15,6 +15,7 @@ class AuthUserResource extends JsonResource
             'role'       => $this->resource->getRoles(),
             'assignments' => $this->resource->getAssignment() ?? [],
             'st_login'    => $this->resource->getStLogin(),
+            'status' => $this->resource->getStatus()
         ];
 
     }

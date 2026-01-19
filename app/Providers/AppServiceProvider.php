@@ -163,6 +163,10 @@ use App\Modules\UserAssignment\Domain\Interfaces\UserAssignmentRepositoryInterfa
 use App\Modules\UserAssignment\Infrastructure\Persistence\EloquentUserAssignmentRepository;
 use App\Modules\VisibleArticles\Domain\Interfaces\VisibleArticleRepositoryInterface;
 use App\Modules\VisibleArticles\Infrastructure\Persistence\EloquentVisibleArticleRepository;
+use App\Modules\Warranty\Domain\Interfaces\WarrantyRepositoryInterface;
+use App\Modules\Warranty\Infrastructure\Persistence\EloquentWarrantyRepository;
+use App\Modules\WarrantyStatus\Domain\Interfaces\WarrantyStatusRepositoryInterface;
+use App\Modules\WarrantyStatus\Infrastructure\Persistence\EloquentWarrantyStatusRepository;
 use App\Modules\Withholding\Domain\Interface\WithholdingRepositoryInterface;
 use App\Modules\Withholding\Infrastructure\Persistence\EloquentWithholdingRepository;
 use App\Modules\PaymentMethodsSunat\Domain\Interface\PaymentMethodSunatRepositoryInterface;
@@ -263,6 +267,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Modules\ScVoucher\Domain\Interface\PdfGeneratorInterface::class, \App\Modules\ScVoucher\Infrastructure\Pdf\DomPdfScVoucherGenerator::class);
        $this->app->bind(KardexRepositoryInterface::class, EloquenKardexRepository::class);
        $this->app->bind(ArticleTypeRepositoryInterface::class, EloquentArticleTypeRepository::class);
+       $this->app->bind(WarrantyStatusRepositoryInterface::class, EloquentWarrantyStatusRepository::class);
+       $this->app->bind(WarrantyRepositoryInterface::class, EloquentWarrantyRepository::class);
     }
 
     /**

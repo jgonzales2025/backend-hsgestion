@@ -2,6 +2,7 @@
 
 namespace App\Modules\EntryItemSerial\Domain\Interface;
 
+use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use App\Modules\EntryItemSerial\Domain\Entities\EntryItemSerial;
 
 interface EntryItemSerialRepositoryInterface{
@@ -13,4 +14,5 @@ interface EntryItemSerialRepositoryInterface{
     public function findSerialByArticleId(int $articleId, int $branch_id, ?bool $updated , ?string $serial = null): ?array;
     public function findBranchBySerial(string $serial): ?array;
     public function findSerialInDatabase(string $serial): ?bool;
+    public function findEntryGuideBySerial(string $serial): ?EntryGuide;
 }

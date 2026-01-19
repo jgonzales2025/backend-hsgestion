@@ -146,7 +146,6 @@
         }
 
         .amount-in-words {
-            margin-top: 20px;
             font-style: italic;
             font-size: 10px;
             /* border-top: 1px solid #ccc; */
@@ -311,13 +310,12 @@
 
         <!-- Totals -->
         <div style="width: 100%;">
-            <div style="width: 100%; margin-bottom: 10px;">
+            <div style="width: 100%; margin-bottom: 0px;">
                 <div class="amount-in-words" style="border-top: 1px solid #ccc; padding-top: 5px;">
                     <span style="font-weight: bold;"></span>
                     {{ \App\Shared\Infrastructure\Helpers\NumberToWords::convert($sale->getTotal(), $sale->getCurrencyType()->getName()) }}
                 </div>
             </div>
-
             <div style="float: left; width: 55%; padding-right: 10px;">
                 <!-- Bank Accounts Information -->
                 <div style="border: 1px solid #333; padding: 4px; background-color: #f9f9f9;">
@@ -340,7 +338,8 @@
                                     <span style="font-weight: bold;">Yape:</span> 981206097
                                 </div>
                             </td>
-                            <td style="width: 50%; vertical-align: top; padding-left: 5px; border-left: 1px solid #ddd;">
+                            <td
+                                style="width: 50%; vertical-align: top; padding-left: 5px; border-left: 1px solid #ddd;">
                                 <div style="font-weight: bold; font-size: 6px; margin-bottom: 2px; color: #000;">
                                     CUENTAS EN DÓLARES:</div>
                                 <div style="font-size: 6px; margin-bottom: 1px;">
@@ -370,7 +369,8 @@
                                         <span style="font-weight: bold;">BCP:</span> 00219100731923607555
                                     </div>
                                 </td>
-                                <td style="width: 50%; vertical-align: top; padding-left: 5px; border-left: 1px solid #ddd;">
+                                <td
+                                    style="width: 50%; vertical-align: top; padding-left: 5px; border-left: 1px solid #ddd;">
                                     <div style="font-weight: bold; font-size: 5px; margin-bottom: 1px; color: #333;">
                                         Dólares:</div>
                                     <div style="font-size: 5px; margin-bottom: 1px;">
@@ -384,7 +384,7 @@
                         </table>
 
                         <div
-                             style="background-color: #fff3cd; border: 1px solid #ffc107; padding: 2px; margin-top: 2px; border-radius: 2px;">
+                            style="background-color: #fff3cd; border: 1px solid #ffc107; padding: 2px; margin-top: 2px; border-radius: 2px;">
                             <div style="font-size: 5px; color: #856404; line-height: 1.2;">
                                 <strong>IMPORTANTE:</strong> Transferir sólo si es inmediato.
                                 <strong>OJO:</strong>
@@ -468,10 +468,9 @@
             </div>
             <div style="clear: both;"></div>
         </div>
-
         <!-- QR Code Section (Bottom Left) -->
         @if(!in_array($sale->getDocumentType()->getId(), [16, 17]))
-            <div style="width: 100%; page-break-inside: avoid;">
+            <div style="width: 100%; page-break-inside: avoid; margin-top: -15px;">
                 <div style="width: 90px; text-align: center;">
                     <div style="border: 1px solid #ddd; padding: 4px; border-radius: 5px; background-color: #f9f9f9;">
                         <div style="margin-bottom: 2px;">

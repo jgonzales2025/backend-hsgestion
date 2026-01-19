@@ -159,7 +159,8 @@
                         <div class="ruc-number">R.U.C. {{ $company->getRuc() }}</div>
                         <div class="doc-title">GUÍA DE INGRESO</div>
                         <div class="doc-number">{{ $entryGuide->getSerie() }} -
-                            {{ str_pad($entryGuide->getCorrelativo(), 8, '0', STR_PAD_LEFT) }}</div>
+                            {{ str_pad($entryGuide->getCorrelativo(), 8, '0', STR_PAD_LEFT) }}
+                        </div>
                     </div>
                 </td>
             </tr>

@@ -793,26 +793,32 @@ class SaleController extends Controller
             return response()->json([
                 'message' => $msg
             ], 200);
-        } else {
-            $statusUseCase = new UpdateStatusSalesUseCase($this->saleRepository);
-            $statusUseCase->execute($id, $status);
-            
-            return response()->json([
-                'message' => 'Estado actualizado correctamente'
-            ], 200);
         }
+            
+        $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
+        $sale = $saleUseCase->execute($id);
+        
+        if ($sale->getSaldo() != $sale->getTotal())
+        {
+            return response()->json(['message' => 'La venta no se puede anular porque ya tiene pagos registrados.'], 200);
+        }
+        
+        $documentReferenceUseCase = new FindByDocumentReferenceUseCase($this->saleRepository);
+        $documentReference = $documentReferenceUseCase->execute($sale->getDocumentType()->getId(), $sale->getSerie(), $sale->getDocumentNumber());
 
-        /*$saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
-        $sale = $saleUseCase->execute($id);*/
+        if ($documentReference) {
+            return response()->json(['message' => 'La venta no se puede anular porque ya tiene notas de crédito'], 200);
+        }
+        
+        $statusUseCase = new UpdateStatusSalesUseCase($this->saleRepository);
+        $statusUseCase->execute($id, $status);
+        
+        return response()->json([
+            'message' => 'Estado actualizado correctamente'
+        ], 200);
+        
 
-        /* if ($sale->getSaldo() != $sale->getTotal())
-            {
-                return response()->json(['message' => 'La venta no se puede anular porque ya tiene pagos registrados.'], 200);
-            } DESCOMENTAR CUANDO TERMINE JEREMY XD*/ 
 
-            /* if ($documentReference) {
-                return response()->json(['message' => 'La venta no se puede anular porque ya tiene notas de crédito'], 200);
-            } DESCOMENTAR CUANDO TERMINE JEREMY XD*/ 
 
         /*if ($sale->getDocumentType()->getId() == 1) {
             $response = $this->salesSunatService->saleInvoiceAnulacion($sale);

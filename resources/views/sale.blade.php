@@ -14,7 +14,7 @@
             font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 10px;
             color: #333;
-            margin-top: 3cm;
+            margin-top: 4cm;
             margin-bottom: 2cm;
             margin-left: 1.5cm;
             margin-right: 1.5cm;
@@ -25,12 +25,12 @@
             top: 0cm;
             left: 0cm;
             right: 0cm;
-            height: 3cm;
+            height: 4cm;
             background-color: #fff;
             padding-top: 0.5cm;
             padding-left: 1.5cm;
             padding-right: 1.5cm;
-            z-index: 1;
+            /*z-index: 1;*/
         }
 
         .content {

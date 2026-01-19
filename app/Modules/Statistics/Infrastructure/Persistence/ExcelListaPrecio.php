@@ -1,82 +1,80 @@
 <?php
 
-namespace App\Modules\Purchases\Infrastructure\Persistence;
+namespace App\Modules\Statistics\Infrastructure\Persistence;
 
+use App\Modules\Statistics\Domain\Interfaces\StatisticsRepositoryInterface;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use Illuminate\Support\Collection;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-
-class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEvents, ShouldAutoSize
+class ExcelListaPrecio implements FromCollection, WithHeadings, WithMapping, WithTitle
 {
+    public function __construct(
+        private readonly StatisticsRepositoryInterface $statisticsRepository,
+        private readonly int $p_codma,
+        private readonly int $p_codcategoria,
+        private readonly int $p_status,
+        private readonly int $p_moneda,
+        private readonly int $p_orden,
+        private readonly string $title
+    ) {
+    }
 
-    public function __construct(private Collection $purchases, private string $title) {}
-
-    public function collection(): Collection
+    public function collection()
     {
-        return $this->purchases;
+        return $this->statisticsRepository->getListaPrecio(
+            p_codma: $this->p_codma,
+            p_codcategoria: $this->p_codcategoria,
+            p_status: $this->p_status,
+            p_moneda: $this->p_moneda,
+            p_orden: $this->p_orden
+        );
     }
 
     public function headings(): array
     {
         return [
-            'T/D',
-            'SERIE',
-            'CORRELATIVO',
-            'FECHA',
-            'RUC/DNI',
-            'RAZON SOCIAL',
-            'T/C',
-            'VALOR S/.',
-            'IGV S/.',
-            'TOTAL S/.',
-            'VALOR USD',
-            'IGV USD',
-            'TOTAL USD',
+            'CODIGO',
+            'DESCRIPCION',
+            'PRECIO',
+            'ESTADO',
+            'CATEGORIA',
+            'MARCA'
         ];
     }
 
-    public function map($purchases): array
+    public function map($row): array
     {
         return [
-            $purchases->{'T/D'} ?? '',
-            $purchases->{'SERIE'} ?? '',
-            $purchases->{'CORRELATIVO'} ?? '',
-            $purchases->{'FECHA'} ?? '',
-            $purchases->{'RUC/DNI'} ?? '',
-            $purchases->{'RAZÓN SOCIAL'} ?? '',
-            (float) ($purchases->{'T/C'} ?? 0),
-            (float) ($purchases->{'VALOR S/'} ?? 0),
-            (float) ($purchases->{'IGV S/'} ?? 0),
-            (float) ($purchases->{'TOTAL S/'} ?? 0),
-            (float) ($purchases->{'VALOR USD'} ?? 0),
-            (float) ($purchases->{'IGV USD'} ?? 0),
-            (float) ($purchases->{'TOTAL USD'} ?? 0),
+            $row['CODIGO'],
+            $row['DESCRIPCION'],
+            $row['PRECIO'],
+            $row['ESTADO'],
+            $row['CATEGORIA'],
+            $row['MARCA']
         ];
     }
 
-    public function registerEvents(): array
+    public function title(): string
+    {
+        return 'Lista de Precios';
+    }
+   public function registerEvents(): array
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 $highestColumn = $sheet->getHighestColumn();
 
-                //  Insertar fila para el título
                 $sheet->insertNewRowBefore(1, 1);
                 $sheet->mergeCells("A1:{$highestColumn}1");
                 $sheet->setCellValue('A1', mb_strtoupper($this->title));
 
-                //  Estilo del título
                 $sheet->getStyle('A1')->applyFromArray([
                     'font' => [
                         'bold' => true,
@@ -87,16 +85,13 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
                         'vertical'   => Alignment::VERTICAL_CENTER,
                     ],
                 ]); 
-                // Recalcular filas DESPUÉS de insertar
+
                 $highestRow = $sheet->getHighestRow();
 
-                // Freeze
                 $sheet->freezePane('A3');
 
-                // AutoFilter (encabezados en fila 2)
                 $sheet->setAutoFilter("A2:{$highestColumn}{$highestRow}");
 
-                // Estilo encabezados
                 $headerRange = "A2:{$highestColumn}2";
                 $sheet->getStyle($headerRange)->applyFromArray([
                     'font' => [
@@ -112,12 +107,11 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
                         'startColor' => ['rgb' => '4472C4'],
                     ],
                 ]);
-                // Formato numérico (2 decimales)
+
                 $sheet->getStyle("H3:M{$highestRow}")
                     ->getNumberFormat()
                     ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
 
-                // Alineaciones
                 $sheet->getStyle("A3:G{$highestRow}")
                     ->getAlignment()
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
@@ -128,4 +122,5 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
             },
         ];
     }
+
 }

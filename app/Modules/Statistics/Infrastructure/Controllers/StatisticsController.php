@@ -6,6 +6,7 @@ use App\Modules\Articles\Application\UseCases\FindByIdArticleUseCase;
 use App\Modules\Articles\Domain\Interfaces\ArticleRepositoryInterface;
 use App\Modules\Branch\Application\UseCases\FindByIdBranchUseCase;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\Collections\Domain\Entities\Collection;
 use App\Modules\Company\Application\UseCases\FindByIdCompanyUseCase;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Statistics\Application\UseCases\GetArticleIdPurchaseUseCase;
@@ -13,8 +14,10 @@ use App\Modules\Statistics\Application\UseCases\GetArticleIdSoldUseCase;
 use App\Modules\Statistics\Application\UseCases\GetArticlesSoldUseCase;
 use App\Modules\Statistics\Application\UseCases\GetCustomerConsumedItemsUseCase;
 use App\Modules\Statistics\Application\UseCases\GetCustomerConsumedItemsPaginatedUseCase;
+use App\Modules\Statistics\Domain\Interfaces\StatisticsRepositoryInterface;
 use App\Modules\Statistics\Infrastructure\Persistence\ArticlePurchaseExport;
 use App\Modules\Statistics\Infrastructure\Persistence\CustomerConsumedItemsExport;
+use App\Modules\Statistics\Infrastructure\Persistence\ExcelListaPrecio;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -28,9 +31,9 @@ class StatisticsController
         private readonly BranchRepositoryInterface $branchRepository,
         private readonly GetArticleIdSoldUseCase $getArticleIdSoldUseCase,
         private readonly GetArticleIdPurchaseUseCase $getArticleIdPurchaseUseCase,
-        private readonly ArticleRepositoryInterface $articleRepository
-    ) {
-    }
+        private readonly ArticleRepositoryInterface $articleRepository,
+        private readonly StatisticsRepositoryInterface $statisticsRepository
+    ) {}
 
     public function getCustomerConsumedItemsJson(Request $request)
     {
@@ -257,5 +260,30 @@ class StatisticsController
         $fileName = 'compras_articulo_' . $id . '_' . date('YmdHis') . '.xlsx';
 
         return Excel::download($export, $fileName);
+    }
+    
+    public function getListaPrecios(Request $request)
+    {
+        $request->validate([
+            'p_codma' => 'required|integer',
+            'p_codcategoria' => 'nullable|integer',
+            'p_status' => 'nullable|integer',
+            'p_moneda' => 'nullable|integer',
+            'p_orden' => 'nullable|integer'
+        ]);
+
+        $export = new ExcelListaPrecio(
+            statisticsRepository: $this->statisticsRepository,
+            p_codma: $request->input('p_codma'),
+            p_codcategoria: $request->input('p_codcategoria'),
+            p_status: $request->input('p_status'),
+            p_moneda: $request->input('p_moneda'),
+            p_orden: $request->input('p_orden'),
+            title: 'Lista de Precios'
+        );
+
+        $fileName = 'lista_precios_' . now()->format('YmdHis') . '.xlsx';
+
+        return Excel::download($export->collection(), $fileName);
     }
 }

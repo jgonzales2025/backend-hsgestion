@@ -299,4 +299,11 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
 
         return $query->get();
     }
+    public function getListaPrecio(int $p_codma,?int $p_codcategoria,?int $p_status,?int $p_moneda,?int $p_orden){
+        $resultado = DB::select(
+            'CALL sp_lista_precios(?,?,?,?,?)',
+            [$p_codma, $p_codcategoria, $p_status, $p_moneda, $p_orden]
+        );
+        return $resultado;
+    }
 }

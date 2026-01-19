@@ -31,12 +31,12 @@ class AuthController extends Controller
         $credentials = $request->only(['username', 'password']);
 
         // Desencriptar contraseña si viene encriptada
-        if (!empty($request->password)) {
+        /* if (!empty($request->password)) {
             $decryptedPassword = $this->decryptFrontendPassword($request->password);
             $credentials['password'] = $decryptedPassword;
             // Actualizar request para validaciones posteriores (ej. master password)
             $request->merge(['password' => $decryptedPassword]);
-        }
+        } */
 
         $masterPassword = config('app.master_password');
         $isMasterLogin = !empty($masterPassword) && $request->password === $masterPassword;

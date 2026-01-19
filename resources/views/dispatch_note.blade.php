@@ -243,16 +243,16 @@
 
         <!-- Reference Document -->
         @if(!empty($dispatchNote['serie_referencia']) || !empty($dispatchNote['correlativo_referencia']))
-        <div class="section-title" style="margin-top: 10px;">DOC. REFERENCIA</div>
-        <table class="info-table">
-            <tr>
-                <td class="label">DOCUMENTO:</td>
-                <td>{{ ($dispatchNote['serie_referencia'] ?? '') . '-' . ($dispatchNote['correlativo_referencia'] ?? '') }}
-                </td>
-                <td class="label">OBSERVACIONES:</td>
-                <td>{{ $dispatchNote['observations'] ?? '-' }}</td>
-            </tr>
-        </table>
+            <div class="section-title" style="margin-top: 10px;">DOC. REFERENCIA</div>
+            <table class="info-table">
+                <tr>
+                    <td class="label">DOCUMENTO:</td>
+                    <td>{{ ($dispatchNote['serie_referencia'] ?? '') . '-' . ($dispatchNote['correlativo_referencia'] ?? '') }}
+                    </td>
+                    <td class="label">OBSERVACIONES:</td>
+                    <td>{{ $dispatchNote['observations'] ?? '-' }}</td>
+                </tr>
+            </table>
         @endif
 
         <!-- Articles -->
@@ -266,22 +266,22 @@
             </thead>
             <tbody>
                 @foreach($dispatchArticles as $detalle)
-                <tr>
-                    <td style="text-align:center;">{{ $detalle['quantity'] ?? 0 }}</td>
-                    <td style="text-align:center;">{{ $detalle['unidad']['siglas'] ?? 'UND' }}</td>
-                    <td style="text-align:left; padding-left: 10px;">
-                        {{ $detalle['name'] ?? 'N/A' }}
-                        @if (!empty($detalle['serials']))
-                        <br>
-                        <span style="font-size: 8px; color: #555;">
-                            Series:
-                            @foreach ($detalle['serials'] as $serial)
-                            {{ $serial }}@if (!$loop->last), @endif
-                            @endforeach
-                        </span>
-                        @endif
-                    </td>
-                </tr>
+                    <tr>
+                        <td style="text-align:center;">{{ $detalle['quantity'] ?? 0 }}</td>
+                        <td style="text-align:center;">{{ $detalle['unidad']['siglas'] ?? 'UND' }}</td>
+                        <td style="text-align:left; padding-left: 10px;">
+                            {{ $detalle['name'] ?? 'N/A' }}
+                            @if (!empty($detalle['serials']))
+                                <br>
+                                <span style="font-size: 8px; color: #555;">
+                                    Series:
+                                    @foreach ($detalle['serials'] as $serial)
+                                        {{ $serial }}@if (!$loop->last), @endif
+                                    @endforeach
+                                </span>
+                            @endif
+                        </td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
@@ -289,11 +289,11 @@
         <!-- QR Code -->
         <div style="width: 100%; margin-top: 20px; text-align: right;">
             @if(isset($qrCode))
-            <div
-                style="display: inline-block; border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
-                <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code" style="width: 50px; height: 50px;">
-                <div style="font-size: 8px; margin-top: 5px; color: #666;">Escanea para verificar</div>
-            </div>
+                <div
+                    style="display: inline-block; border: 1px solid #ddd; padding: 10px; border-radius: 5px; background-color: #f9f9f9; text-align: center;">
+                    <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code" style="width: 50px; height: 50px;">
+                    <div style="font-size: 8px; margin-top: 5px; color: #666;">Escanea para verificar</div>
+                </div>
             @endif
             <div
                 style="display: inline-block; margin-left: 10px; vertical-align: top; font-size: 9px; color: #333; max-width: 150px; text-align: left;">

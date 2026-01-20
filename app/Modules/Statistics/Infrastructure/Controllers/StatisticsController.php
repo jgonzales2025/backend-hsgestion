@@ -130,7 +130,8 @@ class StatisticsController
             'end_date' => 'nullable|date',
             'category_id' => 'nullable|integer',
             'brand_id' => 'nullable|integer',
-            'article_id' => 'nullable|integer'
+            'article_id' => 'nullable|integer',
+            'description' => 'nullable|string'
         ]);
 
         $articles = $this->getArticlesSoldUseCase->execute(
@@ -140,7 +141,8 @@ class StatisticsController
             end_date: $request->input('end_date'),
             category_id: $request->input('category_id'),
             brand_id: $request->input('brand_id'),
-            article_id: $request->input('article_id')
+            article_id: $request->input('article_id'),
+            description: $request->input('description')
         );
 
         return response()->json([

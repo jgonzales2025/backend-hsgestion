@@ -218,7 +218,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             }
         }
 
-        $findByidReferenceEntryGuide = DB::select("sp_valida_docref(?,?,?,?,?,?)", [
+        $findByidReferenceEntryGuide = DB::select("CALL sp_valida_docref(?,?,?,?,?,?)", [
             $entryGuide->getCompany()->getId(),
             $entryGuide->getId(),
             $entryGuide->getCustomer()->getId(),
@@ -226,8 +226,10 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             $entryGuide->getReferenceSerie(),
             $entryGuide->getReferenceCorrelative(),
         ]);
-        if ($findByidReferenceEntryGuide[0]->id > 0) {
-            throw new \Exception("El documento de referencia ya existe en la Guia de de Ingreso.");
+
+
+        if ($findByidReferenceEntryGuide[0]->success === 0) {
+            throw new \Exception($findByidReferenceEntryGuide[0]->msg ?? "El documento de referencia ya existe en la Guía de Ingreso.");
         }
         return DB::transaction(function () use ($entryGuide) {
 
@@ -328,7 +330,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
         if (!$eloquentEntryGuide) {
             return null;
         }
-                if ($entryGuide->getReferenceDocument() === 7 || $entryGuide->getReferenceDocument() === 8) {
+        if ($entryGuide->getReferenceDocument() === 7 || $entryGuide->getReferenceDocument() === 8) {
             $exists = EloquentPurchase::where('document_type_id', $entryGuide->getNcDocumentId())
                 ->where('nc_document_id', $entryGuide->getNcDocumentId())
                 ->where('nc_reference_serie', $entryGuide->getNcReferenceSerie())
@@ -338,6 +340,20 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             if (!$exists) {
                 throw new \Exception("El documento de referencia no existe en las notas de credito/debito.");
             }
+        }
+
+        $findByidReferenceEntryGuide = DB::select("CALL sp_valida_docref(?,?,?,?,?,?)", [
+            $entryGuide->getCompany()->getId(),
+            $entryGuide->getId(),
+            $entryGuide->getCustomer()->getId(),
+            $entryGuide->getReferenceDocument(),
+            $entryGuide->getReferenceSerie(),
+            $entryGuide->getReferenceCorrelative(),
+        ]);
+
+
+        if ($findByidReferenceEntryGuide[0]->success === 0) {
+            throw new \Exception($findByidReferenceEntryGuide[0]->msg ?? "El documento de referencia ya existe en la Guía de Ingreso.");
         }
 
         $eloquentEntryGuide->update([
@@ -467,5 +483,4 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     {
         EloquentEntryGuide::where('id', $id)->update(['status' => $status]);
     }
-    
 }

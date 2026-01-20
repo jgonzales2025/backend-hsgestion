@@ -94,7 +94,7 @@ class ExcelListaPrecio implements FromCollection, WithHeadings, WithMapping, Wit
 
                 $headerRange = "A2:{$highestColumn}2";
                 $sheet->getStyle($headerRange)->applyFromArray([
-                    'font' => [
+                    'font' => [ 
                         'bold'  => true,
                         'color' => ['rgb' => 'FFFFFF'],
                     ],

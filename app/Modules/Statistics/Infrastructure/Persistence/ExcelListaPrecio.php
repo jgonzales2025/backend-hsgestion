@@ -1,138 +1,141 @@
 <?php
 
 namespace App\Modules\Statistics\Infrastructure\Persistence;
-
-use App\Modules\Statistics\Domain\Interfaces\StatisticsRepositoryInterface;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithStyles;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Illuminate\Support\Collection;
 
-class ExcelListaPrecio implements FromCollection, WithHeadings, WithMapping, WithTitle
+class ExcelListaPrecio implements FromCollection, WithHeadings, WithMapping, WithStyles, WithEvents, ShouldAutoSize
 {
-    public function __construct(
-        private readonly StatisticsRepositoryInterface $statisticsRepository,
-        private readonly int $p_codma,
-        private readonly int $p_codcategoria,
-        private readonly int $p_status,
-        private readonly int $p_moneda,
-        private readonly int $p_orden,
-        private readonly string $title
-    ) {
+    private array $columns = [];
+    public function __construct(private array $data) {
+        $this->columns = $this->buildColumns($data);
     }
 
-    public function collection()
+    private function buildColumns(array $data): array
     {
-        return $this->statisticsRepository->getListaPrecio(
-            p_codma: $this->p_codma,
-            p_codcategoria: $this->p_codcategoria,
-            p_status: $this->p_status,
-            p_moneda: $this->p_moneda,
-            p_orden: $this->p_orden
-        );
+        $cols = [];
+        foreach ($data as $item) {
+            if (is_object($item)) {
+                $item = json_decode(json_encode($item), true);
+            } elseif (!is_array($item)) {
+                $item = (array) $item;
+            }
+            foreach (array_keys($item) as $key) {
+                if (!in_array((string) $key, $cols, true)) {
+                    $cols[] = (string) $key;
+                }
+            }
+        }
+        return $cols;
+    }
+
+    public function collection(): Collection
+    {
+        // Convertir array a colección y sanitizar datos
+        return collect($this->data)->map(function ($item) {
+            // Convertir objeto a array usando JSON (evita caracteres nulos)
+            if (is_object($item)) {
+                $item = json_decode(json_encode($item), true);
+            } elseif (!is_array($item)) {
+                $item = (array) $item;
+            }
+
+            // Limpiar cada valor
+            return array_map(function ($value) {
+                if ($value === null) return '';
+
+                if (is_string($value)) {
+                    // Remover caracteres nulos y de control
+                    $value = str_replace("\0", '', $value);
+                    $value = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $value);
+
+                    // Validar UTF-8
+                    if (!mb_check_encoding($value, 'UTF-8')) {
+                        $value = mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+                    }
+                }
+
+                return $value;
+            }, $item);
+        });
     }
 
     public function headings(): array
     {
-        return [
-            'CODIGO',
-            'SKU',
-            'DESCRIPTION ARTICULO',
-            'MARCA',
-            'CATEGORIA',
-            'SUBCATEGORIA',
-            'COSTO US$',
-            'PRECIO PUBLICO US$',
-            'PRECIO DISTRIBUIDOR US$',
-            'PRECIO AUTORIZADO US$',
-            'FEC CREACION',
-            'ESTADO'
-        ];
+        return $this->columns;
     }
 
     public function map($row): array
     {
+        $mapped = [];
+        foreach ($this->columns as $col) {
+            $val = $row[$col] ?? '';
+            if ($val === null) {
+                $val = '';
+            }
+            if (is_string($val)) {
+                $val = str_replace("\0", '', $val);
+                $val = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $val);
+                if (!mb_check_encoding($val, 'UTF-8')) {
+                    $val = mb_convert_encoding($val, 'UTF-8', 'ISO-8859-1');
+                }
+            } elseif (is_bool($val)) {
+                $val = $val ? 1 : 0;
+            } elseif (is_array($val) || is_object($val)) {
+                $val = json_encode($val, JSON_UNESCAPED_UNICODE);
+            }
+            $mapped[] = $val;
+        }
+        return $mapped;
+    }
+
+    public function styles(Worksheet $sheet)
+    {
         return [
-            $row['CODIGO'],
-            $row['SKU'],
-            $row['DESCRIPCION'],
-            $row['MARCA'],
-            $row['CATEGORIA'],
-            $row['SUBCATEGORIA'],
-            $row['COSTO'],
-            $row['PRECIO_PUBLICO'],
-            $row['PRECIO_DISTRIBUIDOR'],
-            $row['PRECIO_AUTORIZADO'],
-            $row['FEC_CREACION'],
-            $row['ESTADO']
+            1 => ['font' => ['bold' => true]],
         ];
     }
 
-    public function title(): string
-    {
-        return 'Lista de Precios';
-    }
-   public function registerEvents(): array
+    public function registerEvents(): array
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-                $highestColumn = $sheet->getHighestColumn();
 
-                $sheet->insertNewRowBefore(1, 1);
-                $sheet->mergeCells("A1:{$highestColumn}1");
-                $sheet->setCellValue('A1', mb_strtoupper($this->title));
+                // Congelar la fila de cabecera
+                $sheet->freezePane('A2');
 
-                $sheet->getStyle('A1')->applyFromArray([
-                    'font' => [
-                        'bold' => true,
-                        'size' => 20,
-                    ],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical'   => Alignment::VERTICAL_CENTER,
-                    ],
-                ]); 
-
+                // Aplicar autofiltro desde la cabecera hasta la última fila
                 $highestRow = $sheet->getHighestRow();
+                $highestColumn = $sheet->getHighestColumn();
+                $sheet->setAutoFilter("A1:{$highestColumn}{$highestRow}");
 
-                $sheet->freezePane('A3');
+                // Estilo de cabecera: fondo y alineación
+                $headerRange = "A1:{$highestColumn}1";
+                $sheet->getStyle($headerRange)
+                    ->getFill()
+                    ->setFillType(Fill::FILL_SOLID)
+                    ->getStartColor()
+                    ->setARGB('FF4472C4'); // azul
 
-                $sheet->setAutoFilter("A2:{$highestColumn}{$highestRow}");
+                $sheet->getStyle($headerRange)
+                    ->getFont()
+                    ->getColor()
+                    ->setARGB('FFFFFFFF'); // texto blanco
 
-                $headerRange = "A2:{$highestColumn}2";
-                $sheet->getStyle($headerRange)->applyFromArray([
-                    'font' => [ 
-                        'bold'  => true,
-                        'color' => ['rgb' => 'FFFFFF'],
-                    ],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical'   => Alignment::VERTICAL_CENTER,
-                    ],
-                    'fill' => [
-                        'fillType'   => Fill::FILL_SOLID,
-                        'startColor' => ['rgb' => '4472C4'],
-                    ],
-                ]);
-
-                $sheet->getStyle("H3:M{$highestRow}")
-                    ->getNumberFormat()
-                    ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
-
-                $sheet->getStyle("A3:G{$highestRow}")
+                $sheet->getStyle($headerRange)
                     ->getAlignment()
                     ->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
-                $sheet->getStyle("H3:M{$highestRow}")
-                    ->getAlignment()
-                    ->setHorizontal(Alignment::HORIZONTAL_RIGHT);
             },
         ];
     }
-
 }

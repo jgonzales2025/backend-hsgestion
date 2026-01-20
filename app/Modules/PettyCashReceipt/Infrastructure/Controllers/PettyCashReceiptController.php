@@ -20,10 +20,12 @@ use App\Modules\PettyCashReceipt\Infrastructure\Request\CreatePettyCashReceiptRe
 use App\Modules\PettyCashReceipt\Infrastructure\Request\UpdatePettyCashReceiptRequest;
 use App\Modules\PettyCashReceipt\Infrastructure\Resource\PettyCashReceiptResource;
 use App\Modules\PettyCashReceipt\Infrastructure\Exports\PettyCashProcedureExport;
+use App\Modules\PettyCashReceipt\Infrastructure\Persistence\PettyCashProcedureExport as PersistencePettyCashProcedureExport;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Maatwebsite\Excel\Excel as MaatwebsiteExcel;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PettyCashReceiptController extends Controller
@@ -218,13 +220,13 @@ class PettyCashReceiptController extends Controller
             $validated['pcodban'],
             $validated['pnroope'],
             $validated['ptipdoc'],
-            $validated['pserie'] ?? '',
-            $validated['pcorrelativo'] ?? ''
+            $validated['pserie'] ,
+            $validated['pcorrelativo']
         );
 
         // Stream directo XLSX para evitar cualquier mezcla de salida y asegurar binario correcto
         $fileName = 'parte_caja_' . now()->format('Y-m-d_His') . '.xlsx';
-        $export = new \App\Modules\PettyCashReceipt\Infrastructure\Persistence\PettyCashProcedureExport($data);
-        return Excel::download($export, $fileName, \Maatwebsite\Excel\Excel::XLSX);
+        $export = new PersistencePettyCashProcedureExport($data);
+        return Excel::download($export, $fileName, MaatwebsiteExcel::XLSX);
     }
 }

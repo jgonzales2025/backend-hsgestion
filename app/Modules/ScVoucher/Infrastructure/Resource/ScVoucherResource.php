@@ -45,8 +45,8 @@ class ScVoucherResource extends JsonResource
             'usradi' => $this->resource->getUsradi(),
             'fecadi' => $this->resource->getFecadi(),
             'usrmod' => $this->resource->getUsrmod(),
-            'total_soles' => (float) number_format($this->resource->getTotal() / $this->resource->getTipcam(), 4),
-            'total_dolares' => (float)number_format($this->resource->getTotal() * $this->resource->getTipcam(), 4),
+            'total_soles' => $this->resource->getTipmon()?->getName() === 'DOLARES' ? (float)number_format($this->resource->getTotal() * $this->resource->getTipcam(), 4) : $this->resource->getTotal(),
+            'total_dolares' => $this->resource->getTipmon()?->getName() === 'SOLES' ? (float)number_format($this->resource->getTotal() / $this->resource->getTipcam(), 4) : $this->resource->getTotal(),
             'detail_sc_voucher' => ScVoucherdetResource::collection($this->resource->getDetails()),
             'detail_voucher_purchase'=>DetVoucherPurchaseResource::collection($this->resource->getDetailVoucherpurchase()),
         ];

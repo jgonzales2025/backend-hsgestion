@@ -217,7 +217,18 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 throw new \Exception("El documento de referencia no existe en las notas de credito/debito.");
             }
         }
-        
+
+        $findByidReferenceEntryGuide = DB::select("sp_valida_docref(?,?,?,?,?,?)", [
+            $entryGuide->getCompany()->getId(),
+            $entryGuide->getId(),
+            $entryGuide->getCustomer()->getId(),
+            $entryGuide->getReferenceDocument(),
+            $entryGuide->getReferenceSerie(),
+            $entryGuide->getReferenceCorrelative(),
+        ]);
+        if ($findByidReferenceEntryGuide[0]->id > 0) {
+            throw new \Exception("El documento de referencia ya existe en la Guia de de Ingreso.");
+        }
         return DB::transaction(function () use ($entryGuide) {
 
             $eloquentEntryGuide = EloquentEntryGuide::create([
@@ -456,4 +467,5 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     {
         EloquentEntryGuide::where('id', $id)->update(['status' => $status]);
     }
+    
 }

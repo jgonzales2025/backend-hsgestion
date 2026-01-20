@@ -89,29 +89,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
 
         // Transform the items in the paginator
         $eloquentScVouchers->getCollection()->transform(function ($eloquentScVoucher) {
-            return new ScVoucher(
-                id: $eloquentScVoucher->id,
-                cia: $eloquentScVoucher->cia,
-                anopr: $eloquentScVoucher->anopr,
-                correlativo: $eloquentScVoucher->correlativo,
-                fecha: $eloquentScVoucher->fecha,
-                codban: $eloquentScVoucher->bank?->toDomain($eloquentScVoucher->bank),
-                codigo: $eloquentScVoucher->customer?->toDomain($eloquentScVoucher->customer),
-                nroope: $eloquentScVoucher->nroope,
-                glosa: $eloquentScVoucher->glosa,
-                orden: $eloquentScVoucher->orden,
-                tipmon: $eloquentScVoucher->currencyType?->toDomain($eloquentScVoucher->currencyType),
-                tipcam: $eloquentScVoucher->tipcam,
-                total: $eloquentScVoucher->total,
-                medpag: $eloquentScVoucher->paymentMethodSunat?->toDomain($eloquentScVoucher->paymentMethodSunat),
-                tipopago: $eloquentScVoucher->paymentType?->toDomain($eloquentScVoucher->paymentType),
-                status: $eloquentScVoucher->status,
-                usradi: $eloquentScVoucher->usradi,
-                fecadi: $eloquentScVoucher->fecadi,
-                usrmod: $eloquentScVoucher->usrmod,
-                details: $eloquentScVoucher->details->map(fn($detail) => $detail->toDomain())->all(),
-                detailVoucherpurchase: $eloquentScVoucher->detailVoucherPurchase->map(fn($detail) => $detail->toDomain())->all(),
-            );
+            return $eloquentScVoucher->toDomain();
         });
 
         return $eloquentScVouchers;
@@ -119,9 +97,8 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
 
     public function create(ScVoucher $scVoucher): ?ScVoucher
     {
-        DB::beginTransaction();
-
-        try {
+     return DB::transaction(function () use ($scVoucher) {
+             
             $eloquentScVoucher = EloquentScVoucher::create([
                 'cia' => $scVoucher->getCia(),
                 'anopr' => $scVoucher->getAnopr() . "-" . date('m'),
@@ -170,19 +147,12 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
                     'voucher_id' => $eloquentScVoucher->id,
                     'purchase_id' => $purchaseDTO->purchase_id,
                     'amount' => $purchaseDTO->amount,
-                ]); 
-            } 
-
-            DB::commit();
+                ]);
+            }
 
             return $this->findWithRelations($eloquentScVoucher->id);
-        } catch (\Throwable $th) { 
-
-            DB::rollBack();
-            throw $th;
-        }
+        });
     }
-
     public function update(ScVoucher $scVoucher): ?ScVoucher
     {
         $eloquentScVoucher = EloquentScVoucher::find($scVoucher->getId());
@@ -212,30 +182,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
 
         ]);
 
-        return new ScVoucher(
-            id: $eloquentScVoucher->id,
-            cia: $eloquentScVoucher->cia,
-            anopr: $eloquentScVoucher->anopr,
-            correlativo: $eloquentScVoucher->correlativo,
-            fecha: $eloquentScVoucher->fecha,
-            codban: $eloquentScVoucher->bank?->toDomain($eloquentScVoucher->bank),
-            codigo: $eloquentScVoucher->customer?->toDomain($eloquentScVoucher->customer),
-            nroope: $eloquentScVoucher->nroope,
-            glosa: $eloquentScVoucher->glosa,
-            orden: $eloquentScVoucher->orden,
-            tipmon: $eloquentScVoucher->currencyType?->toDomain($eloquentScVoucher->currencyType),
-            tipcam: $eloquentScVoucher->tipcam,
-            total: $eloquentScVoucher->total,
-            medpag: $eloquentScVoucher->paymentMethodSunat?->toDomain($eloquentScVoucher->paymentMethodSunat),
-            tipopago: $eloquentScVoucher->paymentType?->toDomain($eloquentScVoucher->paymentType),
-            status: $eloquentScVoucher->status,
-            usradi: $eloquentScVoucher->usradi,
-            fecadi: $eloquentScVoucher->fecadi,
-            usrmod: $eloquentScVoucher->usrmod,
-            details: $scVoucher->getDetails(),
-            detailVoucherpurchase: $scVoucher->getDetailVoucherpurchase(),
-
-        );
+        return $this->findWithRelations($eloquentScVoucher->id);
     }
     public function updateStatus(int $id, int $status)
     {
@@ -251,7 +198,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
 
         return $updatestatuseloquent;
     }
-    public function findWithRelations(int $id): ScVoucher
+    public function findWithRelations(int $id): ?ScVoucher
     {
         $model = EloquentScVoucher::with([
             'details',
@@ -261,8 +208,8 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
             'currencyType',
             'paymentMethodSunat',
             'paymentType'
-        ])->findOrFail($id);
+        ])->find($id);
 
-        return $model->toDomain();
+        return $model?->toDomain();
     }
 }

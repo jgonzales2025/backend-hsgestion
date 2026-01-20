@@ -152,6 +152,7 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
             ->whereIn('s.document_type_id', [1, 3]) // Facturas y Boletas
             ->select(
                 'a.id',
+                's.date',
                 'a.cod_fab',
                 'a.description as nombre_articulo',
                 'sa.quantity as cantidad',

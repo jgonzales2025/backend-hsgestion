@@ -25,7 +25,7 @@
             top: 0cm;
             left: 0cm;
             right: 0cm;
-            height: 4cm;
+            height: 1.5cm;
             background-color: #fff;
             padding-top: 0.5cm;
             padding-left: 1.5cm;
@@ -86,7 +86,7 @@
         }
 
         .doc-title {
-            font-size: 16px;
+            font-size: 12px;
             font-weight: bold;
             margin: 5px 0;
             background-color: #333;
@@ -112,7 +112,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 10px;
+            margin-bottom: 3px;
         }
 
         .info-table td {
@@ -188,7 +188,7 @@
 
     <div class="content">
         <!-- Customer Information -->
-        <div class="section-title">DATOS DEL CLIENTE</div>
+        <div class="section-title" style="margin-top: -25px;">DATOS DEL CLIENTE</div>
         <table class="info-table">
             @php
                 $customer = $sale->getCustomer();
@@ -238,7 +238,7 @@
             <tr>
                 <td class="label">FECHA EMISIÓN:</td>
                 <td>{{ $sale->getDate() }}</td>
-                <td class="label">FECHA VENCIMIENTO:</td>
+                <td class="label" style="white-space: nowrap;">FECHA VENCIMIENTO:</td>
                 <td>{{ $sale->getDueDate() }}</td>
                 <td class="label">TIPO DE CAMBIO:</td>
                 <td>{{ $sale->getParallelRate() }}</td>
@@ -272,7 +272,7 @@
         </table>
 
         <!-- Articles -->
-        <table class="products-table" style="margin-top: 15px;">
+        <table class="products-table" style="margin-top: 2px;">
             <thead>
                 <tr>
                     <th style="width: 10%;">CÓDIGO</th>
@@ -318,7 +318,7 @@
             </div>
             <div style="float: left; width: 55%; padding-right: 10px;">
                 <!-- Bank Accounts Information -->
-                <div style="border: 1px solid #333; padding: 4px; background-color: #f9f9f9;">
+                <div style="border: 1px solid #333; padding: 4px; background-color: #f9f9f9; page-break-inside: avoid;">
                     <div class="section-title" style="margin-bottom: 3px; font-size: 7px; padding: 2px;">
                         CUENTAS BANCARIAS
                     </div>
@@ -468,11 +468,11 @@
 
                 <!-- QR Code Section -->
                 @if(!in_array($sale->getDocumentType()->getId(), [16, 17]))
-                    <div style="width: 100%; text-align: center; margin-top: 8px;">
+                    <div style="width: 100%; text-align: center; margin-top: 8px; page-break-inside: avoid;">
                         <div style="display: inline-block; border: 1px solid #ddd; padding: 4px; border-radius: 5px; background-color: #f9f9f9;">
                             <div style="margin-bottom: 2px;">
                                 <img src="data:image/svg+xml;base64,{{ $qrCode }}" alt="QR Code"
-                                    style="width: 50px; height: 50px;">
+                                    style="width: 40px; height: 40px;">
                             </div>
                             <div style="font-size: 5px; margin-top: 2px; color: #666;">Escanea para verificar</div>
                             <div style="font-size: 5px; color: #333; margin-top: 2px; line-height: 1.2;">

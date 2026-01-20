@@ -26,6 +26,7 @@ use App\Modules\Warranty\Application\UseCases\FindAllWarrantiesUseCases;
 use App\Modules\Warranty\Application\UseCases\FindByIdWarrantyUseCase;
 use App\Modules\Warranty\Domain\Interfaces\WarrantyRepositoryInterface;
 use App\Modules\Warranty\Infrastructure\Requests\StoreWarrantyRequest;
+use App\Modules\Warranty\Infrastructure\Requests\UpdateWarrantyRequest;
 use App\Modules\Warranty\Infrastructure\Resource\TechnicalSupportResource;
 use App\Modules\Warranty\Infrastructure\Resource\WarrantyArticleResource;
 use App\Modules\Warranty\Infrastructure\Resource\WarrantyEntryGuideResource;
@@ -117,6 +118,11 @@ class WarrantyController
         } else {
             return response()->json(new WarrantyResource($warranty, $this->documentTypeRepository));
         }
+    }
+    
+    public function update(UpdateWarrantyRequest $request, int $id)
+    {
+        
     }
 
     public function findDocumentsBySerial(Request $request)

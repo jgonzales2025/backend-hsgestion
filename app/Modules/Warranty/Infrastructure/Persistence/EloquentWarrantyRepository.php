@@ -3,6 +3,7 @@
 namespace App\Modules\Warranty\Infrastructure\Persistence;
 
 use App\Modules\Warranty\Domain\Entities\TechnicalSupport;
+use App\Modules\Warranty\Domain\Entities\UpdateWarranty;
 use App\Modules\Warranty\Domain\Entities\Warranty;
 use App\Modules\Warranty\Domain\Interfaces\WarrantyRepositoryInterface;
 use App\Modules\Warranty\Infrastructure\Model\EloquentWarranty;
@@ -102,6 +103,30 @@ class EloquentWarrantyRepository implements WarrantyRepositoryInterface
             "diagnosis" => $technicalSupport->getDiagnosis(),
             "contact" => $technicalSupport->getContact()
         ])->id;
+    }
+    
+    public function updateWarranty(UpdateWarranty $updateWarranty, int $id): ?int
+    {
+	    return EloquentWarranty::where('id', $id)->update([
+            "customer_email" => $updateWarranty->getCustomerEmail(),
+            "failure_description" => $updateWarranty->getFailureDescription(),
+            "observations" => $updateWarranty->getObservations(),
+            "diagnosis" => $updateWarranty->getDiagnosis(),
+            "follow_up_diagnosis" => $updateWarranty->getFollowUpDiagnosis(),
+            "follow_up_status" => $updateWarranty->getFollowUpStatus(),
+            "solution" => $updateWarranty->getSolution(),
+            "solution_date" => $updateWarranty->getSolutionDate(),
+            "delivery_description" => $updateWarranty->getDeliveryDescription(),
+            "delivery_serie_art" => $updateWarranty->getDeliverySerieArt(),
+            "credit_note_serie" => $updateWarranty->getCreditNoteSerie(),
+            "credit_note_correlative" => $updateWarranty->getCreditNoteCorrelative(),
+            "delivery_date" => $updateWarranty->getDeliveryDate(),
+            "dispatch_note_serie" => $updateWarranty->getDispatchNoteSerie(),
+            "dispatch_note_correlative" => $updateWarranty->getDispatchNoteCorrelative(),
+            "dispatch_note_date" => $updateWarranty->getDispatchNoteDate()
+        ]);
+        
+        return $id;
     }
 
     private function mapByDocumentType(EloquentWarranty $warranty)

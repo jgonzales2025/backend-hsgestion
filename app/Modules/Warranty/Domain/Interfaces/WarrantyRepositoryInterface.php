@@ -3,6 +3,7 @@
 namespace App\Modules\Warranty\Domain\Interfaces;
 
 use App\Modules\Warranty\Domain\Entities\TechnicalSupport;
+use App\Modules\Warranty\Domain\Entities\UpdateWarranty;
 use App\Modules\Warranty\Domain\Entities\Warranty;
 
 interface WarrantyRepositoryInterface
@@ -12,4 +13,5 @@ interface WarrantyRepositoryInterface
     public function findById(int $id);
     public function getLastDocumentNumber(string $serie): ?string;
     public function saveTechnicalSupport(TechnicalSupport $technicalSupport): int;
+    public function updateWarranty(UpdateWarranty $updateWarranty, int $id): ?int;
 }

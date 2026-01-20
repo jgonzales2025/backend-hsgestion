@@ -189,4 +189,38 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
 
         return $resultado;
     }
+
+    public function cobranzaDetalle(
+        $cia,
+        $fecha,
+        $fechaU,
+        $nrocliente,
+        $pcodsuc,
+        $ptippag,
+        $pcodban,
+        $pnroope,
+        $ptipdoc,
+        $pserie,
+        $pcorrelativo
+    ): array {
+
+        $resultado = DB::select(
+            'CALL sp_cobranzas_detalle(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                (int) $cia,
+                $fecha,
+                $fechaU,
+                (int) $nrocliente,
+                (int) $pcodsuc,
+                (int) $ptippag,
+                (int) $pcodban,
+                $pnroope ?? '',
+                (int) $ptipdoc,
+                $pserie ?? '',
+                $pcorrelativo ?? ''
+            ]
+        );
+
+        return $resultado;
+    }
 }

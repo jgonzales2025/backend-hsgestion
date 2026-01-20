@@ -1,10 +1,7 @@
 <?php
 
 namespace App\Modules\PettyCashReceipt\Infrastructure\Resource;
-
-use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
-use App\Modules\DocumentType\Infrastructure\Models\EloquentDocumentType;
-use App\Modules\PettyCashMotive\Infrastructure\Models\EloquentPettyCashMotive;
+ 
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class PettyCashReceiptResource extends JsonResource

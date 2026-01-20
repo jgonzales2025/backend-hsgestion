@@ -182,7 +182,7 @@ class PettyCashReceiptController extends Controller
             'last_page_url' => $datos->url($datos->lastPage()),
             'first_page_url' => $datos->url(1),
             'prev_page_url'  => $datos->previousPageUrl(),
-            
+
         ]);
     }
 
@@ -220,7 +220,7 @@ class PettyCashReceiptController extends Controller
             $validated['pcodban'],
             $validated['pnroope'],
             $validated['ptipdoc'],
-            $validated['pserie'] ,
+            $validated['pserie'],
             $validated['pcorrelativo']
         );
 
@@ -228,5 +228,104 @@ class PettyCashReceiptController extends Controller
         $fileName = 'parte_caja_' . now()->format('Y-m-d_His') . '.xlsx';
         $export = new PersistencePettyCashProcedureExport($data);
         return Excel::download($export, $fileName, MaatwebsiteExcel::XLSX);
+    }
+
+    public function exportExcelCobranzaDetalle(Request $request)
+    {
+        $companyId = request()->get('company_id');
+
+        $validated = $request->validate([
+            'fecha' => 'nullable|date',
+            'fechaU' => 'nullable|date',
+            'nrocliente' => 'nullable|integer',
+            'pcodsuc' => 'required|integer',
+            'ptippag' => 'nullable|integer',
+            'pcodban' => 'nullable|integer',
+            'pnroope' => 'nullable|string',
+            'ptipdoc' => 'nullable|integer',
+            'pserie' => 'nullable|string',
+            'pcorrelativo' => 'nullable|string',
+        ]);
+
+        $validated['cia'] = $companyId;
+
+        // Obtener datos del procedimiento almacenado
+        $selectProcedureUseCase = new SelectProcedureUseCase(
+            $this->pettyCashReceiptRepository
+        );
+
+        $data = $selectProcedureUseCase->execute(
+            $validated['cia'],
+            $validated['fecha'] ?? '',
+            $validated['fechaU'] ?? '',
+            $validated['nrocliente'],
+            $validated['pcodsuc'],
+            $validated['ptippag'],
+            $validated['pcodban'],
+            $validated['pnroope'],
+            $validated['ptipdoc'],
+            $validated['pserie'],
+            $validated['pcorrelativo']
+        );
+
+        // Stream directo XLSX para evitar cualquier mezcla de salida y asegurar binario correcto
+        $fileName = 'parte_caja_' . now()->format('Y-m-d_His') . '.xlsx';
+        $export = new PersistencePettyCashProcedureExport($data);
+        return Excel::download($export, $fileName, MaatwebsiteExcel::XLSX);
+    }
+
+
+    public function listartCobranzaDetalle(Request $request)
+    {
+        $companyId = request()->get('company_id');
+
+        $validated = $request->validate([
+            'fecha' => 'nullable|date',
+            'fechaU' => 'nullable|date',
+            'nrocliente' => 'nullable|integer',
+            'pcodsuc' => 'required|integer',
+            'ptippag' => 'nullable|integer',
+            'pcodban' => 'nullable|integer',
+            'pnroope' => 'nullable|string',
+            'ptipdoc' => 'nullable|integer',
+            'pserie' => 'nullable|string',
+            'pcorrelativo' => 'nullable|string',
+        ]);
+
+        $validated['cia'] = $companyId;
+
+        // Obtener datos del procedimiento almacenado
+        $selectProcedureUseCase = new SelectProcedureUseCase(
+            $this->pettyCashReceiptRepository
+        );
+
+        $data = $selectProcedureUseCase->execute(
+            $validated['cia'],
+            $validated['fecha'] ?? '',
+            $validated['fechaU'] ?? '',
+            $validated['nrocliente'],
+            $validated['pcodsuc'],
+            $validated['ptippag'],
+            $validated['pcodban'],
+            $validated['pnroope'],
+            $validated['ptipdoc'],
+            $validated['pserie'],
+            $validated['pcorrelativo']
+        );
+
+        $data = $this->paginateStoredProcedure($data, 10);
+
+        return response()->json([
+            'data'           => $data->items(),
+            'current_page'   => $data->currentPage(),
+            'per_page'       => $data->perPage(),
+            'total'          => $data->total(),
+            'last_page'      => $data->lastPage(),
+            'next_page_url'  => $data->nextPageUrl(),
+            'last_page_url' => $data->url($data->lastPage()),
+            'first_page_url' => $data->url(1),
+            'prev_page_url'  => $data->previousPageUrl(),
+
+        ]);
     }
 }

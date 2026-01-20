@@ -86,6 +86,10 @@ class EloquentUserAssignmentRepository implements UserAssignmentRepositoryInterf
             $branches = $branches->filter(function ($branch) {
                 return $branch->branch->st_petty_cash === 1;
             });
+        } else if ($type === 'warranties') {
+            $branches = $branches->filter(function ($branch) {
+                return $branch->branch->st_warranties === 1;
+            });
         }
 
         return $branches->map(function ($branch) {
@@ -95,9 +99,10 @@ class EloquentUserAssignmentRepository implements UserAssignmentRepositoryInterf
                 'address' => $branch->branch->address,
                 'st_sales' => $branch->branch->st_sales,
                 'st_entry_guide' => $branch->branch->st_entry_guide,
-                'st_petty_cash' => $branch->branch->st_petty_cash
+                'st_petty_cash' => $branch->branch->st_petty_cash,
+                'st_warranties' => $branch->branch->st_warranties
             ];
-        })->toArray();
+        })->values()->toArray();
     }
 
 }

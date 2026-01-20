@@ -9,6 +9,7 @@ class UpdateWarrantyRequest extends FormRequest
     public function rules(): array
     {
         return [
+            "document_type_warranty_id" => "required",
             'customer_email' => 'nullable|email',
             'failure_description' => 'nullable|string',
             'observations' => 'nullable|string',

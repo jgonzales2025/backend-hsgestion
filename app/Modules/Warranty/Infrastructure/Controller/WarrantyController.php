@@ -19,11 +19,16 @@ use App\Modules\SaleItemSerial\Application\UseCases\FindArticleBySerialUseCase;
 use App\Modules\SaleItemSerial\Application\UseCases\FindSaleBySerialUseCase;
 use App\Modules\SaleItemSerial\Domain\Interfaces\SaleItemSerialRepositoryInterface;
 use App\Modules\Warranty\Application\DTOs\TechnicalSupportDTO;
+use App\Modules\Warranty\Application\DTOs\UpdateTechnicalSupportDTO;
+use App\Modules\Warranty\Application\DTOs\UpdateWarrantyDTO;
 use App\Modules\Warranty\Application\DTOs\WarrantyDTO;
 use App\Modules\Warranty\Application\UseCases\CreateTechnicalSupportUseCase;
 use App\Modules\Warranty\Application\UseCases\CreateWarrantyUseCase;
 use App\Modules\Warranty\Application\UseCases\FindAllWarrantiesUseCases;
 use App\Modules\Warranty\Application\UseCases\FindByIdWarrantyUseCase;
+use App\Modules\Warranty\Application\UseCases\UpdateStatusUseCase;
+use App\Modules\Warranty\Application\UseCases\UpdateTechnicalSupportUseCase;
+use App\Modules\Warranty\Application\UseCases\UpdateWarrantyUseCase;
 use App\Modules\Warranty\Domain\Interfaces\WarrantyRepositoryInterface;
 use App\Modules\Warranty\Infrastructure\Requests\StoreWarrantyRequest;
 use App\Modules\Warranty\Infrastructure\Requests\UpdateWarrantyRequest;
@@ -122,7 +127,27 @@ class WarrantyController
     
     public function update(UpdateWarrantyRequest $request, int $id)
     {
-        
+        if ($request->validated()['document_type_warranty_id'] == 1) {
+            $warrantyDTO = new UpdateWarrantyDTO($request->validated());
+            $warrantyUseCase = new UpdateWarrantyUseCase($this->warrantyRepository);
+            $id = $warrantyUseCase->execute($warrantyDTO, $id);
+            
+            if (!$id) {
+                return response()->json(['message' => 'Ticket no existe.'], 404);
+            }
+            
+            return response()->json(['message' => 'Ticket actualizado exitosamente', 'id' => $id]);
+        } else {
+            $technicalSupportDTO = new UpdateTechnicalSupportDTO($request->validated());
+            $technicalSupportUseCase = new UpdateTechnicalSupportUseCase($this->warrantyRepository);
+            $id = $technicalSupportUseCase->execute($technicalSupportDTO, $id);
+            
+            if (!$id) {
+                return response()->json(['message' => 'Ticket no existe.'], 404);
+            }
+            
+            return response()->json(['message' => 'Ticket actualizado exitosamente', 'id' => $id]);
+        }
     }
 
     public function findDocumentsBySerial(Request $request)
@@ -167,8 +192,10 @@ class WarrantyController
         $pdf = Pdf::loadView('warranty', [
             'warranty' => $warranty
         ]);
+        
+        $documentType = $warranty->getDocumentTypeWarrantyId() == 1 ? 'Garantia' : 'Soporte';
 
-        $fileName = 'Garantia' . '_' . $warranty->getSerie() . '-' . $warranty->getCorrelative() . '.pdf';
+        $fileName = $documentType . '_' . $warranty->getSerie() . '-' . $warranty->getCorrelative() . '.pdf';
 
         $path = 'pdf/' . $fileName;
         $content = $pdf->output();
@@ -179,5 +206,14 @@ class WarrantyController
             'fileName' => $fileName,
             'pdf_base64' => base64_encode($content)
         ]);
+    }
+    
+    public function updateStatus(int $id, Request $request)
+    {
+        $status = $request->input('status');
+        $statusUseCase = new UpdateStatusUseCase($this->warrantyRepository);
+        $statusUseCase->execute($id, $status);
+        
+        return response()->json(['message' => 'Estado actualizado correctamente']);
     }
 }

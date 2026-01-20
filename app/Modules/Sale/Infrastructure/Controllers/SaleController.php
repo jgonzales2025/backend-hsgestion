@@ -781,10 +781,6 @@ class SaleController extends Controller
 
     public function updateStatus(Request $request, int $id)
     {
-        $status = $request->input('status', [
-            'status' => 'required|integer|in:0,1',
-        ]);
-
         $result = DB::select('CALL sp_comunicacion_anulacion_baja(?)', [$id]);
 
         $estado = $result[0]->estado;
@@ -792,7 +788,8 @@ class SaleController extends Controller
 
         if ($estado == 0) {
             return response()->json([
-                'message' => $msg
+                'message' => $msg,
+                'status' => false
             ], 200);
         }
             
@@ -801,14 +798,14 @@ class SaleController extends Controller
         
         if ($sale->getSaldo() != $sale->getTotal())
         {
-            return response()->json(['message' => 'La venta no se puede anular porque ya tiene pagos registrados.'], 200);
+            return response()->json(['message' => 'La venta no se puede anular porque ya tiene pagos registrados.', 'status' => false], 200);
         }
         
         $documentReferenceUseCase = new FindByDocumentReferenceUseCase($this->saleRepository);
         $documentReference = $documentReferenceUseCase->execute($sale->getDocumentType()->getId(), $sale->getSerie(), $sale->getDocumentNumber());
 
         if ($documentReference) {
-            return response()->json(['message' => 'La venta no se puede anular porque ya tiene notas de crédito'], 200);
+            return response()->json(['message' => 'La venta no se puede anular porque ya tiene notas de crédito', 'status' => false], 200);
         }
         
         $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
@@ -819,17 +816,15 @@ class SaleController extends Controller
         foreach ($serials as $serial) {
             $entryItemSerialUseCase->execute($serial, 1);
         }
-
+        
         $statusUseCase = new UpdateStatusSalesUseCase($this->saleRepository);
-        $statusUseCase->execute($id, $status);
+        $statusUseCase->execute($id, 0);
         
         return response()->json([
-            'message' => 'Documento anulado correctamente'
+            'message' => 'Documento anulado correctamente',
+            'status' => true
         ], 200);
         
-
-
-
         /*if ($sale->getDocumentType()->getId() == 1) {
             $response = $this->salesSunatService->saleInvoiceAnulacion($sale);
         }

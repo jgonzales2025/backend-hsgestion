@@ -33,9 +33,9 @@ class EloquentWarrantyRepository implements WarrantyRepositoryInterface
         return $eloquentWarranties;
     }
 
-    public function save(Warranty $warranty): void
+    public function save(Warranty $warranty): int
     {
-        EloquentWarranty::create([
+        return EloquentWarranty::create([
             "document_type_warranty_id" => $warranty->document_type_warranty_id,
             "company_id" => $warranty->getCompany()->getId(),
             "branch_id" => $warranty->getBranch()->getId(),
@@ -68,7 +68,7 @@ class EloquentWarrantyRepository implements WarrantyRepositoryInterface
             "dispatch_note_serie" => $warranty->dispatch_note_serie,
             "dispatch_note_correlative" => $warranty->dispatch_note_correlative,
             "dispatch_note_date" => $warranty->dispatch_note_date
-        ]);
+        ])->id;
     }
 
     public function findById(int $id)
@@ -86,9 +86,9 @@ class EloquentWarrantyRepository implements WarrantyRepositoryInterface
         return $warranty?->correlative;
     }
 
-    public function saveTechnicalSupport(TechnicalSupport $technicalSupport): void
+    public function saveTechnicalSupport(TechnicalSupport $technicalSupport): int
     {
-        EloquentWarranty::create([
+        return EloquentWarranty::create([
             "document_type_warranty_id" => $technicalSupport->getDocumentTypeWarrantyId(),
             "company_id" => $technicalSupport->getCompany()->getId(),
             "branch_id" => $technicalSupport->getBranch()->getId(),
@@ -101,7 +101,7 @@ class EloquentWarrantyRepository implements WarrantyRepositoryInterface
             "observations" => $technicalSupport->getObservations(),
             "diagnosis" => $technicalSupport->getDiagnosis(),
             "contact" => $technicalSupport->getContact()
-        ]);
+        ])->id;
     }
 
     private function mapByDocumentType(EloquentWarranty $warranty)

@@ -93,13 +93,13 @@ class WarrantyController
         if ($request->validated()['document_type_warranty_id'] == 2) {
             $technicalSupportDTO = new TechnicalSupportDTO($request->validated());
             $technicalSupportUseCase = new CreateTechnicalSupportUseCase($this->warrantyRepository, $this->documentNumberGeneratorService, $this->companyRepository, $this->branchRepository);
-            $technicalSupportUseCase->execute($technicalSupportDTO);
-            return response()->json(['message' => 'Soporte técnico creado exitosamente']);
+            $id = $technicalSupportUseCase->execute($technicalSupportDTO);
+            return response()->json(['message' => 'Soporte técnico creado exitosamente', 'id' => $id]);
         } else {
             $warrantyDTO = new WarrantyDTO($request->validated());
             $warrantyUseCase = new CreateWarrantyUseCase($this->warrantyRepository, $this->companyRepository, $this->branchRepository, $this->articleRepository, $this->customerRepository, $this->entryGuideRepository, $this->saleRepository, $this->warrantyStatusRepository, $this->documentNumberGeneratorService);
-            $warrantyUseCase->execute($warrantyDTO);
-            return response()->json(['message' => 'Garantía creada exitosamente']);
+            $id = $warrantyUseCase->execute($warrantyDTO);
+            return response()->json(['message' => 'Garantía creada exitosamente', 'id' => $id]);
         }
     }
 

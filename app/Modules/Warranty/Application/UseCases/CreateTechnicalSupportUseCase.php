@@ -20,7 +20,7 @@ class CreateTechnicalSupportUseCase
         private readonly BranchRepositoryInterface $branchRepository
     ){}
 
-    public function execute(TechnicalSupportDTO $technicalSupportDTO): void
+    public function execute(TechnicalSupportDTO $technicalSupportDTO): int
     {
         $lastDocumentNumber = $this->warrantyRepository->getLastDocumentNumber($technicalSupportDTO->serie);
         $technicalSupportDTO->correlative = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
@@ -45,6 +45,6 @@ class CreateTechnicalSupportUseCase
             contact: $technicalSupportDTO->contact
         );
 
-        $this->warrantyRepository->saveTechnicalSupport($technicalSupport);
+        return $this->warrantyRepository->saveTechnicalSupport($technicalSupport);
     }
 }

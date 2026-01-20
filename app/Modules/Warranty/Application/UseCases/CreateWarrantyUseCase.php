@@ -35,7 +35,7 @@ class CreateWarrantyUseCase
         private readonly SaleRepositoryInterface $saleRepository,
         private readonly WarrantyStatusRepositoryInterface $warrantyStatusRepository,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService){}
-    public function execute(WarrantyDTO $warrantyDTO): void
+    public function execute(WarrantyDTO $warrantyDTO): int
     {
         $lastDocumentNumber = $this->warrantyRepository->getLastDocumentNumber($warrantyDTO->serie);
         $warrantyDTO->correlative = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
@@ -92,6 +92,6 @@ class CreateWarrantyUseCase
             dispatch_note_correlative: $warrantyDTO->dispatch_note_correlative,
             dispatch_note_date: $warrantyDTO->dispatch_note_date
         );
-        $this->warrantyRepository->save($warranty);
+        return $this->warrantyRepository->save($warranty);
     }
 }

@@ -277,30 +277,36 @@ class StatisticsController
         return Excel::download($export, $fileName);
     }
     
-    public function getListaPrecios(Request $request)
-    {
-        $request->validate([
-            'p_codma' => 'required|integer',
-            'p_codcategoria' => 'nullable|integer',
-            'p_status' => 'nullable|integer',
-            'p_moneda' => 'nullable|integer',
-            'p_orden' => 'nullable|integer'
-        ]);
 
-        $export = new ExcelListaPrecio(
-            statisticsRepository: $this->statisticsRepository,
-            p_codma: $request->input('p_codma'),
-            p_codcategoria: $request->input('p_codcategoria'),
-            p_status: $request->input('p_status'),
-            p_moneda: $request->input('p_moneda'),
-            p_orden: $request->input('p_orden'),
-            title: 'Lista de Precios'
-        );
 
-        $fileName = 'lista_precios_' . now()->format('YmdHis') . '.xlsx';
+public function getListaPrecios(Request $request)
+{
+    $request->validate([
+        'p_codma'        => 'required|integer',
+        'p_codcategoria' => 'nullable|integer',
+        'p_status'       => 'nullable|integer',
+        'p_moneda'       => 'nullable|integer',
+        'p_orden'        => 'nullable|integer'
+    ]);
 
-        return Excel::download($export->collection(), $fileName);
-    }
+
+    $data = $this->statisticsRepository->getListaPrecio(
+        $request->p_codma,
+        $request->p_codcategoria,
+        $request->p_status,
+        $request->p_moneda,
+        $request->p_orden
+    );
+
+    
+    $fileName = 'lista_precios_' . now()->format('YmdHis') . '.xlsx';
+
+    return Excel::download(
+        new ExcelListaPrecio($data),
+        $fileName
+    );
+}
+
 
     private function paginateStoredProcedure(array $items, $perPage = 10): LengthAwarePaginator
     {

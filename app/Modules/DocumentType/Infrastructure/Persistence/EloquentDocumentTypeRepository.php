@@ -220,4 +220,27 @@ class EloquentDocumentTypeRepository implements DocumentTypeRepositoryInterface
             );
         })->toArray();
     }
+
+    public function findAllForCompra(): array
+    {
+        $eloquentDocumentTypes = EloquentDocumentType::whereIn('id', [1, 3, 8, 17])->get();
+
+        if ($eloquentDocumentTypes->isEmpty()){
+            return [];
+        }
+
+        return $eloquentDocumentTypes->map(function ($eloquentDocumentType){
+            return new DocumentType(
+                id: $eloquentDocumentType->id,
+                cod_sunat: $eloquentDocumentType->cod_sunat,
+                description: $eloquentDocumentType->description,
+                abbreviation: $eloquentDocumentType->abbreviation,
+                st_sales: $eloquentDocumentType->st_sales,
+                st_purchases: $eloquentDocumentType->st_purchases,
+                st_collections: $eloquentDocumentType->st_collections,
+                st_invoices: $eloquentDocumentType->st_invoices,
+                status: $eloquentDocumentType->status
+            );
+        })->toArray();
+    }
 }

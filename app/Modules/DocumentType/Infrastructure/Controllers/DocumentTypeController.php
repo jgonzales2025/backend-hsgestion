@@ -106,4 +106,10 @@ class DocumentTypeController extends Controller
 
         return DocumentTypeResource::collection($documentTypes)->resolve();
     }
+
+    public function documentTyePurchase(){
+         $purchaseDocument = $this->documentTypeRepository->findAllForCompra();
+
+         return DocumentTypeResource::collection($purchaseDocument)->resolve();
+    }
 }

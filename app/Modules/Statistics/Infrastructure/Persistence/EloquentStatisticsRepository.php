@@ -197,6 +197,8 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
 
     public function getArticleIdSold(int $company_id, int $article_id, ?int $branch_id, ?string $start_date, ?string $end_date, ?int $category_id, ?int $brand_id, int $perPage = 10)
     {
+        $customerNameExpression = "COALESCE(NULLIF(c.company_name, ''), NULLIF(TRIM(CONCAT_WS(' ', c.name, c.lastname, c.second_lastname)), ''))";
+
         $query = DB::table('sales as s')
             ->join('sale_article as sa', 's.id', '=', 'sa.sale_id')
             ->join('branches as b', 's.branch_id', '=', 'b.id')
@@ -213,7 +215,7 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
                 's.serie',
                 's.document_number as correlativo',
                 's.date as fecha_venta',
-                'c.company_name as cliente',
+                DB::raw("{$customerNameExpression} as customer_name"),
                 'sa.quantity as cantidad',
                 'ct.commercial_symbol as tipo_moneda',
                 'sa.unit_price as precio_venta',
@@ -257,8 +259,8 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
             ->select(
                 'b.name as sucursal',
                 'dt.abbreviation as tipo_documento',
-                'p.serie',
-                'p.correlative as correlativo',
+                'p.reference_serie',
+                'p.reference_correlative as correlativo',
                 'p.date as fecha_compra',
                 DB::raw('CASE 
                     WHEN c.company_name IS NOT NULL AND c.company_name != "" THEN c.company_name
@@ -274,9 +276,9 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
                 'dpg.precio_costo as precio_compra',
                 'p.exchange_type as tipo_cambio',
                 DB::raw('CASE 
-                    WHEN p.currency = 1 THEN dpg.total 
-                    WHEN p.currency = 2 THEN dpg.total * p.exchange_type 
-                    ELSE dpg.total 
+                    WHEN p.currency = 1 THEN ROUND(dpg.total, 4) 
+                    WHEN p.currency = 2 THEN ROUND(dpg.total * p.exchange_type, 4) 
+                    ELSE ROUND(dpg.total, 4) 
                 END as importe_soles')
             );
 

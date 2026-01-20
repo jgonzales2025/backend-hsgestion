@@ -824,7 +824,7 @@ class SaleController extends Controller
         $statusUseCase->execute($id, $status);
         
         return response()->json([
-            'message' => 'Estado actualizado correctamente'
+            'message' => 'Documento anulado correctamente'
         ], 200);
         
 

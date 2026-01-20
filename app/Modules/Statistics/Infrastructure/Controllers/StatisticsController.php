@@ -19,6 +19,7 @@ use App\Modules\Statistics\Infrastructure\Persistence\ArticlePurchaseExport;
 use App\Modules\Statistics\Infrastructure\Persistence\CustomerConsumedItemsExport;
 use App\Modules\Statistics\Infrastructure\Persistence\ExcelListaPrecio;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class StatisticsController
@@ -299,5 +300,55 @@ class StatisticsController
         $fileName = 'lista_precios_' . now()->format('YmdHis') . '.xlsx';
 
         return Excel::download($export->collection(), $fileName);
+    }
+
+    private function paginateStoredProcedure(array $items, $perPage = 10): LengthAwarePaginator
+    {
+        $page = request()->get('page', 1);
+        $items = collect($items);
+
+        $pagedItems = $items->slice(($page - 1) * $perPage, $perPage)->values();
+
+        return  new LengthAwarePaginator(
+            $pagedItems,
+            $items->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+    }
+
+    public function listarPrecios(Request $request)
+    {
+        $request->validate([
+            'p_codma' => 'required|integer',
+            'p_codcategoria' => 'nullable|integer',
+            'p_status' => 'nullable|integer',
+            'p_moneda' => 'nullable|integer',
+            'p_orden' => 'nullable|integer'
+        ]);
+
+        $data = $this->statisticsRepository->getListaPrecio(
+            p_codma: $request->input('p_codma'),
+            p_codcategoria: $request->input('p_codcategoria'),
+            p_status: $request->input('p_status'),
+            p_moneda: $request->input('p_moneda'),
+            p_orden: $request->input('p_orden')
+        );
+
+        $data = $this->paginateStoredProcedure($data, 10);
+
+        return response()->json([
+            'data'           => $data->items(),
+            'current_page'   => $data->currentPage(),
+            'per_page'       => $data->perPage(),
+            'total'          => $data->total(),
+            'last_page'      => $data->lastPage(),
+            'next_page_url'  => $data->nextPageUrl(),
+            'last_page_url' => $data->url($data->lastPage()),
+            'first_page_url' => $data->url(1),
+            'prev_page_url'  => $data->previousPageUrl(),
+
+        ]);
     }
 }

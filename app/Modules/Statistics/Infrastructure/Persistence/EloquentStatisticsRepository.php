@@ -315,6 +315,8 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
             'CALL sp_lista_precios(?,?,?,?,?)',
             [$p_codma, $p_codcategoria, $p_status, $p_moneda, $p_orden]
         );
+
+
         return $resultado;
     }
 }

@@ -190,6 +190,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/pettyCashReceiptstatus/{id}', [PettyCashReceiptController::class, 'updateStatus']);
     Route::post('/pettyCashReceipt/select-procedure', [PettyCashReceiptController::class, 'selectProcedure']);
     Route::post('/pettyCashReceipt/export-excel', [PettyCashReceiptController::class, 'exportExcel']);
+    Route::post('/pettyCashReceipt/export-excel-cobranza-detalle', [PettyCashReceiptController::class, 'exportExcelCobranzaDetalle']);
+    Route::post('/pettyCashReceipt/listartCobranzaDetalle', [PettyCashReceiptController::class, 'listartCobranzaDetalle']);
     //PettyCashReceiptMotive
     Route::get('/pettyCashMotive', [PettyCashMotiveController::class, 'index']);
     Route::get('/pettyCashMotive-by-receipt-type-infinite/{id}', [PettyCashMotiveController::class, 'indexByReceiptTypeInfinite']);
@@ -296,6 +298,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/statistics/article-id-purchase/{id}', [StatisticsController::class, 'getArticleIdPurchase']);
     Route::get('/statistics/article-id-purchase/{id}/export', [StatisticsController::class, 'exportArticleIdPurchase']);
     Route::get('/statistics/lista-precios/export', [StatisticsController::class, 'getListaPrecios']);
+    Route::post('/statistics/lista-precios', [StatisticsController::class, 'listarPrecios']);
     // Ruta para envío sunat de venta
     Route::post('/sale-sunat-send/{id}', [SaleSunatController::class, 'store']);
     Route::get('/roles', [RoleController::class, 'index']);

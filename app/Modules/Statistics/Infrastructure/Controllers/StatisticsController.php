@@ -130,11 +130,8 @@ class StatisticsController
             'end_date' => 'nullable|date',
             'category_id' => 'nullable|integer',
             'brand_id' => 'nullable|integer',
-            'article_id' => 'nullable|integer',
-            'per_page' => 'nullable|integer|min:1|max:100',
+            'article_id' => 'nullable|integer'
         ]);
-
-        $perPage = $request->input('per_page', 15);
 
         $articles = $this->getArticlesSoldUseCase->execute(
             company_id: $request->input('company_id'),
@@ -143,8 +140,7 @@ class StatisticsController
             end_date: $request->input('end_date'),
             category_id: $request->input('category_id'),
             brand_id: $request->input('brand_id'),
-            article_id: $request->input('article_id'),
-            perPage: $perPage
+            article_id: $request->input('article_id')
         );
 
         return response()->json([
@@ -182,7 +178,15 @@ class StatisticsController
         );
 
         return response()->json([
-            'data' => $articles
+            'data' => $articles->items(),
+            'current_page' => $articles->currentPage(),
+            'per_page' => $articles->perPage(),
+            'total' => $articles->total(),
+            'last_page' => $articles->lastPage(),
+            'next_page_url' => $articles->nextPageUrl(),
+            'prev_page_url' => $articles->previousPageUrl(),
+            'first_page_url' => $articles->url(1),
+            'last_page_url' => $articles->url($articles->lastPage()),
         ]);
     }
 
@@ -208,7 +212,15 @@ class StatisticsController
         );
 
         return response()->json([
-            'data' => $purchases
+            'data' => $purchases->items(),
+            'current_page' => $purchases->currentPage(),
+            'per_page' => $purchases->perPage(),
+            'total' => $purchases->total(),
+            'last_page' => $purchases->lastPage(),
+            'next_page_url' => $purchases->nextPageUrl(),
+            'prev_page_url' => $purchases->previousPageUrl(),
+            'first_page_url' => $purchases->url(1),
+            'last_page_url' => $purchases->url($purchases->lastPage()),
         ]);
     }
 

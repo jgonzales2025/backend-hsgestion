@@ -141,6 +141,15 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
         }
         return $this->entryGuideRepository->findById($entryItemSerial->entry_guide_id);
     }
+    
+    public function updateStatusBySerial(string $serial, int $status): void
+    {
+        $entryItemSerial = EloquentEntryItemSerial::where('serial', $serial)->first();
+        
+        $entryItemSerial->status = $status;
+        $entryItemSerial->save();
+    }
+
 }
 
 

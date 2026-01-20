@@ -15,6 +15,7 @@ use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRep
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Resource\DispatchNoteResource;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
+use App\Modules\EntryItemSerial\Application\UseCases\UpdateStatusBySerialUseCase;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\Installment\Application\DTOs\InstallmentDTO;
 use App\Modules\Installment\Application\UseCases\CreateInstallmentUseCase;
@@ -810,6 +811,15 @@ class SaleController extends Controller
             return response()->json(['message' => 'La venta no se puede anular porque ya tiene notas de crédito'], 200);
         }
         
+        $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
+        $serials = array_merge(...array_values($serialsByArticle));
+        
+        // Actualizando el estado de las series para que estén habilitadas nuevamente para la venta.
+        $entryItemSerialUseCase = new UpdateStatusBySerialUseCase($this->entryItemSerialRepository);
+        foreach ($serials as $serial) {
+            $entryItemSerialUseCase->execute($serial, 1);
+        }
+
         $statusUseCase = new UpdateStatusSalesUseCase($this->saleRepository);
         $statusUseCase->execute($id, $status);
         

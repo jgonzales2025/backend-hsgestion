@@ -37,7 +37,7 @@ class RequestUpdate extends FormRequest
             'date_referencia' => 'nullable|date',
             'cod_conductor' => 'nullable|integer|exists:drivers,id',
             'license_plate' => 'string',
-            'total_weight' => 'required|numeric',
+            'total_weight' => 'required|numeric|min:1',
             'transfer_type' => 'required|int|in:1,2',
             'vehicle_type' => 'nullable|boolean',
             'reference_document_type_id' => 'nullable|integer|exists:document_types,id',
@@ -45,7 +45,7 @@ class RequestUpdate extends FormRequest
             'dispatch_articles' => 'required|array|min:1',
             'customer_id' => 'required|integer|exists:customers,id',
             'address_supplier_id' => 'nullable|integer|exists:customers,id',
-            'supplier_id' => 'nullable|integer|exists:customers,id'
+            'supplier_id' => 'nullable|integer|exists:customers,id',
         ];
     }
     public function messages(): array
@@ -58,6 +58,7 @@ class RequestUpdate extends FormRequest
             'total_weight.required' => 'Debe ingresar el peso total.',
             'destination_branch_client_id.required' => 'Debe seleccionar un cliente.',
             'destination_branch_client_id.exists' => 'Selecciona un cliente',
+            'total_weight.min' => 'El peso total debe ser mayor a 0.',
 
             //dispatch_articles
             'dispatch_articles.required' => 'Debe seleccionar al menos un artículo.',

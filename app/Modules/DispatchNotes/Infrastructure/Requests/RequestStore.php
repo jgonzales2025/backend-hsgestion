@@ -38,7 +38,7 @@ class RequestStore extends FormRequest
             'date_referencia' => 'nullable|date',
             'cod_conductor' => 'nullable|integer|exists:drivers,id',
             'license_plate' => 'string',
-            'total_weight' => 'required|numeric',
+            'total_weight' => 'required|numeric|min:1',
             'transfer_type' => 'required|int|in:1,2',
             'vehicle_type' => 'required|boolean',
             'reference_document_type_id' => 'nullable|integer|exists:document_types,id',
@@ -68,6 +68,7 @@ class RequestStore extends FormRequest
             'customer_id.exists' => 'Selecciona un cliente',
             'destination_branch_client_id.required' => 'Debe seleccionar un cliente.',
             'destination_branch_client_id.exists' => 'Selecciona un cliente',
+            'total_weight.min' => 'El peso total debe ser mayor a 0.',
 
             //dispatch_articles
             'dispatch_articles.required' => 'Debe seleccionar al menos un artículo.',

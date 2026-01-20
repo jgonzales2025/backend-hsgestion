@@ -40,11 +40,17 @@ class ExcelListaPrecio implements FromCollection, WithHeadings, WithMapping, Wit
     {
         return [
             'CODIGO',
-            'DESCRIPCION',
-            'PRECIO',
-            'ESTADO',
+            'SKU',
+            'DESCRIPTION ARTICULO',
+            'MARCA',
             'CATEGORIA',
-            'MARCA'
+            'SUBCATEGORIA',
+            'COSTO US$',
+            'PRECIO PUBLICO US$',
+            'PRECIO DISTRIBUIDOR US$',
+            'PRECIO AUTORIZADO US$',
+            'FEC CREACION',
+            'ESTADO'
         ];
     }
 
@@ -52,11 +58,17 @@ class ExcelListaPrecio implements FromCollection, WithHeadings, WithMapping, Wit
     {
         return [
             $row['CODIGO'],
+            $row['SKU'],
             $row['DESCRIPCION'],
-            $row['PRECIO'],
-            $row['ESTADO'],
+            $row['MARCA'],
             $row['CATEGORIA'],
-            $row['MARCA']
+            $row['SUBCATEGORIA'],
+            $row['COSTO'],
+            $row['PRECIO_PUBLICO'],
+            $row['PRECIO_DISTRIBUIDOR'],
+            $row['PRECIO_AUTORIZADO'],
+            $row['FEC_CREACION'],
+            $row['ESTADO']
         ];
     }
 

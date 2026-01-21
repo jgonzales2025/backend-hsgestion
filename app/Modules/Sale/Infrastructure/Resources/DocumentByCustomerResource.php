@@ -1,0 +1,96 @@
+<?php
+
+namespace App\Modules\Sale\Infrastructure\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class DocumentByCustomerResource extends JsonResource
+{
+    public $installments = null;
+
+    public function toArray(Request $request): array
+    {
+        $customer = $this->resource->getCustomer();
+        $isCompany = $customer->getCustomerDocumentType()->getId() == 2;
+        $isNegative = $this->resource->getDocumentType()->getId() == 7;
+
+        return [
+            'id' => $this->resource->getId(),
+            'company_id' => $this->resource->getCompany()->getId(),
+            'branch_id' => $this->resource->getBranch()->getId(),
+            'document_type' => [
+                'id' => $this->resource->getDocumentType()->getId(),
+                'name' => $this->resource->getDocumentType()->getDescription(),
+                'abbreviation' => $this->resource->getDocumentType()->getAbbreviation(),
+            ],
+            'serie' => $this->resource->getSerie(),
+            'document_number' => $this->resource->getDocumentNumber(),
+            'parallel_rate' => $this->resource->getParallelRate(),
+            'customer' => [
+                'id' => $this->resource->getCustomer()->getId(),
+                'name' => $this->resource->getCustomer()->getCompanyName() ??
+                    trim($this->resource->getCustomer()->getName() . ' ' .
+                        $this->resource->getCustomer()->getLastname() . ' ' .
+                        $this->resource->getCustomer()->getSecondLastname()),
+                'customer_type' => [
+                    'id' => $customer->getCustomerTypeId(),
+                    'name' => $customer->getCustomerTypeName(),
+                ],
+            ],
+            'date' => $this->resource->getDate(),
+            'due_date' => $this->resource->getDueDate(),
+            'days' => $this->resource->getDays(),
+            'user' => [
+                'id' => $this->resource->getUser()->getId(),
+                'username' => $this->resource->getUser()->getUsername(),
+                'firstname' => $this->resource->getUser()->getFirstName(),
+                'lastname' => $this->resource->getUser()->getLastName()
+            ],
+            'user_sale' => $this->resource->getUserSale()?->getId() ? [
+                'id' => $this->resource->getUserSale()->getId(),
+                'username' => $this->resource->getUserSale()->getUsername(),
+                'firstname' => $this->resource->getUserSale()->getFirstName(),
+                'lastname' => $this->resource->getUserSale()->getLastName()
+            ] : null,
+            'payment_type' => [
+                'id' => $this->resource->getPaymentType()->getId(),
+                'name' => $this->resource->getPaymentType()->getName(),
+            ],
+            'observations' => $this->resource->getObservations(),
+            'currency_type' => [
+                'id' => $this->resource->getCurrencyType()->getId(),
+                'name' => $this->resource->getCurrencyType()->getName(),
+                'reference' => ($this->resource->getCurrencyType()->getName()) == "SOLES" ? "S/" : "$",
+            ],
+            'installments' => $this->installments,
+            'subtotal' => $isNegative ? -$this->resource->getSubtotal() : $this->resource->getSubtotal(),
+            'igv' => $isNegative ? -$this->resource->getIgv() : $this->resource->getIgv(),
+            'total' => $isNegative ? -$this->resource->getTotal() : $this->resource->getTotal(),
+            'saldo' => $isNegative ? -$this->resource->getSaldo() : $this->resource->getSaldo(),
+            'amount_amortized' => $this->resource->getAmountAmortized(),
+            'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
+            'payment_status' => ($this->resource->getPaymentStatus()) == 1 ? 'Cancelado' : 'Pendiente',
+            'is_locked' => $this->resource->getIsLocked(),
+            'reference_document_type_id' => $this->resource->getReferenceDocumentTypeId() ?? null,
+            'reference_serie' => $this->resource->getReferenceSerie() ?? null,
+            'reference_correlative' => $this->resource->getReferenceCorrelative() ?? null,
+            'purchase_order' => $this->resource->getPurchaseOrder() ?? null,
+            'user_authorized' => $this->resource->getUserAuthorized() ? [
+                'id' => $this->resource->getUserAuthorized()->getId(),
+                'username' => $this->resource->getUserAuthorized()->getUsername(),
+            ] : null,
+            'coddetrac' => $this->resource->getCoddetrac() ?? null,
+            'pordetrac' => $this->resource->getPordetrac() ?? null,
+            'impdetracs' => $this->resource->getImpdetracs() ?? null,
+            'impdetracd' => $this->resource->getImpdetracd() ?? null,
+            'stretencion' => $this->resource->getStretencion() ?? null,
+            'porretencion' => $this->resource->getPorretencion() ?? null,
+            'impretens' => $this->resource->getImpretens() ?? null,
+            'impretend' => $this->resource->getImpretend() ?? null,
+            'total_costo_neto' => $this->resource->getTotalCostoNeto() ?? null,
+            'estado_sunat' => $this->resource->getSunatStatus() ?? null,
+            'fecha_aceptacion' => $this->resource->getFechaAceptacion() ?? null
+        ];
+    }
+}

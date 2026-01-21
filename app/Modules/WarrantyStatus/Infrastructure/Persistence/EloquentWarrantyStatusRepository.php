@@ -27,6 +27,7 @@ class EloquentWarrantyStatusRepository implements WarrantyStatusRepositoryInterf
         return new WarrantyStatus(
             id: $eloquentWarrantyStatus->id,
             name: $eloquentWarrantyStatus->name,
+            color: $eloquentWarrantyStatus->color,
             status: $eloquentWarrantyStatus->status,
         );
     }

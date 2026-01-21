@@ -398,19 +398,7 @@
                 LOS MANTENIMIENTOS GENERALES LAS REINSTALACIONES O RESTAURACIONES DE SOFTWARE Y LAS FALLAS CAUSADAS POR VIRUS,
                 POR LO QUE LA EMPRESA NO SE RESPONSABILIZA POR LA PERDIDA PARCIAL O TOTAL DE LA INFORMACION ALMACENADA EN SU EQUIPO.</div>
                 <div>- EL DIAGNOSTICO DE LOS PRODUCTOS SON 72 HORAS HABILES DE NUESTRO HORARIO DE ATENCION.</div>
-            </div>
-
-            <table style="width: 100%; margin-top: 60px;">
-                <tr>
-                    <td style="width: 40%; text-align: center;">
-                        <div style="border-top: 1px dashed #000; padding-top: 5px;">Cliente</div>
-                    </td>
-                    <td style="width: 20%;"></td>
-                    <td style="width: 40%; text-align: center;">
-                        <div style="border-top: 1px dashed #000; padding-top: 5px;">CYBERHOUSE TEC S.A.C.</div>
-                    </td>
-                </tr>
-            </table>
+            </div> 
 
         @else
             <!-- SOPORTE TÉCNICO -->
@@ -465,6 +453,18 @@
                 </div>
             @endif
         @endif
+
+        <table style="width: 100%; margin-top: 150px;">
+                <tr>
+                    <td style="width: 40%; text-align: center;">
+                        <div style="border-top: 1px dashed #000; padding-top: 5px;">Cliente</div>
+                    </td>
+                    <td style="width: 20%;"></td>
+                    <td style="width: 40%; text-align: center;">
+                        <div style="border-top: 1px dashed #000; padding-top: 5px;">CYBERHOUSE TEC S.A.C.</div>
+                    </td>
+                </tr>
+            </table>
     </div>
 </body>
 

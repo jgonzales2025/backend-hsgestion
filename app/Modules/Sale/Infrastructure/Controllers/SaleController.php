@@ -48,6 +48,7 @@ use App\Modules\Sale\Infrastructure\Requests\StoreSaleCreditNoteRequest;
 use App\Modules\Sale\Infrastructure\Requests\StoreSaleRequest;
 use App\Modules\Sale\Infrastructure\Requests\UpdateSaleCreditNoteRequest;
 use App\Modules\Sale\Infrastructure\Requests\UpdateSaleRequest;
+use App\Modules\Sale\Infrastructure\Resources\DocumentByCustomerResource;
 use App\Modules\Sale\Infrastructure\Resources\SaleCreditNoteResource;
 use App\Modules\Sale\Infrastructure\Resources\SaleResource;
 use App\Modules\SaleArticle\Application\DTOs\SaleArticleDTO;
@@ -465,7 +466,7 @@ class SaleController extends Controller
 
         return response()->json([
             'totals' => $paginatedSales->totals,
-            'data' => SaleResource::collection($paginatedSales)->resolve(),
+            'data' => DocumentByCustomerResource::collection($paginatedSales)->resolve(),
             'current_page' => $paginatedSales->currentPage(),
             'per_page' => $paginatedSales->perPage(),
             'total' => $paginatedSales->total(),

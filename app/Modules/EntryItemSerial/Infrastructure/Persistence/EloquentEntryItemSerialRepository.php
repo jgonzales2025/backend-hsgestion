@@ -149,6 +149,12 @@ class EloquentEntryItemSerialRepository implements EntryItemSerialRepositoryInte
         $entryItemSerial->status = $status;
         $entryItemSerial->save();
     }
+    
+    public function updateStatusBySerials(array $serials): void
+    {
+        EloquentEntryItemSerial::whereIn('serial', $serials)
+            ->update(['status' => 1]);
+    }
 
 }
 

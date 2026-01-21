@@ -5,6 +5,7 @@ namespace App\Modules\Warranty\Infrastructure\Resource;
 use App\Modules\DocumentType\Application\UseCases\FindByIdDocumentTypeUseCase;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class WarrantyEntryGuideResource extends JsonResource
@@ -25,7 +26,7 @@ class WarrantyEntryGuideResource extends JsonResource
             'serie' => $this->entryGuide->getSerie(),
             'correlative' => $this->entryGuide->getCorrelativo(),
 
-            'date' => $this->entryGuide->getDate(),
+            'date' => Carbon::parse($this->entryGuide->getDate())->format('Y-m-d'),
             'reference_purchase_document_id' => $this->entryGuide->getReferenceDocument(),
             'reference_purchase_abbreviation' => $documentTypes->getAbbreviation(),
             'reference_purchase_description' => $documentTypes->getDescription(),

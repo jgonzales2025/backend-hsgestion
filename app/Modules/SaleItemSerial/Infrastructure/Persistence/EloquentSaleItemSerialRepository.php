@@ -84,4 +84,29 @@ class EloquentSaleItemSerialRepository implements SaleItemSerialRepositoryInterf
 
         return $this->articleRepository->findById($saleItemSerial->article_id);
     }
+    
+    public function findSerialBySaleAndArticle(int $saleId, int $articleId): ?array
+    {
+        return EloquentSaleItemSerial::where('sale_id', $saleId)
+            ->where('article_id', $articleId)
+            ->where('status', 1)
+            ->pluck(['serial'])
+            ->toArray();
+    }
+    
+    public function updateStatusBySerials(array $serials): void
+    {
+        EloquentSaleItemSerial::whereIn('serial', $serials)
+            ->update(['status' => 0]);
+    }
+    
+    public function findSerialsInactiveBySaleId(int $saleId): array
+    {
+        $rows = EloquentSaleItemSerial::where('sale_id', $saleId)->where('status', 0)->get(['article_id', 'serial']);
+        $grouped = [];
+        foreach ($rows as $row) {
+            $grouped[$row->article_id][] = $row->serial;
+        }
+        return $grouped;
+    }
 }

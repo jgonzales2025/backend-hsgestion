@@ -4,6 +4,7 @@ namespace App\Modules\Warranty\Domain\Entities;
 
 use App\Modules\Branch\Domain\Entities\Branch;
 use App\Modules\Company\Domain\Entities\Company;
+use App\Modules\WarrantyStatus\Domain\Entities\WarrantyStatus;
 
 class TechnicalSupport
 {
@@ -20,6 +21,7 @@ class TechnicalSupport
     public ?string $observations;
     public string $diagnosis;
     public ?string $contact;
+    public ?WarrantyStatus $warranty_status;
 
     public function __construct(
         int $id,
@@ -34,7 +36,8 @@ class TechnicalSupport
         string $failure_description,
         ?string $observations,
         string $diagnosis,
-        ?string $contact
+        ?string $contact,
+        ?WarrantyStatus $warranty_status = null
     ) {
         $this->id = $id;
         $this->document_type_warranty_id = $document_type_warranty_id;
@@ -49,6 +52,7 @@ class TechnicalSupport
         $this->observations = $observations;
         $this->diagnosis = $diagnosis;
         $this->contact = $contact;
+        $this->warranty_status = $warranty_status;
     }
 
     public function getId(): int { return $this->id; }
@@ -64,5 +68,6 @@ class TechnicalSupport
     public function getObservations(): ?string { return $this->observations; }
     public function getDiagnosis(): string { return $this->diagnosis; }
     public function getContact(): ?string { return $this->contact; }
+    public function getWarrantyStatus(): ?WarrantyStatus { return $this->warranty_status; }
 
 }

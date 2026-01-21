@@ -41,7 +41,7 @@ class WarrantySaleResource extends JsonResource
                 'phones' => $this->phones ? CustomerPhoneResource::collection($this->phones) : [],
                 'emails' => $this->emails ? CustomerEmailResource::collection($this->emails) : [],
             ],
-            'date' => Carbon::parse($this->resource->getDate())->format('d/m/Y'),
+            'date' => $this->resource->getDate()
         ];
     }
 }

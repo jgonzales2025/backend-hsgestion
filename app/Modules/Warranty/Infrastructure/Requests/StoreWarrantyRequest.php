@@ -2,6 +2,8 @@
 
 namespace App\Modules\Warranty\Infrastructure\Requests;
 
+use App\Modules\EntryItemSerial\Infrastructure\Models\EloquentEntryItemSerial;
+use App\Modules\Sale\Infrastructure\Models\EloquentSale;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreWarrantyRequest extends FormRequest
@@ -45,6 +47,28 @@ class StoreWarrantyRequest extends FormRequest
             "dispatch_note_correlative" => "nullable",
             "dispatch_note_date" => "nullable"
         ];
+    }
+    
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $creditNoteSerie = $this->input('credit_note_serie');
+            $creditNoteCorrelative = $this->input('credit_note_correlative');
+            
+            if ($creditNoteSerie && $creditNoteCorrelative) {
+                $creditNote = EloquentSale::where('serie', $creditNoteSerie)->where('document_number', $creditNoteCorrelative)->first();
+                if (!$creditNote) {
+                    $validator->errors()->add('credit_note_serie', 'La nota de crédito no existe.');
+                }
+            }
+            $serie = $this->input('delivery_serie_art');
+            if ($serie) {
+                $serie = EloquentEntryItemSerial::where('serial', $serie)->first();
+                if (!$serie) {
+                    $validator->errors()->add('delivery_serie_art', 'La nueva serie del artículo no está registrada.');
+                }
+            }
+        });
     }
 
     public function messages()

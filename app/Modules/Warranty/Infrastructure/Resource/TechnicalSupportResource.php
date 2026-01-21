@@ -28,6 +28,7 @@ class TechnicalSupportResource extends JsonResource
             'observations' => $this->resource->getObservations(),
             'diagnosis' => $this->resource->getDiagnosis(),
             'contact' => $this->resource->getContact(),
+            'warranty_status' => $this->resource->getWarrantyStatus() ?? null
         ];
     }
 }

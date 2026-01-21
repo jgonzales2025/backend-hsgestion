@@ -6,6 +6,6 @@ use App\Modules\WarrantyStatus\Domain\Entities\WarrantyStatus;
 
 interface WarrantyStatusRepositoryInterface
 {
-    public function findAll(): array;
+    public function findAll(?int $type): array;
     public function findById(int $id): WarrantyStatus;
 }

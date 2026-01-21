@@ -10,10 +10,12 @@ class UpdateWarrantyRequest extends FormRequest
     {
         return [
             "document_type_warranty_id" => "required",
+            'customer_phone' => 'required|string',
             'customer_email' => 'nullable|email',
             'failure_description' => 'nullable|string',
             'observations' => 'nullable|string',
             'diagnosis' => 'nullable|string',
+            'contact' => 'required|string',
             'follow_up_diagnosis' => 'nullable|string',
             'follow_up_status' => 'nullable|string',
             'solution' => 'nullable|string',

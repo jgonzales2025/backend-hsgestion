@@ -8,9 +8,17 @@ use App\Modules\WarrantyStatus\Infrastructure\Model\EloquentWarrantyStatus;
 
 class EloquentWarrantyStatusRepository implements WarrantyStatusRepositoryInterface
 {
-    public function findAll(): array
+    public function findAll(?int $type): array
     {
-        $eloquentWarrantyStatuses = EloquentWarrantyStatus::all();
+        $eloquentWarrantyStatuses = EloquentWarrantyStatus::query()->where('status', 1);
+
+        if ($type == 1) {
+            $eloquentWarrantyStatuses = $eloquentWarrantyStatuses->where('st_warranty', 1);
+        } elseif ($type == 2) {
+            $eloquentWarrantyStatuses = $eloquentWarrantyStatuses->where('st_support', 1);
+        }
+        
+        $eloquentWarrantyStatuses = $eloquentWarrantyStatuses->get();
 
         return $eloquentWarrantyStatuses->map(fn($warrantyStatus) => $this->mapToEntity($warrantyStatus))->toArray();
     }
@@ -29,6 +37,8 @@ class EloquentWarrantyStatusRepository implements WarrantyStatusRepositoryInterf
             name: $eloquentWarrantyStatus->name,
             color: $eloquentWarrantyStatus->color,
             status: $eloquentWarrantyStatus->status,
+            st_warranty: $eloquentWarrantyStatus->st_warranty,
+            st_support: $eloquentWarrantyStatus->st_support
         );
     }
 }

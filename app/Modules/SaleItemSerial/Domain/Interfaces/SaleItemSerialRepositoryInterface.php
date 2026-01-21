@@ -13,4 +13,7 @@ interface SaleItemSerialRepositoryInterface
     public function deleteSerialsBySaleId(int $saleId): void;
     public function findSaleBySerial(string $serial): ?Sale;
     public function findArticleBySerial(string $serial): ?Article;
+    public function findSerialBySaleAndArticle(int $saleId, int $articleId): ?array;
+    public function updateStatusBySerials(array $serials): void;
+    public function findSerialsInactiveBySaleId(int $saleId): array;
 }

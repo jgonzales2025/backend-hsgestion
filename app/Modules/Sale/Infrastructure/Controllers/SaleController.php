@@ -15,6 +15,7 @@ use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRep
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
 use App\Modules\DispatchNotes\Infrastructure\Resource\DispatchNoteResource;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
+use App\Modules\EntryItemSerial\Application\UseCases\UpdateStatusBySerialsUseCase as UseCasesUpdateStatusBySerialsUseCase;
 use App\Modules\EntryItemSerial\Application\UseCases\UpdateStatusBySerialUseCase;
 use App\Modules\EntryItemSerial\Domain\Interface\EntryItemSerialRepositoryInterface;
 use App\Modules\Installment\Application\DTOs\InstallmentDTO;
@@ -59,6 +60,8 @@ use App\Modules\SaleArticle\Infrastructure\Resources\SaleArticleResource;
 use App\Modules\SaleItemSerial\Application\DTOs\SaleItemSerialDTO;
 use App\Modules\SaleItemSerial\Application\UseCases\CreateSaleItemSerialUseCase;
 use App\Modules\SaleItemSerial\Application\UseCases\DeleteSaleItemSerialBySaleIdUseCase;
+use App\Modules\SaleItemSerial\Application\UseCases\FindSerialsInactiveBySaleIdUseCase;
+use App\Modules\SaleItemSerial\Application\UseCases\UpdateStatusBySerialsUseCase;
 use App\Modules\SaleItemSerial\Domain\Interfaces\SaleItemSerialRepositoryInterface;
 use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
 use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
@@ -194,6 +197,19 @@ class SaleController extends Controller
             $saleCreditNoteDTO = new SaleCreditNoteDTO($request->validated());
             $saleCreditNoteUseCase = new CreateSaleCreditNoteUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->noteReasonRepository, $this->documentNumberGeneratorService);
             $saleCreditNote = $saleCreditNoteUseCase->execute($saleCreditNoteDTO);
+            
+            $validated = $request->validated();
+            if ($validated['document_type_id'] === 7 && !in_array($validated['note_reason_id'], [2, 4, 5, 6, 7, 8, 12, 13])) {
+                foreach($validated['sale_articles'] as $article) {
+                    if (!empty($article['serie'])){
+                        $saleItemSerialUseCase = new UpdateStatusBySerialsUseCase($this->saleItemSerialRepository);
+                        $saleItemSerialUseCase->execute($article['serie']);
+                        
+                        $entryItemSerialUseCase = new UseCasesUpdateStatusBySerialsUseCase($this->entryItemSerialRepository);
+                        $entryItemSerialUseCase->execute($article['serie']);
+                    }
+                }
+            }
 
             $saleArticles = $this->createSaleArticles($saleCreditNote, $request->validated()['sale_articles']);
             $this->logTransaction($request, $saleCreditNote);
@@ -256,6 +272,15 @@ class SaleController extends Controller
         }
 
         $articles = $this->saleArticleRepository->findBySaleId($saleCreditNote->getId());
+        $serialsUseCase = new FindSerialsInactiveBySaleIdUseCase($this->saleItemSerialRepository);
+        $saleUseCase = new FindByDocumentSaleUseCase($this->saleRepository);
+        $sale = $saleUseCase->execute($saleCreditNote->getReferenceDocumentTypeId(), $saleCreditNote->getReferenceSerie(), $saleCreditNote->getReferenceCorrelative());
+        $serials = $serialsUseCase->execute($sale->getId());
+
+        $articles = array_map(function ($article) use ($serials) {
+            $article->serials = $serials[$article->getArticle()->getId()] ?? [];
+            return $article;
+        }, $articles);
 
         return response()->json(
             [

@@ -210,10 +210,21 @@ class WarrantyController
     
     public function updateStatus(int $id, Request $request)
     {
+        $warrantyUseCase = new FindByIdWarrantyUseCase($this->warrantyRepository);
+        $warranty = $warrantyUseCase->execute($id);
+        
+        $role = request()->get('role');
+        
+        if ($role !== 'Gerencia') {
+            if ($warranty->getWarrantyStatus()->getId() == 2) {
+                return response()->json(['message' => 'No se puede actualizar el estado cuando ya está devuelto.', 'status' => false]);
+            }
+        }
+
         $status = $request->input('status');
         $statusUseCase = new UpdateStatusUseCase($this->warrantyRepository);
         $statusUseCase->execute($id, $status);
         
-        return response()->json(['message' => 'Estado actualizado correctamente']);
+        return response()->json(['message' => 'Estado actualizado correctamente', 'status' => true]);
     }
 }

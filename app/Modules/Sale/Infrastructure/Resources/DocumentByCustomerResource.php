@@ -32,11 +32,7 @@ class DocumentByCustomerResource extends JsonResource
                 'name' => $this->resource->getCustomer()->getCompanyName() ??
                     trim($this->resource->getCustomer()->getName() . ' ' .
                         $this->resource->getCustomer()->getLastname() . ' ' .
-                        $this->resource->getCustomer()->getSecondLastname()),
-                'customer_type' => [
-                    'id' => $customer->getCustomerTypeId(),
-                    'name' => $customer->getCustomerTypeName(),
-                ],
+                        $this->resource->getCustomer()->getSecondLastname())
             ],
             'date' => $this->resource->getDate(),
             'due_date' => $this->resource->getDueDate(),

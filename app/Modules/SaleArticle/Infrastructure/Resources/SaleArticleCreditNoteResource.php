@@ -18,9 +18,9 @@ class SaleArticleCreditNoteResource extends JsonResource
             'unit_price' => $this->resource->getUnitPrice(),
             'subtotal' => $this->resource->getSubTotal(),
             'state_modify_article' => $this->resource->getStateModifyArticle(),
-            'serials' => $this->when(
-                isset($this->resource->serials) && !empty($this->resource->serials),
-                array_map(fn($itemSerial) => $itemSerial->getSerial(), $this->resource->serials ?? [])
+            'serie' => array_map(
+                fn($itemSerial) => method_exists($itemSerial, 'getSerial') ? $itemSerial->getSerial() : $itemSerial,
+                $this->resource->serials ?? []
             ),
         ];
     }

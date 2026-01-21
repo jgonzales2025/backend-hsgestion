@@ -102,7 +102,8 @@ class EloquentWarrantyRepository implements WarrantyRepositoryInterface
             "failure_description" => $technicalSupport->getFailureDescription(),
             "observations" => $technicalSupport->getObservations(),
             "diagnosis" => $technicalSupport->getDiagnosis(),
-            "contact" => $technicalSupport->getContact()
+            "contact" => $technicalSupport->getContact(),
+            "warranty_status_id" => 5
         ])->id;
     }
     
@@ -224,7 +225,8 @@ class EloquentWarrantyRepository implements WarrantyRepositoryInterface
             $warranty->failure_description,
             $warranty->observations,
             $warranty->diagnosis,
-            $warranty->contact
+            $warranty->contact,
+            $warranty->warranty_status?->toDomain($warranty->warranty_status)
         );
     }
 }

@@ -16,4 +16,5 @@ interface EntryItemSerialRepositoryInterface{
     public function findSerialInDatabase(string $serial): ?bool;
     public function findEntryGuideBySerial(string $serial): ?EntryGuide;
     public function updateStatusBySerial(string $serial, int $status): void;
+    public function updateStatusBySerials(array $serials): void;
 }

@@ -8,6 +8,8 @@ use App\Modules\Sale\Domain\Entities\Sale;
 use App\Modules\Sale\Domain\Entities\SaleCreditNote;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
+use App\Modules\SaleItemSerial\Application\UseCases\FindSerialBySaleAndArticleUseCase;
+use App\Modules\SaleItemSerial\Infrastructure\Models\EloquentSaleItemSerial;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -231,6 +233,12 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             $quantityForCalculation = $returnedQuantity > 0 ? $updatedQuantity : $originalQuantity;
 
             $articleSubtotal = $quantityForCalculation * $saleArticle->unit_price;
+            
+            $serials = EloquentSaleItemSerial::where('sale_id', $originalSale->id)
+                ->where('article_id', $articleId)
+                ->where('status', 1)
+                ->pluck('serial')
+                ->toArray();
 
             $updatedArticles[] = [
                 'sale_article_id' => $saleArticle->id,
@@ -245,6 +253,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
                 'public_price' => (float) $saleArticle->public_price ?? null,
                 'purchase_price' => (float) $saleArticle->purchase_price,
                 'subtotal' => round($articleSubtotal, 2),
+                'serie' => $serials
             ];
         }
 

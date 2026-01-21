@@ -8,8 +8,8 @@ class FindAllWarrantyStatusesUseCases
 {
     public function __construct(private readonly WarrantyStatusRepositoryInterface $warrantyStatusRepository){}
 
-    public function execute() : array
+    public function execute(?int $type) : array
     {
-        return $this->warrantyStatusRepository->findAll();
+        return $this->warrantyStatusRepository->findAll($type);
     }
 }

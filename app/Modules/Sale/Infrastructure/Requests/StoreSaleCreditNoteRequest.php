@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sale\Infrastructure\Requests;
 
+use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\Sale\Application\UseCases\FindSaleWithUpdatedQuantitiesUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use Illuminate\Foundation\Http\FormRequest;
@@ -45,17 +46,20 @@ class StoreSaleCreditNoteRequest extends FormRequest
             'sale_articles' => 'required|array|min:1',
             'sale_articles.*.article_id' => 'required|integer',
             'sale_articles.*.description' => 'required|string',
-            'sale_articles.*.quantity' => 'required|integer|min:1',
+            'sale_articles.*.quantity' => 'required|integer|min:0',
             'sale_articles.*.unit_price' => 'required|numeric|min:0',
             'sale_articles.*.public_price' => 'required|numeric|min:0',
             'sale_articles.*.purchase_price' => 'required|numeric|min:0',
             'sale_articles.*.subtotal' => 'required|numeric|min:0',
+            'sale_articles.*.serie' => 'nullable|array|min:1',
+            'sale_articles.*.serie.*' => 'string|distinct'
         ];
     }
 
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
+            $this->validateSerials($validator);
             if ($this->input('document_type_id') == 7) {
                 $paddedCorrelative = str_pad($this->input('reference_correlative'), 5, '0', STR_PAD_LEFT);
                 $result = $this->findSaleWithUpdatedQuantitiesUseCase->execute(
@@ -97,6 +101,63 @@ class StoreSaleCreditNoteRequest extends FormRequest
                 }
             }
         });
+    }
+    
+    protected function validateSerials($validator)
+    {
+        $documentTypeId = $this->input('document_type_id');
+        $noteReasonId = $this->input('note_reason_id');
+        if ((int) $documentTypeId === 8 || in_array((int) $noteReasonId, [2, 4, 5, 6, 7, 8, 12, 13])) {
+            return;
+        }
+
+        $saleArticles = $this->input('sale_articles', []);
+        $allSerials = [];
+
+        foreach ($saleArticles as $index => $saleArticle) {
+            $article = EloquentArticle::find($saleArticle['article_id']);
+
+            if (!$article) {
+                continue;
+            }
+
+            $serials = $saleArticle['serie'] ?? [];
+            $quantity = $saleArticle['quantity'];
+
+            // Validar artículos que requieren serie
+            if ($article->series_enabled) {
+                if (empty($serials)) {
+                    $validator->errors()->add(
+                        "sale_articles.{$index}.serie",
+                        "El artículo '{$article->description}' requiere series."
+                    );
+                } elseif (count($serials) !== $quantity) {
+                    $validator->errors()->add(
+                        "sale_articles.{$index}.serie",
+                        "El artículo '{$article->description}' requiere {$quantity} series, pero se proporcionaron " . count($serials) . "."
+                    );
+                }
+
+                $allSerials = array_merge($allSerials, $serials);
+            } else {
+                // Validar que artículos sin serie no tengan series
+                if (!empty($serials)) {
+                    $validator->errors()->add(
+                        "sale_articles.{$index}.serie",
+                        "El artículo '{$article->description}' no maneja series."
+                    );
+                }
+            }
+        }
+
+        // Validar que no haya series duplicadas en toda la venta
+        if (count($allSerials) !== count(array_unique($allSerials))) {
+            $validator->errors()->add(
+                'sale_articles',
+                'Hay números de serie duplicados en la venta.'
+            );
+        }
+
     }
 
     public function messages(): array

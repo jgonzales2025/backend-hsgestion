@@ -3,6 +3,7 @@
 namespace App\Modules\Warranty\Infrastructure\Persistence;
 
 use App\Modules\Warranty\Domain\Entities\TechnicalSupport;
+use App\Modules\Warranty\Domain\Entities\UpdateTechnicalSupport;
 use App\Modules\Warranty\Domain\Entities\UpdateWarranty;
 use App\Modules\Warranty\Domain\Entities\Warranty;
 use App\Modules\Warranty\Domain\Interfaces\WarrantyRepositoryInterface;
@@ -107,7 +108,13 @@ class EloquentWarrantyRepository implements WarrantyRepositoryInterface
     
     public function updateWarranty(UpdateWarranty $updateWarranty, int $id): ?int
     {
-	    return EloquentWarranty::where('id', $id)->update([
+        $warranty = EloquentWarranty::find($id);
+        
+        if (!$warranty) {
+            return null;
+        }
+        
+	    $warranty->update([
             "customer_email" => $updateWarranty->getCustomerEmail(),
             "failure_description" => $updateWarranty->getFailureDescription(),
             "observations" => $updateWarranty->getObservations(),
@@ -127,6 +134,31 @@ class EloquentWarrantyRepository implements WarrantyRepositoryInterface
         ]);
         
         return $id;
+    }
+    
+    public function updateTechnicalSupport(UpdateTechnicalSupport $updateTechnicalSupport, int $id): ?int
+    {
+        $technicalSupport = EloquentWarranty::find($id);
+        
+        if (!$technicalSupport) {
+            return null;
+        }
+        
+        $technicalSupport->update([
+            "customer_phone" => $updateTechnicalSupport->getCustomerPhone(),
+            "customer_email" => $updateTechnicalSupport->getCustomerEmail(),
+            "failure_description" => $updateTechnicalSupport->getFailureDescription(),
+            "observations" => $updateTechnicalSupport->getObservations(),
+            "diagnostic" => $updateTechnicalSupport->getDiagnosis(),
+            "contact" => $updateTechnicalSupport->getContact()
+        ]);
+        
+        return $id;
+    }
+    
+    public function updateStatus(int $id, int $status): void
+    {
+        EloquentWarranty::find($id)->update(['warranty_status_id' => $status]);
     }
 
     private function mapByDocumentType(EloquentWarranty $warranty)

@@ -9,7 +9,7 @@ class EloquentWarrantyStatus extends Model
 {
     protected $table = 'warranty_statuses';
 
-    protected $fillable = ['name', 'status'];
+    protected $fillable = ['name', 'color', 'status'];
 
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -18,6 +18,7 @@ class EloquentWarrantyStatus extends Model
         return new WarrantyStatus(
             id: $warrantyStatus->id,
             name: $warrantyStatus->name,
+            color: $warrantyStatus->color,
             status: $warrantyStatus->status
         );
     }

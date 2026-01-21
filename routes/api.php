@@ -509,6 +509,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('warranties/{id}', [WarrantyController::class, 'show']);
     Route::get('warranties/documents/serial', [WarrantyController::class, 'findDocumentsBySerial']);
     Route::get('warranties/pdf/{id}', [WarrantyController::class, 'generatePdf']);
+    Route::put('warranties/{id}', [WarrantyController::class, 'update']);
+    Route::put('warranties-status/{id}', [WarrantyController::class, 'updateStatus']);
 });
 
 Route::middleware('auth:api')->group(function () {

@@ -43,7 +43,7 @@ class UpdateScVoucherRequest extends FormRequest
             'usrmod' => 'nullable|integer',
             'detail_sc_voucher' => 'required|array',
             'detail_sc_voucher.*.codcon' => 'required|integer',
-            'detail_sc_voucher.*.glosa' => 'required|string',
+            'detail_sc_voucher.*.glosa' => 'nullable|string',
             'detail_sc_voucher.*.impsol' => 'required|numeric',
             'detail_sc_voucher.*.impdol' => 'required|numeric',
             'detail_sc_voucher.*.tipdoc' => 'required|integer',

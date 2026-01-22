@@ -97,8 +97,8 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
 
     public function create(ScVoucher $scVoucher): ?ScVoucher
     {
-     return DB::transaction(function () use ($scVoucher) {
-             
+        return DB::transaction(function () use ($scVoucher) {
+
             $eloquentScVoucher = EloquentScVoucher::create([
                 'cia' => $scVoucher->getCia(),
                 'anopr' => $scVoucher->getAnopr() . "-" . date('m'),
@@ -181,6 +181,38 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
             'usrmod' => $scVoucher->getUsrmod(),
 
         ]);
+
+        EloquentScVoucherdet::where('id_sc_voucher', $scVoucher->getId())->delete();
+        foreach ($scVoucher->getDetails() as $detailDTO) {
+            EloquentScVoucherdet::create([
+                'id_sc_voucher' => $eloquentScVoucher->id,
+                'cia' => $eloquentScVoucher->cia,
+                'codcon' => $detailDTO->codcon,
+                'glosa' => $detailDTO->glosa,
+                'impsol' => $detailDTO->impsol,
+                'impdol' => $detailDTO->impdol,
+                'tipdoc' => $detailDTO->tipdoc,
+                'numdoc' => $detailDTO->numdoc,
+                'correlativo' => $detailDTO->correlativo,
+                'id_purchase' => $detailDTO->id_purchase,
+            ]);
+
+            DB::statement("CALL update_purchase_balance(?, ?, ?, ?, ?)", [
+                $eloquentScVoucher->cia,
+                $eloquentScVoucher->codigo,
+                $detailDTO->tipdoc,
+                $detailDTO->serie,
+                $detailDTO->correlativo,
+            ]);
+        }
+        EloquentDetVoucherPurchase::where('voucher_id', $scVoucher->getId())->delete();
+        foreach ($scVoucher->getDetailVoucherpurchase() as $purchaseDTO) {
+            EloquentDetVoucherPurchase::create([
+                'voucher_id' => $eloquentScVoucher->id,
+                'purchase_id' => $purchaseDTO->purchase_id,
+                'amount' => $purchaseDTO->amount,
+            ]);
+        }
 
         return $this->findWithRelations($eloquentScVoucher->id);
     }

@@ -199,7 +199,7 @@ class SaleController extends Controller
             $saleCreditNote = $saleCreditNoteUseCase->execute($saleCreditNoteDTO);
             
             $validated = $request->validated();
-            if ($validated['document_type_id'] === 7 && !in_array($validated['note_reason_id'], [2, 4, 5, 6, 7, 8, 12, 13])) {
+            if ($validated['document_type_id'] === 7 && !in_array($validated['note_reason_id'], [2, 4, 5, 6, 7, 8, 11, 12, 13])) {
                 foreach($validated['sale_articles'] as $article) {
                     if (!empty($article['serie'])){
                         $saleItemSerialUseCase = new UpdateStatusBySerialsUseCase($this->saleItemSerialRepository);

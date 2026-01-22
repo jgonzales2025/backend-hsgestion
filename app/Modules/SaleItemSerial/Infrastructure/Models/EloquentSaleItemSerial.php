@@ -15,6 +15,7 @@ class EloquentSaleItemSerial extends Model
         'sale_id',
         'article_id',
         'serial',
+        'status'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];

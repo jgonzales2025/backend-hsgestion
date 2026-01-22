@@ -41,6 +41,7 @@ class StoreScVoucherRequest extends FormRequest
             'usradi' => 'required|integer',
             'fecadi' => 'nullable|date',
             'usrmod' => 'nullable|integer',
+            
             'detail_sc_voucher' => 'required|array',
             'detail_sc_voucher.*.codcon' => 'required|integer',
             'detail_sc_voucher.*.glosa' => 'nullable|string',
@@ -48,10 +49,9 @@ class StoreScVoucherRequest extends FormRequest
             'detail_sc_voucher.*.impdol' => 'required|numeric',
             'detail_sc_voucher.*.tipdoc' => 'required|integer',
             'detail_sc_voucher.*.numdoc' => 'required|string',
-            'detail_sc_voucher.*.correlativo' => 'required|string',
-            // 'detail_sc_voucher.*.serie' => 'nullable|string|',
-
+            'detail_sc_voucher.*.correlativo' => 'required|string', 
             'detail_sc_voucher.*.id_purchase' => 'nullable|integer|exists:purchase,id',
+
             'detail_voucher_purchase' => 'nullable|array',
             'detail_voucher_purchase.*.purchase_id' => 'nullable|integer|exists:purchase,id',
             'detail_voucher_purchase.*.amount' => 'nullable|numeric',

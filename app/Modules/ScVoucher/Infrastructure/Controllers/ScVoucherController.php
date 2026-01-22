@@ -3,25 +3,18 @@
 namespace App\Modules\ScVoucher\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface;
-use App\Modules\DetVoucherPurchase\application\DTOS\DetVoucherPurchaseDTO;
-use App\Modules\DetVoucherPurchase\application\UseCases\CreateDetVoucherPurchaseUseCase;
-use App\Modules\DetVoucherPurchase\Domain\Interface\DetVoucherPurchaseRepositoryInterface;
-use App\Modules\DetVoucherPurchase\Infrastructure\Resource\DetVoucherPurchaseResource;
+use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface; 
 use App\Modules\ScVoucher\Application\DTOS\ScVoucherDTO;
 use App\Modules\ScVoucher\Application\UseCases\CreateScVoucherUseCase;
 use App\Modules\ScVoucher\Application\UseCases\FindAllScVoucherUseCase;
 use App\Modules\ScVoucher\Application\UseCases\FindByIdScVoucherUseCase;
 use App\Modules\ScVoucher\Application\UseCases\UpdateScVoucherUseCase;
 use App\Modules\ScVoucher\Application\UseCases\UpdateStatusScVoucherUseCase;
-use App\Modules\ScVoucher\Application\UseCases\GenerateScVoucherPdfUseCase;
-use App\Modules\ScVoucher\Domain\Interface\ScVoucherRepositoryInterface;
+use App\Modules\ScVoucher\Domain\Interface\ScVoucherRepositoryInterface; 
 use App\Modules\ScVoucher\Infrastructure\Request\StoreScVoucherRequest;
 use App\Modules\ScVoucher\Infrastructure\Request\UpdateScVoucherRequest;
-use App\Modules\ScVoucher\Infrastructure\Request\UpdateStatusScVoucherRequest;
-use App\Modules\ScVoucher\Infrastructure\Resource\ScVoucherResource;
-use App\Modules\ScVoucherdet\application\DTOS\ScVoucherdetDTO;
-use App\Modules\ScVoucherdet\application\UseCases\CreateScVoucherdetUseCase;
+use App\Modules\ScVoucher\Infrastructure\Request\UpdateStatusScVoucherRequest; 
+use App\Modules\ScVoucher\Infrastructure\Resource\ScVoucherResource; 
 use App\Modules\ScVoucherdet\Domain\Interface\ScVoucherdetRepositoryInterface;
 use App\Modules\ScVoucherdet\Infrastructure\Resource\ScVoucherdetResource;
 use App\Services\DocumentNumberGeneratorService;
@@ -37,33 +30,14 @@ class ScVoucherController extends Controller
     public function __construct(
         private ScVoucherRepositoryInterface $scVoucherRepository,
         private readonly ScVoucherdetRepositoryInterface $scVoucherdetRepository,
-        private readonly DetVoucherPurchaseRepositoryInterface $detVoucherPurchaseRepository,
-        private DocumentNumberGeneratorService $documentNumberGeneratorService,
+        private DocumentNumberGeneratorService $documentNumberGeneratorService, 
         private CustomerRepositoryInterface $customerRepository,
         private CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private PaymentMethodSunatRepositoryInterface $paymentMethodSunatRepository,
         private PaymentTypeRepositoryInterface $paymentTypeRepository,
         private BankRepositoryInterface $bankRepository,
-        private GenerateScVoucherPdfUseCase $generatePdfUseCase
     ) {}
-
-    public function generate(int $id)
-    {
-        try {
-            $pdfContent = $this->generatePdfUseCase->execute((int) $id);
-
-            $filename = 'voucher_electronico_' . $id . '.pdf';
-
-            return response()->streamDownload(function () use ($pdfContent) {
-                echo $pdfContent;
-            }, $filename, [
-                'Content-Type' => 'application/pdf',
-            ]);
-        } catch (\Throwable $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
+ 
     public function index(Request $request): JsonResponse
     {
         $search = $request->query('description');
@@ -113,13 +87,7 @@ class ScVoucherController extends Controller
         );
         $scVoucher = $createUseCase->execute($scVoucherDTO);
 
-        return response()->json( 
-            array_merge(
-                (new ScVoucherResource($scVoucher))->resolve(),
-                []
-            ),
-            201
-        );
+        return response()->json((new ScVoucherResource($scVoucher))->resolve(), 201);
     }
 
     public function update(UpdateScVoucherRequest $request, int $id): JsonResponse
@@ -134,77 +102,14 @@ class ScVoucherController extends Controller
             $this->paymentTypeRepository,
             $this->bankRepository
         );
-        $scVoucher = $updateUseCase->execute($scVoucherDTO, $id);
+        $scVoucher = $updateUseCase->execute($scVoucherDTO, $id); 
 
         if (!$scVoucher) {
             return response()->json(['message' => 'Voucher no encontrado'], 404);
         }
-
-        // Update details if provided
-        if (isset($request->validated()['detail_sc_voucher'])) {
-            // Delete old details
-            $this->scVoucherdetRepository->deleteByVoucherId($id);
-
-            // Create new details
-            $details = $this->createScVoucherdet($scVoucher, $request->validated()['detail_sc_voucher']);
-        } else {
-            // Get existing details
-            $details = $this->scVoucherdetRepository->findByVoucherId($id);
-        }
-
-        return response()->json(
-            array_merge(
-                (new ScVoucherResource($scVoucher))->resolve(),
-                [
-                    'detail_sc_voucher' => ScVoucherdetResource::collection($details)->resolve(),
-                ]
-            ),
-            200
-        );
+        return response()->json((new ScVoucherResource($scVoucher))->resolve(), 200);
     }
-
-    public function createScVoucherdet($voucher, array $data)
-    {
-        $createdetailvoucher = new CreateScVoucherdetUseCase($this->scVoucherdetRepository);
-
-        return array_map(function ($item) use ($voucher, $createdetailvoucher) {
-
-            $scVoucherdetDTO = new ScVoucherdetDTO([
-                'cia' => $voucher->getCia(),
-                'codcon' => $item['codcon'],
-                'tipdoc' => $item['tipdoc'],
-                'glosa' => $item['glosa'],
-                'impsol' => $item['impsol'],
-                'impdol' => $item['impdol'],
-                'id_purchase' => $item['id_purchase'],
-                'id_sc_voucher' => $voucher->getId(),
-                'numdoc' => $item['numdoc'],
-                'correlativo' => $item['correlativo'],
-                'serie' => $item['serie'] ?? ''
-            ]);
-
-            $svvoucherdetalle = $createdetailvoucher->execute($scVoucherdetDTO);
-
-            return $svvoucherdetalle;
-        }, $data);
-    }
-    public function createDetVoucherPurchase($voucher, array $data)
-    {
-        $createdetailvoucher = new CreateDetVoucherPurchaseUseCase($this->detVoucherPurchaseRepository);
-
-        return array_map(function ($item) use ($voucher, $createdetailvoucher) {
-
-            $detVoucherPurchaseDTO = new DetVoucherPurchaseDTO([
-                'voucher_id' => $voucher->getId(),
-                'purchase_id' => $item['purchase_id'],
-                'amount' => $item['amount'],
-            ]);
-
-            $svvoucherdetalle = $createdetailvoucher->execute($detVoucherPurchaseDTO);
-
-            return $svvoucherdetalle;
-        }, $data);
-    }
+ 
     public function updateStatus(int $id, UpdateStatusScVoucherRequest $request): JsonResponse
     {
         $updateStatusUseCase = new UpdateStatusScVoucherUseCase($this->scVoucherRepository);
@@ -214,9 +119,7 @@ class ScVoucherController extends Controller
             return response()->json(['message' => 'Voucher no encontrado'], 404);
         }
 
-        return response()->json([
-            'message' => 'Estado actualizado correctamente',
-        ]);
+        return response()->json((new ScVoucherResource($scVoucher))->resolve(), 200);
     }
 
     public function getdetVoucher(int $id): JsonResponse

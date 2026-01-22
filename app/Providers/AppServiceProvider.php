@@ -242,7 +242,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
         $this->app->bind(DispatchArticleSerialRepositoryInterface::class, EloquentDispatchArticleSerialRepository::class);
         $this->app->bind(PurchaseRepositoryInterface::class, EloquentPurchaseRepository::class);
-        $this->app->bind(GeneratepdfRepositoryInterface::class, DompdfAdapter::class);
         $this->app->bind(ShoppingIncomeGuideRepositoryInterface::class, EloquentShoppingIncomeGuideRepository::class);
         $this->app->bind(DetailPurchaseGuideRepositoryInterface::class, EloquentDetailPurchaseGuideRepository::class);
         $this->app->bind(PettyCashMotiveInterfaceRepository::class, EloquentPettyCashMotiveRepository::class);
@@ -264,7 +263,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DetEntryguidePurchaseOrderRepositoryInterface::class, EloquentDetEntryguidePurchaseOrderRepository::class);
         $this->app->bind(DetVoucherPurchaseRepositoryInterface::class, EloquentDetVoucherPurchaseRepository::class);
         $this->app->bind(PaymentConceptRepositoryInterface::class, EloquentPaymentConceptRepository::class);
-        $this->app->bind(\App\Modules\ScVoucher\Domain\Interface\PdfGeneratorInterface::class, \App\Modules\ScVoucher\Infrastructure\Pdf\DomPdfScVoucherGenerator::class);
        $this->app->bind(KardexRepositoryInterface::class, EloquenKardexRepository::class);
        $this->app->bind(ArticleTypeRepositoryInterface::class, EloquentArticleTypeRepository::class);
        $this->app->bind(WarrantyStatusRepositoryInterface::class, EloquentWarrantyStatusRepository::class);

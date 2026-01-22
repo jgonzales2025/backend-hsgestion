@@ -34,13 +34,14 @@ class UpdateScVoucherRequest extends FormRequest
             'orden' => 'nullable|string',
             'tipmon' => 'required|integer',
             'tipcam' => 'required|numeric',
-            'total' => 'required|numeric',
+            'total' => 'required|numeric|min:1',
             'medpag_id' => 'required|integer',
             'tipopago' => 'required|integer',
             'status' => 'nullable|integer',
             'usradi' => 'required|integer',
             'fecadi' => 'nullable|date',
             'usrmod' => 'nullable|integer',
+
             'detail_sc_voucher' => 'required|array',
             'detail_sc_voucher.*.codcon' => 'required|integer',
             'detail_sc_voucher.*.glosa' => 'nullable|string',
@@ -48,10 +49,9 @@ class UpdateScVoucherRequest extends FormRequest
             'detail_sc_voucher.*.impdol' => 'required|numeric',
             'detail_sc_voucher.*.tipdoc' => 'required|integer',
             'detail_sc_voucher.*.numdoc' => 'required|string',
-            'detail_sc_voucher.*.correlativo' => 'required|string',
-            // 'detail_sc_voucher.*.serie' => 'required|string',
-
+            'detail_sc_voucher.*.correlativo' => 'required|string', 
             'detail_sc_voucher.*.id_purchase' => 'nullable|integer|exists:purchase,id',
+
             'detail_voucher_purchase' => 'nullable|array',
             'detail_voucher_purchase.*.purchase_id' => 'nullable|integer|exists:purchase,id',
             'detail_voucher_purchase.*.amount' => 'nullable|numeric',
@@ -60,6 +60,10 @@ class UpdateScVoucherRequest extends FormRequest
     public function messages(): array
     {
         return [
+            'total.required' => 'Debe ingresar un total.',
+            'total.numeric' => 'El total debe ser un numero.',
+            'total.min' => 'El total debe ser mayor a 0.',
+
             'detail_sc_voucher.*.id_purchase.exists' => 'la compra que deseas crear no existe',
             'detail_sc_voucher.*.codcon.required' => 'Debe seleccionar una cuenta.',
             'detail_sc_voucher.*.impsol.required' => 'Debe ingresar un importe.',

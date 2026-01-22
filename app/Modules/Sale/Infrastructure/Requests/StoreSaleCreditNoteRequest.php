@@ -107,7 +107,7 @@ class StoreSaleCreditNoteRequest extends FormRequest
     {
         $documentTypeId = $this->input('document_type_id');
         $noteReasonId = $this->input('note_reason_id');
-        if ((int) $documentTypeId === 8 || in_array((int) $noteReasonId, [2, 4, 5, 6, 7, 8, 12, 13])) {
+        if ((int) $documentTypeId === 8 || in_array((int) $noteReasonId, [2, 4, 5, 6, 7, 8, 11, 12, 13])) {
             return;
         }
 

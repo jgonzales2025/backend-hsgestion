@@ -29,7 +29,7 @@ class UpdateScVoucherRequest extends FormRequest
             'fecha' => 'required|date',
             'codban' => 'required|integer',
             'codigo' => 'required|integer',
-            'nroope' => 'required|string',
+            'nroope' => 'nullable|string',
             'glosa' => 'nullable|string',
             'orden' => 'nullable|string',
             'tipmon' => 'required|integer',

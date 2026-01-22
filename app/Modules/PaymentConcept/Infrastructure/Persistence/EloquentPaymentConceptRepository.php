@@ -24,12 +24,19 @@ class EloquentPaymentConceptRepository implements PaymentConceptRepositoryInterf
         return $eloquentPaymentConcepts;
     }
 
+    public function findAllInfinity(?string $description, ?int $status)
+    {
+        return EloquentPaymentConcept::when($description, fn($query) => $query->where('description', 'like', '%' . $description . '%'))
+            ->when($status !== null, fn($query) => $query->where('status', $status))
+            ->orderBy('id', 'desc')
+            ->cursorPaginate(10);
+    }
+
     public function findById(int $id): ?PaymentConcept
     {
         $paymentConcept = EloquentPaymentConcept::find($id);
 
-        if(!$paymentConcept)
-        {
+        if (!$paymentConcept) {
             return null;
         }
 

@@ -246,7 +246,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/purchase-orders/{id}', [PurchaseOrderController::class, 'update']);
     Route::get('/purchase-orders/{id}/pdf', [PurchaseOrderController::class, 'generatePdf']);
     Route::post('/purchase-orders-customer', [PurchaseOrderController::class, 'getBySupplier']);
-    
+
     // Ruta para traer las series de un articulo
     Route::get('/entry-item-serial/{articleId}', [EntryItemSerialController::class, 'findSerialByArticleId']);
     Route::get('/serial/consulta', [EntryItemSerialController::class, 'findSerialInDatabase']);
@@ -262,7 +262,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/purchases', [PurchaseController::class, 'store']);
     Route::get('/purchases/{id}', [PurchaseController::class, 'show']);
     Route::put('/purchases/{id}', [PurchaseController::class, 'update']);
-    Route::get('/purchases-pdf/{id}', [PurchaseController::class, 'downloadPdf']); 
+    Route::get('/purchases-pdf/{id}', [PurchaseController::class, 'downloadPdf']);
     Route::get('/purchase-excel', [PurchaseController::class, 'exportExcel']);
     Route::post('/purchase-reporte', [PurchaseController::class, 'reporteVentasCompras']);
     // Advances - Anticipos
@@ -284,6 +284,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
     // PaymentConcepts - Conceptos de pago
     Route::get('/payment-concepts', [PaymentConceptController::class, 'index']);
+    Route::get('/payment-concepts-infinite', [PaymentConceptController::class, 'findAllInfinity']);
     Route::post('/payment-concepts', [PaymentConceptController::class, 'store']);
     Route::get('/payment-concepts/{id}', [PaymentConceptController::class, 'show']);
     Route::put('/payment-concepts/{id}', [PaymentConceptController::class, 'update']);
@@ -503,7 +504,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('warranty-statuses', [WarrantyStatusController::class, 'index']);
 
     // Warranties
-    Route::get('warranties', [WarrantyController::class,'index']);
+    Route::get('warranties', [WarrantyController::class, 'index']);
     Route::post('warranties', [WarrantyController::class, 'store']);
     Route::get('warranties/{id}', [WarrantyController::class, 'show']);
     Route::get('warranties/documents/serial', [WarrantyController::class, 'findDocumentsBySerial']);

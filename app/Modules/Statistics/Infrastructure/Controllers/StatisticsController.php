@@ -18,6 +18,7 @@ use App\Modules\Statistics\Domain\Interfaces\StatisticsRepositoryInterface;
 use App\Modules\Statistics\Infrastructure\Persistence\ArticlePurchaseExport;
 use App\Modules\Statistics\Infrastructure\Persistence\CustomerConsumedItemsExport;
 use App\Modules\Statistics\Infrastructure\Persistence\ExcelListaPrecio;
+use App\Modules\Statistics\Infrastructure\Persistence\ListaPreciosHeaderExport;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -276,36 +277,40 @@ class StatisticsController
 
         return Excel::download($export, $fileName);
     }
-    
 
 
-public function getListaPrecios(Request $request)
-{
-    $request->validate([
-        'p_codma'        => 'required|integer',
-        'p_codcategoria' => 'nullable|integer',
-        'p_status'       => 'nullable|integer',
-        'p_moneda'       => 'nullable|integer',
-        'p_orden'        => 'nullable|integer'
-    ]);
+
+    public function getListaPrecios(Request $request)
+    {
+        $request->validate([
+            'p_codma'        => 'required|integer',
+            'p_codcategoria' => 'nullable|integer',
+            'p_status'       => 'nullable|integer',
+            'p_moneda'       => 'nullable|integer',
+            'p_orden'        => 'nullable|integer',
+            'company_id'     => 'required|integer' // Added company_id
+        ]);
+
+        $company = $this->companyRepository->findById($request->input('company_id'));
+        $companyName = $company ? $company->getCompanyName() : '';
 
 
-    $data = $this->statisticsRepository->getListaPrecio(
-        $request->p_codma,
-        $request->p_codcategoria,
-        $request->p_status,
-        $request->p_moneda,
-        $request->p_orden
-    );
+        $data = $this->statisticsRepository->getListaPrecio(
+            $request->p_codma,
+            $request->p_codcategoria,
+            $request->p_status,
+            $request->p_moneda,
+            $request->p_orden
+        );
 
-    
-    $fileName = 'lista_precios_' . now()->format('YmdHis') . '.xlsx';
 
-    return Excel::download(
-        new ExcelListaPrecio($data),
-        $fileName
-    );
-}
+        $fileName = 'lista_precios_' . now()->format('YmdHis') . '.xlsx';
+
+        return Excel::download(
+            new ListaPreciosHeaderExport($data, $companyName),
+            $fileName
+        );
+    }
 
 
     private function paginateStoredProcedure(array $items, $perPage = 10): LengthAwarePaginator

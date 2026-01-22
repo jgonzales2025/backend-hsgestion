@@ -21,7 +21,7 @@ class ScVoucherdetDTO
         $this->cia = $data['cia']??0;
         $this->codcon = $data['codcon'];
         $this->tipdoc = $data['tipdoc'];
-        $this->glosa = $data['glosa'];
+        $this->glosa = $data['glosa'] ?? '';
         $this->impsol = $data['impsol'];
         $this->impdol = $data['impdol'];
         $this->id_purchase = $data['id_purchase'] ?? null;

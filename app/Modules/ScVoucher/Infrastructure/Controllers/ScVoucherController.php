@@ -23,7 +23,7 @@ use Illuminate\Http\Request;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\PaymentMethodsSunat\Domain\Interface\PaymentMethodSunatRepositoryInterface;
-use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
+use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
 
 class ScVoucherController extends Controller
 {
@@ -34,7 +34,7 @@ class ScVoucherController extends Controller
         private CustomerRepositoryInterface $customerRepository,
         private CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private PaymentMethodSunatRepositoryInterface $paymentMethodSunatRepository,
-        private PaymentTypeRepositoryInterface $paymentTypeRepository,
+        private PaymentMethodRepositoryInterface $paymentMethodRepository,
         private BankRepositoryInterface $bankRepository,
     ) {}
  
@@ -82,7 +82,7 @@ class ScVoucherController extends Controller
             $this->customerRepository,
             $this->currencyTypeRepository,
             $this->paymentMethodSunatRepository,
-            $this->paymentTypeRepository,
+            $this->paymentMethodRepository,
             $this->bankRepository
         );
         $scVoucher = $createUseCase->execute($scVoucherDTO);
@@ -95,11 +95,10 @@ class ScVoucherController extends Controller
         $scVoucherDTO = new ScVoucherDTO($request->validated());
         $updateUseCase = new UpdateScVoucherUseCase(
             $this->scVoucherRepository,
-            $this->documentNumberGeneratorService,
             $this->customerRepository,
             $this->currencyTypeRepository,
             $this->paymentMethodSunatRepository,
-            $this->paymentTypeRepository,
+            $this->paymentMethodRepository,
             $this->bankRepository
         );
         $scVoucher = $updateUseCase->execute($scVoucherDTO, $id); 
@@ -128,16 +127,16 @@ class ScVoucherController extends Controller
 
         $detailsByPurchase = $this->scVoucherdetRepository->getvoucherPurchase($id);
         if (empty($detailsByPurchase)) {
-            return response()->json([], 200);
+            return response()->json(['message' => 'No se encontraron detalles'], 404);
         }
 
         $groupedByVoucher = collect($detailsByPurchase)
             ->groupBy(fn($detail) => $detail->getIdScVoucher())
-            ->filter(fn($details, $voucherId) => $voucherId !== null);
+            ->filter(fn($voucherId) => $voucherId !== null);
 
         $vouchersData = $groupedByVoucher->map(function ($details, $voucherId) use ($findByIdUseCase) {
             $voucher = $findByIdUseCase->execute((int) $voucherId);
-            if (!$voucher) return null;
+            if (!$voucher) return ['message' => 'Voucher no encontrado'];
 
             return array_merge(
                 (new ScVoucherResource($voucher))->resolve(),

@@ -5,6 +5,7 @@ namespace App\Modules\ScVoucher\Domain\Entities;
 use App\Modules\Bank\Domain\Entities\Bank;
 use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
 use App\Modules\Customer\Domain\Entities\Customer;
+use App\Modules\PaymentMethod\Domain\Entities\PaymentMethod;
 use App\Modules\PaymentMethodsSunat\Domain\Entities\PaymentMethodSunat;
 use App\Modules\PaymentType\Domain\Entities\PaymentType;
 
@@ -24,7 +25,7 @@ class ScVoucher
     private float $tipcam;
     private float $total;
     private ?PaymentMethodSunat $medpag;
-    private ?PaymentType $tipopago;
+    private ?PaymentMethod $tipopago;
     private int $status;
     private int $usradi;
     private string $fecadi;
@@ -47,7 +48,7 @@ class ScVoucher
         float $tipcam,
         float $total,
         ?PaymentMethodSunat $medpag,
-        ?PaymentType $tipopago,
+        ?PaymentMethod $tipopago,
         int $status,
         int $usradi,
         string $fecadi,
@@ -133,7 +134,7 @@ class ScVoucher
     {
         return $this->medpag;
     }
-    public function getTipopago(): ?PaymentType
+    public function getTipopago(): ?PaymentMethod
     {
         return $this->tipopago;
     }

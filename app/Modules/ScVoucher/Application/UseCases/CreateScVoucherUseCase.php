@@ -15,7 +15,7 @@ class CreateScVoucherUseCase
         private \App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface $customerRepository,
         private \App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private \App\Modules\PaymentMethodsSunat\Domain\Interface\PaymentMethodSunatRepositoryInterface $paymentMethodSunatRepository,
-        private \App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface $paymentTypeRepository,
+        private \App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface $paymentMethodRepository,
         private \App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface $bankRepository,
     ) {}
 
@@ -29,7 +29,7 @@ class CreateScVoucherUseCase
         $customer = $this->customerRepository->findById($scVoucherDTO->codigo);
         $currencyType = $this->currencyTypeRepository->findById($scVoucherDTO->tipmon);
         $paymentMethodSunat = $this->paymentMethodSunatRepository->findById($scVoucherDTO->medpag);
-        $paymentType = $this->paymentTypeRepository->findById($scVoucherDTO->tipopago);
+        $paymentMethod = $this->paymentMethodRepository->findById($scVoucherDTO->tipopago);
         $bank = $this->bankRepository->findById($scVoucherDTO->codban);
 
         $scVoucher = new ScVoucher(
@@ -47,7 +47,7 @@ class CreateScVoucherUseCase
             tipcam: $scVoucherDTO->tipcam,
             total: $scVoucherDTO->total,
             medpag: $paymentMethodSunat,
-            tipopago: $paymentType,
+            tipopago: $paymentMethod,
             status: $scVoucherDTO->status,
             usradi: $scVoucherDTO->usradi,
             fecadi: $scVoucherDTO->fecadi,

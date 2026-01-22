@@ -6,6 +6,7 @@ use App\Modules\Bank\Infrastructure\Models\EloquentBank;
 use App\Modules\CurrencyType\Infrastructure\Models\EloquentCurrencyType;
 use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\DetVoucherPurchase\Infrastructure\Models\EloquentDetVoucherPurchase;
+use App\Modules\PaymentMethod\Infrastructure\Model\EloquentPaymentMethod;
 use App\Modules\PaymentMethodsSunat\Infrastructure\Models\EloquentPaymentMethodSunat;
 use App\Modules\PaymentType\Infrastructure\Models\EloquentPaymentType;
 use App\Modules\ScVoucher\Domain\Entities\ScVoucher;
@@ -59,7 +60,7 @@ class EloquentScVoucher extends Model
 
     public function paymentType()
     {
-        return $this->belongsTo(EloquentPaymentType::class, 'tipopago', 'id');
+        return $this->belongsTo(EloquentPaymentMethod::class, 'tipopago', 'id');
     }
     public function bank()
     {

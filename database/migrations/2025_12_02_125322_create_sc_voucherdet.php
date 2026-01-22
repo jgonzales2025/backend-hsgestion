@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->integer('tipdoc')->default(0);
 
-            $table->string('glosa', 40)->nullable();
+            $table->string('glosa', 255)->nullable();
 
             $table->decimal('impsol', 10, 2)->default(0.00);
             $table->decimal('impdol', 10, 2)->default(0.00);

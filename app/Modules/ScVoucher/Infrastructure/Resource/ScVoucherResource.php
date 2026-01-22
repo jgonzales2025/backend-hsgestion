@@ -39,7 +39,7 @@ class ScVoucherResource extends JsonResource
             ],
             'tipopago' => [
                 'id' => $this->resource->getTipopago()?->getId(),
-                'name' => $this->resource->getTipopago()?->getName(),
+                 'name' => $this->resource->getTipopago()?->getDescription(),
             ],
             'status' => $this->resource->getStatus(),
             'usradi' => $this->resource->getUsradi(),

@@ -5,6 +5,7 @@ namespace App\Modules\PaymentConcept\Infrastructure\Controller;
 use App\Http\Controllers\Controller;
 use App\Modules\PaymentConcept\Application\UseCases\CreatePaymentConceptUseCase;
 use App\Modules\PaymentConcept\Application\UseCases\FindAllPaymentConceptsUseCase;
+use App\Modules\PaymentConcept\Application\UseCases\FindAllInfinityPaymentConceptsUseCase;
 use App\Modules\PaymentConcept\Application\UseCases\FindByIdPaymentConceptUseCase;
 use App\Modules\PaymentConcept\Application\UseCases\UpdatePaymentConceptUseCase;
 use App\Modules\PaymentConcept\Application\UseCases\UpdateStatusPaymentConceptUseCase;
@@ -25,7 +26,7 @@ class PaymentConceptController extends Controller
     {
         $description = $request->query('description');
         $status = $request->query('status') !== null ? (int) $request->query('status') : null;
-        
+
         $paymentConceptsUseCase = new FindAllPaymentConceptsUseCase($this->paymentConceptRepository);
         $paymentConcepts = $paymentConceptsUseCase->execute($description, $status);
 
@@ -39,6 +40,24 @@ class PaymentConceptController extends Controller
             'prev_page_url' => $paymentConcepts->previousPageUrl(),
             'first_page_url' => $paymentConcepts->url(1),
             'last_page_url' => $paymentConcepts->url($paymentConcepts->lastPage()),
+        ]);
+    }
+
+    public function findAllInfinity(Request $request): JsonResponse
+    {
+        $description = $request->query('description');
+        $status = $request->query('status') !== null ? (int) $request->query('status') : null;
+
+        $paymentConceptsUseCase = new FindAllInfinityPaymentConceptsUseCase($this->paymentConceptRepository);
+        $paymentConcepts = $paymentConceptsUseCase->execute($description, $status);
+
+        return new JsonResponse([
+            'data' => PaymentConceptResource::collection($paymentConcepts)->resolve(),
+            'next_cursor' => $paymentConcepts->nextCursor()?->encode(),
+            'prev_cursor' => $paymentConcepts->previousCursor()?->encode(),
+            'next_page_url' => $paymentConcepts->nextPageUrl(),
+            'prev_page_url' => $paymentConcepts->previousPageUrl(),
+            'per_page' => $paymentConcepts->perPage()
         ]);
     }
 
@@ -58,8 +77,7 @@ class PaymentConceptController extends Controller
         $paymentConceptUseCase = new FindByIdPaymentConceptUseCase($this->paymentConceptRepository);
         $paymentConcept = $paymentConceptUseCase->execute($id);
 
-        if (!$paymentConcept)
-        {
+        if (!$paymentConcept) {
             return response()->json(['message' => 'Concepto de pago no encontrado'], 404);
         }
 
@@ -71,8 +89,7 @@ class PaymentConceptController extends Controller
         $paymentConceptUseCase = new FindByIdPaymentConceptUseCase($this->paymentConceptRepository);
         $paymentConcept = $paymentConceptUseCase->execute($id);
 
-        if (!$paymentConcept)
-        {
+        if (!$paymentConcept) {
             return response()->json(['message' => 'Concepto de pago no encontrado'], 404);
         }
 
@@ -89,8 +106,7 @@ class PaymentConceptController extends Controller
         $paymentConceptUseCase = new FindByIdPaymentConceptUseCase($this->paymentConceptRepository);
         $paymentConcept = $paymentConceptUseCase->execute($id);
 
-        if (!$paymentConcept)
-        {
+        if (!$paymentConcept) {
             return response()->json(['message' => 'Concepto de pago no encontrado'], 404);
         }
 

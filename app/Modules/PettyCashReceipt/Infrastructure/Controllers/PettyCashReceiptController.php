@@ -4,6 +4,7 @@ namespace App\Modules\PettyCashReceipt\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PettyCashMotive\Domain\Interface\PettyCashMotiveInterfaceRepository;
@@ -21,6 +22,7 @@ use App\Modules\PettyCashReceipt\Infrastructure\Request\UpdatePettyCashReceiptRe
 use App\Modules\PettyCashReceipt\Infrastructure\Resource\PettyCashReceiptResource;
 use App\Modules\PettyCashReceipt\Infrastructure\Exports\PettyCashProcedureExport;
 use App\Modules\PettyCashReceipt\Infrastructure\Persistence\PettyCashProcedureExport as PersistencePettyCashProcedureExport;
+use App\Modules\PettyCashReceipt\Infrastructure\Persistence\CobranzaDetalleExport;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,7 +39,8 @@ class PettyCashReceiptController extends Controller
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
-        private readonly PettyCashMotiveInterfaceRepository $pettyCashMotiveRepository
+        private readonly PettyCashMotiveInterfaceRepository $pettyCashMotiveRepository,
+        private readonly CompanyRepositoryInterface $companyRepository
     ) {}
     public function index(Request $request): JsonResponse
     {
@@ -268,9 +271,23 @@ class PettyCashReceiptController extends Controller
             $validated['pcorrelativo']
         );
 
+        // Obtener nombre de la compañía
+        $companyName = '';
+        if ($validated['cia']) {
+            $company = $this->companyRepository->findById($validated['cia']);
+            if ($company) {
+                $companyName = $company->getCompanyName();
+            }
+        }
+
         // Stream directo XLSX para evitar cualquier mezcla de salida y asegurar binario correcto
         $fileName = 'parte_caja_' . now()->format('Y-m-d_His') . '.xlsx';
-        $export = new PersistencePettyCashProcedureExport($data);
+        $export = new CobranzaDetalleExport(
+            $data,
+            $companyName,
+            $validated['fecha'] ?? null,
+            $validated['fechaU'] ?? null
+        );
         return Excel::download($export, $fileName, MaatwebsiteExcel::XLSX);
     }
 

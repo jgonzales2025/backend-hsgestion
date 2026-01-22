@@ -37,7 +37,7 @@ class ScVoucherDTO
         $this->fecha = $data['fecha'];
         $this->codban = $data['codban'];
         $this->codigo = $data['codigo'];
-        $this->nroope = $data['nroope'];
+        $this->nroope = $data['nroope'] ?? '';
         $this->glosa = $data['glosa'] ?? null;
         $this->orden = $data['orden'] ?? null;
         $this->tipmon = $data['tipmon'];

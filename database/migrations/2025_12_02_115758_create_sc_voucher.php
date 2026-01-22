@@ -21,8 +21,8 @@ return new class extends Migration
             $table->integer('codban')->default(0);     // SMALLINT(3)
             $table->integer('codigo')->default(0);          // INT(9)
 
-            $table->string('nroope', 15)->default('0');     // VARCHAR(15)
-            $table->string('glosa', 120)->nullable();        // VARCHAR(120)
+            $table->string('nroope', 255)->default('0');     // VARCHAR(120)
+            $table->string('glosa', 255)->nullable();        // VARCHAR(120)
             $table->string('orden', 60)->nullable();         // VARCHAR(60)
 
             $table->integer('tipmon')->default(0);       // INT(1)

@@ -6,7 +6,7 @@ use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\PaymentMethodsSunat\Domain\Interface\PaymentMethodSunatRepositoryInterface;
-use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
+use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
 use App\Modules\ScVoucher\Application\DTOS\ScVoucherDTO;
 use App\Modules\ScVoucher\Domain\Entities\ScVoucher;
 use App\Modules\ScVoucher\Domain\Interface\ScVoucherRepositoryInterface;
@@ -16,11 +16,10 @@ class UpdateScVoucherUseCase
 {
     public function __construct(
         private ScVoucherRepositoryInterface $scVoucherRepository,
-        private DocumentNumberGeneratorService $documentNumberGeneratorService,
         private CustomerRepositoryInterface $customerRepository,
         private CurrencyTypeRepositoryInterface $currencyTypeRepository,
         private PaymentMethodSunatRepositoryInterface $paymentMethodSunatRepository,
-        private PaymentTypeRepositoryInterface $paymentTypeRepository,
+        private PaymentMethodRepositoryInterface $paymentMethodRepository,
         private BankRepositoryInterface $bankRepository,
     ) {}
 
@@ -30,7 +29,7 @@ class UpdateScVoucherUseCase
         $customer = $this->customerRepository->findById($scVoucherDTO->codigo);
         $currencyType = $this->currencyTypeRepository->findById($scVoucherDTO->tipmon);
         $paymentMethodSunat = $this->paymentMethodSunatRepository->findById($scVoucherDTO->medpag);
-        $paymentType = $this->paymentTypeRepository->findById($scVoucherDTO->tipopago);
+        $paymentMethod = $this->paymentMethodRepository->findById($scVoucherDTO->tipopago);
         $bank = $this->bankRepository->findById($scVoucherDTO->codban);
 
         $scVoucher = new ScVoucher(
@@ -48,13 +47,13 @@ class UpdateScVoucherUseCase
             tipcam: $scVoucherDTO->tipcam,
             total: $scVoucherDTO->total,
             medpag: $paymentMethodSunat,
-            tipopago: $paymentType,
+            tipopago: $paymentMethod,
             status: $scVoucherDTO->status,
             usradi: $scVoucherDTO->usradi,
             fecadi: $scVoucherDTO->fecadi,
             usrmod: $scVoucherDTO->usrmod,
-            details: [],
-            detailVoucherpurchase: [],
+            details: $scVoucherDTO->detail_sc_voucher,
+            detailVoucherpurchase: $scVoucherDTO->detail_voucher_purchase,
         );
 
         return $this->scVoucherRepository->update($scVoucher);

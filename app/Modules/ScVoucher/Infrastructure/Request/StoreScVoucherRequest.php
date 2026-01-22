@@ -34,14 +34,14 @@ class StoreScVoucherRequest extends FormRequest
             'orden' => 'nullable|string',
             'tipmon' => 'required|integer',
             'tipcam' => 'required|numeric',
-            'total' => 'required|numeric',
+            'total' => 'required|numeric|min:1',
             'medpag_id' => 'required|integer',
             'tipopago' => 'required|integer',
             'status' => 'nullable|integer',
             'usradi' => 'required|integer',
             'fecadi' => 'nullable|date',
             'usrmod' => 'nullable|integer',
-            
+
             'detail_sc_voucher' => 'required|array',
             'detail_sc_voucher.*.codcon' => 'required|integer',
             'detail_sc_voucher.*.glosa' => 'nullable|string',
@@ -49,7 +49,7 @@ class StoreScVoucherRequest extends FormRequest
             'detail_sc_voucher.*.impdol' => 'required|numeric',
             'detail_sc_voucher.*.tipdoc' => 'required|integer',
             'detail_sc_voucher.*.numdoc' => 'required|string',
-            'detail_sc_voucher.*.correlativo' => 'required|string', 
+            'detail_sc_voucher.*.correlativo' => 'required|string',
             'detail_sc_voucher.*.id_purchase' => 'nullable|integer|exists:purchase,id',
 
             'detail_voucher_purchase' => 'nullable|array',
@@ -80,6 +80,7 @@ class StoreScVoucherRequest extends FormRequest
             'tipcam.required' => 'Debe ingresar el tipo de cambio.',
             'tipcam.numeric' => 'El tipo de cambio debe ser un numero.',
             'total.required' => 'Debe ingresar el total.',
+            'total.min' => 'El total debe ser mayor a 0.',
             'total.numeric' => 'El total debe ser un numero.',
             'medpag_id.required' => 'Debe seleccionar un medio de pago.',
             'medpag_id.exists' => 'Selecciona un medio de pago',
@@ -88,6 +89,7 @@ class StoreScVoucherRequest extends FormRequest
             'status.required' => 'Debe seleccionar un estado.',
             'status.exists' => 'Selecciona un estado',
             'fecadi.date' => 'La fecha debe ser una fecha.',
+
             'detail_sc_voucher.required' => 'Debe seleccionar al menos un detalle.',
             'detail_sc_voucher.array' => 'Los detalles deben ser un array.',
             'detail_sc_voucher.min' => 'Debe seleccionar al menos un detalle.',
@@ -98,14 +100,14 @@ class StoreScVoucherRequest extends FormRequest
             'detail_sc_voucher.*.impdol.required' => 'Debe ingresar el importe dol.',
             'detail_sc_voucher.*.impdol.numeric' => 'El importe dol debe ser un numero.',
             'detail_sc_voucher.*.serie.max' => 'La serie no puede tener mas de 4 caracteres.',
+            'detail_sc_voucher.*.id_purchase.exists' => 'la compra que deseas crear no existe',
+
             'detail_voucher_purchase.array' => 'Los detalles de la compra deben ser un array.',
             'detail_voucher_purchase.*.purchase_id.required' => 'Debe seleccionar una compra.',
-            'detail_voucher_purchase.*.purchase_id.exists' => 'Selecciona una compra',
-            'detail_voucher_purchase.*.amount.required' => 'Debe ingresar el monto.',
-            'detail_voucher_purchase.*.amount.numeric' => 'El monto debe ser un numero.',
-            'detail_sc_voucher.*.id_purchase.exists' => 'la compra que deseas crear no existe',
+            'detail_voucher_purchase.*.purchase_id.exists' => 'Selecciona una compra', 
+            'detail_voucher_purchase.*.amount.required' => 'Debe ingresar el monto.', 
+            'detail_voucher_purchase.*.amount.numeric' => 'El monto debe ser un numero.', 
             'detail_voucher_purchase.*.purchase_id.exists' => 'la compra que deseas crear no existe',
         ];
-        }
-    
+    }
 }

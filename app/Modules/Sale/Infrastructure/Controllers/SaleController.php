@@ -441,8 +441,6 @@ class SaleController extends Controller
                 'articles' => SaleArticleResource::collection($articles)->resolve()
             ]);
         }
-
-
     }
 
     public function findSaleByDocumentForDebitNote(Request $request): JsonResponse

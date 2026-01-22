@@ -51,7 +51,7 @@ class StoreSaleCreditNoteRequest extends FormRequest
             'sale_articles.*.public_price' => 'required|numeric|min:0',
             'sale_articles.*.purchase_price' => 'required|numeric|min:0',
             'sale_articles.*.subtotal' => 'required|numeric|min:0',
-            'sale_articles.*.serie' => 'nullable|array|min:1',
+            'sale_articles.*.serie' => 'nullable|array',
             'sale_articles.*.serie.*' => 'string|distinct'
         ];
     }

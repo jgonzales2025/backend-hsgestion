@@ -339,7 +339,7 @@ class DispatchNotesController extends Controller
         return response()->json(['message' => 'Status actualizado'], 200);
     }
 
-    private function logTransaction($request, $dispatchNote): void
+    private function logTransaction($request, $dispatchNote, ?string $observations = null): void
     {
         $transactionLogs = new CreateTransactionLogUseCase(
             $this->transactionLogRepositoryInterface,
@@ -353,6 +353,7 @@ class DispatchNotesController extends Controller
             'user_id' => request()->get('user_id'),
             'role_name' => request()->get('role'),
             'description_log' => 'Guia de Remisión',
+            'observations' => $observations ?? ($request->method() == 'POST' ? 'Registro de documento.' : 'Actualización de documento.'),
             'action' => $request->method(),
             'company_id' => request()->get('company_id'),
             'branch_id' => $dispatchNote->getBranch()->getId(),

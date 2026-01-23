@@ -156,6 +156,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                     'entry_guide_id' => $shopping_Income_Guide->entry_guide_id,
                 ]);
             }
+            
 
             return $this->findWithRelations($eloquentpurchase->id);
         });

@@ -32,11 +32,19 @@ readonly class CreateTransactionLogUseCase
         $companyUseCase = new FindByIdCompanyUseCase($this->companyRepository);
         $company = $companyUseCase->execute($transactionLogDTO->company_id);
 
-        $branchUseCase = new FindByIdBranchUseCase($this->branchRepository);
-        $branch = $branchUseCase->execute($transactionLogDTO->branch_id);
+        if ($transactionLogDTO->branch_id === null) {
+            $branch = null;
+        } else {
+            $branchUseCase = new FindByIdBranchUseCase($this->branchRepository);
+            $branch = $branchUseCase->execute($transactionLogDTO->branch_id);
+        }
 
-        $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepository);
-        $documentType = $documentTypeUseCase->execute($transactionLogDTO->document_type_id);
+        if ($transactionLogDTO->document_type_id === null) {
+            $documentType = null;
+        } else {
+            $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepository);
+            $documentType = $documentTypeUseCase->execute($transactionLogDTO->document_type_id);
+        }
 
         $transactionLog = new TransactionLog(
             id: 0,

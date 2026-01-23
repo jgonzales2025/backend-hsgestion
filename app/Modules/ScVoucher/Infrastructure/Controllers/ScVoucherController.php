@@ -3,7 +3,9 @@
 namespace App\Modules\ScVoucher\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface; 
+use App\Modules\Bank\Domain\Interfaces\BankRepositoryInterface;
+use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
+use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\ScVoucher\Application\DTOS\ScVoucherDTO;
 use App\Modules\ScVoucher\Application\UseCases\CreateScVoucherUseCase;
 use App\Modules\ScVoucher\Application\UseCases\FindAllScVoucherUseCase;
@@ -22,8 +24,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
+use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PaymentMethodsSunat\Domain\Interface\PaymentMethodSunatRepositoryInterface;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
+use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
+use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
+use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
+use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 
 class ScVoucherController extends Controller
 {
@@ -36,6 +43,11 @@ class ScVoucherController extends Controller
         private PaymentMethodSunatRepositoryInterface $paymentMethodSunatRepository,
         private PaymentMethodRepositoryInterface $paymentMethodRepository,
         private BankRepositoryInterface $bankRepository,
+        private readonly TransactionLogRepositoryInterface $transactionLogRepository,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly CompanyRepositoryInterface $companyRepository,
+        private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
+        private readonly BranchRepositoryInterface $branchRepository,
     ) {}
  
     public function index(Request $request): JsonResponse
@@ -87,6 +99,8 @@ class ScVoucherController extends Controller
         );
         $scVoucher = $createUseCase->execute($scVoucherDTO);
 
+        $this->logTransaction($request, $scVoucher);
+
         return response()->json((new ScVoucherResource($scVoucher))->resolve(), 201);
     }
 
@@ -106,6 +120,7 @@ class ScVoucherController extends Controller
         if (!$scVoucher) {
             return response()->json(['message' => 'Voucher no encontrado'], 404);
         }
+        $this->logTransaction($request, $scVoucher);
         return response()->json((new ScVoucherResource($scVoucher))->resolve(), 200);
     }
  
@@ -147,5 +162,33 @@ class ScVoucherController extends Controller
         })->filter()->values()->all();
 
         return response()->json($vouchersData, 200);
+    }
+
+    private function logTransaction($request, $voucher, ?string $observations = null): void
+    {
+        $transactionLogs = new CreateTransactionLogUseCase(
+            $this->transactionLogRepository,
+            $this->userRepository,
+            $this->companyRepository,
+            $this->documentTypeRepository,
+            $this->branchRepository
+        );
+
+        $transactionDTO = new TransactionLogDTO([
+            'user_id' => request()->get('user_id'),
+            'role_name' => request()->get('role'),
+            'description_log' => 'Voucher',
+            'observations' => $observations ?? ($request->method() == 'POST' ? 'Registro de documento.' : 'Actualización de documento.'),
+            'action' => $request->method(),
+            'company_id' => $voucher->getCia(),
+            'branch_id' => null,
+            'document_type_id' => null,
+            'serie' => $voucher->getAnopr(),
+            'correlative' => $voucher->getCorrelativo(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        $transactionLogs->execute($transactionDTO);
     }
 }

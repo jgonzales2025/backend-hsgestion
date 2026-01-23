@@ -17,15 +17,15 @@ class TransactionLog
     private ?string $observations;
     private string $action;
     private Company $company;
-    private Branch $branch;
-    private DocumentType $documentType;
+    private ?Branch $branch;
+    private ?DocumentType $documentType;
     private string $serie;
     private string $correlative;
     private string $ipAddress;
     private ?string $userAgent;
     private ?string $createdAt;
 
-    public function __construct(?int $id,User $user, ?int $roleId, string $role_name, string $description_log, string $action, Company $company, Branch $branch, DocumentType $documentType, string $serie, string $correlative, string $ipAddress, ?string $userAgent, ?string $createdAt = null, ?string $observations = null)
+    public function __construct(?int $id,User $user, ?int $roleId, string $role_name, string $description_log, string $action, Company $company, ?Branch $branch, ?DocumentType $documentType, string $serie, string $correlative, string $ipAddress, ?string $userAgent, ?string $createdAt = null, ?string $observations = null)
     {
         $this->id = $id;
         $this->user = $user;
@@ -52,8 +52,8 @@ class TransactionLog
     public function getObservations(): ?string { return $this->observations; }
     public function getAction(): string { return $this->action; }
     public function getCompany(): Company { return $this->company; }
-    public function getBranch(): Branch { return $this->branch; }
-    public function getDocumentType(): DocumentType { return $this->documentType; }
+    public function getBranch(): ?Branch { return $this->branch; }
+    public function getDocumentType(): ?DocumentType { return $this->documentType; }
     public function getSerie(): string { return $this->serie; }
     public function getCorrelative(): string { return $this->correlative; }
     public function getIpAddress(): string { return $this->ipAddress; }

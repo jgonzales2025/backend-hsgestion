@@ -171,7 +171,7 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
     ): array {
 
         $resultado = DB::select(
-            'CALL sp_parte_diario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'CALL sp_cobranzas_detalle(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [
                 (int) $cia,
                 $fecha,

@@ -328,16 +328,16 @@ class PettyCashReceiptController extends Controller
 
         $data = $selectProcedureUseCase->execute(
             $validated['cia'],
-            $validated['fecha'] ?? '',
-            $validated['fechaU'] ?? '',
-            $validated['nrocliente'],
+            $validated['fecha'] ?? null,
+            $validated['fechaU'] ?? null,
+            $validated['nrocliente'] ?? 0,
             $validated['pcodsuc'],
-            $validated['ptippag'],
-            $validated['pcodban'],
-            $validated['pnroope'],
-            $validated['ptipdoc'],
-            $validated['pserie'],
-            $validated['pcorrelativo']
+            $validated['ptippag'] ?? 0,
+            $validated['pcodban'] ?? 0,
+            $validated['pnroope'] ?? '',
+            $validated['ptipdoc'] ?? 0,
+            $validated['pserie'] ?? '',
+            $validated['pcorrelativo'] ?? ''
         );
 
         $data = $this->paginateStoredProcedure($data, 10);

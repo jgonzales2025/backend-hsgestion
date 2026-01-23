@@ -10,7 +10,7 @@ class TransactionLogDTO
     public ?string $observations;
     public $action;
     public $company_id;
-    public $branch_id;
+    public ?int $branch_id;
     public $document_type_id;
     public $serie;
     public $correlative;
@@ -25,7 +25,7 @@ class TransactionLogDTO
         $this->observations = $data['observations'] ?? null;
         $this->action = $data['action'];
         $this->company_id = $data['company_id'];
-        $this->branch_id = $data['branch_id'];
+        $this->branch_id = $data['branch_id'] ?? null;
         $this->document_type_id = $data['document_type_id'];
         $this->serie = $data['serie'];
         $this->correlative = $data['correlative'];

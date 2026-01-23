@@ -19,8 +19,8 @@ class TransactionLogDocumentResource extends JsonResource
             'observations' => $this->resource->getObservations(),
             'action' => $this->resource->getAction(),
             'branch' => [
-                'id' => $this->resource->getBranch()->getId(),
-                'name' => $this->resource->getBranch()->getName()
+                'id' => $this->resource->getBranch()?->getId(),
+                'name' => $this->resource->getBranch()?->getName()
             ],
             'datetime' => $this->resource->getCreatedAt()
         ];

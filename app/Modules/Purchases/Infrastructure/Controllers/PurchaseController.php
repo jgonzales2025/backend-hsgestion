@@ -26,6 +26,10 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Modules\Purchases\Infrastructure\Persistence\PurchasesExport;
 use App\Modules\Purchases\Infrastructure\Persistence\GenericExport;
+use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
+use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
+use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
+use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -41,6 +45,8 @@ class PurchaseController extends Controller
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly CompanyRepositoryInterface $companyRepository,
         private readonly ExchangeRateRepositoryInterface $exchangeRateRepository,
+        private readonly TransactionLogRepositoryInterface $transactionLogRepository,
+        private readonly UserRepositoryInterface $userRepository,
     ) {}
 
     public function index(Request $request): JsonResponse
@@ -99,6 +105,8 @@ class PurchaseController extends Controller
         );
 
         $purchase = $cretaePurchaseUseCase->execute($purchaseDTO);
+
+        $this->logTransaction($request, $purchase);
         return response()->json(
             (new PurchaseResource($purchase))->resolve(),
             201
@@ -124,6 +132,8 @@ class PurchaseController extends Controller
         if (!$purchase) {
             return response()->json(['message' => 'Compra no encontrada'], 404);
         }
+
+        $this->logTransaction($request, $purchase);
 
         return response()->json(
             (new PurchaseResource($purchase))->resolve(),
@@ -194,5 +204,33 @@ class PurchaseController extends Controller
         $fileName = $tipoRegister == 1 ? 'registro_ventas.xlsx' : 'registro_compras.xlsx';
 
         return Excel::download(new GenericExport(collect($purchases), $title), $fileName);
+    }
+
+    private function logTransaction($request, $purchase, ?string $observations = null): void
+    {
+        $transactionLogs = new CreateTransactionLogUseCase(
+            $this->transactionLogRepository,
+            $this->userRepository,
+            $this->companyRepository,
+            $this->documentTypeRepository,
+            $this->branchRepository
+        );
+
+        $transactionDTO = new TransactionLogDTO([
+            'user_id' => request()->get('user_id'),
+            'role_name' => request()->get('role'),
+            'description_log' => 'Caja Chica',
+            'observations' => $observations ?? ($request->method() == 'POST' ? 'Registro de documento.' : 'Actualización de documento.'),
+            'action' => $request->method(),
+            'company_id' => $purchase->getCompanyId(),
+            'branch_id' => $purchase->getBranch()->getId(),
+            'document_type_id' => $purchase->getTypeDocumentId()->getId(),
+            'serie' => $purchase->getSerie(),
+            'correlative' => $purchase->getCorrelative(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        $transactionLogs->execute($transactionDTO);
     }
 }

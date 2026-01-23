@@ -99,10 +99,18 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
     {
         return DB::transaction(function () use ($scVoucher) {
 
+            // 🔐 1. OBTENER CORRELATIVO SEGURO (CIA + ANOPR)
+            $ultimoCorrelativo = EloquentScVoucher::where('cia', $scVoucher->getCia())
+                ->where('anopr', $scVoucher->getAnopr())
+                ->lockForUpdate()
+                ->max('correlativo');
+
+            $correlativo = ($ultimoCorrelativo ?? 0) + 1;
+
             $eloquentScVoucher = EloquentScVoucher::create([
                 'cia' => $scVoucher->getCia(),
-                'anopr' => $scVoucher->getAnopr() . "-" . date('m'),
-                'correlativo' => $scVoucher->getCorrelativo(),
+                'anopr' => $scVoucher->getAnopr(), //. "-" . date('m')
+                'correlativo' => $correlativo,
                 'fecha' => $scVoucher->getFecha(),
                 'codban' => $scVoucher->getCodban()?->getId(),
                 'codigo' => $scVoucher->getCodigo()?->getId(),
@@ -127,11 +135,12 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
                     'codcon' => $detailDTO->codcon,
                     'glosa' => $detailDTO->glosa,
                     'impsol' => $detailDTO->impsol,
-                    'impdol' => $detailDTO->impdol,
-                    'tipdoc' => $detailDTO->tipdoc,
-                    'numdoc' => $detailDTO->numdoc,
+                    'impdol' => $detailDTO->impdol, 
+                    'tipdoc' => $detailDTO->tipdoc, 
                     'correlativo' => $detailDTO->correlativo,
                     'id_purchase' => $detailDTO->id_purchase,
+                    'serie' => $detailDTO->serie,
+
                 ]);
 
                 DB::statement("CALL update_purchase_balance(?, ?, ?, ?, ?)", [
@@ -191,10 +200,10 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
                 'glosa' => $detailDTO->glosa,
                 'impsol' => $detailDTO->impsol,
                 'impdol' => $detailDTO->impdol,
-                'tipdoc' => $detailDTO->tipdoc,
-                'numdoc' => $detailDTO->numdoc,
+                'tipdoc' => $detailDTO->tipdoc, 
                 'correlativo' => $detailDTO->correlativo,
                 'id_purchase' => $detailDTO->id_purchase,
+                'serie' => $detailDTO->serie,
             ]);
 
             DB::statement("CALL update_purchase_balance(?, ?, ?, ?, ?)", [

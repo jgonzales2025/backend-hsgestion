@@ -51,4 +51,5 @@ class ScVoucherResource extends JsonResource
             'detail_voucher_purchase'=>DetVoucherPurchaseResource::collection($this->resource->getDetailVoucherpurchase()),
         ];
     }
+
 }

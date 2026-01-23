@@ -46,11 +46,11 @@ class StoreScVoucherRequest extends FormRequest
             'detail_sc_voucher.*.codcon' => 'required|integer',
             'detail_sc_voucher.*.glosa' => 'nullable|string',
             'detail_sc_voucher.*.impsol' => 'required|numeric',
-            'detail_sc_voucher.*.impdol' => 'required|numeric',
-            'detail_sc_voucher.*.tipdoc' => 'required|integer',
-            'detail_sc_voucher.*.numdoc' => 'required|string',
+            'detail_sc_voucher.*.impdol' => 'required|numeric', 
+            'detail_sc_voucher.*.tipdoc' => 'required|integer', 
             'detail_sc_voucher.*.correlativo' => 'required|string',
             'detail_sc_voucher.*.id_purchase' => 'nullable|integer|exists:purchase,id',
+            'detail_sc_voucher.*.serie' => 'nullable|string',
 
             'detail_voucher_purchase' => 'nullable|array',
             'detail_voucher_purchase.*.purchase_id' => 'nullable|integer|exists:purchase,id',
@@ -69,8 +69,8 @@ class StoreScVoucherRequest extends FormRequest
             'fecha.date' => 'La fecha debe ser una fecha.',
             'codban.required' => 'Debe seleccionar una banco.',
             'codban.exists' => 'Selecciona un banco',
-            'codigo.required' => 'Debe ingresar el codigo.', 
-            'codigo.integer' => 'El codigo debe ser un numero.', 
+            'codigo.required' => 'Debe ingresar el codigo.',
+            'codigo.integer' => 'El codigo debe ser un numero.',
             'nroope.string' => 'El numero debe ser una cadena de texto.',
             'glosa.string' => 'La glosa debe ser una cadena de texto.',
             'orden.string' => 'El orden debe ser una cadena de texto.',
@@ -103,9 +103,9 @@ class StoreScVoucherRequest extends FormRequest
 
             'detail_voucher_purchase.array' => 'Los detalles de la compra deben ser un array.',
             'detail_voucher_purchase.*.purchase_id.required' => 'Debe seleccionar una compra.',
-            'detail_voucher_purchase.*.purchase_id.exists' => 'Selecciona una compra', 
-            'detail_voucher_purchase.*.amount.required' => 'Debe ingresar el monto.', 
-            'detail_voucher_purchase.*.amount.numeric' => 'El monto debe ser un numero.', 
+            'detail_voucher_purchase.*.purchase_id.exists' => 'Selecciona una compra',
+            'detail_voucher_purchase.*.amount.required' => 'Debe ingresar el monto.',
+            'detail_voucher_purchase.*.amount.numeric' => 'El monto debe ser un numero.',
             'detail_voucher_purchase.*.purchase_id.exists' => 'la compra que deseas crear no existe',
         ];
     }

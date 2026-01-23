@@ -227,17 +227,24 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
     }
     public function updateStatus(int $id, int $status)
     {
-        $scVoucher = $this->findById($id);
 
-        if (!$scVoucher) {
-            return null;
-        }
-        $updatestatuseloquent = EloquentScVoucher::find($id);
-        $updatestatuseloquent->update([
-            'status' => $status,
-        ]);
-
-        return $updatestatuseloquent;
+                $scVoucher = $this->findById($id);
+        
+                if (!$scVoucher) {
+                    return null;
+                }
+                $updatestatuseloquent = EloquentScVoucher::find($id);
+                $updatestatuseloquent->update([
+                    'status' => $status,
+                ]);
+        
+                DB::statement("CALL sp_anula_voucher(?, ?)", [
+                    $scVoucher->getCia(),
+                    $id,
+                ]);
+        
+                return $this->findById($id);
+      
     }
     public function findWithRelations(int $id): ?ScVoucher
     {

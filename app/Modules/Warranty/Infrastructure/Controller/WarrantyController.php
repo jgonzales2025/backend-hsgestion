@@ -18,6 +18,10 @@ use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\SaleItemSerial\Application\UseCases\FindArticleBySerialUseCase;
 use App\Modules\SaleItemSerial\Application\UseCases\FindSaleBySerialUseCase;
 use App\Modules\SaleItemSerial\Domain\Interfaces\SaleItemSerialRepositoryInterface;
+use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
+use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
+use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
+use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Modules\Warranty\Application\DTOs\TechnicalSupportDTO;
 use App\Modules\Warranty\Application\DTOs\UpdateTechnicalSupportDTO;
 use App\Modules\Warranty\Application\DTOs\UpdateWarrantyDTO;
@@ -60,6 +64,8 @@ class WarrantyController
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
         private readonly CustomerPhoneRepositoryInterface $customerPhoneRepository,
         private readonly CustomerEmailRepositoryInterface $customerEmailRepository,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly TransactionLogRepositoryInterface $transactionLogRepository
     ){}
 
     public function index(Request $request)
@@ -100,13 +106,22 @@ class WarrantyController
             $technicalSupportDTO = new TechnicalSupportDTO($request->validated());
             $technicalSupportUseCase = new CreateTechnicalSupportUseCase($this->warrantyRepository, $this->documentNumberGeneratorService, $this->companyRepository, $this->branchRepository);
             $id = $technicalSupportUseCase->execute($technicalSupportDTO);
-            return response()->json(['message' => 'Soporte técnico creado exitosamente', 'id' => $id]);
+            
+            $warrantyUseCase = new FindByIdWarrantyUseCase($this->warrantyRepository);
+            $warranty = $warrantyUseCase->execute($id);
         } else {
             $warrantyDTO = new WarrantyDTO($request->validated());
             $warrantyUseCase = new CreateWarrantyUseCase($this->warrantyRepository, $this->companyRepository, $this->branchRepository, $this->articleRepository, $this->customerRepository, $this->entryGuideRepository, $this->saleRepository, $this->warrantyStatusRepository, $this->documentNumberGeneratorService);
             $id = $warrantyUseCase->execute($warrantyDTO);
-            return response()->json(['message' => 'Garantía creada exitosamente', 'id' => $id]);
+            
+            $warrantyUseCase = new FindByIdWarrantyUseCase($this->warrantyRepository);
+            $warranty = $warrantyUseCase->execute($id);
         }
+
+        $observations = 'Se creó un nuevo ticket';
+        $this->logTransaction($request, $warranty, $observations);
+            
+        return response()->json(['message' => 'Ticket creado exitosamente', 'id' => $id]);
     }
 
     public function show($id)
@@ -115,7 +130,7 @@ class WarrantyController
         $warranty = $warrantyUseCase->execute($id);
 
         if (!$warranty) {
-            return response()->json(['message' => 'Garantía no encontrada'], 404);
+            return response()->json(['message' => 'Ticket no encontrado'], 404);
         }
 
         if ($warranty->getDocumentTypeWarrantyId() == 2) {
@@ -136,7 +151,8 @@ class WarrantyController
                 return response()->json(['message' => 'Ticket no existe.'], 404);
             }
             
-            return response()->json(['message' => 'Ticket actualizado exitosamente', 'id' => $id]);
+            $warrantyUseCase = new FindByIdWarrantyUseCase($this->warrantyRepository);
+            $warranty = $warrantyUseCase->execute($id);
         } else {
             $technicalSupportDTO = new UpdateTechnicalSupportDTO($request->validated());
             $technicalSupportUseCase = new UpdateTechnicalSupportUseCase($this->warrantyRepository);
@@ -146,8 +162,14 @@ class WarrantyController
                 return response()->json(['message' => 'Ticket no existe.'], 404);
             }
             
-            return response()->json(['message' => 'Ticket actualizado exitosamente', 'id' => $id]);
+            $warrantyUseCase = new FindByIdWarrantyUseCase($this->warrantyRepository);
+            $warranty = $warrantyUseCase->execute($id);
         }
+
+        $observations = 'Se actualizó la información del ticket.';
+        $this->logTransaction($request, $warranty, $observations);
+            
+        return response()->json(['message' => 'Ticket actualizado exitosamente', 'id' => $id]);
     }
 
     public function findDocumentsBySerial(Request $request)
@@ -186,7 +208,7 @@ class WarrantyController
         $warranty = $warrantyUseCase->execute($id);
 
         if (!$warranty) {
-            return response()->json(['message' => 'Garantía no encontrada'], 404);
+            return response()->json(['message' => 'Ticket no encontrado'], 404);
         }
 
         $pdf = Pdf::loadView('warranty', [
@@ -225,6 +247,42 @@ class WarrantyController
         $statusUseCase = new UpdateStatusUseCase($this->warrantyRepository);
         $statusUseCase->execute($id, $status);
         
+        $observations = 'Se actualizó el estado del documento en el flujo de trabajo.';
+        $this->logTransaction($request, $warranty, $observations);
+        
         return response()->json(['message' => 'Estado actualizado correctamente', 'status' => true]);
+    }
+    
+    private function logTransaction($request, $warranty, ?string $observations = null): void
+    {
+        $transactionLogs = new CreateTransactionLogUseCase(
+            $this->transactionLogRepository,
+            $this->userRepository,
+            $this->companyRepository,
+            $this->documentTypeRepository,
+            $this->branchRepository
+        );
+        
+        $description = match ($warranty->getDocumentTypeWarrantyId()) {
+            1 => 'GARANTIA',
+            2 => 'SOPORTE TECNICO'
+        };
+        
+        $transactionDTO = new TransactionLogDTO([
+            'user_id' => request()->get('user_id'),
+            'role_name' => request()->get('role'),
+            'description_log' => $description,
+            'observations' => $observations,
+            'action' => $request->method(),
+            'company_id' => $warranty->getCompany()->getId(),
+            'branch_id' => $warranty->getBranch()->getId(),
+            'document_type_id' => $warranty->getDocumentTypeWarrantyId(),
+            'serie' => $warranty->getSerie(),
+            'correlative' => $warranty->getCorrelative(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+        
+        $transactionLogs->execute($transactionDTO);
     }
 }

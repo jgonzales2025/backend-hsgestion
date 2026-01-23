@@ -18,6 +18,7 @@ class EloquentTransactionLog extends Model
         'role_id',
         'role_name',
         'description_log',
+        'observations',
         'action',
         'company_id',
         'branch_id',

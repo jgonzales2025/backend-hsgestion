@@ -603,7 +603,7 @@ class SaleController extends Controller
         return $saleArticles;
     }
 
-    private function logTransaction($request, $sale): void
+    private function logTransaction($request, $sale, ?string $observations = null): void
     {
         $transactionLogs = new CreateTransactionLogUseCase(
             $this->transactionLogRepository,
@@ -627,6 +627,7 @@ class SaleController extends Controller
             'user_id' => request()->get('user_id'),
             'role_name' => request()->get('role'),
             'description_log' => $description,
+            'observations' => $observations ?? ($request->method() == 'POST' ? 'Registro de documento.' : 'Actualización de documento.'),
             'action' => $request->method(),
             'company_id' => $sale->getCompany()->getId(),
             'branch_id' => $sale->getBranch()->getId(),
@@ -843,6 +844,8 @@ class SaleController extends Controller
         
         $statusUseCase = new UpdateStatusSalesUseCase($this->saleRepository);
         $statusUseCase->execute($id, 0);
+
+        $this->logTransaction($request, $sale, 'Anulación de documento.');
         
         return response()->json([
             'message' => 'Documento anulado correctamente',

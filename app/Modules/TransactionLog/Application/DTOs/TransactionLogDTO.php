@@ -7,6 +7,7 @@ class TransactionLogDTO
     public $user_id;
     public $role_name;
     public $description_log;
+    public ?string $observations;
     public $action;
     public $company_id;
     public $branch_id;
@@ -21,6 +22,7 @@ class TransactionLogDTO
         $this->user_id = $data['user_id'];
         $this->role_name = $data['role_name'];
         $this->description_log = $data['description_log'];
+        $this->observations = $data['observations'] ?? null;
         $this->action = $data['action'];
         $this->company_id = $data['company_id'];
         $this->branch_id = $data['branch_id'];

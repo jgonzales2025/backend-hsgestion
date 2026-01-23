@@ -20,6 +20,7 @@ class EloquentTransactionLogRepository implements TransactionLogRepositoryInterf
                 roleId: $eloquentTransactionLog->role_id,
                 role_name: $eloquentTransactionLog->role_name,
                 description_log: $eloquentTransactionLog->description_log,
+                observations: $eloquentTransactionLog->observations,
                 action: $eloquentTransactionLog->action,
                 company: $eloquentTransactionLog->company->toDomain($eloquentTransactionLog->company),
                 branch: $eloquentTransactionLog->branch->toDomain($eloquentTransactionLog->branch),
@@ -28,6 +29,7 @@ class EloquentTransactionLogRepository implements TransactionLogRepositoryInterf
                 correlative: $eloquentTransactionLog->correlative,
                 ipAddress: $eloquentTransactionLog->ip_address,
                 userAgent: $eloquentTransactionLog->user_agent,
+                createdAt: $eloquentTransactionLog->created_at
             );
         })->toArray();
     }
@@ -41,6 +43,7 @@ class EloquentTransactionLogRepository implements TransactionLogRepositoryInterf
             'role_id' =>$roleId,
             'role_name' => $transactionLog->getRoleName(),
             'description_log' => $transactionLog->getDescriptionLog(),
+            'observations' => $transactionLog->getObservations(),
             'action' => $transactionLog->getAction(),
             'company_id' => $transactionLog->getCompany()->getId(),
             'branch_id' => $transactionLog->getBranch()->getId(),
@@ -52,29 +55,32 @@ class EloquentTransactionLogRepository implements TransactionLogRepositoryInterf
         ]);
     }
 
-    public function findByDocument(string $serie, string $correlative): ?TransactionLog
+    public function findByDocument(string $serie, string $correlative): ?array
     {
-        $transactionLog = EloquentTransactionLog::where('serie', $serie)->where('correlative', $correlative)->where('action', 'POST')->first();
+        $transactionLog = EloquentTransactionLog::where('serie', $serie)->where('correlative', $correlative)->orderBy('created_at', 'desc')->get();
 
-        if (!$transactionLog) {
+        if ($transactionLog->isEmpty()) {
             return null;
         }
 
-        return new TransactionLog(
-            id: $transactionLog->id,
-            user: $transactionLog->user->toDomain($transactionLog->user),
-            roleId: $transactionLog->role_id,
-            role_name: $transactionLog->role_name,
-            description_log: $transactionLog->description_log,
-            action: $transactionLog->action,
-            company: $transactionLog->company->toDomain($transactionLog->company),
-            branch: $transactionLog->branch->toDomain($transactionLog->branch),
-            documentType: $transactionLog->documentType->toDomain($transactionLog->documentType),
-            serie: $transactionLog->serie,
-            correlative: $transactionLog->correlative,
-            ipAddress: $transactionLog->ip_address,
-            userAgent: $transactionLog->user_agent,
-            createdAt: $transactionLog->created_at,
-        );
+        return $transactionLog->map(function ($eloquentTransactionLog){
+            return new TransactionLog(
+                id:  $eloquentTransactionLog->id,
+                user: $eloquentTransactionLog->user->toDomain($eloquentTransactionLog->user),
+                roleId: $eloquentTransactionLog->role_id,
+                role_name: $eloquentTransactionLog->role_name,
+                description_log: $eloquentTransactionLog->description_log,
+                observations: $eloquentTransactionLog->observations,
+                action: $eloquentTransactionLog->action,
+                company: $eloquentTransactionLog->company->toDomain($eloquentTransactionLog->company),
+                branch: $eloquentTransactionLog->branch->toDomain($eloquentTransactionLog->branch),
+                documentType: $eloquentTransactionLog->documentType->toDomain($eloquentTransactionLog->documentType),
+                serie: $eloquentTransactionLog->serie,
+                correlative: $eloquentTransactionLog->correlative,
+                ipAddress: $eloquentTransactionLog->ip_address,
+                userAgent: $eloquentTransactionLog->user_agent,
+                createdAt: $eloquentTransactionLog->created_at,
+            );
+        })->toArray();
     }
 }

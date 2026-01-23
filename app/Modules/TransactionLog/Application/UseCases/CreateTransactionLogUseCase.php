@@ -44,6 +44,7 @@ readonly class CreateTransactionLogUseCase
             roleId: null,
             role_name: $transactionLogDTO->role_name,
             description_log: $transactionLogDTO->description_log,
+            observations: $transactionLogDTO->observations,
             action: $transactionLogDTO->action,
             company: $company,
             branch: $branch,

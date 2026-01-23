@@ -140,7 +140,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 if ($article && $article->article_type_id == 1) {
                     DB::statement('CALL descontar_saldo_fifo(?,?,?,?,?,?,?)', [
                         $purchase->getCompanyId(),                  // cia
-                        $purchase->getSupplier()->getId(),          // cliente
+                        $purchase->getSupplier()->getId(),          // clientez
                         $det->article_id,                           // artículo
                         $purchase->getTypeDocumentId()->getId(),    // tipo documento
                         $purchase->getReferenceSerie(),             // serie
@@ -156,7 +156,6 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                     'entry_guide_id' => $shopping_Income_Guide->entry_guide_id,
                 ]);
             }
-            
 
             return $this->findWithRelations($eloquentpurchase->id);
         });

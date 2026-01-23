@@ -223,7 +223,10 @@
             </tr>
             <tr>
                 <td class="label">USUARIO:</td>
-                <td>{{ $transactionLog->getUser()->getFirstname() }} {{ $transactionLog->getUser()->getLastname() }}
+                <td>
+                    @if($transactionLog && is_array($transactionLog) && count($transactionLog) > 0)
+                        {{ $transactionLog[0]->getUser()->getFirstname() }} {{ $transactionLog[0]->getUser()->getLastname() }}
+                    @endif
                 </td>
                 <td class="label" colspan="3" style="text-align: right;">FECHA DE IMPRESIÓN:</td>
                 <td style="white-space: nowrap;">{{ now()->format('d/m/Y H:i:s') }}</td>

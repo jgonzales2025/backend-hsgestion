@@ -23,6 +23,10 @@ use App\Modules\PettyCashReceipt\Infrastructure\Resource\PettyCashReceiptResourc
 use App\Modules\PettyCashReceipt\Infrastructure\Exports\PettyCashProcedureExport;
 use App\Modules\PettyCashReceipt\Infrastructure\Persistence\PettyCashProcedureExport as PersistencePettyCashProcedureExport;
 use App\Modules\PettyCashReceipt\Infrastructure\Persistence\CobranzaDetalleExport;
+use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
+use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
+use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
+use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -40,7 +44,9 @@ class PettyCashReceiptController extends Controller
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
         private readonly PettyCashMotiveInterfaceRepository $pettyCashMotiveRepository,
-        private readonly CompanyRepositoryInterface $companyRepository
+        private readonly CompanyRepositoryInterface $companyRepository,
+        private readonly TransactionLogRepositoryInterface $transactionLogRepository,
+        private readonly UserRepositoryInterface $userRepository,
     ) {}
     public function index(Request $request): JsonResponse
     {
@@ -86,6 +92,8 @@ class PettyCashReceiptController extends Controller
         );
         $eloquentCreatePettyCash = $eloquentCreatePettyCashReceiptUseCase->execute($eloquentCreatePettyCash);
 
+        $this->logTransaction($request, $eloquentCreatePettyCash);
+
         return response()->json(new PettyCashReceiptResource($eloquentCreatePettyCash), 201);
     }
     public function update(int $id, UpdatePettyCashReceiptRequest $request)
@@ -100,6 +108,8 @@ class PettyCashReceiptController extends Controller
             $this->pettyCashMotiveRepository
         );
         $updatePettyCashReceipt = $updatePettyCashReceiptUseCase->execute($eloquentCreatePettyCash, $id);
+
+        $this->logTransaction($request, $updatePettyCashReceipt);
 
         return response()->json(new PettyCashReceiptResource($updatePettyCashReceipt), 200);
     }
@@ -344,5 +354,33 @@ class PettyCashReceiptController extends Controller
             'prev_page_url'  => $data->previousPageUrl(),
 
         ]);
+    }
+
+    private function logTransaction($request, $pettyCash, ?string $observations = null): void
+    {
+        $transactionLogs = new CreateTransactionLogUseCase(
+            $this->transactionLogRepository,
+            $this->userRepository,
+            $this->companyRepository,
+            $this->documentTypeRepository,
+            $this->branchRepository
+        );
+
+        $transactionDTO = new TransactionLogDTO([
+            'user_id' => request()->get('user_id'),
+            'role_name' => request()->get('role'),
+            'description_log' => 'Caja Chica',
+            'observations' => $observations ?? ($request->method() == 'POST' ? 'Registro de documento.' : 'Actualización de documento.'),
+            'action' => $request->method(),
+            'company_id' => $pettyCash->getCompany(),
+            'branch_id' => $pettyCash->getBranch()->getId(),
+            'document_type_id' => $pettyCash->getDocumentType()->getId(),
+            'serie' => $pettyCash->getSeries(),
+            'correlative' => $pettyCash->getCorrelative(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        $transactionLogs->execute($transactionDTO);
     }
 }

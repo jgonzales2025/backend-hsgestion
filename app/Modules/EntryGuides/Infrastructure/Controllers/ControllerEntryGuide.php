@@ -239,7 +239,32 @@ class ControllerEntryGuide extends Controller
             $documentEntryGuide = $this->updateDocumentEntryGuide($entryGuide, $data['document_entry_guide']);
 
             if ($isFactura || $iscredito || $isdebito) {
-                $this->createPurchaseFromEntryGuide($entryGuide, $data);
+                $purchase = $this->createPurchaseFromEntryGuide($entryGuide, $data);
+
+                $transactionLogs = new CreateTransactionLogUseCase(
+                    $this->transactionLogRepositoryInterface,
+                    $this->userRepository,
+                    $this->companyRepositoryInterface,
+                    $this->documentTypeRepository,
+                    $this->branchRepositoryInterface
+                );
+
+                $transactionDTO = new TransactionLogDTO([
+                    'user_id' => request()->get('user_id'),
+                    'role_name' => request()->get('role'),
+                    'description_log' => 'Caja Chica',
+                    'observations' => $observations ?? ($request->method() == 'POST' ? 'Registro de documento.' : 'Actualización de documento.'),
+                    'action' => $request->method(),
+                    'company_id' => $purchase->getCompanyId(),
+                    'branch_id' => $purchase->getBranch()->getId(),
+                    'document_type_id' => $purchase->getTypeDocumentId()->getId(),
+                    'serie' => $purchase->getSerie(),
+                    'correlative' => $purchase->getCorrelative(),
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                ]);
+
+                $transactionLogs->execute($transactionDTO);
             }
 
             $detEntryguidePurchaseOrder = $this->createDetEntryguidePurchaseOrder($entryGuide, $request->validated()['order_purchase_id'] ?? []);
@@ -376,7 +401,7 @@ class ControllerEntryGuide extends Controller
 
         $result = $createDocumentEntryGuideUseCase->execute($documentEntryGuide);
         return $result;
-    } 
+    }
     private function calculateProcessStatus(array $articles, $documentEntryGuide = null): string
     {
         if ($documentEntryGuide && in_array($documentEntryGuide->getReferenceDocument()?->getId(), [1, 7, 8])) {
@@ -409,7 +434,7 @@ class ControllerEntryGuide extends Controller
         }
 
         return 'en proceso';
-    } 
+    }
     private function logTransaction($request, $entryGuide, ?string $observations = null): void
     {
         $transactionLogs = new CreateTransactionLogUseCase(
@@ -503,7 +528,7 @@ class ControllerEntryGuide extends Controller
 
         $customerHeader = null;
         $currencyType = null;
-        $articleMap = []; 
+        $articleMap = [];
 
         foreach ($entryGuides as $entryGuide) {
             if ($customerHeader === null) {
@@ -584,7 +609,7 @@ class ControllerEntryGuide extends Controller
             'nc_reference_serie' => $entryGuide->getNcReferenceSerie(),
             'nc_reference_correlative' => $entryGuide->getNcReferenceCorrelative(),
         ], 200);
-    } 
+    }
     public function downloadPdf($id)
     {
         try {
@@ -640,8 +665,8 @@ class ControllerEntryGuide extends Controller
         $updateStatusUseCase->execute($id, $status);
 
         return response()->json(['message' => 'Estado actualizado correctamente']);
-    } 
-    private function createPurchaseFromEntryGuide($entryGuide, array $data): void
+    }
+    private function createPurchaseFromEntryGuide($entryGuide, array $data)
     {
 
         $serie = $this->serieRepositoryInterface->findByDocumentType(22, $entryGuide->getBranch()->getId(), null);
@@ -704,7 +729,7 @@ class ControllerEntryGuide extends Controller
             $this->exchangeRateRepositoryInterface
         );
 
-        $createPurchaseUseCase->execute($purchaseDTO);
+        return $createPurchaseUseCase->execute($purchaseDTO);
     }
 
     private function syncPurchaseFromEntryGuide($entryGuide, array $data): void
@@ -841,7 +866,8 @@ class ControllerEntryGuide extends Controller
 
         $updatePurchaseUseCase->execute($purchaseDTO, $purchaseId);
     }
-    public function excelDowload(){
+    public function excelDowload()
+    {
         $entryGuides = $this->entryGuideRepositoryInterface->findAllExcel();
         return Excel::download(new ExcelEntryGuide($entryGuides, "Reporte de Guías de Ingreso"), 'entry_guides.xlsx');
     }

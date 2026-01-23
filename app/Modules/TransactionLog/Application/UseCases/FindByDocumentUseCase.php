@@ -11,7 +11,7 @@ class FindByDocumentUseCase
     {
     }
 
-    public function execute(string $serie, string $correlative): ?TransactionLog
+    public function execute(string $serie, string $correlative): ?array
     {
         return $this->transactionLogRepository->findByDocument($serie, $correlative);
     }

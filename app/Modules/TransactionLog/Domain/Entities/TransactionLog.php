@@ -14,6 +14,7 @@ class TransactionLog
     private ?int $roleId;
     private string $role_name;
     private string $description_log;
+    private ?string $observations;
     private string $action;
     private Company $company;
     private Branch $branch;
@@ -24,7 +25,7 @@ class TransactionLog
     private ?string $userAgent;
     private ?string $createdAt;
 
-    public function __construct(?int $id,User $user, ?int $roleId, string $role_name, string $description_log, string $action, Company $company, Branch $branch, DocumentType $documentType, string $serie, string $correlative, string $ipAddress, ?string $userAgent, ?string $createdAt = null)
+    public function __construct(?int $id,User $user, ?int $roleId, string $role_name, string $description_log, string $action, Company $company, Branch $branch, DocumentType $documentType, string $serie, string $correlative, string $ipAddress, ?string $userAgent, ?string $createdAt = null, ?string $observations = null)
     {
         $this->id = $id;
         $this->user = $user;
@@ -40,6 +41,7 @@ class TransactionLog
         $this->ipAddress = $ipAddress;
         $this->userAgent = $userAgent;
         $this->createdAt = $createdAt;
+        $this->observations = $observations;
     }
 
     public function getId(): ?int { return $this->id; }
@@ -47,6 +49,7 @@ class TransactionLog
     public function getRoleId(): ?int { return $this->roleId; }
     public function getRoleName(): string { return $this->role_name; }
     public function getDescriptionLog(): string { return $this->description_log; }
+    public function getObservations(): ?string { return $this->observations; }
     public function getAction(): string { return $this->action; }
     public function getCompany(): Company { return $this->company; }
     public function getBranch(): Branch { return $this->branch; }

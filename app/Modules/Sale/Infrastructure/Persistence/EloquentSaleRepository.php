@@ -667,7 +667,6 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         ]);
 
         $sale = $sale->fresh();
-        Log::info('sale', $sale->toArray());
         $sale->payment_status = $sale->saldo == 0 ? 1 : 0;
         $sale->amount_amortized = $sale->total - $sale->saldo;
         $sale->save();

@@ -149,7 +149,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                     ]);
                 }
             }
-
+       
             foreach ($purchase->getShoppingIncomeGuide() as $shopping_Income_Guide) {
                 EloquentShoppingIncomeGuide::create([
                     'purchase_id'   => $eloquentpurchase->id,

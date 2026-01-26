@@ -20,6 +20,7 @@ use App\Modules\DispatchNotes\Application\UseCases\CreateTransferOrderUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindAllConsignationUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindAllTransferOrdersUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindByIdTransferOrderUseCase;
+use App\Modules\DispatchNotes\application\UseCases\ToInvalidateTransferOrderUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\UpdateStatusTransferOrderUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\UpdateTransferOrderUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
@@ -282,7 +283,7 @@ class TransferOrderController extends Controller
             return response()->json(['message' => 'Orden de salida no encontrada'], 404);
         }
 
-        if ($transferOrder->getStatus() == 1) {
+        if ($transferOrder->getStage() == 1) {
             return response()->json(['message' => 'No se puede modificar una orden de salida que ya ha sido recibida.'], 400);
         }
 
@@ -306,5 +307,24 @@ class TransferOrderController extends Controller
         }
 
         return response()->json(['message' => 'Orden de salida recepcionada correctamente.'], 200);
+    }
+
+    public function toInvalidateTransferOrder(int $id)
+    {
+        $findByIdTransferOrderUseCase = new FindByIdTransferOrderUseCase($this->transferOrderRepository);
+        $transferOrder = $findByIdTransferOrderUseCase->execute($id);
+
+        if (!$transferOrder) {
+            return response()->json(['message' => 'Orden de salida no encontrada'], 404);
+        }
+
+        if ($transferOrder->getStage() == 1) {
+            return response()->json(['message' => 'No se puede anular una orden de salida que ya ha sido recibida.'], 400);
+        }
+
+        $toInvalidateUseCase = new ToInvalidateTransferOrderUseCase($this->transferOrderRepository);
+        $toInvalidateUseCase->execute($id);
+
+        return response()->json(['message' => 'Orden de salida invalidada correctamente.'], 200);
     }
 }

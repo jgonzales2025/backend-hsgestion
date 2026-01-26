@@ -86,7 +86,7 @@ readonly class CreateSaleUseCase
             due_date: $saleDTO->due_date,
             days: $saleDTO->days,
             user: $user,
-            user_sale: $userSale,
+            user_sale: $userSale ?? request()->get('user_id'),
             paymentType: $paymentType,
             observations: $saleDTO->observations,
             currencyType: $currencyType,

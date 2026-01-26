@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
 use App\Modules\CustomerPortfolio\Application\DTOs\CustomerPortfolioDTO;
 use App\Modules\CustomerPortfolio\Application\DTOs\UpdateAllCustomerPortfolioDTO;
-use App\Modules\CustomerPortfolio\Application\DTOs\UpdateCustomerPortfolioDTO;
 use App\Modules\CustomerPortfolio\Application\UseCases\CreateCustomerPortfolioUseCase;
 use App\Modules\CustomerPortfolio\Application\UseCases\FindAllCustomerPortfoliosUseCase;
 use App\Modules\CustomerPortfolio\Application\UseCases\FindUserByCustomerIdUseCase;
@@ -15,14 +14,11 @@ use App\Modules\CustomerPortfolio\Application\UseCases\UpdateCustomerPorfolioUse
 use App\Modules\CustomerPortfolio\Domain\Interfaces\CustomerPortfolioRepositoryInterface;
 use App\Modules\CustomerPortfolio\Infrastructure\Requests\StoreCustomerPortfolioRequest;
 use App\Modules\CustomerPortfolio\Infrastructure\Requests\UpdateAllRequest;
-use App\Modules\CustomerPortfolio\Infrastructure\Requests\UpdateCustomerPortfolioRequest;
 use App\Modules\CustomerPortfolio\Infrastructure\Resources\CustomerPortfolioResource;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Modules\User\Infrastructure\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
-use function PHPUnit\Framework\isArray;
 
 class CustomerPortfolioController extends Controller
 {
@@ -70,11 +66,11 @@ class CustomerPortfolioController extends Controller
         return response()->json(['message' => 'Actualización de vendedor realizada con éxito'], 200);
     }
 
-    public function update(UpdateCustomerPortfolioRequest $request, $id): JsonResponse
+    public function update(Request $request, $id): JsonResponse
     {
-        $customerPortfolioDTO = new UpdateCustomerPortfolioDTO($request->validated());
+        $user_id = $request->input('user_sale_id');
         $customerPortfolioUseCase = new UpdateCustomerPorfolioUseCase($this->customerPortfolioRepository);
-        $customerPortfolioUseCase->execute($id, $customerPortfolioDTO);
+        $customerPortfolioUseCase->execute($id, $user_id);
 
         return response()->json(['message' => 'Registro actualizado con éxito'], 200);
     }

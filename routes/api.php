@@ -200,7 +200,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/pettyCashMotive/{id}', [PettyCashMotiveController::class, 'update']);
     Route::get('/pettyCashMotive/{id}', [PettyCashMotiveController::class, 'show']);
     Route::put('/pettyCashMotive/update-status/{id}', [PettyCashMotiveController::class, 'updateStatus']);
-
+    Route::get('/pettyCashMotive-infinite/{id}', [PettyCashMotiveController::class, 'indexByReceiptTypeInfinite']);
     //detailPcCompatible
     Route::get('/detailPcCompatible', [DetailPcCompatibleController::class, 'index']);
     Route::post('/detailPcCompatible', [DetailPcCompatibleController::class, 'store']);
@@ -266,6 +266,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/purchases-pdf/{id}', [PurchaseController::class, 'downloadPdf']);
     Route::get('/purchase-excel', [PurchaseController::class, 'exportExcel']);
     Route::post('/purchase-reporte', [PurchaseController::class, 'reporteVentasCompras']);
+    Route::put('/purchase-status/{id}', [PurchaseController::class, 'updateStatus']);
     // Advances - Anticipos
     Route::get('/advances', [AdvanceController::class, 'index']);
     Route::get('/advances/{customerId}', [AdvanceController::class, 'showAdvancesByCustomer']);

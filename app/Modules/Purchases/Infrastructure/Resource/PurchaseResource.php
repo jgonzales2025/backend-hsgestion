@@ -2,10 +2,10 @@
 
 namespace App\Modules\Purchases\Infrastructure\Resource;
 
-use App\Modules\DetailPurchaseGuides\Infrastructure\Resource\DetailPurchaseGuideResource;
-use App\Modules\ShoppingIncomeGuide\Infrastructure\Resource\ShoppingIncomeGuideResource;
+use App\Modules\DetailPurchaseGuides\Infrastructure\Resource\DetailPurchaseGuideResource; 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 class PurchaseResource extends JsonResource
 {
@@ -66,16 +66,18 @@ class PurchaseResource extends JsonResource
             ],
             'reference_serie' => $this->resource->getReferenceSerie(),
             'reference_correlative' => $this->resource->getReferenceCorrelative(),
-            'saldo_soles' => $currencyId === 1 ? number_format($this->resource->getSaldo(), 4, '.', ''): number_format($this->resource->getSaldo() * $this->resource->getExchangeType(), 4, '.', ''),
-            'saldo_dolares' => $currencyId === 2 ? number_format($this->resource->getSaldo(), 4, '.', ''): number_format($this->resource->getSaldo() / $this->resource->getExchangeType(), 4, '.', ''),
+            'saldo_soles' => $currencyId === 1 ? number_format($this->resource->getSaldo(), 4, '.', '') : number_format($this->resource->getSaldo() * $this->resource->getExchangeType(), 4, '.', ''),
+            'saldo_dolares' => $currencyId === 2 ? number_format($this->resource->getSaldo(), 4, '.', '') : number_format($this->resource->getSaldo() / $this->resource->getExchangeType(), 4, '.', ''),
             'process_status' => $this->calculateProcessStatus(),
             'nc_document_id' => $this->resource?->getNcDocumentId(),
             'nc_reference_serie' => $this->resource?->getNcReferenceSerie(),
             'nc_reference_correlative' => $this->resource?->getNcReferenceCorrelative(),
+            'status' => $this->resource->getStatus() === true ? 'Activo' : 'Inactivo',
 
             'det_compras_guia_ingreso' =>  DetailPurchaseGuideResource::collection($this->resource->getDetComprasGuiaIngreso()),
             'entry_guide' => array_map(fn($item) => $item->getEntryGuideId(), $this->resource->getShoppingIncomeGuide()),
             'pdf_base64' => $this->generatePdfBase64($request),
+            'estado' => $this->statusDate(),
         ];
     }
 
@@ -123,5 +125,16 @@ class PurchaseResource extends JsonResource
         }
 
         return null;
+    }
+
+    private function statusDate()
+    {
+        $result = DB::select('CALL sp_bloqueo_diario(?, ?)', [
+            $this->resource->getDate(),
+            3
+        ]);
+
+        $bloqueado = $result[0]->bloqueado;
+        return $bloqueado;
     }
 }

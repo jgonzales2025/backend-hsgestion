@@ -88,10 +88,14 @@ class EloquentPettyCashMotiveRepository implements PettyCashMotiveInterfaceRepos
     public function updateStatus(int $id, int $status): void{
         EloquentPettyCashMotive::where('id', $id)->update(['status' => $status]);
     }
-    public function findByReceiptTypeInfinite(int $receipt_type_id)
+    public function findByReceiptTypeInfinite(int $receipt_type_id, ?string $description)
     {
         return EloquentPettyCashMotive::with(['documentType'])
-            ->where('receipt_type', $receipt_type_id)
+            ->where('receipt_type', $receipt_type_id)          
+            ->where('status', 1)
+            ->when($description, function ($query) use ($description) {
+            $query->where('description', 'like', "%{$description}%");
+        })
             ->orderBy('id', 'asc')
             ->cursorPaginate(10);
     }

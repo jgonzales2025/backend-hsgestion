@@ -233,4 +233,17 @@ class PurchaseController extends Controller
 
         $transactionLogs->execute($transactionDTO);
     }
+    public function updateStatus(int $id, Request $request)
+    {
+        $validatedData = $request->validate([
+            'status' => 'required|in:0,1',
+        ]);
+
+        $status = $validatedData['status'];
+
+
+       $this->purchaseRepository->updateStatus($id, $status);
+
+        return response()->json(['message' => 'Status actualizado'], 200);
+    }
 }

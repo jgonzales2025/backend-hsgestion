@@ -4,7 +4,9 @@ namespace App\Modules\ScVoucher\Infrastructure\Resource;
 
 use App\Modules\DetVoucherPurchase\Infrastructure\Resource\DetVoucherPurchaseResource;
 use App\Modules\ScVoucherdet\Infrastructure\Resource\ScVoucherdetResource;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 class ScVoucherResource extends JsonResource
 {
@@ -49,7 +51,17 @@ class ScVoucherResource extends JsonResource
             'total_dolares' => $this->resource->getTipmon()?->getName() === 'SOLES' ? (float)number_format($this->resource->getTotal() / $this->resource->getTipcam(), 4) : $this->resource->getTotal(),
             'detail_sc_voucher' => ScVoucherdetResource::collection($this->resource->getDetails()),
             'detail_voucher_purchase'=>DetVoucherPurchaseResource::collection($this->resource->getDetailVoucherpurchase()),
+            'estado' => $this->statusDate(),
         ];
     }
+    private function statusDate()
+    {
+        $result = DB::select('CALL sp_bloqueo_diario(?, ?)', [
+            $this->resource->getFecha(),
+            5
+        ]);
 
+        $bloqueado = $result[0]->bloqueado;
+        return $bloqueado;
+    }
 }

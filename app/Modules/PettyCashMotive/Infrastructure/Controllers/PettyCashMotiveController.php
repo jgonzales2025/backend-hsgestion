@@ -47,27 +47,24 @@ class PettyCashMotiveController extends Controller
         ]);
     }
 
-    public function indexByReceiptTypeInfinite(int $id): JsonResponse
-    {
-        $paginator = $this->pettyCashMotiveInterfaceRepository->findByReceiptTypeInfinite($id);
 
-        $data = collect($paginator->items())->map(function ($motive) {
-            return [
+    public function indexByReceiptTypeInfinite(int $id, Request $request): JsonResponse
+    {
+        $paginator = $this->pettyCashMotiveInterfaceRepository->findByReceiptTypeInfinite($id, $request->query('description'));
+
+        return new JsonResponse([
+            'data' => collect($paginator->items())->map(fn ($motive) => [
                 'id' => $motive->id,
                 'name' => $motive->description,
                 'receipt_type_id' => $motive->receipt_type,
                 'receipt_type_name' => $motive->documentType?->description,
-                'status' => ($motive->status) == 1 ? 'Activo' : 'Inactivo',
-            ];
-        })->all();
-
-        return new JsonResponse([
-            'data' => $data,
+                'status' => $motive->status == 1 ? 'Activo' : 'Inactivo',
+            ]),
             'next_cursor' => $paginator->nextCursor()?->encode(),
             'prev_cursor' => $paginator->previousCursor()?->encode(),
             'next_page_url' => $paginator->nextPageUrl(),
             'prev_page_url' => $paginator->previousPageUrl(),
-            'per_page' => $paginator->perPage()
+            'per_page' => $paginator->perPage(),
         ]);
     }
 
@@ -111,7 +108,7 @@ class PettyCashMotiveController extends Controller
 
     public function updateStatus(Request $request, int $id): JsonResponse
     {
-        $status = $request->input('status') !== null ? (int) $request->query('status') : null;
+        $status = $request->input('status');
         $updateStatusCashMotiveUseCase = new UpdateStatusCashMotiveUseCase($this->pettyCashMotiveInterfaceRepository);
         $updateStatusCashMotiveUseCase->execute($id, $status);
 

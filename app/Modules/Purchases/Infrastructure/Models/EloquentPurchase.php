@@ -50,6 +50,7 @@ class EloquentPurchase extends Model
         'nc_document_id',
         'nc_reference_serie',
         'nc_reference_correlative',
+        'status',
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -120,6 +121,7 @@ class EloquentPurchase extends Model
             nc_document_id: $this->nc_document_id,
             nc_reference_serie: $this->nc_reference_serie,
             nc_reference_correlative: $this->nc_reference_correlative,
+            status: $this->status,
         );
     }
 }

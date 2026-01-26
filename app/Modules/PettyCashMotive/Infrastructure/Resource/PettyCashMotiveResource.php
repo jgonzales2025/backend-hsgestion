@@ -2,8 +2,7 @@
 
 namespace App\Modules\PettyCashMotive\Infrastructure\Resource;
 
-use App\Modules\DocumentType\Infrastructure\Models\EloquentDocumentType;
-use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\JsonResource; 
 
 class PettyCashMotiveResource extends JsonResource
 {

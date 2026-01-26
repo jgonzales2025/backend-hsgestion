@@ -21,7 +21,7 @@ readonly class CreateCustomerPortfolioUseCase
     public function execute(CustomerPortfolioDTO $customerPortfolioDTO): array
     {
         $userUseCase = new GetUserByIdUseCase($this->userRepository);
-        $user = $userUseCase->execute($customerPortfolioDTO->user_id);
+        $user = $userUseCase->execute($customerPortfolioDTO->user_sale_id);
 
         $customerPortfolios = [];
 

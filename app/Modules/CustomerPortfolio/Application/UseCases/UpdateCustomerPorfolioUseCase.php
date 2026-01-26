@@ -9,8 +9,8 @@ readonly class UpdateCustomerPorfolioUseCase
 {
     public function __construct(private readonly CustomerPortfolioRepositoryInterface $customerPortfolioRepository){}
 
-    public function execute($id, UpdateCustomerPortfolioDTO $customerPortfolioDTO): void
+    public function execute($id, int $userId): void
     {
-        $this->customerPortfolioRepository->updateCustomerPortfolio($id, $customerPortfolioDTO->userId);
+        $this->customerPortfolioRepository->updateCustomerPortfolio($id, $userId);
     }
 }

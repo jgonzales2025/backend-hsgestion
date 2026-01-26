@@ -54,6 +54,7 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
                 destination_branch: $item->destination_branch->toDomain($item->destination_branch),
                 observations: $item->observations,
                 status: $item->status,
+                stage: $item->stage,
                 transfer_date: $item->transfer_date,
                 arrival_date: $item->arrival_date,
             );
@@ -172,6 +173,7 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
             destination_branch: $transferOrder->destination_branch->toDomain($transferOrder->destination_branch),
             observations: $transferOrder->observations,
             status: $transferOrder->status,
+            stage: $transferOrder->stage,
             transfer_date: $transferOrder->transfer_date,
             arrival_date: $transferOrder->arrival_date,
         );
@@ -193,8 +195,16 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
     {
         $transferOrder = EloquentDispatchNote::find($transferOrderId);
         $transferOrder->update([
-            'status' => 1,
+            'stage' => 1,
             'arrival_date' => now()->toDateString(),
+        ]);
+    }
+
+    public function toInvalidate(int $transferOrderId): void
+    {
+        $transferOrder = EloquentDispatchNote::find($transferOrderId);
+        $transferOrder->update([
+            'stage' => 2
         ]);
     }
 }

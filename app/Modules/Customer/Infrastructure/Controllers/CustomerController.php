@@ -356,7 +356,7 @@ class CustomerController extends Controller
             }
 
             $userId = request()->get('user_id');
-            $customerPortfolioDTO = new CustomerPortfolioDTO(['customer_ids' => [$customer->getId()], 'user_id' => $userId]);
+            $customerPortfolioDTO = new CustomerPortfolioDTO(['customer_ids' => [$customer->getId()], 'user_sale_id' => $userId]);
             $customerPortfolioUseCase = new CreateCustomerPortfolioUseCase($this->customerPortfolioRepository, $this->customerRepository, $this->userRepository);
             $customerPorfolio = $customerPortfolioUseCase->execute($customerPortfolioDTO);
 

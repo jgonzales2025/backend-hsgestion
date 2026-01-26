@@ -120,6 +120,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 'nc_document_id' => $purchase->getNcDocumentId(),
                 'nc_reference_serie' => $purchase->getNcReferenceSerie(),
                 'nc_reference_correlative' => $purchase->getNcReferenceCorrelative(),
+                'status' => $purchase->getStatus(),
             ]);
 
             foreach ($purchase->getDetComprasGuiaIngreso() as $det) {
@@ -149,7 +150,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                     ]);
                 }
             }
-       
+
             foreach ($purchase->getShoppingIncomeGuide() as $shopping_Income_Guide) {
                 EloquentShoppingIncomeGuide::create([
                     'purchase_id'   => $eloquentpurchase->id,
@@ -199,6 +200,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 'nc_document_id' => $purchase->getNcDocumentId(),
                 'nc_reference_serie' => $purchase->getNcReferenceSerie(),
                 'nc_reference_correlative' => $purchase->getNcReferenceCorrelative(),
+                'status' => $purchase->getStatus(),
                 'saldo' => $purchase->getTotal(),
             ]);
 
@@ -316,5 +318,9 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         ]);
 
         return $datos;
+    }
+    public function updateStatus(int $purchase, int $status):void
+    {
+        EloquentPurchase::where('id', $purchase)->update(['status' => $status]);
     }
 }

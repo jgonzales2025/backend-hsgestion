@@ -29,6 +29,7 @@ class EloquentPaymentConceptRepository implements PaymentConceptRepositoryInterf
         return EloquentPaymentConcept::when($description, fn($query) => $query->where('description', 'like', '%' . $description . '%'))
             ->when($status !== null, fn($query) => $query->where('status', $status))
             ->orderBy('id', 'desc')
+            ->where('status', 1)
             ->cursorPaginate(10);
     }
 

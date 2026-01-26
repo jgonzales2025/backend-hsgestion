@@ -42,6 +42,7 @@ class Purchase
     private ?int $nc_document_id;
     private ?string $nc_reference_serie;
     private ?string $nc_reference_correlative;
+    private bool $status;
 
     public function __construct(
         ?int $id,
@@ -75,7 +76,8 @@ class Purchase
         array $shopping_Income_Guide = [],
         ?int $nc_document_id,
         ?string $nc_reference_serie,
-        ?string $nc_reference_correlative 
+        ?string $nc_reference_correlative,
+        bool $status
     ) {
         $this->id = $id;
         $this->branch = $branch;
@@ -109,6 +111,7 @@ class Purchase
         $this->nc_document_id = $nc_document_id;
         $this->nc_reference_serie = $nc_reference_serie;
         $this->nc_reference_correlative = $nc_reference_correlative;
+        $this->status = $status;
     }
 
     public function getId(): int|null
@@ -238,5 +241,9 @@ class Purchase
     public function getNcReferenceCorrelative(): string|null
     {
         return $this->nc_reference_correlative;
+    }
+    public function getStatus(): bool
+    {
+        return $this->status;
     }
 }

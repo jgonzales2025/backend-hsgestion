@@ -2,10 +2,10 @@
 
 namespace App\Modules\EntryGuides\Infrastructure\Resource;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-
-
+use Illuminate\Support\Facades\DB;
 
 class EntryGuideResource extends JsonResource
 {
@@ -17,7 +17,7 @@ class EntryGuideResource extends JsonResource
             'serie' => $this->resource->getSerie(),
             'correlativo' => $this->resource->getCorrelativo(),
 
-            'date' => $this->resource->getDate(),
+            'date' => Carbon::createFromFormat('d/m/Y', $this->resource->getDate())->format('Y-m-d'),
             'observations' => $this->resource->getObservations(),
 
             'reference_serie' => $this->resource->getReferenceSerie(),
@@ -56,6 +56,22 @@ class EntryGuideResource extends JsonResource
             'nc_document_id' => $this->resource?->getNcDocumentId(),
             'nc_reference_serie' => $this->resource?->getNcReferenceSerie(),
             'nc_reference_correlative' => $this->resource?->getNcReferenceCorrelative(),
+            'estado' => $this->statusDate(),
         ];
+    }
+
+    private function statusDate()
+    {
+        $fecha = Carbon::createFromFormat(
+            'd/m/Y',
+            $this->resource->getDate()
+        )->format('Y-m-d');
+
+        $result = DB::select(
+            'CALL sp_bloqueo_diario(?, ?)',
+            [$fecha, 1]
+        );
+
+        return $result[0]->bloqueado;
     }
 }

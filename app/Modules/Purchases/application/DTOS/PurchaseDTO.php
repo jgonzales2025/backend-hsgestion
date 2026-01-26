@@ -37,6 +37,7 @@ class PurchaseDTO
     public ?int $nc_document_id;
     public ?string $nc_reference_serie;
     public ?string $nc_reference_correlative;
+    public bool $status;
 
     public function __construct(array $array)
     {
@@ -79,5 +80,6 @@ class PurchaseDTO
         $this->nc_document_id = $array['nc_document_id'] ?? null;
         $this->nc_reference_serie = $array['nc_reference_serie'] ?? null;
         $this->nc_reference_correlative = $array['nc_reference_correlative'] ?? null;
+        $this->status = $array['status'] ?? true;
     }
 }

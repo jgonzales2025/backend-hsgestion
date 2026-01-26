@@ -94,6 +94,7 @@ class UpdatePurchaseUseCase
             nc_document_id: $purchaseDTO->nc_document_id,
             nc_reference_serie: $purchaseDTO->nc_reference_serie,
             nc_reference_correlative: $purchaseDTO->nc_reference_correlative,
+            status: $purchaseDTO->status,
         );
         return $this->purchaseRepository->update($puchaseCreate);
     }

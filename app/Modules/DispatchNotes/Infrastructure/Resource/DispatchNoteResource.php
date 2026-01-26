@@ -6,6 +6,7 @@ use App\Modules\Customer\Infrastructure\Models\EloquentCustomer;
 use App\Modules\CustomerAddress\Infrastructure\Models\EloquentCustomerAddress;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 class DispatchNoteResource extends JsonResource
 {
@@ -106,7 +107,19 @@ class DispatchNoteResource extends JsonResource
                 'name' => $this->resource->getAddressSupplier()?->getName(),
             ],
             'created_at' => $this->resource->getCreatedFecha(),
-            'estado_sunat' => $this->resource->getEstadoSunat()
+            'estado_sunat' => $this->resource->getEstadoSunat(),
+            'estado' => $this->statusDate(),
         ];
+    }
+
+    private function statusDate()
+    {
+        $result = DB::select('CALL sp_bloqueo_diario(?, ?)', [
+            $this->resource->getCreatedFecha(),
+            5
+        ]);
+
+        $bloqueado = $result[0]->bloqueado;
+        return $bloqueado;
     }
 }

@@ -150,6 +150,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('transfer-orders', [TransferOrderController::class, 'index']);
     Route::get('transfer-orders/{id}', [TransferOrderController::class, 'show']);
     Route::put('transfer-orders/{id}', [TransferOrderController::class, 'update']);
+    Route::put('transfer-orders-anular/{id}', [TransferOrderController::class, 'toInvalidateTransferOrder']);
 
     // Ruta para traer los logs transaccionales
     Route::get('/logs-transaction', [TransactionLogController::class, 'index']);

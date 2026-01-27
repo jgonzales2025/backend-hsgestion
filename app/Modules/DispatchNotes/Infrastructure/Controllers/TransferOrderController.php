@@ -12,6 +12,7 @@ use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterf
 use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
 use App\Modules\DispatchArticleSerial\Application\DTOs\DispatchArticleSerialDTO;
 use App\Modules\DispatchArticleSerial\Application\UseCases\CreateDispatchArticleSerialUseCase;
+use App\Modules\DispatchArticleSerial\Application\UseCases\FindSerialsByTransferOrderIdUseCase;
 use App\Modules\DispatchArticleSerial\Application\UseCases\UpdateStatusSerialEntryUseCase;
 use App\Modules\DispatchArticleSerial\Domain\Interfaces\DispatchArticleSerialRepositoryInterface;
 use App\Modules\DispatchNotes\Application\DTOs\TransferOrderDTO;
@@ -321,6 +322,12 @@ class TransferOrderController extends Controller
         if ($transferOrder->getStage() == 1) {
             return response()->json(['message' => 'No se puede anular una orden de salida que ya ha sido recibida.'], 400);
         }
+
+        $serialsUseCase = new FindSerialsByTransferOrderIdUseCase($this->dispatchArticleSerialRepository);
+        $serialsByArticle = $serialsUseCase->execute($id);
+        $serials = array_merge(...array_values($serialsByArticle));
+
+        $this->dispatchArticleSerialRepository->deleteByTransferOrderId($id, $serials, $transferOrder->getBranch()->getId());
 
         $toInvalidateUseCase = new ToInvalidateTransferOrderUseCase($this->transferOrderRepository);
         $toInvalidateUseCase->execute($id);

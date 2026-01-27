@@ -425,7 +425,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'due_date' => $sale->getDueDate(),
             'days' => $sale->getDays(),
             'user_id' => $sale->getUser()->getId(),
-            'user_sale_id' => $sale->getUserSale()->getId(),
+            'user_sale_id' => $sale->getUserSale()?->getId(),
             'payment_type_id' => $sale->getPaymentType()->getId(),
             'observations' => $sale->getObservations(),
             'currency_type_id' => $sale->getCurrencyType()->getId(),

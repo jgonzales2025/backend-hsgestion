@@ -153,7 +153,6 @@ class StoreSaleRequest extends FormRequest
             'days.integer' => 'Los días deben ser un número entero.',
             'user_id.required' => 'El usuario es obligatorio.',
             'user_id.exists' => 'El usuario seleccionado no existe.',
-            'user_sale_id.exists' => 'El usuario vendedor seleccionado no existe.',
             'payment_type_id.required' => 'El tipo de pago es obligatorio.',
             'payment_type_id.exists' => 'El tipo de pago seleccionado no existe.',
             'currency_type_id.required' => 'La moneda es obligatoria.',

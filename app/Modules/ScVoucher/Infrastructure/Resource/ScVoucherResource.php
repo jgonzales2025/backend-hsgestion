@@ -4,7 +4,6 @@ namespace App\Modules\ScVoucher\Infrastructure\Resource;
 
 use App\Modules\DetVoucherPurchase\Infrastructure\Resource\DetVoucherPurchaseResource;
 use App\Modules\ScVoucherdet\Infrastructure\Resource\ScVoucherdetResource;
-use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
 

@@ -3,8 +3,7 @@
 namespace App\Modules\ScVoucherdet\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\ScVoucher\Application\UseCases\FindByIdScVoucherUseCase;
-use App\Modules\ScVoucher\Infrastructure\Request\UpdateScVoucherRequest;
+use App\Modules\PaymentConcept\Domain\Interfaces\PaymentConceptRepositoryInterface;
 use App\Modules\ScVoucherdet\application\DTOS\ScVoucherdetDTO;
 use App\Modules\ScVoucherdet\application\UseCases\CreateScVoucherdetUseCase;
 use App\Modules\ScVoucherdet\application\UseCases\FindAllScVoucherdetUseCase;
@@ -20,6 +19,7 @@ class ScVoucherdetController extends Controller
 {
     public function __construct(
         private ScVoucherdetRepositoryInterface $scVoucherdetRepository,
+        private PaymentConceptRepositoryInterface $paymentConceptRepository,
     ) {}
 
     public function index(): JsonResponse
@@ -44,7 +44,7 @@ class ScVoucherdetController extends Controller
     public function store(StoreScVoucherdetRequest $request): JsonResponse
     {
         $scVoucherdetdto = new ScVoucherdetDTO($request->validated());
-        $scVoucherdet = new CreateScVoucherdetUseCase($this->scVoucherdetRepository);
+        $scVoucherdet = new CreateScVoucherdetUseCase($this->scVoucherdetRepository, $this->paymentConceptRepository);
         $scVoucherdeta = $scVoucherdet->execute($scVoucherdetdto);
 
         return response()->json(

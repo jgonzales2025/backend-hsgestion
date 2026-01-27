@@ -362,32 +362,52 @@ class StatisticsController
 
         ]);
     }
-    public function rankingAnualCliente(Request $request){
-        $request->validate([
-            'company_id' => 'required|integer',
+    public function rankingAnualCliente(Request $request)
+    {
+        $request->validate([ 
             'branch_id' => 'nullable|integer',
             'customer_id' => 'required|integer',
             'annio' => 'required|integer',
             'currency_type_id' => 'required|integer',
             'document_type_id' => 'required|integer'
         ]);
+        $request['company_id'] = request()->get('company_id');
 
         $data = $this->statisticsRepository->rankingAnualCliente(
-            $request->input('company_id'),
-            $request->input('branch_id'),
-            $request->input('customer_id'),
-            $request->input('annio'),
-            $request->input('currency_type_id'),
-            $request->input('document_type_id')
+            $request->company_id,
+            $request->branch_id,
+            $request->customer_id,
+            $request->annio,
+            $request->currency_type_id,
+            $request->document_type_id
         );
-       $data['company_id'] = $request->input('company_id');
-        $data = $this->paginateStoredProcedure($data, 10);
+
+        $page = $request->get('page', 1);
+        $perPage = $request->get('per_page', 10);
+
+        $items = collect($data);
+        $paginated = new LengthAwarePaginator(
+            $items->forPage($page, $perPage)->values(),
+            $items->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url()]
+        );
 
         return response()->json([
-            'data' => $data
+            'data' => $paginated->items(),
+            'current_page' => $paginated->currentPage(),
+            'per_page' => $paginated->perPage(),
+            'total' => $paginated->total(),
+            'last_page' => $paginated->lastPage(),
+            'next_page_url' => $paginated->nextPageUrl(),
+            'prev_page_url' => $paginated->previousPageUrl(),
+            'first_page_url' => $paginated->url(1),
+            'last_page_url' => $paginated->url($paginated->lastPage()),
         ]);
     }
-    public function rankingAnualClientePaginatedExcel(Request $request){
+    public function rankingAnualClientePaginatedExcel(Request $request)
+    {
         $request->validate([
             'company_id' => 'required|integer',
             'branch_id' => 'nullable|integer',
@@ -410,7 +430,93 @@ class StatisticsController
         $fileName = 'ranking_anual_cliente_' . now()->format('YmdHis') . '.xlsx';
 
         return Excel::download(
-            new ListaPreciosHeaderExport($data,  $request->input('company_id')),
+            new ListaPreciosHeaderExport($data,  $request->input('company_id'), 'RANKING DE CLIENTES ANUAL'),
+            $fileName
+        );
+    }
+    public function consultasVentas(Request $request)
+    {
+        $request->validate([
+            "p_branch_id" => 'nullable|integer',
+            "p_document_type_id" => 'nullable|integer',
+            "p_serie" => 'nullable|string',
+            "p_correlativo" => 'nullable|string',
+            "p_fecha1" => 'nullable|string',
+            "p_fecha2" => 'nullable|string',
+            "p_customer_id" => 'nullable|integer',
+            "p_vendedor_id" => 'nullable|integer',
+            "p_status_id" => 'nullable|integer'
+        ]);
+        $request['p_compania_id'] = request()->get('company_id');
+        $data = $this->statisticsRepository->consultas_ventas(
+            $request->p_compania_id,
+            $request->p_branch_id ?? 0,
+            $request->p_document_type_id ?? 0,
+            $request->p_serie ?? '',
+            $request->p_correlativo ?? '',
+            $request->p_fecha1,
+            $request->p_fecha2,
+            $request->p_customer_id ?? 0,
+            $request->p_vendedor_id ?? 0,
+            $request->p_status_id ?? 0
+        );
+
+        $page = $request->get('page', 1);
+        $perPage = $request->get('per_page', 10);
+
+        $items = collect($data);
+        $paginated = new LengthAwarePaginator(
+            $items->forPage($page, $perPage)->values(),
+            $items->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url()]
+        );
+
+        return response()->json([
+            'data' => $paginated->items(),
+            'current_page' => $paginated->currentPage(),
+            'per_page' => $paginated->perPage(),
+            'total' => $paginated->total(),
+            'last_page' => $paginated->lastPage(),
+            'next_page_url' => $paginated->nextPageUrl(),
+            'prev_page_url' => $paginated->previousPageUrl(),
+            'first_page_url' => $paginated->url(1),
+            'last_page_url' => $paginated->url($paginated->lastPage()),
+        ]);
+    }
+    public function consultasVentasPaginatedExcel(Request $request)
+    {
+        $request->validate([
+            'company_id' => 'required|integer',
+            'branch_id' => 'nullable|integer',
+            'document_type_id' => 'nullable|integer',
+            'serie' => 'nullable|string',
+            'correlativo' => 'nullable|string',
+            'fecha1' => 'nullable|string',
+            'fecha2' => 'nullable|string',
+            'customer_id' => 'nullable|integer',
+            'vendedor_id' => 'nullable|integer',
+            'status_id' => 'nullable|integer'
+        ]);
+        $request['company_id'] = request()->get('company_id');
+        $data = $this->statisticsRepository->consultas_ventas(
+            $request->input('company_id'),
+            $request->input('branch_id'),
+            $request->input('document_type_id'),
+            $request->input('serie'),
+            $request->input('correlativo'),
+            $request->input('fecha1'),
+            $request->input('fecha2'),
+            $request->input('customer_id'),
+            $request->input('vendedor_id'),
+            $request->input('status_id')
+        );
+
+        $fileName = 'consultas_ventas_' . now()->format('YmdHis') . '.xlsx';
+
+        return Excel::download(
+            new ListaPreciosHeaderExport($data,  $request->input('company_id'), 'CONSULTAS DE VENTAS'),
             $fileName
         );
     }

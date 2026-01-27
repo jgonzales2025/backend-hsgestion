@@ -20,7 +20,8 @@ class ListaPreciosHeaderExport implements FromCollection, WithHeadings, WithMapp
 
     public function __construct(
         private array $data,
-        private string $companyName
+        private string $companyName,
+        private ?string $name = null
     ) {
         $this->columns = $this->buildColumns($data);
     }
@@ -75,7 +76,7 @@ class ListaPreciosHeaderExport implements FromCollection, WithHeadings, WithMapp
 
         return [
             [$this->companyName],
-            ['REPORTE DE LISTA DE PRECIOS'],
+            [ $this->name ?? 'REPORTE DE LISTA DE PRECIOS'],
             [$date],
             [''], // Espacio
             $this->columns // Cabecera de la tabla

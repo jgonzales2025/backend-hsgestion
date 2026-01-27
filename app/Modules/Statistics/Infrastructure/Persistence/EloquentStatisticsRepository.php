@@ -319,4 +319,21 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
 
         return $resultado;
     }
+    public function rankingAnualCliente(int $p_company_id, ?int $p_branch_id, int $p_customer_id, int $p_annio, int $p_currency_type_id, int $p_document_type_id){
+         $resultado = DB::select(
+            'CALL sp_ranking_anual_cliente(?,?,?,?,?,?)',
+            [$p_company_id, $p_branch_id, $p_customer_id, $p_annio, $p_currency_type_id, $p_document_type_id]
+        );
+
+        return $resultado;
+    }
+    public function consultas_ventas(int $p_compania_id, ?int $p_branch_id, ?int $p_document_type_id, ?string $p_serie, ?string $p_correlativo, ?string $p_fecha1, ?string $p_fecha2, ?int $p_customer_id, ?int $p_vendedor_id, ?int $p_status_id){
+	  
+        $resultado = DB::select(
+            'CALL sp_consultas_ventas(?,?,?,?,?,?,?,?,?,?)',
+            [$p_compania_id, $p_branch_id, $p_document_type_id, $p_serie, $p_correlativo, $p_fecha1, $p_fecha2, $p_customer_id, $p_vendedor_id, $p_status_id]
+        );
+
+        return $resultado;
+    }
 }

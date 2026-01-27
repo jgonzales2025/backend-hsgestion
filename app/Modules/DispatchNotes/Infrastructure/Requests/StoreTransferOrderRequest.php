@@ -2,6 +2,7 @@
 
 namespace App\Modules\DispatchNotes\Infrastructure\Requests;
 
+use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -34,6 +35,68 @@ class StoreTransferOrderRequest extends FormRequest
             'dispatch_articles.*.serials' => ['nullable','array'],
             'dispatch_articles.*.serials.*' => ['required','distinct'],
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $this->validateSerials($validator);
+        });
+    }
+
+    protected function validateSerials($validator)
+    {
+        $documentTypeId = $this->input('document_type_id');
+        if ((int) $documentTypeId === 16) {
+            return;
+        }
+
+        $dispatchArticles = $this->input('dispatch_articles', []);
+        $allSerials = [];
+
+        foreach ($dispatchArticles as $index => $dispatchArticle) {
+            $article = EloquentArticle::find($dispatchArticle['article_id']);
+            if (!$article) {
+                continue;
+            }
+
+            $serials = $dispatchArticle['serials'] ?? [];
+            $quantity = $dispatchArticle['quantity'];
+
+            // Validar artículos que requieren serie
+            if ($article->series_enabled) {
+                if (empty($serials)) {
+                    $validator->errors()->add(
+                        "dispatch_articles.{$index}.serials",
+                        "El artículo '{$article->description}' requiere series."
+                    );
+                } elseif (count($serials) !== $quantity) {
+                    $validator->errors()->add(
+                        "dispatch_articles.{$index}.serials",
+                        "El artículo '{$article->description}' requiere {$quantity} series, pero se proporcionaron " . count($serials) . "."
+                    );
+                }
+
+                $allSerials = array_merge($allSerials, $serials);
+            } else {
+                // Validar que artículos sin serie no tengan series
+                if (!empty($serials)) {
+                    $validator->errors()->add(
+                        "dispatch_articles.{$index}.serials",
+                        "El artículo '{$article->description}' no maneja series."
+                    );
+                }
+            }
+        }
+
+        // Validar que no haya series duplicadas en toda la venta
+        if (count($allSerials) !== count(array_unique($allSerials))) {
+            $validator->errors()->add(
+                'dispatch_articles',
+                'Hay números de serie duplicados en la venta.'
+            );
+        }
+
     }
 
     public function messages(): array

@@ -351,10 +351,10 @@ class ArticleController extends Controller
       } else {
         $branch = $this->branchRepository->findById($serialBranchId);
         return response()->json([
-          "message" => "El artículo no se encuentra en esta sucursal",
+          "message" => "El artículo se encuentra en la sucursal " . $branch->getName() . ".",
           'branch_id' => $branch->getId(),
           "location" => $branch->getName()
-        ]);
+        ], 404);
       }
     }
 

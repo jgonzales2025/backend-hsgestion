@@ -11,7 +11,7 @@ class TechnicalSupportDTO
     public string $correlative;
     public string $date;
     public string $customer_phone;
-    public string $customer_email;
+    public ?string $customer_email;
     public string $failure_description;
     public ?string $observations;
     public string $diagnosis;
@@ -24,7 +24,7 @@ class TechnicalSupportDTO
         $this->serie = $data['serie'];
         $this->date = $data['date'];
         $this->customer_phone = $data['customer_phone'];
-        $this->customer_email = $data['customer_email'];
+        $this->customer_email = $data['customer_email'] ?? null;
         $this->failure_description = $data['failure_description'];
         $this->observations = $data['observations'] ?? null;
         $this->diagnosis = $data['diagnosis'];

@@ -448,16 +448,16 @@ class AuthController extends Controller
             [
                 'id' => 4,
                 'label' => 'Consignaciones',
-                'link' => config('app.frontend_url') . '/tablas/consignaciones',
+                'link' => config('app.frontend_url') . '/mantenimiento/emitir-consignacion',
                 'icon' => 'FileBox',
-                'permission' => 'tablas.lista_consignaciones'
+                'permission' => 'mantenimiento.emitir_consignacion'
             ],
             [
                 'id' => 5,
                 'label' => 'Traslados',
-                'link' => config('app.frontend_url') . '/tablas/movimiento-traslado',
+                'link' => config('app.frontend_url') . '/mantenimiento/ordenes-salida-traslado',
                 'icon' => 'Truck',
-                'permission' => 'tablas.lista_movimientos_traslado'
+                'permission' => 'mantenimiento.emitir_orden_salida_traslado'
             ],
             [
                 'id' => 6,

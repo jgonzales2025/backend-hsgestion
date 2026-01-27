@@ -292,7 +292,7 @@ class TransferOrderController extends Controller
             'destination_branch_id' => 'required',
             'dispatch_articles' => 'required|array|min:1',
             'dispatch_articles.*.article_id' => 'required|integer',
-            'dispatch_articles.*.serials' => 'required|array|min:1',
+            'dispatch_articles.*.serials' => 'nullable|array|min:1',
             'dispatch_articles.*.serials.*' => 'string|distinct'
         ]);
 
@@ -302,8 +302,10 @@ class TransferOrderController extends Controller
         $updateSerialEntryUseCase = new UpdateStatusSerialEntryUseCase($this->dispatchArticleSerialRepository);
 
         foreach ($validatedData['dispatch_articles'] as $article) {
-            foreach ($article['serials'] as $serial) {
-                $updateSerialEntryUseCase->execute($validatedData['destination_branch_id'], $serial);
+            if (!empty($article['serials'])) {
+                foreach ($article['serials'] as $serial) {
+                    $updateSerialEntryUseCase->execute($validatedData['destination_branch_id'], $serial);
+                }
             }
         }
 
@@ -325,9 +327,11 @@ class TransferOrderController extends Controller
 
         $serialsUseCase = new FindSerialsByTransferOrderIdUseCase($this->dispatchArticleSerialRepository);
         $serialsByArticle = $serialsUseCase->execute($id);
-        $serials = array_merge(...array_values($serialsByArticle));
-
-        $this->dispatchArticleSerialRepository->deleteByTransferOrderId($id, $serials, $transferOrder->getBranch()->getId());
+        
+        if (!empty($serialsByArticle)) {
+            $serials = array_merge(...array_values($serialsByArticle));
+            $this->dispatchArticleSerialRepository->deleteByTransferOrderId($id, $serials, $transferOrder->getBranch()->getId());
+        }
 
         $toInvalidateUseCase = new ToInvalidateTransferOrderUseCase($this->transferOrderRepository);
         $toInvalidateUseCase->execute($id);

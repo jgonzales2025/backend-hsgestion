@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class EloquentPaymentConcept extends Model
 {
     protected $table = 'payment_concepts';
-    protected $fillable = ['description'];
+    protected $fillable = ['description', 'status', 'company_id'];
     protected $hidden = ['created_at', 'updated_at'];
 
     public function toDomain(): PaymentConcept
@@ -16,6 +16,8 @@ class EloquentPaymentConcept extends Model
         return new PaymentConcept(
             id: $this->id,
             description: $this->description,
+            status: (bool) $this->status,
+            company_id: $this->company_id
         );
     }
 }

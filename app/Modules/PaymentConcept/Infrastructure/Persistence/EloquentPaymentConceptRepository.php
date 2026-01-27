@@ -15,22 +15,22 @@ class EloquentPaymentConceptRepository implements PaymentConceptRepositoryInterf
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        $eloquentPaymentConcepts->getCollection()->transform(fn($eloquentPaymentConcept) => new PaymentConcept(
-            id: $eloquentPaymentConcept->id,
-            description: $eloquentPaymentConcept->description,
-            status: $eloquentPaymentConcept->status
-        ));
+        $eloquentPaymentConcepts->getCollection()->transform(fn($eloquentPaymentConcept) => $eloquentPaymentConcept->toDomain());
 
         return $eloquentPaymentConcepts;
     }
 
     public function findAllInfinity(?string $description, ?int $status)
     {
-        return EloquentPaymentConcept::when($description, fn($query) => $query->where('description', 'like', '%' . $description . '%'))
+        $eloquentPaymentConcepts = EloquentPaymentConcept::when($description, fn($query) => $query->where('description', 'like', '%' . $description . '%'))
             ->when($status !== null, fn($query) => $query->where('status', $status))
             ->orderBy('id', 'desc')
             ->where('status', 1)
             ->cursorPaginate(10);
+
+        $eloquentPaymentConcepts->transform(fn($eloquentPaymentConcept) => $eloquentPaymentConcept->toDomain());
+
+        return $eloquentPaymentConcepts;
     }
 
     public function findById(int $id): ?PaymentConcept
@@ -41,11 +41,7 @@ class EloquentPaymentConceptRepository implements PaymentConceptRepositoryInterf
             return null;
         }
 
-        return new PaymentConcept(
-            id: $paymentConcept->id,
-            description: $paymentConcept->description,
-            status: $paymentConcept->status
-        );
+        return $paymentConcept->toDomain();
     }
 
     public function create(array $data): void
@@ -55,7 +51,10 @@ class EloquentPaymentConceptRepository implements PaymentConceptRepositoryInterf
 
     public function update(int $id, array $data): void
     {
-        EloquentPaymentConcept::find($id)->update($data);
+        $paymentConcept = EloquentPaymentConcept::find($id);
+        if ($paymentConcept) {
+            $paymentConcept->update($data);
+        }
     }
 
     public function updateStatus(int $id, int $status): void

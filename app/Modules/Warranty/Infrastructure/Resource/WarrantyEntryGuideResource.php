@@ -26,7 +26,7 @@ class WarrantyEntryGuideResource extends JsonResource
             'serie' => $this->entryGuide->getSerie(),
             'correlative' => $this->entryGuide->getCorrelativo(),
 
-            'date' => Carbon::parse($this->entryGuide->getDate())->format('Y-m-d'),
+            'date' => Carbon::createFromFormat('d/m/Y', $this->entryGuide->getDate())->format('Y-m-d'),
             'reference_purchase_document_id' => $this->entryGuide->getReferenceDocument(),
             'reference_purchase_abbreviation' => $documentTypes->getAbbreviation(),
             'reference_purchase_description' => $documentTypes->getDescription(),

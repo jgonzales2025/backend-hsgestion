@@ -238,7 +238,7 @@ class WarrantyController
         $role = request()->get('role');
         
         if ($role !== 'Gerencia') {
-            if ($warranty->getWarrantyStatus()->getId() == 2) {
+            if ($warranty->getWarrantyStatus()->getId() == 2 || $warranty->getWarrantyStatus()->getId() == 7) {
                 return response()->json(['message' => 'No se puede actualizar el estado cuando ya está devuelto.', 'status' => false]);
             }
         }

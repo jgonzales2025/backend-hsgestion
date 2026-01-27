@@ -16,7 +16,7 @@ class TechnicalSupport
     public string $correlative;
     public string $date;
     public string $customer_phone;
-    public string $customer_email;
+    public ?string $customer_email;
     public string $failure_description;
     public ?string $observations;
     public string $diagnosis;
@@ -32,7 +32,7 @@ class TechnicalSupport
         string $correlative,
         string $date,
         string $customer_phone,
-        string $customer_email,
+        ?string $customer_email,
         string $failure_description,
         ?string $observations,
         string $diagnosis,
@@ -63,7 +63,7 @@ class TechnicalSupport
     public function getCorrelative(): string { return $this->correlative; }
     public function getDate(): string { return $this->date; }
     public function getCustomerPhone(): string { return $this->customer_phone; }
-    public function getCustomerEmail(): string { return $this->customer_email; }
+    public function getCustomerEmail(): ?string { return $this->customer_email; }
     public function getFailureDescription(): string { return $this->failure_description; }
     public function getObservations(): ?string { return $this->observations; }
     public function getDiagnosis(): string { return $this->diagnosis; }

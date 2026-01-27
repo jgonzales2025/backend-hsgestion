@@ -21,7 +21,7 @@ use App\Modules\DispatchNotes\Application\UseCases\CreateTransferOrderUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindAllConsignationUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindAllTransferOrdersUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\FindByIdTransferOrderUseCase;
-use App\Modules\DispatchNotes\application\UseCases\ToInvalidateTransferOrderUseCase;
+use App\Modules\DispatchNotes\Application\UseCases\ToInvalidateTransferOrderUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\UpdateStatusTransferOrderUseCase;
 use App\Modules\DispatchNotes\Application\UseCases\UpdateTransferOrderUseCase;
 use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;

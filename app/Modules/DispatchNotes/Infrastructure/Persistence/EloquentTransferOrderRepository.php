@@ -204,7 +204,8 @@ class EloquentTransferOrderRepository implements TransferOrderRepositoryInterfac
     {
         $transferOrder = EloquentDispatchNote::find($transferOrderId);
         $transferOrder->update([
-            'stage' => 2
+            'stage' => 2,
+            'status' => 0
         ]);
     }
 }

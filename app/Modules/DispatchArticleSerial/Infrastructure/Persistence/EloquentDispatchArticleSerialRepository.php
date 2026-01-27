@@ -77,10 +77,14 @@ class EloquentDispatchArticleSerialRepository implements DispatchArticleSerialRe
         EloquentEntryItemSerial::where('serial', $serial)->update(['status' => 1, 'branch_id' => $branchId]);
     }
 
-    public function deleteByTransferOrderId(int $transferOrderId, array $serials): void
+    public function deleteByTransferOrderId(int $transferOrderId, array $serials, ?int $branchId = null): void
     {
         foreach ($serials as $serial) {
-            EloquentEntryItemSerial::where('serial', $serial)->update(['status' => 1]);
+            $updateData = ['status' => 1];
+            if ($branchId !== null) {
+                $updateData['branch_id'] = $branchId;
+            }
+            EloquentEntryItemSerial::where('serial', $serial)->update($updateData);
         }
         
         EloquentDispatchArticleSerial::where('dispatch_note_id', $transferOrderId)->delete();

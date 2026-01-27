@@ -56,7 +56,7 @@ readonly class CreateSaleUseCase
         $user = $userUseCase->execute($saleDTO->user_id);
 
         $userSaleUseCase = new GetUserByIdUseCase($this->userRepository);
-        $userSale = $userSaleUseCase->execute($saleDTO->user_sale_id);
+        $userSale = $userSaleUseCase->execute($saleDTO->user_sale_id ?? $saleDTO->user_id);
 
         $currencyTypeUseCase = new FindByIdCurrencyTypeUseCase($this->currencyTypeRepository);
         $currencyType = $currencyTypeUseCase->execute($saleDTO->currency_type_id);
@@ -86,7 +86,7 @@ readonly class CreateSaleUseCase
             due_date: $saleDTO->due_date,
             days: $saleDTO->days,
             user: $user,
-            user_sale: $userSale ?? request()->get('user_id'),
+            user_sale: $userSale,
             paymentType: $paymentType,
             observations: $saleDTO->observations,
             currencyType: $currencyType,

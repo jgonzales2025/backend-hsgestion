@@ -302,6 +302,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/statistics/article-id-purchase/{id}/export', [StatisticsController::class, 'exportArticleIdPurchase']);
     Route::post('/statistics/lista-precios/export', [StatisticsController::class, 'getListaPrecios']);
     Route::post('/statistics/lista-precios', [StatisticsController::class, 'listarPrecios']);
+    Route::post('/statistics/ranking-anual-cliente', [StatisticsController::class, 'rankingAnualCliente']);
+    Route::post('/statistics/ranking-anual-excel', [StatisticsController::class, 'rankingAnualClientePaginatedExcel']);
     // Ruta para envío sunat de venta
     Route::post('/sale-sunat-send/{id}', [SaleSunatController::class, 'store']);
     Route::get('/roles', [RoleController::class, 'index']);

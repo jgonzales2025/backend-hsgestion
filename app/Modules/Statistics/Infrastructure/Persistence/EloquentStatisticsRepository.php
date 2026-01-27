@@ -319,4 +319,12 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
 
         return $resultado;
     }
+    public function rankingAnualCliente(int $p_company_id, ?int $p_branch_id, int $p_customer_id, int $p_annio, int $p_currency_type_id, int $p_document_type_id){
+         $resultado = DB::select(
+            'CALL sp_ranking_anual_cliente(?,?,?,?,?,?)',
+            [$p_company_id, $p_branch_id, $p_customer_id, $p_annio, $p_currency_type_id, $p_document_type_id]
+        );
+
+        return $resultado;
+    }
 }

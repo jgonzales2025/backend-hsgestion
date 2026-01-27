@@ -362,4 +362,56 @@ class StatisticsController
 
         ]);
     }
+    public function rankingAnualCliente(Request $request){
+        $request->validate([
+            'company_id' => 'required|integer',
+            'branch_id' => 'nullable|integer',
+            'customer_id' => 'required|integer',
+            'annio' => 'required|integer',
+            'currency_type_id' => 'required|integer',
+            'document_type_id' => 'required|integer'
+        ]);
+
+        $data = $this->statisticsRepository->rankingAnualCliente(
+            $request->input('company_id'),
+            $request->input('branch_id'),
+            $request->input('customer_id'),
+            $request->input('annio'),
+            $request->input('currency_type_id'),
+            $request->input('document_type_id')
+        );
+       $data['company_id'] = $request->input('company_id');
+        $data = $this->paginateStoredProcedure($data, 10);
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+    public function rankingAnualClientePaginatedExcel(Request $request){
+        $request->validate([
+            'company_id' => 'required|integer',
+            'branch_id' => 'nullable|integer',
+            'customer_id' => 'required|integer',
+            'annio' => 'required|integer',
+            'currency_type_id' => 'required|integer',
+            'document_type_id' => 'required|integer'
+        ]);
+
+        $data = $this->statisticsRepository->rankingAnualCliente(
+            $request->input('company_id'),
+            $request->input('branch_id'),
+            $request->input('customer_id'),
+            $request->input('annio'),
+            $request->input('currency_type_id'),
+            $request->input('document_type_id')
+        );
+        $data['companyName'] =  $request->input('company_id');
+
+        $fileName = 'ranking_anual_cliente_' . now()->format('YmdHis') . '.xlsx';
+
+        return Excel::download(
+            new ListaPreciosHeaderExport($data,  $request->input('company_id')),
+            $fileName
+        );
+    }
 }

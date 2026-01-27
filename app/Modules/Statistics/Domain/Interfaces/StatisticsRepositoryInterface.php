@@ -15,4 +15,5 @@ interface StatisticsRepositoryInterface
     public function getArticleIdPurchase(int $company_id, int $article_id, ?int $branch_id, ?string $start_date, ?string $end_date, ?int $category_id, ?int $brand_id);
 
     public function getListaPrecio(int $p_codma, ?int $p_codcategoria, ?int $p_status, ?int $p_moneda, ?int $p_orden);
+    public function rankingAnualCliente(int $p_company_id, ?int $p_branch_id, int $p_customer_id, int $p_annio, int $p_currency_type_id, int $p_document_type_id);
 }

@@ -2,11 +2,13 @@
 
 namespace App\Modules\ScVoucherdet\Domain\Entities;
 
+use App\Modules\PaymentConcept\Domain\Entities\PaymentConcept;
+
 class ScVoucherdet
 {
     private ?int $id;
     private ?int $cia;
-    private int $codcon;
+    private ?PaymentConcept $codcon;
     private int $tipdoc;
     private string $glosa;
     private float $impsol;
@@ -20,7 +22,7 @@ class ScVoucherdet
     public function __construct(
         ?int $id,
         ?int $cia,
-        int $codcon,
+        ?PaymentConcept $codcon,
         int $tipdoc,
         string $glosa,
         float $impsol,
@@ -56,7 +58,7 @@ class ScVoucherdet
         return $this->cia;
     }
 
-    public function getCodcon(): int
+    public function getCodcon(): ?PaymentConcept
     {
         return $this->codcon;
     }

@@ -11,7 +11,11 @@ class ScVoucherdetResource extends JsonResource
         return [
             'id' => $this->resource->getId(),
             'cia' => $this->resource->getCia(),
-            'codcon' => $this->resource->getCodcon(),
+            'codcon' => [
+                'id' => $this->resource->getCodcon()?->getId(),
+                'description' => $this->resource->getCodcon()?->getDescription(),
+                // 'status' => $this->resource->getCodcon()?->getStatus() == 1 ? 'Activo' : 'Inactivo',
+            ],
             'tipdoc' => $this->resource->getTipdoc(),
 
             'glosa' => $this->resource->getGlosa(),
@@ -19,7 +23,7 @@ class ScVoucherdetResource extends JsonResource
             'impdol' => $this->resource->getImpdol(),
             'id_purchase' => $this->resource->getIdPurchase(),
             'id_sc_voucher' => $this->resource->getIdScVoucher(),
-            'numdoc'=>$this->resource->getNumdoc(),
+            // 'numdoc'=>$this->resource->getNumdoc(),
             'correlativo'=>$this->resource->getCorrelativo(),
             'serie'=>$this->resource->getSerie(),
         ];

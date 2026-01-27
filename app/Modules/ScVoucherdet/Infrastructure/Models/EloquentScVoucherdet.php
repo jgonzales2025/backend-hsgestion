@@ -2,7 +2,9 @@
 
 namespace App\Modules\ScVoucherdet\Infrastructure\Models;
 
-use App\Modules\ScVoucher\Domain\Entities\ScVoucher;
+use App\Modules\PaymentConcept\Domain\Entities\PaymentConcept;
+use App\Modules\PaymentConcept\Infrastructure\Model\EloquentPaymentConcept;
+use App\Modules\ScVoucher\Infrastructure\Models\EloquentScVoucher;
 use App\Modules\ScVoucherdet\Domain\Entities\ScVoucherdet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,26 +29,29 @@ class EloquentScVoucherdet extends Model
         'created_at',
         'updated_at',
     ];
-    public function voucher():BelongsTo
+    public function voucher(): BelongsTo
     {
-        return $this->belongsTo(ScVoucher::class, 'id_sc_voucher');
+        return $this->belongsTo(EloquentScVoucher::class, 'id_sc_voucher');
+    }
+    public function paymentConcept(): BelongsTo
+    {
+        return $this->belongsTo(EloquentPaymentConcept::class, 'codcon');
     }
     public function toDomain(): ?ScVoucherdet
     {
-    return new ScVoucherdet(
-        id: $this->id,
-        cia: $this->cia,
-        codcon: $this->codcon,
-        tipdoc: $this->tipdoc,
-        glosa: $this->glosa,
-        impsol: $this->impsol,
-        impdol: $this->impdol,
-        id_purchase: $this->id_purchase,
-        id_sc_voucher: $this->id_sc_voucher,
-        numdoc: $this->numdoc,
-        correlativo: $this->correlativo,
-        serie: $this->serie,
-    );
-
+        return new ScVoucherdet(
+            id: $this->id,
+            cia: $this->cia,
+            codcon: $this->paymentConcept ? $this->paymentConcept->toDomain($this->paymentConcept) : null,
+            tipdoc: $this->tipdoc,
+            glosa: $this->glosa,
+            impsol: $this->impsol,
+            impdol: $this->impdol,
+            id_purchase: $this->id_purchase,
+            id_sc_voucher: $this->id_sc_voucher,
+            numdoc: $this->numdoc,
+            correlativo: $this->correlativo,
+            serie: $this->serie,
+        );
     }
 }

@@ -16,12 +16,14 @@ class PaymentConceptResource extends JsonResource
                 'id' => $this->resource->getId(),
                 'description' => $this->resource->getDescription(),
                 'status' => $this->resource->getStatus() == 1 ? 'Activo' : 'Inactivo',
+                'company_id' => $this->resource->getCompanyId(),
             ];
         } else {
             return [
                 'id' => $this->resource->id,
                 'description' => $this->resource->description,
                 'status' => $this->resource->status == 1 ? 'Activo' : 'Inactivo',
+                'company_id' => $this->resource->company_id,
             ];
         }
     }

@@ -679,7 +679,7 @@ class ControllerEntryGuide extends Controller
                 'article_id' => $article['article_id'],
                 'description' => $article['description'],
                 'cantidad' => $article['quantity'],
-                'precio_costo' => $article['precio_costo'] ?? 0,
+                'precio_costo' => $article['quantity'] > 0 ? $article['total'] / $article['quantity'] : 0,
                 'descuento' => $article['descuento'] ?? 0,
                 'sub_total' => $article['subtotal'] ?? 0,
                 'total' => $article['total'] ?? 0,

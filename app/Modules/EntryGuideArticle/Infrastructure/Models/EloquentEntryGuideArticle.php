@@ -11,7 +11,7 @@ class EloquentEntryGuideArticle extends Model
     protected $table = 'entry_guide_article';
 
     protected $fillable = [
-        'entry_guide_id',
+        'en try_guide_id',
         'article_id',
         'description',
         'quantity',

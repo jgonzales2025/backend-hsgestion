@@ -66,6 +66,7 @@ class EloquentAdvanceRepository implements AdvanceRepositoryInterface
                         ->orWhere('document_number', 'like', "%{$description}%");
                 });
             })
+            ->orderBy('id', 'desc')
             ->paginate(10);
 
         $eloquentAdvance->getCollection()->transform(fn($advance) => new Advance(

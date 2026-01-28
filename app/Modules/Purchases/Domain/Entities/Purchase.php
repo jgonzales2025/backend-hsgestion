@@ -22,9 +22,9 @@ class Purchase
     private string $date;
     private string $date_ven;
     private int $days;
-    private string $observation;
-    private string $detraccion;
-    private string $fech_detraccion;
+    private ?string $observation;
+    private ?string $detraccion;
+    private ?string $fech_detraccion;
     private float $amount_detraccion;
     private bool $is_detracion;
     private float $subtotal;
@@ -34,8 +34,8 @@ class Purchase
     private float $total;
     private bool $is_igv;
     private ?DocumentType $type_document_id;
-    private string $reference_serie;
-    private string $reference_correlative;
+    private ?string $reference_serie;
+    private ?string $reference_correlative;
     private float $saldo;
     private array $det_compras_guia_ingreso;
     private array $shopping_Income_Guide;
@@ -56,9 +56,9 @@ class Purchase
         string $date,
         string $date_ven,
         int $days,
-        string $observation,
-        string $detraccion,
-        string $fech_detraccion,
+        ?string $observation,
+        ?string $detraccion,
+        ?string $fech_detraccion,
         float $amount_detraccion,
         bool $is_detracion,
         float $subtotal,
@@ -68,8 +68,8 @@ class Purchase
         float $total,
         bool $is_igv,
         ?DocumentType $type_document_id,
-        string $reference_serie,
-        string $reference_correlative,
+        ?string $reference_serie,
+        ?string $reference_correlative,
         int $company_id,
         float $saldo = 0,
         array $det_compras_guia_ingreso = [],
@@ -158,15 +158,15 @@ class Purchase
     {
         return $this->days;
     }
-    public function getObservation(): string
+    public function getObservation(): ?string
     {
         return $this->observation;
     }
-    public function getDetraccion(): string
+    public function getDetraccion(): ?string
     {
         return $this->detraccion;
     }
-    public function getFechDetraccion(): string
+    public function getFechDetraccion(): ?string
     {
         return $this->fech_detraccion;
     }
@@ -206,11 +206,11 @@ class Purchase
     {
         return $this->type_document_id;
     }
-    public function getReferenceSerie(): string
+    public function getReferenceSerie(): ?string
     {
         return $this->reference_serie;
     }
-    public function getReferenceCorrelative(): string
+    public function getReferenceCorrelative(): ?string
     {
         return $this->reference_correlative;
     }

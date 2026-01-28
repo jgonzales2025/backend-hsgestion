@@ -10,7 +10,7 @@ class FindAllAdvancesUseCase
     {
     }
 
-    public function execute(?string $customer, int $company_id): ?array
+    public function execute(?string $customer, int $company_id)
     {
         return $this->advanceRepository->findAll($customer, $company_id);
     }

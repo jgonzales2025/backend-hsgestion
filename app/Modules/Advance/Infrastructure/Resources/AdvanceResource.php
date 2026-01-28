@@ -15,15 +15,10 @@ class AdvanceResource extends JsonResource
             'correlative' => $this->resource->getCorrelative(),
             'customer' => [
                 'id' => $this->resource->getCustomer()->getId(),
-                ...($isCompany ? [
-                    'document_number' => $customer->getDocumentNumber(),
-                    'company_name' => $customer->getCompanyName(),
-                ] : [
-                    'document_number' => $customer->getDocumentNumber(),
-                    'name' => $customer->getName(),
-                    'lastname' => $customer->getLastName(),
-                    'second_lastname' => $customer->getSecondLastName(),
-                ])
+                'name' => $this->resource->getCustomer()->getCompanyName() ??
+                    trim($this->resource->getCustomer()->getName() . ' ' .
+                        $this->resource->getCustomer()->getLastname() . ' ' .
+                        $this->resource->getCustomer()->getSecondLastname()),
             ],
             'payment_method' => [
                 'id' => $this->resource->getPaymentMethod()->getId(),
@@ -43,6 +38,7 @@ class AdvanceResource extends JsonResource
             ],
             'amount' => $this->resource->getAmount(),
             'saldo' => $this->resource->getSaldo(),
+            'status' => $this->resource->getStatus() == 1 ? 'Activo':'Anulado',
         ];
     }
 }

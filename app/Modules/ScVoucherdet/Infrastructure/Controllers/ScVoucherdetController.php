@@ -56,7 +56,7 @@ class ScVoucherdetController extends Controller
     public function update(UpdateScVoucherdetRequest $request, int $id): JsonResponse
     {
         $scVoucherdetdto = new ScVoucherdetDTO($request->validated());
-        $scVoucherdet = new UpdateScVoucherdetUseCase($this->scVoucherdetRepository);
+        $scVoucherdet = new UpdateScVoucherdetUseCase($this->scVoucherdetRepository, $this->paymentConceptRepository);
         $scVoucherdeta = $scVoucherdet->execute($scVoucherdetdto, $id);
         return response()->json(
             new ScVoucherdetResource($scVoucherdeta),

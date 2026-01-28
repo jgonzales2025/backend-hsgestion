@@ -26,7 +26,7 @@ class EloquentEntryGuideArticleRepository implements EntryGuideArticleRepository
         ]);
         return new EntryGuideArticle(
             id: $eloquentEntryGuideArticle->id,
-            entry_guide_id: $eloquentEntryGuideArticle->entry_guide_id,
+            entry_guide_id: $entryGuideArticle->getEntryGuideId(),
             article: $entryGuideArticle->getArticle(),
             description: $eloquentEntryGuideArticle->description,
             quantity: $eloquentEntryGuideArticle->quantity,
@@ -47,7 +47,7 @@ class EloquentEntryGuideArticleRepository implements EntryGuideArticleRepository
         return $eloquentEntryGuideArticle->map(function ($entryGuideArticle) {
             return new EntryGuideArticle(
                 id: $entryGuideArticle->id,
-                entry_guide_id: $entryGuideArticle->entry_guide_id,
+                entry_guide_id: (int) $entryGuideArticle->entry_guide_id,
                 article: $entryGuideArticle->article->toDomain($entryGuideArticle->article),
                 description: $entryGuideArticle->description,
                 quantity: $entryGuideArticle->quantity,
@@ -72,7 +72,7 @@ class EloquentEntryGuideArticleRepository implements EntryGuideArticleRepository
 
         return new EntryGuideArticle(
             id: $eloquent->id,
-            entry_guide_id: $eloquent->entry_guide_id,
+            entry_guide_id: (int) $eloquent->entry_guide_id,
             article: $eloquent->article?->toDomain($eloquent->article),
             description: $eloquent->description,
             quantity: $eloquent->quantity,

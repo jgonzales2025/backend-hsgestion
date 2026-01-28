@@ -18,9 +18,9 @@ class PurchaseDTO
     public string $date;
     public string $date_ven;
     public int $days;
-    public string $observation;
+    public ?string $observation;
     public  $detraccion;
-    public string $fech_detraccion;
+    public  ?string $fech_detraccion;
     public  $amount_detraccion;
     public bool $is_detracion;
     public  $subtotal;
@@ -30,8 +30,8 @@ class PurchaseDTO
     public  $total;
     public bool $is_igv;
     public int $type_document_id;
-    public string $reference_serie;
-    public string $reference_correlative;
+    public ?string $reference_serie;
+    public ?string $reference_correlative;
     public array $det_compras_guia_ingreso;
     public array $shopping_Income_Guide;
     public ?int $nc_document_id;
@@ -54,7 +54,7 @@ class PurchaseDTO
         $this->days = $array['days'];
         $this->observation = $array['observation'] ?? '';
         $this->detraccion = $array['detraccion'] ?? '';
-        $this->fech_detraccion = $array['fech_detraccion'];
+        $this->fech_detraccion = $array['fech_detraccion'] ?? null;
         $this->amount_detraccion = $array['amount_detraccion'];
         $this->is_detracion = $array['is_detracion'];
         $this->subtotal = $array['subtotal'];

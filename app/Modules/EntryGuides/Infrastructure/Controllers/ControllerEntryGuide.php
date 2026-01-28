@@ -702,7 +702,7 @@ class ControllerEntryGuide extends Controller
             'days' => 0,
             'observation' => $data['observations'] ?? '',
             'detraccion' => null,
-            'fech_detraccion' => '0000-00-00',
+            'fech_detraccion' => null,
             'amount_detraccion' => 0,
             'is_detracion' => false,
             'subtotal' => $data['subtotal'] ?? 0,

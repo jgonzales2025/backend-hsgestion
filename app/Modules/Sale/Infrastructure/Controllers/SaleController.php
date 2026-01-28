@@ -238,7 +238,11 @@ class SaleController extends Controller
             3
         ]);
 
-        $bloqueado = $result[0]->bloqueado;
+        if ($sale->getDocumentType()->getId() == 16) {
+            $bloqueado = 0;
+        } else {
+            $bloqueado = $result[0]->bloqueado;
+        }
 
         $installmentsUseCase = new FindInstallmentBySaleIdUseCase($this->installmentRepository);
         $installments = $installmentsUseCase->execute($sale->getId());

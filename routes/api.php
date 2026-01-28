@@ -272,6 +272,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/advances', [AdvanceController::class, 'index']);
     Route::get('/advances/{customerId}', [AdvanceController::class, 'showAdvancesByCustomer']);
     Route::post('/advances', [AdvanceController::class, 'store']);
+    Route::get('/advances/detail/{id}', [AdvanceController::class, 'show']);
+    Route::put('/advances/{id}', [AdvanceController::class, 'update']);
+    Route::put('/advances/invalidate/{id}', [AdvanceController::class, 'toInvalidateAdvance']);
 
     // Dashboard
     Route::get('/dashboard/countProductsSoldByCategory', [DashboardController::class, 'countProductsSoldByCategory']);

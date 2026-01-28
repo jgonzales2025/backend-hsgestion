@@ -7,10 +7,9 @@ use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
 use App\Modules\Customer\Domain\Entities\Customer;
 use App\Modules\PaymentMethod\Domain\Entities\PaymentMethod;
 
-class Advance
+class UpdateAdvance
 {
     private int $id;
-    private string $correlative;
     private Customer $customer;
     private PaymentMethod $payment_method;
     private Bank $bank;
@@ -20,11 +19,9 @@ class Advance
     private CurrencyType $currency_type;
     private float $amount;
     private ?float $saldo;
-    private ?int $status;
 
     public function __construct(
         int $id,
-        string $correlative,
         Customer $customer,
         PaymentMethod $payment_method,
         Bank $bank,
@@ -33,11 +30,9 @@ class Advance
         float $parallel_rate,
         CurrencyType $currency_type,
         float $amount,
-        ?float $saldo = null,
-        ?int $status = null
+        ?float $saldo = null
     ) {
         $this->id = $id;
-        $this->correlative = $correlative;
         $this->customer = $customer;
         $this->payment_method = $payment_method;
         $this->bank = $bank;
@@ -47,11 +42,9 @@ class Advance
         $this->currency_type = $currency_type;
         $this->amount = $amount;
         $this->saldo = $saldo;
-        $this->status = $status;
     }
 
     public function getId(): int { return $this->id; }
-    public function getCorrelative(): string { return $this->correlative; }
     public function getCustomer(): Customer { return $this->customer; }
     public function getPaymentMethod(): PaymentMethod { return $this->payment_method; }
     public function getBank(): Bank { return $this->bank; }
@@ -61,5 +54,4 @@ class Advance
     public function getCurrencyType(): CurrencyType { return $this->currency_type; }
     public function getAmount(): float { return $this->amount; }
     public function getSaldo(): ?float { return $this->saldo; }
-    public function getStatus(): ?int { return $this->status; }
 }

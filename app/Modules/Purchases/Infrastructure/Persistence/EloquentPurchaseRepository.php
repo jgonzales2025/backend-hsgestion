@@ -104,7 +104,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 'days' => $purchase->getDays(),
                 'observation' => $purchase->getObservation(),
                 'detraccion' => $purchase->getDetraccion(),
-                'fech_detraccion' => $purchase->getFechDetraccion(),
+                'fech_detraccion' => '0000-00-00',
                 'amount_detraccion' => $purchase->getAmountDetraccion(),
                 'is_detracion' => $purchase->getIsDetracion(),
                 'subtotal' => $purchase->getSubtotal(),

@@ -198,12 +198,21 @@ class PurchaseController extends Controller
             $validated['nrodoc_cli_pro'] ?? 0,
             $validated['tipo_register'] ?? 2
         );
-     
+
         $tipoRegister = $validated['tipo_register'] ?? 2;
         $title = $tipoRegister == 1 ? 'REGISTRO DE VENTA' : 'REGISTRO DE COMPRA';
         $fileName = $tipoRegister == 1 ? 'registro_ventas.xlsx' : 'registro_compras.xlsx';
 
-        return Excel::download(new GenericExport(collect($purchases), $title), $fileName);
+        $company = $this->companyRepository->findById($companyId);
+        $companyName = $company ? $company->getCompanyName() : 'EMPRESA';
+
+        return Excel::download(new GenericExport(
+            collect($purchases),
+            $title,
+            $companyName,
+            $validated['date_start'],
+            $validated['date_end']
+        ), $fileName);
     }
 
     private function logTransaction($request, $purchase, ?string $observations = null): void
@@ -242,7 +251,7 @@ class PurchaseController extends Controller
         $status = $validatedData['status'];
 
 
-       $this->purchaseRepository->updateStatus($id, $status);
+        $this->purchaseRepository->updateStatus($id, $status);
 
         return response()->json(['message' => 'Status actualizado'], 200);
     }

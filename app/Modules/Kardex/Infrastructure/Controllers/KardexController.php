@@ -142,6 +142,9 @@ class KardexController extends Controller
         if ($productId) $title .= ' - Producto ' . $productId;
         if ($fecha && $fecha1) $title .= ' - ' . $fecha . ' a ' . $fecha1;
 
+        $company = $this->companyRepository->findById($companyId ?? 1);
+        $companyName = $company ? $company->getCompanyName() : 'CYBERHOUSE TEC S.A.C.';
+
         $export = new GenerateExcel(
             companyId: $companyId ?? 1,
             branchId: isset($validated['branch_id']) ? (int) $validated['branch_id'] : 0,
@@ -152,6 +155,7 @@ class KardexController extends Controller
             marca: isset($validated['marca']) ? (int) $validated['marca'] : 0,
             consulta: isset($validated['consulta']) ? (int) $validated['consulta'] : 2,
             title: $title,
+            companyName: $companyName,
         );
 
         if ($export->isEmpty()) {

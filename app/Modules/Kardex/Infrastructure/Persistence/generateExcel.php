@@ -13,7 +13,10 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 
-class GenerateExcel implements FromArray, WithHeadings, WithEvents, WithCustomStartCell, ShouldAutoSize
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithStyles;
+
+class GenerateExcel implements FromArray, WithHeadings, WithEvents, ShouldAutoSize, WithStyles
 {
     private array $rows = [];
     private array $keys = [];
@@ -27,7 +30,8 @@ class GenerateExcel implements FromArray, WithHeadings, WithEvents, WithCustomSt
         private readonly ?int $categoria,
         private readonly ?int $marca,
         private readonly ?int $consulta,
-        private readonly string $title = 'Kardex Físico'
+        private readonly string $title = 'Kardex Físico',
+        private readonly string $companyName = ''
     ) {
         $results = DB::select(
             'CALL sp_kardex_fisico(?, ?, ?, ?, ?, ?, ?, ?)',
@@ -56,12 +60,41 @@ class GenerateExcel implements FromArray, WithHeadings, WithEvents, WithCustomSt
         if (empty($this->keys)) {
             return [];
         }
-        return $this->keys;
+
+        $dateRange = 'FECHA EMISIÓN: ' . now()->format('d/m/Y');
+        if ($this->fecha && $this->fecha1) {
+            $dateRange .= '   RANGO: ' . date('d/m/Y', strtotime($this->fecha)) . ' - ' . date('d/m/Y', strtotime($this->fecha1));
+        }
+
+        // Map technical keys to more user-friendly uppercase names
+        $cleanKeys = array_map(function ($key) {
+            $mapped = match (strtolower($key)) {
+                'producto_id_producto' => 'ID PRODUCTO',
+                'desart' => 'DESCRIPCION PRODUCTO',
+                'id_kardex' => 'ID',
+                'fecha_emision' => 'FECHA',
+                default => str_replace('_', ' ', $key)
+            };
+            return mb_strtoupper($mapped);
+        }, $this->keys);
+
+        return [
+            [$this->companyName],
+            [mb_strtoupper($this->title)],
+            [$dateRange],
+            [''], // Espacio
+            $cleanKeys
+        ];
     }
 
-    public function startCell(): string
+    public function styles(Worksheet $sheet)
     {
-        return 'A3';
+        return [
+            1 => ['font' => ['bold' => true, 'size' => 16, 'color' => ['argb' => 'FF4472C4']]], // Compañía (Azul)
+            2 => ['font' => ['bold' => true, 'size' => 14]], // Reporte Nombre
+            3 => ['font' => ['bold' => true, 'size' => 12, 'italic' => true]], // Fecha
+            5 => ['font' => ['bold' => true]],               // Cabecera tabla
+        ];
     }
 
     public function registerEvents(): array
@@ -72,20 +105,52 @@ class GenerateExcel implements FromArray, WithHeadings, WithEvents, WithCustomSt
                 if ($this->isEmpty()) {
                     return;
                 }
-                $lastColumn = $sheet->getHighestDataColumn();
-                $sheet->setCellValue('A1', $this->title);
-                $sheet->mergeCells("A1:{$lastColumn}1");
-                $sheet->getStyle("A1:{$lastColumn}1")->getFont()->setBold(true)->setSize(14);
-                $sheet->getStyle("A1:{$lastColumn}1")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)->setVertical(Alignment::VERTICAL_CENTER);
-                $sheet->getRowDimension(1)->setRowHeight(24);
-                $headerRange = "A3:{$lastColumn}3";
-                $sheet->getStyle($headerRange)->getFont()->setBold(true);
-                $sheet->getStyle($headerRange)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle($headerRange)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setARGB('FFE6E6E6');
-                $dataRange = "A3:{$lastColumn}" . $sheet->getHighestRow();
-                $sheet->getStyle($dataRange)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN)->getColor()->setARGB('FFBFBFBF');
-                $sheet->freezePane('A4');
-                $sheet->setAutoFilter($headerRange);
+                $highestColumn = $sheet->getHighestColumn();
+                $highestRow = $sheet->getHighestRow();
+
+                // Merge para los títulos
+                $sheet->mergeCells("A1:{$highestColumn}1");
+                $sheet->mergeCells("A2:{$highestColumn}2");
+                $sheet->mergeCells("A3:{$highestColumn}3");
+
+                // Alineación izquierda para títulos
+                $sheet->getStyle("A1:A3")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+
+                // Ajustar altura de filas
+                $sheet->getRowDimension(1)->setRowHeight(30);
+                $sheet->getRowDimension(2)->setRowHeight(25);
+                $sheet->getRowDimension(3)->setRowHeight(20);
+                $sheet->getRowDimension(5)->setRowHeight(25);
+
+                // Estilo para la cabecera de la tabla (A5)
+                $headerRange = "A5:{$highestColumn}5";
+                $sheet->getStyle($headerRange)->applyFromArray([
+                    'font' => [
+                        'bold'  => true,
+                        'color' => ['rgb' => 'FFFFFF'],
+                        'size'  => 11,
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical'   => Alignment::VERTICAL_CENTER,
+                    ],
+                    'fill' => [
+                        'fillType'   => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => '4472C4'],
+                    ],
+                ]);
+
+                // Bordes para los datos
+                if ($highestRow >= 6) {
+                    $dataRange = "A5:{$highestColumn}" . $highestRow;
+                    $sheet->getStyle($dataRange)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN)->getColor()->setARGB('FFBFBFBF');
+
+                    // Congelar paneles
+                    $sheet->freezePane('A6');
+
+                    // Autofiltro
+                    $sheet->setAutoFilter($headerRange);
+                }
             },
         ];
     }

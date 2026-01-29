@@ -16,10 +16,16 @@ use Illuminate\Support\Collection;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 
-class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEvents, ShouldAutoSize
+class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEvents, WithStyles, ShouldAutoSize
 {
 
-    public function __construct(private Collection $purchases, private string $title) {}
+    public function __construct(
+        private Collection $purchases,
+        private string $title,
+        private string $companyName = '',
+        private ?string $dateStart = null,
+        private ?string $dateEnd = null
+    ) {}
 
     public function collection(): Collection
     {
@@ -28,20 +34,31 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
 
     public function headings(): array
     {
+        $dateRange = 'FECHA EMISIÓN: ' . now()->format('d/m/Y');
+        if ($this->dateStart && $this->dateEnd) {
+            $dateRange .= '   RANGO: ' . date('d/m/Y', strtotime($this->dateStart)) . ' - ' . date('d/m/Y', strtotime($this->dateEnd));
+        }
+
         return [
-            'T/D',
-            'SERIE',
-            'CORRELATIVO',
-            'FECHA',
-            'RUC/DNI',
-            'RAZON SOCIAL',
-            'T/C',
-            'VALOR S/.',
-            'IGV S/.',
-            'TOTAL S/.',
-            'VALOR USD',
-            'IGV USD',
-            'TOTAL USD',
+            [$this->companyName],
+            [mb_strtoupper($this->title)],
+            [$dateRange],
+            [''], // Espacio
+            [
+                'T/D',
+                'SERIE',
+                'CORRELATIVO',
+                'FECHA',
+                'RUC/DNI',
+                'RAZON SOCIAL',
+                'T/C',
+                'VALOR S/.',
+                'IGV S/.',
+                'TOTAL S/.',
+                'VALOR USD',
+                'IGV USD',
+                'TOTAL USD',
+            ]
         ];
     }
 
@@ -64,40 +81,42 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
         ];
     }
 
+    public function styles(Worksheet $sheet)
+    {
+        return [
+            1 => ['font' => ['bold' => true, 'size' => 16, 'color' => ['argb' => 'FF4472C4']]], // Compañía (Azul)
+            2 => ['font' => ['bold' => true, 'size' => 14]], // Reporte Nombre
+            3 => ['font' => ['bold' => true, 'size' => 12, 'italic' => true]], // Fecha
+            5 => ['font' => ['bold' => true]],               // Cabecera tabla
+        ];
+    }
+
     public function registerEvents(): array
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
                 $highestColumn = $sheet->getHighestColumn();
-
-                //  Insertar fila para el título
-                $sheet->insertNewRowBefore(1, 1);
-                $sheet->mergeCells("A1:{$highestColumn}1");
-                $sheet->setCellValue('A1', mb_strtoupper($this->title));
-
-                //  Estilo del título
-                $sheet->getStyle('A1')->applyFromArray([
-                    'font' => [
-                        'bold' => true,
-                        'size' => 20,
-                    ],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical'   => Alignment::VERTICAL_CENTER,
-                    ],
-                ]); 
-                // Recalcular filas DESPUÉS de insertar
                 $highestRow = $sheet->getHighestRow();
 
-                // Freeze
-                $sheet->freezePane('A3');
+                // Merge para los títulos
+                $sheet->mergeCells("A1:{$highestColumn}1");
+                $sheet->mergeCells("A2:{$highestColumn}2");
+                $sheet->mergeCells("A3:{$highestColumn}3");
 
-                // AutoFilter (encabezados en fila 2)
-                $sheet->setAutoFilter("A2:{$highestColumn}{$highestRow}");
+                // Alineación izquierda para títulos
+                $sheet->getStyle("A1:A3")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
 
-                // Estilo encabezados
-                $headerRange = "A2:{$highestColumn}2";
+                // Congelar paneles desde fila 6
+                $sheet->freezePane('A6');
+
+                // Autofiltro para la tabla principal (fila 5 en adelante)
+                if ($highestRow >= 5) {
+                    $sheet->setAutoFilter("A5:{$highestColumn}{$highestRow}");
+                }
+
+                // Estilo para la cabecera de la tabla (A5)
+                $headerRange = "A5:{$highestColumn}5";
                 $sheet->getStyle($headerRange)->applyFromArray([
                     'font' => [
                         'bold'  => true,
@@ -112,19 +131,22 @@ class GenericExport implements FromCollection, WithHeadings, WithMapping, WithEv
                         'startColor' => ['rgb' => '4472C4'],
                     ],
                 ]);
-                // Formato numérico (2 decimales)
-                $sheet->getStyle("H3:M{$highestRow}")
-                    ->getNumberFormat()
-                    ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
 
-                // Alineaciones
-                $sheet->getStyle("A3:G{$highestRow}")
-                    ->getAlignment()
-                    ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                // Formato numérico (2 decimales) para las columnas de montos (H en adelante)
+                if ($highestRow >= 6) {
+                    $sheet->getStyle("H6:M{$highestRow}")
+                        ->getNumberFormat()
+                        ->setFormatCode(NumberFormat::FORMAT_NUMBER_00);
 
-                $sheet->getStyle("H3:M{$highestRow}")
-                    ->getAlignment()
-                    ->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+                    // Alineaciones
+                    $sheet->getStyle("A6:G{$highestRow}")
+                        ->getAlignment()
+                        ->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                    $sheet->getStyle("H6:M{$highestRow}")
+                        ->getAlignment()
+                        ->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+                }
             },
         ];
     }

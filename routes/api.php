@@ -268,6 +268,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/purchase-excel', [PurchaseController::class, 'exportExcel']);
     Route::post('/purchase-reporte', [PurchaseController::class, 'reporteVentasCompras']);
     Route::put('/purchase-status/{id}', [PurchaseController::class, 'updateStatus']);
+    Route::get('/purchases-detalle', [PurchaseController::class, 'listarComprasDetalle']);
+    Route::post('/purchase-detalle-excel', [PurchaseController::class, 'exportarComprasDetalleExcel']);
+    
     // Advances - Anticipos
     Route::get('/advances', [AdvanceController::class, 'index']);
     Route::get('/advances/{customerId}', [AdvanceController::class, 'showAdvancesByCustomer']);

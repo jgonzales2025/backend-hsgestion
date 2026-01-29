@@ -16,9 +16,11 @@ use App\Modules\Purchases\Application\UseCases\FindAllPurchaseUseCase;
 use App\Modules\Purchases\Application\UseCases\FindByIdPurchaseUseCase;
 use App\Modules\Purchases\Application\UseCases\UpdatePurchaseUseCase;
 use App\Modules\ExchangeRate\Domain\Interfaces\ExchangeRateRepositoryInterface;
+use App\Modules\Purchases\Application\UseCases\FindAllDetallePurchaseUseCase;
 use App\Modules\Purchases\Domain\Interface\PurchaseRepositoryInterface;
 use App\Modules\Purchases\Infrastructure\Request\CreatePurchaseRequest;
 use App\Modules\Purchases\Infrastructure\Request\UpdatePurchaseRequest;
+use App\Modules\Purchases\Infrastructure\Resource\DetailedPurchaseResource;
 use App\Modules\Purchases\Infrastructure\Resource\PurchaseResource;
 use Illuminate\Http\JsonResponse;
 use App\Services\DocumentNumberGeneratorService;
@@ -26,6 +28,7 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Modules\Purchases\Infrastructure\Persistence\PurchasesExport;
 use App\Modules\Purchases\Infrastructure\Persistence\GenericExport;
+use App\Modules\Purchases\Infrastructure\Persistence\DetailedPurchaseExport;
 use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
 use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
 use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
@@ -51,14 +54,16 @@ class PurchaseController extends Controller
 
     public function index(Request $request): JsonResponse
     {
+        $company_id = request()->get('company_id');
         $description = $request->query('description');
-        $num_doc = $request->query('num_doc');
-        $id_proveedr = $request->query('supplier_id');
-        $reference_correlative = $request->query('reference_correlative');
-        $reference_serie = $request->query('reference_serie');
+        $marca = $request->query('marca') ? (int) $request->query('marca') : null;
+        $cod_producto = $request->query('cod_producto') ? (int) $request->query('cod_producto') : null;
+        $sucursal = $request->query('sucursal') ? (int) $request->query('sucursal') : null;
+        $fecha_inicio = $request->query('fecha_inicio');
+        $fecha_fin = $request->query('fecha_fin');
 
-        $findAllPurchaseUseCase = new FindAllPurchaseUseCase($this->purchaseRepository);
-        $purchases = $findAllPurchaseUseCase->execute($description, $num_doc, $id_proveedr, $reference_correlative, $reference_serie);
+        $useCase = new FindAllPurchaseUseCase($this->purchaseRepository);
+        $purchases = $useCase->execute($company_id, $description, $marca, $cod_producto, $sucursal, $fecha_inicio, $fecha_fin);
 
         $result = PurchaseResource::collection($purchases)->resolve();
 
@@ -254,5 +259,56 @@ class PurchaseController extends Controller
         $this->purchaseRepository->updateStatus($id, $status);
 
         return response()->json(['message' => 'Status actualizado'], 200);
+    }
+
+    public function listarComprasDetalle(Request $request): JsonResponse
+    {
+        $company_id = request()->get('company_id');
+        $description = $request->query('categoria');
+        $marca = $request->query('marca') ? (int) $request->query('marca') : null;
+        $cod_producto = $request->query('cod_producto') ? (int) $request->query('cod_producto') : null;
+        $sucursal = $request->query('sucursal') ? (int) $request->query('sucursal') : null;
+        $fecha_inicio = $request->query('fecha_inicio');
+        $fecha_fin = $request->query('fecha_fin');
+
+        $useCase = new FindAllDetallePurchaseUseCase($this->purchaseRepository);
+        $purchases = $useCase->execute($company_id, $description, $marca, $cod_producto, $sucursal, $fecha_inicio, $fecha_fin);
+
+        $result = DetailedPurchaseResource::collection($purchases)->resolve();
+
+        return new JsonResponse([
+            'data' => $result,
+            'current_page' => $purchases->currentPage(),
+            'per_page' => $purchases->perPage(),
+            'total' => $purchases->total(),
+            'last_page' => $purchases->lastPage(),
+            'next_page_url' => $purchases->nextPageUrl(),
+            'prev_page_url' => $purchases->previousPageUrl(),
+            'first_page_url' => $purchases->url(1),
+            'last_page_url' => $purchases->url($purchases->lastPage())
+        ]);
+    }
+    public function exportarComprasDetalleExcel(Request $request)
+    {
+        $company_id = $request->input('company_id');
+        $categoria = $request->input('categoria');
+        $marca = $request->input('marca') ? (int) $request->input('marca') : null;
+        $cod_producto = $request->input('cod_producto') ? (int) $request->input('cod_producto') : null;
+        $sucursal = $request->input('sucursal') ? (int) $request->input('sucursal') : null;
+        $fecha_inicio = $request->input('fecha_inicio');
+        $fecha_fin = $request->input('fecha_fin');
+
+        $company = $this->companyRepository->findById($company_id);
+        $companyName = $company ? $company->getCompanyName() : '';
+
+        $useCase = new FindAllDetallePurchaseUseCase($this->purchaseRepository);
+        $purchases = $useCase->executeExcel($company_id, $categoria, $marca, $cod_producto, $sucursal, $fecha_inicio, $fecha_fin);
+
+        $fileName = 'registro_compras_detallado_' . now()->format('YmdHis') . '.xlsx';
+
+        return Excel::download(
+            new DetailedPurchaseExport($purchases, $companyName, $fecha_inicio, $fecha_fin),
+            $fileName
+        );
     }
 }

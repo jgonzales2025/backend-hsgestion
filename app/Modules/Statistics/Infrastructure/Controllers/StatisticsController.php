@@ -364,7 +364,7 @@ class StatisticsController
     }
     public function rankingAnualCliente(Request $request)
     {
-        $request->validate([ 
+        $request->validate([
             'branch_id' => 'nullable|integer',
             'customer_id' => 'required|integer',
             'annio' => 'required|integer',
@@ -425,12 +425,15 @@ class StatisticsController
             $request->input('currency_type_id'),
             $request->input('document_type_id')
         );
-        $data['companyName'] =  $request->input('company_id');
+        $company = $this->companyRepository->findById($request->input('company_id'));
+        $companyName = $company ? $company->getCompanyName() : '';
+
+        $data['companyName'] =  $companyName;
 
         $fileName = 'ranking_anual_cliente_' . now()->format('YmdHis') . '.xlsx';
 
         return Excel::download(
-            new ListaPreciosHeaderExport($data,  $request->input('company_id'), 'RANKING DE CLIENTES ANUAL'),
+            new ListaPreciosHeaderExport($data,  $companyName, 'RANKING DE CLIENTES ANUAL'),
             $fileName
         );
     }
@@ -513,10 +516,13 @@ class StatisticsController
             $request->p_status_id ?? 0
         );
 
+        $company = $this->companyRepository->findById($request->input('company_id'));
+        $companyName = $company ? $company->getCompanyName() : '';
+
         $fileName = 'consultas_ventas_' . now()->format('YmdHis') . '.xlsx';
 
         return Excel::download(
-            new ListaPreciosHeaderExport($data,  $request->input('company_id'), 'CONSULTAS DE VENTAS'),
+            new ListaPreciosHeaderExport($data,  $companyName, 'CONSULTAS DE VENTAS'),
             $fileName
         );
     }

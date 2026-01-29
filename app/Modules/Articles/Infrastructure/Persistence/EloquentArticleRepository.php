@@ -285,12 +285,16 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                     })
                         // Grupo 2: Búsqueda por Serie (usar cadena completa)
                         ->orWhere(function ($subQ) use ($name, $branchId) {
+                            // Buscar por serie (con o sin sucursal)
+                            $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
+                                $s->where('serial', $name);
+                                if ($branchId) {
+                                    $s->where('branch_id', $branchId);
+                                }
+                            });
+
+                            // Solo validar visibilidad si hay sucursal
                             if ($branchId) {
-                                $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
-                                    $s->where('serial', $name)
-                                        ->where('branch_id', $branchId);
-                                });
-                                // Validar también que sea visible en la sucursal
                                 $subQ->whereHas('visibleArticles', function ($v) use ($branchId) {
                                     $v->where('branch_id', $branchId)
                                         ->where('status', 1);

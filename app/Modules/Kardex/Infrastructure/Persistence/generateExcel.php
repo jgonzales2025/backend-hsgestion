@@ -67,8 +67,8 @@ class GenerateExcel implements FromArray, WithHeadings, WithEvents, ShouldAutoSi
         }
 
         // Map technical keys to more user-friendly uppercase names
-        $cleanKeys = array_map(function ($key) {
-            $mapped = match (strtolower($key)) {
+        $cleanKeys = array_map(function($key) {
+            $mapped = match(strtolower($key)) {
                 'producto_id_producto' => 'ID PRODUCTO',
                 'desart' => 'DESCRIPCION PRODUCTO',
                 'id_kardex' => 'ID',

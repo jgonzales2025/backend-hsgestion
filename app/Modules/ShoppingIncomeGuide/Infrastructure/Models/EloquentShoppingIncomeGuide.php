@@ -2,10 +2,13 @@
 
 namespace App\Modules\ShoppingIncomeGuide\Infrastructure\Models;
 
+use App\Modules\EntryGuides\Infrastructure\Models\EloquentEntryGuide;
 use App\Modules\ShoppingIncomeGuide\Domain\Entities\ShoppingIncomeGuide;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class EloquentShoppingIncomeGuide extends Model{
+class EloquentShoppingIncomeGuide extends Model
+{
     protected $table = 'shopping_income_guide';
 
 
@@ -15,7 +18,12 @@ class EloquentShoppingIncomeGuide extends Model{
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
-   
+
+    public function entryGuide(): BelongsTo
+    {
+        return $this->belongsTo(EloquentEntryGuide::class, 'entry_guide_id');
+    }
+
     public function toDomain(): ?ShoppingIncomeGuide
     {
         return new ShoppingIncomeGuide(

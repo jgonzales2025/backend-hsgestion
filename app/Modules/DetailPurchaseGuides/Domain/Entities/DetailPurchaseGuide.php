@@ -2,6 +2,8 @@
 
 namespace App\Modules\DetailPurchaseGuides\Domain\Entities;
 
+use App\Modules\Articles\Domain\Entities\Article;
+
 class DetailPurchaseGuide
 {
     private ?int $id;
@@ -15,6 +17,7 @@ class DetailPurchaseGuide
     private float $total;
     private float $cantidad_update;
     private string $process_status;
+    private ?Article $article;
 
     public function __construct(
         ?int $id,
@@ -41,6 +44,7 @@ class DetailPurchaseGuide
         $this->total = $total;
         $this->cantidad_update = $cantidad_update;
         $this->process_status = $process_status;
+        $this->article = null;
     }
     public function getId(): int|null
     {
@@ -97,5 +101,15 @@ class DetailPurchaseGuide
     public function setCantidadUpdate(float $cantidad_update): void
     {
         $this->cantidad_update = $cantidad_update;
+    }
+
+    public function getArticle(): ?\App\Modules\Articles\Domain\Entities\Article
+    {
+        return $this->article;
+    }
+
+    public function setArticle(?\App\Modules\Articles\Domain\Entities\Article $article): void
+    {
+        $this->article = $article;
     }
 }

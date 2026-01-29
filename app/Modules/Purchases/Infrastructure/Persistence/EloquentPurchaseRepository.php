@@ -104,7 +104,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 'days' => $purchase->getDays(),
                 'observation' => $purchase->getObservation(),
                 'detraccion' => $purchase->getDetraccion(),
-                'fech_detraccion' =>null,
+                'fech_detraccion' => null,
                 'amount_detraccion' => $purchase->getAmountDetraccion(),
                 'is_detracion' => $purchase->getIsDetracion(),
                 'subtotal' => $purchase->getSubtotal(),
@@ -184,7 +184,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 'days' => $purchase->getDays(),
                 'observation' => $purchase->getObservation(),
                 'detraccion' => $purchase->getDetraccion(),
-                'fech_detraccion' =>null,
+                'fech_detraccion' => null,
                 'amount_detraccion' => $purchase->getAmountDetraccion(),
                 'is_detracion' => $purchase->getIsDetracion(),
                 'subtotal' => $purchase->getSubtotal(),
@@ -319,8 +319,81 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
 
         return $datos;
     }
-    public function updateStatus(int $purchase, int $status):void
+    public function updateStatus(int $purchase, int $status): void
     {
         EloquentPurchase::where('id', $purchase)->update(['status' => $status]);
+    }
+    public function findAllDetalle(int $company_id, ?string $description, ?int $marca, ?int $cod_producto, ?int $sucursal, ?string $fecha_inicio, ?string $fecha_fin)
+    {
+        $query = EloquentDetailPurchaseGuide::with([
+            'purchase.branches',
+            'purchase.customers',
+            'purchase.currencyType',
+            'purchase.documentType',
+            'purchase.shoppingIncomeGuide.entryGuide.ingressReason',
+            'article.brand',
+            'article.category',
+            'article.subCategory'
+        ])
+            ->whereHas('purchase', function ($q) use ($company_id, $sucursal, $fecha_inicio, $fecha_fin) {
+                $q->where('company_id', $company_id)
+                    ->when($sucursal, fn($query) => $query->where('branch_id', $sucursal))
+                    ->when($fecha_inicio, fn($query) => $query->where('date', '>=', $fecha_inicio))
+                    ->when($fecha_fin, fn($query) => $query->where('date', '<=', $fecha_fin));
+            })
+            ->when($description, function ($q) use ($description) {
+                $q->whereHas('article', function ($a) use ($description) {
+                    $a->where('category_id', $description);
+                });
+            })
+            ->when($cod_producto, function ($q) use ($cod_producto) {
+                $q->where('article_id', $cod_producto);
+            })
+            ->when($marca, function ($q) use ($marca) {
+                $q->whereHas('article', function ($a) use ($marca) {
+                    $a->where('brand_id', $marca);
+                });
+            })
+            ->orderByDesc('id')
+            ->paginate(10);
+
+        return $query;
+    }
+
+    public function findAllDetalleExcel(int $company_id, ?string $description, ?int $marca, ?int $cod_producto, ?int $sucursal, ?string $fecha_inicio, ?string $fecha_fin): Collection
+    {
+        $query = EloquentDetailPurchaseGuide::with([
+            'purchase.branches',
+            'purchase.customers',
+            'purchase.currencyType',
+            'purchase.documentType',
+            'purchase.shoppingIncomeGuide.entryGuide.ingressReason',
+            'article.brand',
+            'article.category',
+            'article.subCategory'
+        ])
+            ->whereHas('purchase', function ($q) use ($company_id, $sucursal, $fecha_inicio, $fecha_fin) {
+                $q->where('company_id', $company_id)
+                    ->when($sucursal, fn($query) => $query->where('branch_id', $sucursal))
+                    ->when($fecha_inicio, fn($query) => $query->where('date', '>=', $fecha_inicio))
+                    ->when($fecha_fin, fn($query) => $query->where('date', '<=', $fecha_fin));
+            })
+            ->when($description, function ($q) use ($description) {
+                $q->whereHas('article', function ($a) use ($description) {
+                    $a->where('category_id', $description);
+                });
+            })
+            ->when($cod_producto, function ($q) use ($cod_producto) {
+                $q->where('article_id', $cod_producto);
+            })
+            ->when($marca, function ($q) use ($marca) {
+                $q->whereHas('article', function ($a) use ($marca) {
+                    $a->where('brand_id', $marca);
+                });
+            })
+            ->orderByDesc('id')
+            ->get();
+
+        return $query;
     }
 }

@@ -325,7 +325,6 @@ class ArticleController extends Controller
 
     $articlesUseCase = new FindAllArticlesPriceConvertionUseCase($this->articleRepository);
     $articles = $articlesUseCase->execute($date, $description, $articleId, $branchId, $priceArticleId);
-
     // Check if the result is empty (when paginated, check if items are empty)
     // Solo buscar por serial si hay una descripción y no hay articleId
     if (is_object($articles) && method_exists($articles, 'isEmpty') && $articles->isEmpty() && $articleId === null && $description !== null) {

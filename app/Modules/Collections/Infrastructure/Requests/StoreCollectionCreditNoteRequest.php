@@ -2,6 +2,7 @@
 
 namespace App\Modules\Collections\Infrastructure\Requests;
 
+use App\Modules\Sale\Infrastructure\Models\EloquentSale;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCollectionCreditNoteRequest extends FormRequest
@@ -26,6 +27,30 @@ class StoreCollectionCreditNoteRequest extends FormRequest
             'credit_serie' => 'required|string|max:6',
             'credit_correlative' => 'required|string|max:10',
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $sale = EloquentSale::find($this->sale_id);
+            $creditNote = EloquentSale::where('document_type_id', $this->credit_document_type_id)
+                ->where('serie', $this->credit_serie)
+                ->where('document_number', $this->credit_correlative)
+                ->first();
+            
+            $saldoSale = $sale->saldo;
+            $saldoCreditNote = $creditNote->saldo;
+
+            if ($saldoSale < $saldoCreditNote) {
+                if ($this->amount > $saldoSale) {
+                    $validator->errors()->add('amount', 'El monto no puede ser mayor al saldo de la venta.');
+                }
+            } else {
+                if ($this->amount > $saldoCreditNote) {
+                    $validator->errors()->add('amount', 'El monto no puede ser mayor al saldo de la nota de crédito.');
+                }
+            }
+        });
     }
 
     public function messages(): array

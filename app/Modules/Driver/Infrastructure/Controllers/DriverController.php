@@ -114,13 +114,13 @@ class DriverController extends Controller
         $documentNumberValue = $data['data']['ruc'] ?? $data['data']['document_number'];
 
         $customerDTO = new DriverDTO([
-        'customer_document_type_id' => strlen($documentNumberValue) === 11 ? 2 : 1,
+        'customer_document_type_id' => 3,
         'doc_number' => $documentNumberValue,
         'name' => $data['data']['first_name'] ?? null,
         'pat_surname' => $data['data']['first_last_name'] ?? null,
         'mat_surname' => $data['data']['second_last_name'] ?? null,
         'status'=>1 ,
-        'license' => null,
+        'license' => 'Q' . $documentNumberValue,
         ]);
 
         $customerUseCase = new CreateDriverUseCase($this->driverRepository);

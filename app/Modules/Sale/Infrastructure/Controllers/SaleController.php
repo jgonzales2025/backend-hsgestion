@@ -721,9 +721,38 @@ class SaleController extends Controller
                 ], 404);
             }
 
+            // Obtener los artículos originales de la venta para mantener los precios
+            $originalArticles = $this->saleArticleRepository->findBySaleId($sale->getId());
+            $originalPricesMap = [];
+            
+            foreach ($originalArticles as $originalArticle) {
+                $originalPricesMap[$originalArticle->getArticle()->getId()] = [
+                    'unit_price' => $originalArticle->getUnitPrice(),
+                    'public_price' => $originalArticle->getPublicPrice(),
+                    'purchase_price' => $originalArticle->getPurchasePrice(),
+                ];
+            }
+
+            // Actualizar los artículos del resultado con los precios originales
+            $updatedArticles = array_map(function($article) use ($originalPricesMap) {
+                $articleId = $article['article_id'] ?? $article['id'] ?? null;
+                
+                if ($articleId && isset($originalPricesMap[$articleId])) {
+                    $article['unit_price'] = $originalPricesMap[$articleId]['unit_price'];
+                    $article['public_price'] = $originalPricesMap[$articleId]['public_price'];
+                    $article['purchase_price'] = $originalPricesMap[$articleId]['purchase_price'];
+                    
+                    // Recalcular el subtotal con el precio original y la cantidad actualizada
+                    $quantity = $article['quantity'] ?? $article['available_quantity'] ?? 0;
+                    $article['subtotal'] = $article['unit_price'] * $quantity;
+                }
+                
+                return $article;
+            }, $result['articles']);
+
             $saleData = [
                 'sale' => (new SaleResource($this->saleRepository->findById($result['sale']->id)))->resolve(),
-                'articles' => $result['articles'],
+                'articles' => $updatedArticles,
                 'has_credit_notes' => $result['has_credit_notes'],
             ];
 

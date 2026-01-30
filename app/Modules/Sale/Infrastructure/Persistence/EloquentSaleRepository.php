@@ -204,13 +204,21 @@ class EloquentSaleRepository implements SaleRepositoryInterface
         $returnedQuantities = [];
         if ($hasCreditNotes) {
             foreach ($creditNotes as $creditNote) {
-                foreach ($creditNote->saleArticles as $article) {
-                    $articleId = $article->article_id;
-                    if (!isset($returnedQuantities[$articleId])) {
-                        $returnedQuantities[$articleId] = 0;
+                // Verificar el tipo de nota de crédito según note_reason_id
+                // IDs 1, 3, 9, 10: afectan cantidades
+                // IDs 5, 7, 8, 11, 12, 13: afectan precios/importes, no cantidades
+                $noteReasonId = $creditNote->note_reason_id;
+                
+                // Solo contar cantidades devueltas para notas que afectan cantidades
+                if (in_array($noteReasonId, [1, 3, 9, 10])) {
+                    foreach ($creditNote->saleArticles as $article) {
+                        $articleId = $article->article_id;
+                        if (!isset($returnedQuantities[$articleId])) {
+                            $returnedQuantities[$articleId] = 0;
+                        }
+                        // Sumar la cantidad devuelta de este artículo en esta nota de crédito
+                        $returnedQuantities[$articleId] += $article->quantity;
                     }
-                    // Sumar la cantidad devuelta de este artículo en esta nota de crédito
-                    $returnedQuantities[$articleId] += $article->quantity;
                 }
             }
         }

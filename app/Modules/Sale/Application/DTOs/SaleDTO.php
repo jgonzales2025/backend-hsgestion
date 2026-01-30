@@ -67,8 +67,8 @@ class SaleDTO
         $this->payment_status = $data['payment_status'] ?? null;
         $this->is_locked = $data['is_locked'] ?? null;
         $this->reference_document_type_id = $data['reference_document_type_id'] ?? null;
-        $this->reference_serie = $data['reference_serie'] ?? null;
-        $this->reference_correlative = $data['reference_correlative'] ?? null;
+        $this->reference_serie = isset($data['reference_serie']) ? strtoupper($data['reference_serie']) : null;
+        $this->reference_correlative = isset($data['reference_correlative']) ? str_pad($data['reference_correlative'], 8, '0', STR_PAD_LEFT) : null;
         $this->purchase_order = $data['purchase_order'] ?? null;
         $this->user_authorized_id = $data['user_authorized_id'] ?? null;
         $this->credit_amount = $data['credit_amount'] ?? null;

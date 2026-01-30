@@ -8,20 +8,18 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class DetailedPurchaseResource extends JsonResource
 {
     /**
-     * @param  Request  $request
+     * @param  Request
      * @return array
      */
-    public function toArray($request): array
+    public function toArray(Request $request): array
     {
         $detail = $this->resource;
-
-        // Ensure relationships are loaded or handle nulls
+ 
         $purchase = $detail->purchase;
         $article = $detail->article;
 
         $currencyId = $purchase?->currency ?? 1;
-        $exchangeType = (float) ($purchase?->exchange_type ?? 1);
-        $totalItem = (float) ($detail->total ?? 0);
+        $totalItem = (float) ($detail->total ?? 0); 
 
         $totalSoles = $currencyId == 1 ? number_format($totalItem, 2, '.', '') : '';
         $totalDolares = $currencyId == 2 ? number_format($totalItem, 2, '.', '') : '';

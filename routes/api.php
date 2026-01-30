@@ -53,6 +53,7 @@ use App\Modules\DocumentType\Infrastructure\Controllers\DocumentTypeController;
 use App\Modules\LoginAttempt\Infrastructure\Controllers\LoginAttemptController;
 use App\Modules\Sale\Infrastructure\Controllers\SaleController;
 use App\Modules\Collections\Infrastructure\Controllers\CollectionController;
+use App\Modules\CustomerAddress\Infrastructure\Controller\CustomerAddressController;
 use App\Modules\Dashboard\Infrastructure\Controller\DashboardController;
 use App\Modules\DetailPcCompatible\Infrastructure\Controllers\DetailPcCompatibleController;
 use App\Modules\Detraction\Infrastructure\Controller\DetractionController;
@@ -105,6 +106,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('customers-save-api', [CustomerController::class, 'storeCustomerBySunatApi']);
     Route::get('customers-company', [CustomerController::class, 'findCustomerCompany']);
     Route::get('customers-no-company', [CustomerController::class, 'findAllCustomersExceptionCompanies']);
+    Route::get('customers-addresses/{id}', [CustomerAddressController::class, 'indexByCustomerId']);
 
     // Series
     Route::get('/serie-number', [SerieController::class, 'findByDocumentType']);

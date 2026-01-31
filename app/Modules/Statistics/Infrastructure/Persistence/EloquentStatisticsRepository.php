@@ -378,25 +378,29 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
             $query->whereBetween('s.date', [$fecha_inicio, $fecha_fin]);
         }
 
-        if ($is_igv) {
-            $query->where('a.igv_applicable', 1);
-        }
-
-        $customerNameExpression = "COALESCE(NULLIF(c.company_name, ''), NULLIF(TRIM(CONCAT_WS(' ', c.name, c.lastname, c.second_lastname)), ''))";
+        $query->leftJoin('note_reasons as nr', 's.note_reason_id', '=', 'nr.id')
+            ->whereNotIn('s.document_type_id', [8, 16]);
 
         return $query->select(
-            's.date as FECHA',
-            DB::raw("CONCAT(s.serie, '-', s.document_number) as DOCUMENTO"),
-            DB::raw("{$customerNameExpression} as CLIENTE"),
             'a.cod_fab as CODIGO',
             'a.description as DESCRIPCION',
-            'sa.quantity as CANTIDAD',
+            DB::raw('SUM(sa.quantity * CASE 
+                WHEN s.document_type_id = 7 AND nr.stock = 1 THEN -1 
+                WHEN s.document_type_id = 7 AND nr.stock = 2 THEN 0 
+                ELSE 1 
+            END) as CANTIDAD'),
             'mu.abbreviation as UDM',
-            DB::raw('CASE WHEN s.currency_type_id = 1 THEN sa.subtotal ELSE 0 END as "S/"'),
-            DB::raw('CASE WHEN s.currency_type_id = 2 THEN sa.subtotal ELSE 0 END as "US$"')
+            DB::raw('SUM(CASE 
+                WHEN s.currency_type_id = 1 THEN sa.subtotal * CASE WHEN s.document_type_id = 7 THEN -1 ELSE 1 END 
+                ELSE 0 
+            END) as "S/"'),
+            DB::raw('SUM(CASE 
+                WHEN s.currency_type_id = 2 THEN sa.subtotal * CASE WHEN s.document_type_id = 7 THEN -1 ELSE 1 END 
+                ELSE 0 
+            END) as "US$"')
         )
             ->join('measurement_units as mu', 'a.measurement_unit_id', '=', 'mu.id')
-            ->orderBy('s.date', 'desc')
+            ->groupBy('s.company_id', 'sa.article_id', 'a.cod_fab', 'a.description', 'mu.abbreviation')
             ->get();
     }
 }

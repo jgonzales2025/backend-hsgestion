@@ -25,7 +25,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         return $purchase?->correlative;
     }
 
-    public function findAll(?string $description, $num_doc, $id_proveedr, ?string $reference_correlative,  ?string $reference_serie)
+    public function findAll(?string $description, $num_doc, $id_proveedr, ?string $reference_correlative, ?string $reference_serie, ?int $status = null)
     {
         $eloquentpurchase = EloquentPurchase::with([
             'paymentType',
@@ -36,6 +36,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'detComprasGuiaIngreso',
             'shoppingIncomeGuide'
         ])
+            ->when($status, fn($query) => $query->where('status', $status))
 
             ->when($description, function ($query) use ($description) {
                 $query->where(function ($q) use ($description) {
@@ -244,7 +245,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         return  $this->findWithRelations($eloquentpurchase->id);
     }
 
-    public function findAllExcel(?string $description, $num_doc, $id_proveedr): Collection
+    public function findAllExcel(?string $description, $num_doc, $id_proveedr, ?int $status = null): Collection
     {
         $companyId = request()->get('company_id');
 
@@ -256,6 +257,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'documentType'
         ])
             ->where('company_id', $companyId)
+            ->when($status, fn($query) => $query->where('status', $status))
             ->when($description, function ($query) use ($description) {
                 $query->where(function ($q) use ($description) {
                     $q->whereHas('customers', function ($c) use ($description) {
@@ -323,7 +325,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
     {
         EloquentPurchase::where('id', $purchase)->update(['status' => $status]);
     }
-    public function findAllDetalle(int $company_id, ?string $description, ?int $marca, ?int $cod_producto, ?int $sucursal, ?string $fecha_inicio, ?string $fecha_fin)
+    public function findAllDetalle(int $company_id, ?string $description, ?int $marca, ?int $cod_producto, ?int $sucursal, ?string $fecha_inicio, ?string $fecha_fin, ?int $status = null)
     {
         $query = EloquentDetailPurchaseGuide::with([
             'purchase.branches',
@@ -335,11 +337,12 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'article.category',
             'article.subCategory'
         ])
-            ->whereHas('purchase', function ($q) use ($company_id, $sucursal, $fecha_inicio, $fecha_fin) {
+            ->whereHas('purchase', function ($q) use ($company_id, $sucursal, $fecha_inicio, $fecha_fin, $status) {
                 $q->where('company_id', $company_id)
                     ->when($sucursal, fn($query) => $query->where('branch_id', $sucursal))
                     ->when($fecha_inicio, fn($query) => $query->where('date', '>=', $fecha_inicio))
-                    ->when($fecha_fin, fn($query) => $query->where('date', '<=', $fecha_fin));
+                    ->when($fecha_fin, fn($query) => $query->where('date', '<=', $fecha_fin))
+                    ->when($status, fn($query) => $query->where('status', $status));
             })
             ->when($description, function ($q) use ($description) {
                 $q->whereHas('article', function ($a) use ($description) {
@@ -360,7 +363,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         return $query;
     }
 
-    public function findAllDetalleExcel(int $company_id, ?string $description, ?int $marca, ?int $cod_producto, ?int $sucursal, ?string $fecha_inicio, ?string $fecha_fin): Collection
+    public function findAllDetalleExcel(int $company_id, ?string $description, ?int $marca, ?int $cod_producto, ?int $sucursal, ?string $fecha_inicio, ?string $fecha_fin, ?int $status = null): Collection
     {
         $query = EloquentDetailPurchaseGuide::with([
             'purchase.branches',
@@ -372,11 +375,12 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
             'article.category',
             'article.subCategory'
         ])
-            ->whereHas('purchase', function ($q) use ($company_id, $sucursal, $fecha_inicio, $fecha_fin) {
+            ->whereHas('purchase', function ($q) use ($company_id, $sucursal, $fecha_inicio, $fecha_fin, $status) {
                 $q->where('company_id', $company_id)
                     ->when($sucursal, fn($query) => $query->where('branch_id', $sucursal))
                     ->when($fecha_inicio, fn($query) => $query->where('date', '>=', $fecha_inicio))
-                    ->when($fecha_fin, fn($query) => $query->where('date', '<=', $fecha_fin));
+                    ->when($fecha_fin, fn($query) => $query->where('date', '<=', $fecha_fin))
+                    ->when($status, fn($query) => $query->where('status', $status));
             })
             ->when($description, function ($q) use ($description) {
                 $q->whereHas('article', function ($a) use ($description) {

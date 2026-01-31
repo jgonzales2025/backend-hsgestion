@@ -382,16 +382,21 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
             $query->where('a.igv_applicable', 1);
         }
 
+        $customerNameExpression = "COALESCE(NULLIF(c.company_name, ''), NULLIF(TRIM(CONCAT_WS(' ', c.name, c.lastname, c.second_lastname)), ''))";
+
         return $query->select(
+            's.date as FECHA',
+            DB::raw("CONCAT(s.serie, '-', s.document_number) as DOCUMENTO"),
+            DB::raw("{$customerNameExpression} as CLIENTE"),
             'a.cod_fab as CODIGO',
             'a.description as DESCRIPCION',
-            DB::raw('SUM(sa.quantity) as CANTIDAD'),
+            'sa.quantity as CANTIDAD',
             'mu.abbreviation as UDM',
-            DB::raw('SUM(CASE WHEN s.currency_type_id = 1 THEN sa.subtotal ELSE 0 END) as "S/"'),
-            DB::raw('SUM(CASE WHEN s.currency_type_id = 2 THEN sa.subtotal ELSE 0 END) as "US$"')
+            DB::raw('CASE WHEN s.currency_type_id = 1 THEN sa.subtotal ELSE 0 END as "S/"'),
+            DB::raw('CASE WHEN s.currency_type_id = 2 THEN sa.subtotal ELSE 0 END as "US$"')
         )
             ->join('measurement_units as mu', 'a.measurement_unit_id', '=', 'mu.id')
-            ->groupBy('a.id', 'a.cod_fab', 'a.description', 'mu.abbreviation')
+            ->orderBy('s.date', 'desc')
             ->get();
     }
 }

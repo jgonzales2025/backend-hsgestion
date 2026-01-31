@@ -104,7 +104,10 @@ class DispatchNoteResource extends JsonResource
             'address_supplier' => [
                 'id' => $this->resource->getAddressSupplier()?->getId(),
                 'status' => $this->resource->getAddressSupplier()?->getStatus() == 1 ? 'Activo' : 'Inactivo',
-                'name' => $this->resource->getAddressSupplier()?->getName(),
+                'name' => (function () {
+                    $addresses = $this->resource->getAddressSupplier()?->getAddresses();
+                    return !empty($addresses) ? $addresses[0]->getAddress() : '';
+                })(),
             ],
             'created_at' => $this->resource->getCreatedFecha(),
             'estado_sunat' => $this->resource->getEstadoSunat(),

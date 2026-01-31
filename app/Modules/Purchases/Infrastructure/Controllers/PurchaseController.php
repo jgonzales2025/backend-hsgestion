@@ -63,7 +63,7 @@ class PurchaseController extends Controller
         $fecha_fin = $request->query('fecha_fin');
 
         $useCase = new FindAllPurchaseUseCase($this->purchaseRepository);
-        $purchases = $useCase->execute($company_id, $description, $marca, $cod_producto, $sucursal, $fecha_inicio, $fecha_fin);
+        $purchases = $useCase->execute($company_id, $description, $marca, $cod_producto, $sucursal, $fecha_inicio, $fecha_fin, 1);
 
         $result = PurchaseResource::collection($purchases)->resolve();
 
@@ -177,7 +177,7 @@ class PurchaseController extends Controller
         $num_doc = $request->query('num_doc');
         $id_proveedr = $request->query('supplier_id');
 
-        $purchases = $this->purchaseRepository->findAllExcel($description, $num_doc, $id_proveedr);
+        $purchases = $this->purchaseRepository->findAllExcel($description, $num_doc, $id_proveedr, 1);
 
         return Excel::download(new PurchasesExport($purchases), 'compras.xlsx');
     }
@@ -272,7 +272,7 @@ class PurchaseController extends Controller
         $fecha_fin = $request->query('fecha_fin');
 
         $useCase = new FindAllDetallePurchaseUseCase($this->purchaseRepository);
-        $purchases = $useCase->execute($company_id, $description, $marca, $cod_producto, $sucursal, $fecha_inicio, $fecha_fin);
+        $purchases = $useCase->execute($company_id, $description, $marca, $cod_producto, $sucursal, $fecha_inicio, $fecha_fin, 1);
 
         $result = DetailedPurchaseResource::collection($purchases)->resolve();
 
@@ -302,7 +302,7 @@ class PurchaseController extends Controller
         $companyName = $company ? $company->getCompanyName() : '';
 
         $useCase = new FindAllDetallePurchaseUseCase($this->purchaseRepository);
-        $purchases = $useCase->executeExcel($company_id, $categoria, $marca, $cod_producto, $sucursal, $fecha_inicio, $fecha_fin);
+        $purchases = $useCase->executeExcel($company_id, $categoria, $marca, $cod_producto, $sucursal, $fecha_inicio, $fecha_fin, 1);
 
         $fileName = 'registro_compras_detallado_' . now()->format('YmdHis') . '.xlsx';
 

@@ -2,17 +2,14 @@
 
 namespace App\Modules\Sale\Infrastructure\Persistence;
 
-use App\Modules\Advance\Infrastructure\Models\EloquentAdvance;
 use App\Modules\DispatchNotes\Infrastructure\Models\EloquentDispatchNote;
 use App\Modules\Sale\Domain\Entities\Sale;
 use App\Modules\Sale\Domain\Entities\SaleCreditNote;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
-use App\Modules\SaleItemSerial\Application\UseCases\FindSerialBySaleAndArticleUseCase;
 use App\Modules\SaleItemSerial\Infrastructure\Models\EloquentSaleItemSerial;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class EloquentSaleRepository implements SaleRepositoryInterface
 {
@@ -421,7 +418,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
 
     private function mapToArray(Sale $sale): array
     {
-        return [
+        $data = [
             'company_id' => $sale->getCompany()->getId(),
             'branch_id' => $sale->getBranch()->getId(),
             'document_type_id' => $sale->getDocumentType()->getId(),
@@ -455,8 +452,14 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             'porretencion' => $sale->getPorretencion(),
             'impretens' => $sale->getImpretens(),
             'impretend' => $sale->getImpretend(),
-            'consignation_id' => $sale->getConsignationId()
+            'consignation_id' => $sale->getConsignationId(),
         ];
+
+        if ($sale->getIgvPercentage() !== null) {
+            $data['igv_percentage'] = $sale->getIgvPercentage();
+        }
+
+        return $data;
     }
 
     private function mapToArrayUpdateCreditNote(SaleCreditNote $saleCreditNote): array
@@ -582,6 +585,7 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason),
             sunat_status: $eloquentSale->estado_sunat,
             fecha_aceptacion: $eloquentSale->fecha_aceptacion,
+            igv_percentage: $eloquentSale->igv_percentage
         );
     }
 
@@ -627,7 +631,8 @@ class EloquentSaleRepository implements SaleRepositoryInterface
             impretens: $eloquentSale->impretens,
             impretend: $eloquentSale->impretend,
             consignation_id: $eloquentSale->consignation_id,
-            note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason)
+            note_reason: $eloquentSale->noteReason?->toDomain($eloquentSale->noteReason),
+            igv_percentage: $eloquentSale->igv_percentage
         );
     }
 

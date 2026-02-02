@@ -162,6 +162,7 @@ class SaleController extends Controller
             }
 
             $saleDTO = new SaleDTO($request->validated());
+            \Log::info($saleDTO->igv_percentage);
             $saleUseCase = new CreateSaleUseCase($this->saleRepository, $this->companyRepository, $this->branchRepository, $this->userRepository, $this->currencyTypeRepository, $this->documentTypeRepository, $this->customerRepository, $this->paymentTypeRepository, $this->documentNumberGeneratorService, $this->paymentMethodRepository);
             $sale = $saleUseCase->execute($saleDTO);
 

@@ -67,7 +67,8 @@ class EloquentSale extends Model
         'respuesta_sunat',
         'consignation_id',
         'fecha_baja_sunat',
-        'hora_baja_sunat'
+        'hora_baja_sunat',
+        'igv_percentage'
     ];
 
     protected $hidden = ['created_at', 'updated_at'];
@@ -187,6 +188,7 @@ class EloquentSale extends Model
             fecha_aceptacion: $sale->fecha_aceptacion,
             consignation_id: $sale->consignation_id,
             purchase_order: $sale->purchase_order,
+            igv_percentage: $sale->igv_percentage
         );
     }
 

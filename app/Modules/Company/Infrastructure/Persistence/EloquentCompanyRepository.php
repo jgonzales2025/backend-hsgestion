@@ -5,8 +5,6 @@ use App\Modules\Company\Domain\Entities\Company;
 use App\Modules\Company\Domain\Entities\UpdateCompany;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Company\Infrastructure\Model\EloquentCompany;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 
 
 
@@ -39,8 +37,6 @@ class EloquentCompanyRepository implements CompanyRepositoryInterface
         if (!$company) {
             return null;
         }
-
-        //  Log::info('companys', $company->toArray());
         return new Company(
             id:$company->id,
             ruc:$company->ruc,

@@ -8,7 +8,6 @@ use App\Modules\DispatchArticle\Application\UseCase\FindByIdDispatchArticle;
 use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
 use App\Modules\DispatchArticle\Infrastructure\Resource\DispatchArticleResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 
 class DispatchArticleController extends Controller
 {

@@ -348,12 +348,16 @@ class ArticleController extends Controller
       } else if ($statusVisibleArticle == 0) {
         return response()->json(['message' => 'El artículo no se encuentra habilitado en esta sucursal.'], 404);
       } else {
-        $branch = $this->branchRepository->findById($serialBranchId);
-        return response()->json([
-          "message" => "El artículo se encuentra en la sucursal " . $branch->getName() . ".",
-          'branch_id' => $branch->getId(),
-          "location" => $branch->getName()
-        ], 404);
+          if ($entrySerial->getStatus() == 1){
+            $branch = $this->branchRepository->findById($serialBranchId);
+            return response()->json([
+            "message" => "El artículo se encuentra en la sucursal " . $branch->getName() . ".",
+            'branch_id' => $branch->getId(),
+            "location" => $branch->getName()
+            ], 404);
+        } else {
+            return response()->json(['message' => 'Esta serie no se encuentra disponible.'], 404);
+        }
       }
     }
 

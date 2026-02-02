@@ -57,6 +57,7 @@ class Sale
     private ?NoteReason $note_reason;
     private ?string $sunat_status;
     private ?string $fecha_aceptacion;
+    public ?float $igv_percentage;
 
     public function __construct(
         int $id,
@@ -101,7 +102,8 @@ class Sale
         ?float $total_costo_neto = null,
         ?NoteReason $note_reason = null,
         ?string $sunat_status = null,
-        ?string $fecha_aceptacion = null
+        ?string $fecha_aceptacion = null,
+        ?float $igv_percentage = null
     ) {
         $this->id = $id;
         $this->company = $company;
@@ -146,6 +148,7 @@ class Sale
         $this->note_reason = $note_reason;
         $this->sunat_status = $sunat_status;
         $this->fecha_aceptacion = $fecha_aceptacion;
+        $this->igv_percentage = $igv_percentage;
     }
 
     public function getId(): int
@@ -319,5 +322,9 @@ class Sale
     public function getFechaAceptacion(): ?string
     {
         return $this->fecha_aceptacion;
+    }
+    public function getIgvPercentage(): ?float
+    {
+        return $this->igv_percentage;
     }
 }

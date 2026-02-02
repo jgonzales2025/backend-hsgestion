@@ -52,7 +52,6 @@ use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\ApiSunatService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use App\Modules\Customer\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\CustomerDocumentType\Domain\Interfaces\CustomerDocumentTypeRepositoryInterface;
 use Illuminate\Support\Facades\DB;

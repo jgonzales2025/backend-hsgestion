@@ -5,7 +5,6 @@ namespace App\Modules\Serie\Infrastructure\Persistence;
 use App\Modules\Serie\Domain\Entities\Serie;
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Serie\Infrastructure\Models\EloquentSerie;
-use Illuminate\Support\Facades\Log;
 
 class EloquentSerieRepository implements SerieRepositoryInterface
 {

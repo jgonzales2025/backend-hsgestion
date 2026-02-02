@@ -41,6 +41,7 @@ class UpdateScVoucherRequest extends FormRequest
             'usradi' => 'required|integer',
             'fecadi' => 'nullable|date',
             'usrmod' => 'nullable|integer',
+            'path_image' => 'nullable|image|max:2048',
 
 
             'detail_sc_voucher' => 'required|array',

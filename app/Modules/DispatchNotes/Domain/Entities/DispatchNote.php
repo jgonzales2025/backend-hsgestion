@@ -71,7 +71,6 @@ class DispatchNote
         ?string $created_at,
         ?string $estado_sunat = null
 
-
     ) {
         $this->id = $id;
         $this->company = $company;

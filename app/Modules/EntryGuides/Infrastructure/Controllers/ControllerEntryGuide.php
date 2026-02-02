@@ -228,6 +228,7 @@ class ControllerEntryGuide extends Controller
                 $this->ingressReasonRepositoryInterface,
                 $this->documentNumberGeneratorService,
                 $this->currencyTypeRepositoryInterface,
+                $this->paymentTypeRepositoryInterface
             );
             $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
@@ -301,6 +302,7 @@ class ControllerEntryGuide extends Controller
                 $this->customerRepositoryInterface,
                 $this->ingressReasonRepositoryInterface,
                 $this->currencyTypeRepositoryInterface,
+                $this->paymentTypeRepositoryInterface
             );
 
             $entryGuide = $entryGuideUseCase->execute($entryGuideDTO, $id);

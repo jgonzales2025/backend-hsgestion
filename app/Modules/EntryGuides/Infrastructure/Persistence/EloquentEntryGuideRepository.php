@@ -15,7 +15,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 
     public function findAll(?string $description, ?int $status, ?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id): LengthAwarePaginator
     {
-        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency', 'entryGuideArticles'])
+        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency', 'entryGuideArticles', 'payment_type'])
             ->when(
                 $description,
                 fn($query) => $query->whereHas(
@@ -86,6 +86,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 includ_igv: $entryGuide->includ_igv,
                 reference_document_id: $entryGuide->reference_document_id,
                 saldo: (float) ($entryGuide->entryGuideArticles->sum('saldo')),
+                payment_type: $entryGuide->payment_type?->toDomain($entryGuide->payment_type),
+                days: $entryGuide->days,
+                date_ven: $entryGuide->date_ven,
             );
         });
 
@@ -99,7 +102,8 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'customer',
             'ingressReason',
             'documentEntryGuides',
-            'entryGuideArticles'
+            'entryGuideArticles',
+            'payment_type'
         ])->get()
             ->map(function ($entryGuide) {
                 return new EntryGuide(
@@ -127,6 +131,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                     nc_document_id: $entryGuide->nc_document_id,
                     nc_reference_serie: $entryGuide->nc_reference_serie,
                     nc_reference_correlative: $entryGuide->nc_reference_correlative,
+                    payment_type: $entryGuide->payment_type?->toDomain($entryGuide->payment_type),
+                    days: $entryGuide->days,
+                    date_ven: $entryGuide->date_ven,
                 );
             });
     }
@@ -134,7 +141,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
     public function findByCorrelative(?string $correlativo): ?EntryGuide
     {
 
-        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'entryGuideArticles']);
+        $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'entryGuideArticles', 'payment_type']);
         $query->where('correlative', $correlativo);
         $entryGuide = $query->first();
         if (!$entryGuide) {
@@ -158,18 +165,21 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             total: $entryGuide->total,
             update_price: (bool) $entryGuide->update_price,
             entry_igv: $entryGuide->entry_igv,
-            currency: $entryGuide->currency_id,
+            currency: $entryGuide->currency?->toDomain($entryGuide->currency),
             includ_igv: $entryGuide->includ_igv,
             reference_document_id: $entryGuide->reference_document_id,
             saldo: (float) ($entryGuide->entryGuideArticles->sum('saldo')),
             nc_document_id: $entryGuide->nc_document_id,
             nc_reference_serie: $entryGuide->nc_reference_serie,
             nc_reference_correlative: $entryGuide->nc_reference_correlative,
+            payment_type: $entryGuide->payment_type?->toDomain($entryGuide->payment_type),
+            days: $entryGuide->days,
+            date_ven: $entryGuide->date_ven,
         );
     }
     public function findBySerieAndCorrelative(string $serie, string $correlative): ?EntryGuide
     {
-        $entryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'currency', 'entryGuideArticles'])
+        $entryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'currency', 'entryGuideArticles', 'payment_type'])
             ->where('reference_serie', $serie)
             ->where('reference_correlative', $correlative)
             ->first();
@@ -203,6 +213,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             nc_document_id: $entryGuide->nc_document_id,
             nc_reference_serie: $entryGuide->nc_reference_serie,
             nc_reference_correlative: $entryGuide->nc_reference_correlative,
+            payment_type: $entryGuide->payment_type?->toDomain($entryGuide->payment_type),
+            days: $entryGuide->days,
+            date_ven: $entryGuide->date_ven,
         );
     }
     public function save(EntryGuide $entryGuide): ?EntryGuide
@@ -255,6 +268,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 'nc_document_id' => $entryGuide->getNcDocumentId(),
                 'nc_reference_serie' => $entryGuide->getNcReferenceSerie(),
                 'nc_reference_correlative' => $entryGuide->getNcReferenceCorrelative(),
+                'payment_type_id' => $entryGuide->getPaymentType()?->getId(),
+                'days' => $entryGuide->getDays(),
+                'date_ven' => $entryGuide->getDateVen(),
             ]);
 
             DB::statement('CALL sp_update_price_article_by_entry_guide(?,?)', [
@@ -287,12 +303,15 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 nc_document_id: $eloquentEntryGuide->nc_document_id,
                 nc_reference_serie: $eloquentEntryGuide->nc_reference_serie,
                 nc_reference_correlative: $eloquentEntryGuide->nc_reference_correlative,
+                payment_type: $eloquentEntryGuide->payment_type?->toDomain($eloquentEntryGuide->payment_type),
+                days: $eloquentEntryGuide->days,
+                date_ven: $eloquentEntryGuide->date_ven,
             );
         });
     }
     public function findById(int $id): ?EntryGuide
     {
-        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency', 'entryGuideArticles'])->find($id);
+        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency', 'entryGuideArticles', 'payment_type'])->find($id);
 
         if (!$eloquentEntryGuide) {
             return null;
@@ -321,11 +340,14 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             nc_document_id: $eloquentEntryGuide->nc_document_id,
             nc_reference_serie: $eloquentEntryGuide->nc_reference_serie,
             nc_reference_correlative: $eloquentEntryGuide->nc_reference_correlative,
+            payment_type: $eloquentEntryGuide->payment_type?->toDomain($eloquentEntryGuide->payment_type),
+            days: $eloquentEntryGuide->days,
+            date_ven: $eloquentEntryGuide->date_ven,
         );
     }
     public function update(EntryGuide $entryGuide): EntryGuide|null
     {
-        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'entryGuideArticles'])->find($entryGuide->getId());
+        $eloquentEntryGuide = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'entryGuideArticles', 'payment_type'])->find($entryGuide->getId());
 
         if (!$eloquentEntryGuide) {
             return null;
@@ -376,6 +398,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             'nc_document_id' => $entryGuide->getNcDocumentId(),
             'nc_reference_serie' => $entryGuide->getNcReferenceSerie(),
             'nc_reference_correlative' => $entryGuide->getNcReferenceCorrelative(),
+            'payment_type_id' => $entryGuide->getPaymentType()?->getId(),
+            'days' => $entryGuide->getDays(),
+            'date_ven' => $entryGuide->getDateVen(),
         ]);
 
 
@@ -408,6 +433,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             nc_document_id: $eloquentEntryGuide->nc_document_id,
             nc_reference_serie: $eloquentEntryGuide->nc_reference_serie,
             nc_reference_correlative: $eloquentEntryGuide->nc_reference_correlative,
+            payment_type: $eloquentEntryGuide->payment_type?->toDomain($eloquentEntryGuide->payment_type),
+            days: $eloquentEntryGuide->days,
+            date_ven: $eloquentEntryGuide->date_ven,
         );
     }
 
@@ -426,7 +454,7 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
             return [];
         }
 
-        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency', 'entryGuideArticles'])
+        $eloquentAll = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency', 'entryGuideArticles', 'payment_type'])
             ->whereIn('id', $ids)
             ->orderByDesc('id')
             ->get();
@@ -461,6 +489,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 nc_document_id: $entryGuide->nc_document_id,
                 nc_reference_serie: $entryGuide->nc_reference_serie,
                 nc_reference_correlative: $entryGuide->nc_reference_correlative,
+                payment_type: $entryGuide->payment_type?->toDomain($entryGuide->payment_type),
+                days: $entryGuide->days,
+                date_ven: $entryGuide->date_ven,
             );
         })->toArray();
     }

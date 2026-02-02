@@ -44,6 +44,9 @@ return new class extends Migration
             $table->foreignId('nc_document_id')->constrained('nc_documents');
             $table->string('nc_reference_serie', 20)->nullable();
             $table->string('nc_reference_correlative', 20)->nullable();
+            $table->foreignId('payment_type_id')->constrained('payment_types')->nullable();
+            $table->integer('days')->nullable();
+            $table->date('date_ven')->nullable();
         });
     }
 

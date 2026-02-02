@@ -40,6 +40,7 @@ use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\EmissionReason\Domain\Interfaces\EmissionReasonRepositoryInterface;
 use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Driver\Domain\Interfaces\DriverRepositoryInterface;
+use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
 use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
 use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
@@ -69,7 +70,6 @@ class DispatchNotesController extends Controller
         private readonly DispatchArticleRepositoryInterface $dispatchArticleRepositoryInterface,
         private readonly GenerateDispatchNotePdfUseCase $generatePdfUseCase,
         private readonly CustomerRepositoryInterface $customerRepositoryInterface,
-        private readonly CustomerAddressRepositoryInterface $customerAddressRepositoryInterface,
         private readonly TransactionLogRepositoryInterface $transactionLogRepositoryInterface,
         private readonly UserRepositoryInterface $userRepository,
         private readonly DocumentTypeRepositoryInterface $documentTypeRepository,
@@ -131,7 +131,6 @@ class DispatchNotesController extends Controller
                 $this->dispatchNoteRepository,
                 $this->companyRepositoryInterface,
                 $this->branchRepository,
-                $this->serieRepositoryInterface,
                 $this->emissionReasonRepositoryInterface,
                 $this->transportCompany,
                 $this->documentTypeRepositoryInterface,
@@ -232,12 +231,11 @@ class DispatchNotesController extends Controller
                 $this->dispatchNoteRepository,
                 $this->companyRepositoryInterface,
                 $this->branchRepository,
-                $this->serieRepositoryInterface,
                 $this->emissionReasonRepositoryInterface,
                 $this->transportCompany,
                 $this->documentTypeRepositoryInterface,
                 $this->driverRepositoryInterface,
-                $this->customerRepositoryInterface,
+                $this->customerRepositoryInterface
             );
             $dispatchNotes = $dispatchNoteUseCase->execute($dispatchNotesDTO, $dispatchNote);
 

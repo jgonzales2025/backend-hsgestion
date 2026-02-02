@@ -395,13 +395,24 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
                 ELSE 1 
             END) as CANTIDAD'),
             'mu.abbreviation as UDM',
-            DB::raw('SUM(sa.subtotal / ' . ($is_igv ? 1 : '(1 + s.igv_percentage)') . ' 
+            DB::raw('SUM(
+            CASE  
+               WHEN s.currency_type_id = 1 THEN
+            sa.subtotal / ' . ($is_igv ? 1 : '(1 + s.igv_percentage)') . '
             * CASE WHEN s.document_type_id = 7 THEN -1 ELSE 1 END
+            ELSE 0
+            END
             ) as "S/"'),
-            DB::raw('SUM(CASE 
-                WHEN s.currency_type_id = 2 THEN sa.subtotal * CASE WHEN s.document_type_id = 7 THEN -1 ELSE 1 END 
-                ELSE 0 
-            END) as "US$"')
+
+            DB::raw('SUM(
+            CASE 
+            WHEN s.currency_type_id = 2 THEN
+            sa.subtotal / ' . ($is_igv ? 1 : '(1 + s.igv_percentage)') . '
+            * CASE WHEN s.document_type_id = 7 THEN -1 ELSE 1 END
+            ELSE 0
+            END
+            ) as "US$"')
+
         )
             ->join('measurement_units as mu', 'a.measurement_unit_id', '=', 'mu.id')
             ->groupBy('s.company_id', 'sa.article_id', 'a.cod_fab', 'a.description', 'mu.abbreviation')

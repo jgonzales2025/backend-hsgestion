@@ -51,7 +51,7 @@ class EloquentDispatchNote extends Model
         'pdf',
         'transfer_date',
         'arrival_date',
-        'estado_sunat'
+        'estado_sunat',
     ];
     public $timestamps = true;
 
@@ -112,34 +112,33 @@ class EloquentDispatchNote extends Model
     public function toDomain(EloquentDispatchNote $dispatchNote): DispatchNote
     {
         return new DispatchNote(
-            $dispatchNote->id,
-            $dispatchNote->company->toDomain($dispatchNote->company),
-            $dispatchNote->branch->toDomain($dispatchNote->branch),
-            $dispatchNote->serie,
-            $dispatchNote->correlativo,
-            $dispatchNote->emission_reason->toDomain($dispatchNote->emission_reason),
-            $dispatchNote->description,
-            $dispatchNote->destination_branch->toDomain($dispatchNote->destination_branch),
-            $dispatchNote->destination_address_customer,
-            $dispatchNote->transport?->toDomain($dispatchNote->transport),
-            $dispatchNote->observations,
-            $dispatchNote->num_orden_compra,
-            $dispatchNote->doc_referencia,
-            $dispatchNote->num_referencia,
-            $dispatchNote->date_referencia,
-            $dispatchNote->status,
-            $dispatchNote->conductor?->toDomain($dispatchNote->conductor),
-            $dispatchNote->license_plate,
-            $dispatchNote->total_weight,
-            $dispatchNote->transfer_type,
-            $dispatchNote->vehicle_type,
-            $dispatchNote->reference_document_type?->toDomain($dispatchNote->reference_document_type),
-            $dispatchNote->created_at ? $dispatchNote->created_at->format('Y-m-d H:i:s') : null,
-            $dispatchNote->estado_sunat,
-            $dispatchNote->destination_branch_client,
-            $dispatchNote->customer_id,
-            $dispatchNote->supplier?->toDomain($dispatchNote->supplier),
-            $dispatchNote->address_supplier?->toDomain($dispatchNote->address_supplier)
+            id: $dispatchNote->id,
+            company: $dispatchNote->company->toDomain($dispatchNote->company),
+            branch: $dispatchNote->branch->toDomain($dispatchNote->branch),
+            serie: $dispatchNote->serie,
+            correlativo: $dispatchNote->correlativo,
+            emission_reason: $dispatchNote->emission_reason->toDomain($dispatchNote->emission_reason),
+            description: $dispatchNote->description,
+            destination_branch: $dispatchNote->destination_branch?->toDomain($dispatchNote->destination_branch),
+            transport: $dispatchNote->transport?->toDomain($dispatchNote->transport),
+            observations: $dispatchNote->observations,
+            num_orden_compra: $dispatchNote->num_orden_compra,
+            doc_referencia: $dispatchNote->doc_referencia,
+            num_referencia: $dispatchNote->num_referencia,
+            date_referencia: $dispatchNote->date_referencia,
+            status: $dispatchNote->status,
+            conductor: $dispatchNote->conductor?->toDomain($dispatchNote->conductor),
+            license_plate: $dispatchNote->license_plate,
+            total_weight: $dispatchNote->total_weight,
+            transfer_type: $dispatchNote->transfer_type,
+            vehicle_type: $dispatchNote->vehicle_type,
+            destination_branch_client: $dispatchNote->destination_branch_client,
+            customer_id: $dispatchNote->customer_id,
+            supplier: $dispatchNote->supplier?->toDomain($dispatchNote->supplier),
+            address_supplier: $dispatchNote->address_supplier?->toDomain($dispatchNote->address_supplier),
+            reference_document_type: $dispatchNote->referenceDocumentType?->toDomain($dispatchNote->referenceDocumentType),
+            created_at: $dispatchNote->created_at ? $dispatchNote->created_at->format('Y-m-d H:i:s') : null,
+            estado_sunat: $dispatchNote->estado_sunat
         );
     }
 }

@@ -27,6 +27,7 @@ class ScVoucherDTO
     public int $usrmod;
     public array $detail_sc_voucher = [];
     public array $detail_voucher_purchase = [];
+    public ?string $path_image;
 
 
     public function __construct(array $data)
@@ -57,5 +58,6 @@ class ScVoucherDTO
             fn($d) => new DetVoucherPurchaseDTO($d),
             $data['detail_voucher_purchase'] ?? []
         );
+        $this->path_image = $data['path_image'] ?? null;
     }
 }

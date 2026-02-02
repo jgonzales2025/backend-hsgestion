@@ -57,6 +57,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
             usradi: $eloquentScVoucher->usradi,
             fecadi: $eloquentScVoucher->fecadi,
             usrmod: $eloquentScVoucher->usrmod,
+            path_image: $eloquentScVoucher->path_image,
             details: $eloquentScVoucher->details->map(fn($detail) => $detail->toDomain())->all(),
             detailVoucherpurchase: $eloquentScVoucher->detailVoucherPurchase->map(fn($detail) => $detail->toDomain())->all(),
         );
@@ -126,7 +127,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
                 'usradi' => $scVoucher->getUsradi(),
                 'fecadi' => $scVoucher->getFecadi(),
                 'usrmod' => $scVoucher->getUsrmod(),
-
+                'path_image' => $scVoucher->getPathImage(),
             ]);
             foreach ($scVoucher->getDetails() as $detailDTO) {
                 EloquentScVoucherdet::create([
@@ -188,7 +189,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
             'usradi' => $scVoucher->getUsradi(),
             'fecadi' => $scVoucher->getFecadi(),
             'usrmod' => $scVoucher->getUsrmod(),
-
+            'path_image' => $scVoucher->getPathImage(),
         ]);
 
         EloquentScVoucherdet::where('id_sc_voucher', $scVoucher->getId())->delete();
@@ -228,23 +229,22 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
     public function updateStatus(int $id, int $status)
     {
 
-                $scVoucher = $this->findById($id);
-        
-                if (!$scVoucher) {
-                    return null;
-                }
-                $updatestatuseloquent = EloquentScVoucher::find($id);
-                $updatestatuseloquent->update([
-                    'status' => $status,
-                ]);
-        
-                DB::statement("CALL sp_anula_voucher(?, ?)", [
-                    $scVoucher->getCia(),
-                    $id,
-                ]);
-        
-                return $this->findById($id);
-      
+        $scVoucher = $this->findById($id);
+
+        if (!$scVoucher) {
+            return null;
+        }
+        $updatestatuseloquent = EloquentScVoucher::find($id);
+        $updatestatuseloquent->update([
+            'status' => $status,
+        ]);
+
+        DB::statement("CALL sp_anula_voucher(?, ?)", [
+            $scVoucher->getCia(),
+            $id,
+        ]);
+
+        return $this->findById($id);
     }
     public function findWithRelations(int $id): ?ScVoucher
     {
@@ -259,5 +259,14 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
         ])->find($id);
 
         return $model?->toDomain();
+    }
+
+    public function updateImagePath(int $id, string $path): void
+    {
+        EloquentScVoucher::where('id', $id)->update(['path_image' => $path]);
+    }
+    public function getImagePath(int $id): ?string
+    {
+        return EloquentScVoucher::find($id)?->path_image;
     }
 }

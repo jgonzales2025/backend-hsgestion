@@ -380,9 +380,9 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
         if (empty($fecha_inicio) && empty($fecha_fin)) {
             $query->where('s.date', '<=', date('Y-m-d'));
         }
-        if ($is_igv) {
-            $query->where('a.igv_applicable', 0);
-        }
+        // if ($is_igv) {
+        //     $query->where('a.igv_applicable', 0);
+        // }
         $query->leftJoin('note_reasons as nr', 's.note_reason_id', '=', 'nr.id')
             ->whereNotIn('s.document_type_id', [8, 16]);
 
@@ -395,10 +395,9 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
                 ELSE 1 
             END) as CANTIDAD'),
             'mu.abbreviation as UDM',
-            DB::raw('SUM(CASE 
-                WHEN s.currency_type_id = 1 THEN sa.subtotal * CASE WHEN s.document_type_id = 7 THEN -1 ELSE 1 END 
-                ELSE 0 
-            END) as "S/"'),
+            DB::raw('SUM(sa.subtotal / ' . ($is_igv ? 1 : '(1 + s.igv_percentage)') . ' 
+            * CASE WHEN s.document_type_id = 7 THEN -1 ELSE 1 END
+            ) as "S/"'),
             DB::raw('SUM(CASE 
                 WHEN s.currency_type_id = 2 THEN sa.subtotal * CASE WHEN s.document_type_id = 7 THEN -1 ELSE 1 END 
                 ELSE 0 

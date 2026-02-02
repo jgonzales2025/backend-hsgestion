@@ -2,11 +2,7 @@
 
 namespace App\Modules\Serie\Infrastructure\Models;
 
-use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
-use App\Modules\Company\Infrastructure\Model\EloquentCompany;
-use App\Modules\DocumentType\Infrastructure\Models\EloquentDocumentType;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EloquentSerie extends Model
 {

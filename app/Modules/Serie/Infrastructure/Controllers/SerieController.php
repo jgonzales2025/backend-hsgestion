@@ -8,7 +8,6 @@ use App\Modules\Serie\Domain\Interfaces\SerieRepositoryInterface;
 use App\Modules\Serie\Infrastructure\Resources\SerieResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class SerieController extends Controller
 {

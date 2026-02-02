@@ -6,7 +6,6 @@ use App\Modules\Branch\Domain\Entities\Branch;
 
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Branch\Infrastructure\Models\EloquentBranch;
-use Illuminate\Support\Facades\Log;
 
 
 class EloquentBranchRepository implements BranchRepositoryInterface
@@ -38,7 +37,6 @@ class EloquentBranchRepository implements BranchRepositoryInterface
     if (!$branch) {
         return null;
     }
-       Log::info('Buscando branch con ID: ' . $branch);
     return new Branch(
         id: $branch->id,
         cia_id: $branch->cia_id,

@@ -191,7 +191,8 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             supplier: $dispatchNote->getSupplier(),
             address_supplier: $dispatchNote->getAddressSupplier(),
             reference_document_type: $dispatchNote->getReferenceDocumentType(),
-            created_at: $eloquentDispatchNote->created_at ? $eloquentDispatchNote->created_at->format('Y-m-d H:i:s') : null
+            created_at: $eloquentDispatchNote->created_at ? $eloquentDispatchNote->created_at->format('Y-m-d H:i:s') : null,
+            estado_sunat: $eloquentDispatchNote->estado_sunat
         );
     }
     private function mapToArray(DispatchNote $dispatchNote)
@@ -221,7 +222,7 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             'customer_id' => $dispatchNote->getCustomerId(),
             'supplier_id' => $dispatchNote->getSupplier()?->getId() ?? null,
             'address_supplier_id' => $dispatchNote->getAddressSupplier()?->getId() ?? null,
-            'reference_document_type_id' => $dispatchNote->getReferenceDocumentType()?->getId() ?? null,
+            'reference_document_type_id' => $dispatchNote->getReferenceDocumentType()?->getId() ?? null
         ];
     }
     public function updateStatus(int $dispatchNote, int $status): void

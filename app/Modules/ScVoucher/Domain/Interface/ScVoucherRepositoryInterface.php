@@ -12,4 +12,6 @@ interface ScVoucherRepositoryInterface
     public function update(ScVoucher $scVoucher): ?ScVoucher;
     public function getLastDocumentNumber(string $serie): ?string;
     public function updateStatus(int $id, int $status);
+    public function updateImagePath(int $id, string $path): void;
+    public function getImagePath(int $id): ?string;
 }

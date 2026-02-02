@@ -54,7 +54,10 @@ class RequestStore extends FormRequest
             'dispatch_articles.*.serials.*' => 'required|distinct',
             'customer_id' => 'required|integer|exists:customers,id',
             'supplier_id' => 'nullable|integer|exists:customers,id',
-            'address_supplier_id' => 'nullable|integer|exists:customers,id'
+            'address_supplier_id' => 'nullable|integer|exists:customers,id',
+            'payment_type_id' => 'required|integer|exists:payment_types,id',
+            'days' => 'required|integer',
+            'date_ven' => 'required|date'
         ];
     }
     public function messages(): array
@@ -69,6 +72,12 @@ class RequestStore extends FormRequest
             'destination_branch_client_id.required' => 'Debe seleccionar un cliente.',
             'destination_branch_client_id.exists' => 'Selecciona un cliente',
             'total_weight.min' => 'El peso total debe ser mayor a 0.',
+            'payment_type_id.required' => 'Debe seleccionar un tipo de pago.',
+            'payment_type_id.exists' => 'Selecciona un tipo de pago',
+            'days.required' => 'Debe ingresar los días.',
+            'days.integer' => 'Los días debe ser un número entero.',
+            'date_ven.required' => 'Debe ingresar la fecha de vencimiento.',
+            'date_ven.date' => 'La fecha de vencimiento debe ser una fecha.',
 
             //dispatch_articles
             'dispatch_articles.required' => 'Debe seleccionar al menos un artículo.',

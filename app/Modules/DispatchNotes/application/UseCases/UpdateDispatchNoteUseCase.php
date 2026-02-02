@@ -27,7 +27,6 @@ class UpdateDispatchNoteUseCase
     private readonly DispatchNotesRepositoryInterface $dispatchNoteRepository,
     private readonly CompanyRepositoryInterface $companyRepositoryInterface,
     private readonly BranchRepositoryInterface $branchRepository,
-    private readonly SerieRepositoryInterface $serieRepositoryInterface,
     private readonly EmissionReasonRepositoryInterface $emissionReasonRepositoryInterface,
     private readonly TransportCompanyRepositoryInterface $transportCompany,
     private readonly DocumentTypeRepositoryInterface $documentTypeRepositoryInterface,
@@ -81,6 +80,8 @@ class UpdateDispatchNoteUseCase
       $supplierAddress = null;
     }
 
+
+
     $dispatchNote = new DispatchNote(
       id: $dispatchNote->getId(),
       company: $company,
@@ -107,8 +108,8 @@ class UpdateDispatchNoteUseCase
       customer_id: $data->customer_id,
       supplier: $supplier,
       address_supplier: $supplierAddress,
-      estado_sunat: null,
-      created_at: ''
+      created_at: '',
+      estado_sunat: null
     );
     return $this->dispatchNoteRepository->update($dispatchNote);
   }

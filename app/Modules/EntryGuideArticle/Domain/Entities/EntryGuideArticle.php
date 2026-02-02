@@ -16,6 +16,7 @@ class EntryGuideArticle
     private float $total;
     private float $total_descuento;
     private float $descuento;
+    public array $serials = [];
 
     public function __construct(
         ?int $id,

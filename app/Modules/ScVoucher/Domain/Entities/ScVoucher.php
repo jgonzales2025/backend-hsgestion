@@ -30,6 +30,7 @@ class ScVoucher
     private int $usradi;
     private string $fecadi;
     private int $usrmod;
+    private ?string $path_image;
     private ?array $details;
     private ?array $detailVoucherpurchase;
 
@@ -53,6 +54,7 @@ class ScVoucher
         int $usradi,
         string $fecadi,
         int $usrmod,
+        ?string $path_image,
         ?array $details,
         ?array $detailVoucherpurchase,
     ) {
@@ -75,6 +77,7 @@ class ScVoucher
         $this->usradi = $usradi;
         $this->fecadi = $fecadi;
         $this->usrmod = $usrmod;
+        $this->path_image = $path_image;
         $this->details = $details;
         $this->detailVoucherpurchase = $detailVoucherpurchase;
     }
@@ -153,6 +156,10 @@ class ScVoucher
     public function getUsrmod(): int
     {
         return $this->usrmod;
+    }
+    public function getPathImage(): ?string
+    {
+        return $this->path_image;
     }
     public function getDetails(): ?array
     {

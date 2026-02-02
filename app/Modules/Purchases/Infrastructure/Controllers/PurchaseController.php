@@ -54,16 +54,14 @@ class PurchaseController extends Controller
 
     public function index(Request $request): JsonResponse
     {
-        $company_id = request()->get('company_id');
-        $description = $request->query('description');
-        $marca = $request->query('marca') ? (int) $request->query('marca') : null;
-        $cod_producto = $request->query('cod_producto') ? (int) $request->query('cod_producto') : null;
-        $sucursal = $request->query('sucursal') ? (int) $request->query('sucursal') : null;
-        $fecha_inicio = $request->query('fecha_inicio');
-        $fecha_fin = $request->query('fecha_fin');
+        $description = $request->query('description'); 
+        $num_doc = $request->query('num_doc');
+        $id_proveedr = $request->query('id_proveedr');
+        $reference_correlative = $request->query('reference_correlative');
+        $reference_serie = $request->query('reference_serie');
 
         $useCase = new FindAllPurchaseUseCase($this->purchaseRepository);
-        $purchases = $useCase->execute($company_id, $description, $marca, $cod_producto, $sucursal, $fecha_inicio, $fecha_fin, 1);
+        $purchases = $useCase->execute($description, $num_doc, $id_proveedr, $reference_correlative, $reference_serie, 1);
 
         $result = PurchaseResource::collection($purchases)->resolve();
 

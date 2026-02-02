@@ -536,7 +536,7 @@ class StatisticsController
             'cod_article' => 'nullable|integer',
             'categoria' => 'nullable|integer',
             'marca' => 'nullable|integer',
-            'is_igv' => 'nullable|boolean',
+            'is_igv' => 'nullable|string',
             'cod_vendedor' => 'nullable|integer',
             'fecha_inicio' => 'nullable|string',
             'fecha_fin' => 'nullable|string',
@@ -544,8 +544,8 @@ class StatisticsController
 
         $request['company_id'] =  request()->get('company_id');
 
-        $startDate = $request->input('fecha_inicio') ?: now()->startOfMonth()->format('Y-m-d');
-        $endDate = $request->input('fecha_fin') ?: now()->format('Y-m-d');
+        // $startDate = $request->input('fecha_inicio') ?: now()->startOfMonth()->format('Y-m-d');
+        // $endDate = $request->input('fecha_fin') ?: now()->format('Y-m-d');
 
         $data = $this->statisticsRepository->consultaReporteVentas(
             $request->company_id,
@@ -553,10 +553,10 @@ class StatisticsController
             $request->cod_article ?? 0,
             $request->categoria ?? 0,
             $request->marca ?? 0,
-            $request->is_igv ?? false,
+            $request->is_igv === 'true' ? 1 : 0,
             $request->cod_vendedor ?? 0,
-            $startDate,
-            $endDate,
+            $request->fecha_inicio ?? '',
+            $request->fecha_fin ?? '',
         );
         $page = $request->get('page', 1);
         $perPage = $request->get('per_page', 10);
@@ -597,8 +597,8 @@ class StatisticsController
 
         $request['company_id'] =  request()->get('company_id');
 
-        $startDate = $request->input('fecha_inicio') ?: now()->startOfMonth()->format('Y-m-d');
-        $endDate = $request->input('fecha_fin') ?: now()->format('Y-m-d');
+        // $startDate = $request->input('fecha_inicio') ?: now()->startOfMonth()->format('Y-m-d');
+        // $endDate = $request->input('fecha_fin') ?: now()->format('Y-m-d');
 
         $data = $this->statisticsRepository->consultaReporteVentas(
             $request->company_id,
@@ -608,8 +608,8 @@ class StatisticsController
             $request->marca ?? 0,
             $request->is_igv ?? false,
             $request->cod_vendedor ?? 0,
-            $startDate,
-            $endDate,
+            $request->fecha_inicio ?? '',
+            $request->fecha_fin ?? '',
         );
 
         $company = $this->companyRepository->findById($request->input('company_id'));
@@ -618,7 +618,7 @@ class StatisticsController
         $fileName = 'reporte_ventas_' . now()->format('YmdHis') . '.xlsx';
 
         return Excel::download(
-            new SalesReportExport($data->toArray(), $companyName, $startDate, $endDate),
+            new SalesReportExport($data->toArray(), $companyName, $request->fecha_inicio ?? '', $request->fecha_fin ?? ''),
             $fileName
         );
     }

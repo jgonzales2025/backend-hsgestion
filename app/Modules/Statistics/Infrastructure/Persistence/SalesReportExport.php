@@ -38,7 +38,7 @@ class SalesReportExport implements FromCollection, WithHeadings, WithMapping, Wi
         return [
             [$this->companyName, '', '', '', '', now()->format('d/m/Y H:i')],
             ['INFORMES DE VENTAS S/INC IGV'],
-            ['DESDE ' . $this->startDate . ' HASTA ' . $this->endDate],
+            ['DESDE ' . ($this->startDate ?: '') . ' HASTA ' . ($this->endDate ?: '')],
             [''],
             ['CÓDIGO', 'DESCRIPCION', 'CANTIDAD', 'UDM', 'S/', 'US$']
         ];

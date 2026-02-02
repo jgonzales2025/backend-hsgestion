@@ -377,7 +377,12 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
         if ($fecha_inicio !== '' && $fecha_fin !== '') {
             $query->whereBetween('s.date', [$fecha_inicio, $fecha_fin]);
         }
-
+        if (empty($fecha_inicio) && empty($fecha_fin)) {
+            $query->where('s.date', '<=', date('Y-m-d'));
+        }
+        if ($is_igv) {
+            $query->where('a.igv_applicable', 0);
+        }
         $query->leftJoin('note_reasons as nr', 's.note_reason_id', '=', 'nr.id')
             ->whereNotIn('s.document_type_id', [8, 16]);
 

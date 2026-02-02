@@ -287,7 +287,7 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
                         ->orWhere(function ($subQ) use ($name, $branchId) {
                             // Buscar por serie (con o sin sucursal)
                             $subQ->whereHas('entryItemSerials', function ($s) use ($name, $branchId) {
-                                $s->where('serial', $name);
+                                $s->where('serial', $name)->where('status', 1);
                                 if ($branchId) {
                                     $s->where('branch_id', $branchId);
                                 }

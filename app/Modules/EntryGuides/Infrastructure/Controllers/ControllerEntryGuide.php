@@ -592,6 +592,9 @@ class ControllerEntryGuide extends Controller
                         'total' => $total,
                         'precio_costo' => $precio,
                         'descuento' => $descuento,
+                        'payment_type' => $entryGuide->getPaymentType(),
+                        'days' => $entryGuide->getDays(),
+                        'date_ven' => $entryGuide->getDateVen()
                     ];
                 }
             }
@@ -697,11 +700,11 @@ class ControllerEntryGuide extends Controller
             'serie' => $serieNumber,
             'correlative' => '',
             'exchange_type' => null,
-            'payment_type_id' => 1,
+            'payment_type_id' => $entryGuide->getPaymentType()?->getId(),
             'currency_id' => $entryGuide->getCurrency()->getId(),
             'date' => $data['date'] ?? date('Y-m-d'),
-            'date_ven' => $data['date'] ?? date('Y-m-d'),
-            'days' => 0,
+            'date_ven' => $entryGuide->getDateVen(),
+            'days' => $entryGuide->getDays(),
             'observation' => $data['observations'] ?? '',
             'detraccion' => null,
             'fech_detraccion' => null,

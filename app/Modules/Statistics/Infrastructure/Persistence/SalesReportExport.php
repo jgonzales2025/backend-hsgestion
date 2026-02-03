@@ -20,7 +20,8 @@ class SalesReportExport implements FromCollection, WithHeadings, WithMapping, Wi
         private array $data,
         private string $companyName,
         private string $startDate,
-        private string $endDate
+        private string $endDate,
+        private bool $isIncIgv
     ) {}
 
     public function collection(): Collection
@@ -37,7 +38,7 @@ class SalesReportExport implements FromCollection, WithHeadings, WithMapping, Wi
         // Row 5: Table Headers
         return [
             [$this->companyName, '', '', '', '', now()->format('d/m/Y H:i')],
-            ['INFORMES DE VENTAS S/INC IGV'],
+            ['INFORMES DE VENTAS ' . ($this->isIncIgv ? 'C/INC IGV' : 'S/INC IGV')],
             ['DESDE ' . ($this->startDate ?: '') . ' HASTA ' . ($this->endDate ?: '')],
             [''],
             ['CÓDIGO', 'DESCRIPCION', 'CANTIDAD', 'UDM', 'S/', 'US$']

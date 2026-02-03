@@ -618,7 +618,7 @@ class StatisticsController
         $fileName = 'reporte_ventas_' . now()->format('YmdHis') . '.xlsx';
 
         return Excel::download(
-            new SalesReportExport($data->toArray(), $companyName, $request->fecha_inicio ?? '', $request->fecha_fin ?? ''),
+            new SalesReportExport($data->toArray(), $companyName, $request->fecha_inicio ?? '', $request->fecha_fin ?? '', $request->is_igv ?? false),
             $fileName
         );
     }

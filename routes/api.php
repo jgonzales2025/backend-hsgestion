@@ -229,7 +229,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/sc-voucher-status/{id}', [ScVoucherController::class, 'updateStatus']);
     Route::get('/sc-voucher/{id}', [ScVoucherController::class, 'show']);
     Route::put('/sc-voucher/{id}', [ScVoucherController::class, 'update']);
-    Route::put('/sc-voucher-image/{id}', [ScVoucherController::class, 'uploadImage']);
+    Route::post('/sc-voucher-image/{id}', [ScVoucherController::class, 'uploadImage']);
     Route::get('/sc-voucher-det/{id}', [ScVoucherController::class, 'getdetVoucher']);
     Route::get('/sc-voucher-image/{id}', [ScVoucherController::class, 'getImagePath']);
     //scvoucherdetalle 

@@ -202,8 +202,19 @@ class ScVoucherController extends Controller
         $transactionLogs->execute($transactionDTO);
     }
 
-    public function getImagePath(int $id): ?string
+    public function getImagePath(int $id): JsonResponse
     {
-        return $this->scVoucherRepository->getImagePath($id);
+        $scVoucher = $this->scVoucherRepository->findById($id);
+
+        if (!$scVoucher) {
+            return response()->json(['message' => 'Voucher no encontrado'], 404);
+        }
+
+        $url = $scVoucher->getPathImage() ? asset('storage/' . $scVoucher->getPathImage()) : null;
+
+        return response()->json([
+            'url_image' => $url,
+            'estado' => $scVoucher->getStatus()
+        ], 200);
     }
 }

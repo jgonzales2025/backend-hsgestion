@@ -306,7 +306,7 @@ class ControllerEntryGuide extends Controller
             );
 
             $entryGuide = $entryGuideUseCase->execute($entryGuideDTO, $id);
- 
+
             $this->entryItemSerialRepositoryInterface->deleteByIdEntryItemSerial($entryGuide->getId());
             $this->entryGuideArticleRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
             $this->documentEntryGuideRepositoryInterface->deleteByEntryGuideId($entryGuide->getId());
@@ -592,9 +592,6 @@ class ControllerEntryGuide extends Controller
                         'total' => $total,
                         'precio_costo' => $precio,
                         'descuento' => $descuento,
-                        'payment_type' => $entryGuide->getPaymentType(),
-                        'days' => $entryGuide->getDays(),
-                        'date_ven' => $entryGuide->getDateVen()
                     ];
                 }
             }
@@ -613,6 +610,13 @@ class ControllerEntryGuide extends Controller
             'nc_document_id' => $entryGuide->getNcDocumentId(),
             'nc_reference_serie' => $entryGuide->getNcReferenceSerie(),
             'nc_reference_correlative' => $entryGuide->getNcReferenceCorrelative(),
+            'payment_type' => [
+                'id' => $entryGuide->getPaymentType()?->getId(),
+                'name' => $entryGuide->getPaymentType()?->getName(),
+                'status' => $entryGuide->getPaymentType()?->getStatus() == 1 ? 'activo' : 'inactivo',
+            ],
+            'days' => $entryGuide->getDays(),
+            'date_ven' => $entryGuide->getDateVen()
         ], 200);
     }
     public function downloadPdf($id)

@@ -27,7 +27,9 @@ use App\Modules\CurrencyType\Domain\Interfaces\CurrencyTypeRepositoryInterface;
 use App\Modules\DocumentType\Domain\Interfaces\DocumentTypeRepositoryInterface;
 use App\Modules\PaymentMethodsSunat\Domain\Interface\PaymentMethodSunatRepositoryInterface;
 use App\Modules\PaymentMethod\Domain\Interfaces\PaymentMethodRepositoryInterface;
+use App\Modules\ScVoucher\Application\UseCases\UploadScVoucherImageUseCase;
 use App\Modules\ScVoucher\Infrastructure\Persistence\EloquentScVoucherRepository;
+use App\Modules\ScVoucher\Infrastructure\Request\UploadScVoucherImageRequest;
 use App\Modules\TransactionLog\Application\DTOs\TransactionLogDTO;
 use App\Modules\TransactionLog\Application\UseCases\CreateTransactionLogUseCase;
 use App\Modules\TransactionLog\Domain\Interfaces\TransactionLogRepositoryInterface;
@@ -137,10 +139,10 @@ class ScVoucherController extends Controller
         return response()->json((new ScVoucherResource($scVoucher))->resolve(), 200);
     }
 
-    public function uploadImage(int $id, \App\Modules\ScVoucher\Infrastructure\Request\UploadScVoucherImageRequest $request): JsonResponse
+    public function uploadImage(int $id, UploadScVoucherImageRequest $request): JsonResponse
     {
         $path = $request->file('path_image')->store('vouchers', 'public');
-        $uploadImageUseCase = new \App\Modules\ScVoucher\Application\UseCases\UploadScVoucherImageUseCase($this->scVoucherRepository);
+        $uploadImageUseCase = new UploadScVoucherImageUseCase($this->scVoucherRepository);
         $uploadImageUseCase->execute($id, $path);
 
         return response()->json(['message' => 'Imagen actualizada correctamente', 'path' => $path], 200);

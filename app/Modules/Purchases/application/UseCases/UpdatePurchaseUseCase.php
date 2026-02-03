@@ -37,9 +37,10 @@ class UpdatePurchaseUseCase
 
     public function execute(PurchaseDTO $purchaseDTO, int $id)
     {
-        $lastDocumentNumber = $this->purchaseRepository->getLastDocumentNumber($purchaseDTO->company_id, $purchaseDTO->branch_id, $purchaseDTO->serie);
-
-        $purchaseDTO->correlative = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
+        if (empty($purchaseDTO->correlative)) {
+            $lastDocumentNumber = $this->purchaseRepository->getLastDocumentNumber($purchaseDTO->company_id, $purchaseDTO->branch_id, $purchaseDTO->serie);
+            $purchaseDTO->correlative = $this->documentNumberGeneratorService->generateNextNumber($lastDocumentNumber);
+        }
 
         $paymentTypeUseCase =  new FindByIdPaymentTypeUseCase($this->paymentTypeRepository);
         $paymentType = $paymentTypeUseCase->execute($purchaseDTO->payment_type_id);

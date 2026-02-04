@@ -183,6 +183,7 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
                 END) as monto_dolares
             ')
                 ->where('company_id', $company_id)
+                ->where('status', 1)
                 ->whereIn('document_type_id', [1, 3, 7, 8, 17])
                 ->groupBy('document_type_id')
                 ->get()

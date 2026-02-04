@@ -2,6 +2,7 @@
 
 namespace App\Modules\Dashboard\Infrastructure\Persistence;
 
+use App\Modules\Collections\Infrastructure\Models\EloquentCollection;
 use App\Modules\Dashboard\Domain\Interfaces\DashboardRepositoryInterface;
 use App\Modules\SaleArticle\Infrastructure\Models\EloquentSaleArticle;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
@@ -20,6 +21,7 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
             ->where('sales.document_type_id', '!=', 16)
             ->where('sales.company_id', $company_id)
             ->select('categories.name as category_name', DB::raw('SUM(CASE WHEN sales.document_type_id = 7 THEN -sale_article.quantity ELSE sale_article.quantity END) as total_quantity'))
+            ->orderBy('total_quantity', 'desc')
             ->groupBy('categories.name')
             ->get()
             ->toArray();
@@ -162,5 +164,79 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
             ->limit(10)
             ->get()
             ->toArray();
+    }
+    
+    public function getDetailByDocuments(int $company_id): array
+    {
+        $resultados = EloquentSale::selectRaw('
+                document_type_id,
+                COUNT(*) as cantidad,
+                SUM(CASE 
+                    WHEN currency_type_id = 1 THEN total 
+                    WHEN currency_type_id = 2 THEN total * parallel_rate 
+                    ELSE 0 
+                END) as monto_soles,
+                SUM(CASE 
+                    WHEN currency_type_id = 2 THEN total 
+                    WHEN currency_type_id = 1 AND parallel_rate > 0 THEN total / parallel_rate 
+                    ELSE 0 
+                END) as monto_dolares
+            ')
+                ->where('company_id', $company_id)
+                ->whereIn('document_type_id', [1, 3, 7, 8, 17])
+                ->groupBy('document_type_id')
+                ->get()
+                ->keyBy('document_type_id');
+        
+            return [
+                'monto_facturas_soles' => round($resultados[1]->monto_soles ?? 0, 2),
+                'monto_facturas_dolares' => round($resultados[1]->monto_dolares ?? 0, 2),
+                'cantidad_facturas' => $resultados[1]->cantidad ?? 0,
+                'monto_boletas_soles' => round($resultados[3]->monto_soles ?? 0, 2),
+                'monto_boletas_dolares' => round($resultados[3]->monto_dolares ?? 0, 2),
+                'cantidad_boletas' => $resultados[3]->cantidad ?? 0,
+                'monto_notas_credito_soles' => round(-($resultados[7]->monto_soles ?? 0), 2),
+                'monto_notas_credito_dolares' => round(-($resultados[7]->monto_dolares ?? 0), 2),
+                'cantidad_notas_credito' => $resultados[7]->cantidad ?? 0,
+                'monto_notas_debito_soles' => round($resultados[8]->monto_soles ?? 0, 2),
+                'monto_notas_debito_dolares' => round($resultados[8]->monto_dolares ?? 0, 2),
+                'cantidad_notas_debito' => $resultados[8]->cantidad ?? 0,
+                'monto_notas_venta_soles' => round($resultados[17]->monto_soles ?? 0, 2),
+                'monto_notas_venta_dolares' => round($resultados[17]->monto_dolares ?? 0, 2),
+                'cantidad_notas_venta' => $resultados[17]->cantidad ?? 0,
+                'total_transacciones' => ($resultados[1]->cantidad ?? 0) + ($resultados[3]->cantidad ?? 0) + ($resultados[7]->cantidad ?? 0) + ($resultados[8]->cantidad ?? 0) + ($resultados[17]->cantidad ?? 0),
+            ];
+    }
+    
+    public function getDetailByPaymentMethods(int $company_id): array
+    {
+        $resultados = EloquentCollection::selectRaw('
+                payment_method_id,
+                SUM(CASE 
+                    WHEN currency_type_id = 1 THEN amount 
+                    WHEN currency_type_id = 2 THEN amount * parallel_rate 
+                    ELSE 0 
+                END) as monto_soles,
+                SUM(CASE 
+                    WHEN currency_type_id = 2 THEN amount 
+                    WHEN currency_type_id = 1 AND parallel_rate > 0 THEN amount / parallel_rate 
+                    ELSE 0 
+                END) as monto_dolares
+            ')
+                ->where('company_id', $company_id)
+                ->groupBy('payment_method_id')
+                ->get()
+                ->keyBy('payment_method_id');
+        
+        return [
+            'monto_efectivo_soles' => round($resultados[1]->monto_soles ?? 0, 2),
+            'monto_efectivo_dolares' => round($resultados[1]->monto_dolares ?? 0, 2),
+            'monto_tarjeta_soles' => round($resultados[2]->monto_soles ?? 0, 2),
+            'monto_tarjeta_dolares' => round($resultados[2]->monto_dolares ?? 0, 2),
+            'monto_deposito_soles' => round($resultados[3]->monto_soles ?? 0, 2),
+            'monto_deposito_dolares' => round($resultados[3]->monto_dolares ?? 0, 2),
+            'monto_billetera_soles' => round($resultados[4]->monto_soles ?? 0, 2),
+            'monto_billetera_dolares' => round($resultados[4]->monto_dolares ?? 0, 2),
+        ];
     }
 }

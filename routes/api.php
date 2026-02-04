@@ -288,6 +288,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/dashboard/topTenSellingProducts', [DashboardController::class, 'topTenSellingProducts']);
     Route::get('/dashboard/getSalesPurchasesAndUtility', [DashboardController::class, 'getSalesPurchasesAndUtility']);
     Route::get('/dashboard/getTopTenCustomers', [DashboardController::class, 'getTopTenCustomers']);
+    Route::get('/dashboard/getDetailByDocuments', [DashboardController::class, 'getDetailByDocuments']);
+    Route::get('/dashboard/getDetailByPaymentMethods', [DashboardController::class, 'getDetailByPaymentMethods']);
 
     // Withholding
     Route::get('/withholdings/{date}', [WithholdingController::class, 'findByDate']);

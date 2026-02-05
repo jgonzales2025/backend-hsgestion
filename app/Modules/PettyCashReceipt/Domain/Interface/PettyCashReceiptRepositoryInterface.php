@@ -25,4 +25,15 @@ interface PettyCashReceiptRepositoryInterface
     $pserie,
     $pcorrelativo
   ): array;
+  public function cobranzaDetalle($cia,
+        $fecha,
+        $fechaU,
+        $nrocliente,
+        $pcodsuc,
+        $ptippag,
+        $pcodban,
+        $pnroope,
+        $ptipdoc,
+        $pserie,
+        $pcorrelativo):array;
 }

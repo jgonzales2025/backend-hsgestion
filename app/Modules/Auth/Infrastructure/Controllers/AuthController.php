@@ -472,6 +472,13 @@ class AuthController extends Controller
                 'link' => config('app.frontend_url') . '/almacen/guia-ingreso',
                 'icon' => 'ClipboardPlus',
                 'permission' => 'almacen.guia_ingreso'
+            ],
+            [
+                'id' => 8,
+                'label' => 'Garantías',
+                'link' => config('app.frontend_url') . '/garantias/registro-ticket',
+                'icon' => 'FileText',
+                'permission' => 'garantias.registro_ticket'
             ]
         ];
 

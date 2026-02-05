@@ -59,12 +59,14 @@ class DashboardController
         return response()->json($data);
     }
     
-    public function getDetailByDocuments(): JsonResponse
+    public function getDetailByDocuments(Request $request): JsonResponse
     {
         $company_id = request()->get('company_id');
+        $start_date = $request->query('start_date');
+        $end_date = $request->query('end_date');
         
         $getDetailByDocumentsUseCase = new GetDetailByDocumentsUseCase($this->dashboardRepository);
-        $data = $getDetailByDocumentsUseCase->execute($company_id);
+        $data = $getDetailByDocumentsUseCase->execute($company_id, $start_date, $end_date);
 
         return response()->json($data);
     }

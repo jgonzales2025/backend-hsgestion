@@ -867,6 +867,12 @@ class SaleController extends Controller
             return response()->json(['message' => 'La venta no se puede anular porque ya tiene notas de crédito', 'status' => false], 200);
         }
         
+        $roleName = request()->get('role');
+        
+        if ($roleName !== 'Gerencia') {
+            return response()->json(['message' => 'No tiene permisos para anular la venta', 'status' => false], 403);
+        }
+        
         $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
         $serials = array_merge(...array_values($serialsByArticle));
         

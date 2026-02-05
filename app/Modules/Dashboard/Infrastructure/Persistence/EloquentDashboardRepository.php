@@ -45,14 +45,14 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
 
     public function getSalesPurchasesAndUtility(int $company_id, string $start_date, string $end_date): array
     {
-        // Obtener ventas agrupadas por mes
+        // Obtener ventas agrupadas por día
         $salesData = EloquentSale::query()
             ->where('company_id', $company_id)
             ->where('status', 1)
             ->where('document_type_id', '!=', 16)
             ->whereBetween('date', [$start_date, $end_date])
             ->select(
-                DB::raw('DATE_FORMAT(date, "%Y-%m") as month'),
+                DB::raw('DATE(date) as date'),
                 DB::raw('SUM((CASE WHEN document_type_id = 7 THEN -1 ELSE 1 END) * (CASE 
                     WHEN currency_type_id = 1 THEN total 
                     WHEN currency_type_id = 2 THEN total * parallel_rate 
@@ -64,17 +64,17 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
                     ELSE 0 
                 END)) as total_sales_in_dollars')
             )
-            ->groupBy('month')
+            ->groupBy('date')
             ->get()
-            ->keyBy('month');
+            ->keyBy('date');
 
-        // Obtener compras agrupadas por mes
+        // Obtener compras agrupadas por día
         $purchasesData = EloquentPurchase::query()
             ->join('branches', 'purchase.branch_id', '=', 'branches.id')
             ->where('branches.cia_id', $company_id)
             ->whereBetween('purchase.date', [$start_date, $end_date])
             ->select(
-                DB::raw('DATE_FORMAT(purchase.date, "%Y-%m") as month'),
+                DB::raw('DATE(purchase.date) as date'),
                 DB::raw('SUM(CASE 
                     WHEN purchase.currency = 1 THEN purchase.total 
                     WHEN purchase.currency = 2 THEN purchase.total * purchase.exchange_type 
@@ -86,18 +86,18 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
                     ELSE 0 
                 END) as total_purchases_in_dollars')
             )
-            ->groupBy('month')
+            ->groupBy('date')
             ->get()
-            ->keyBy('month');
+            ->keyBy('date');
 
-        // Obtener costos (total_costo_neto) de ventas agrupados por mes
+        // Obtener costos (total_costo_neto) de ventas agrupados por día
         $costsData = EloquentSale::query()
             ->where('company_id', $company_id)
             ->where('status', 1)
             ->where('document_type_id', '!=', 16)
             ->whereBetween('date', [$start_date, $end_date])
             ->select(
-                DB::raw('DATE_FORMAT(date, "%Y-%m") as month'),
+                DB::raw('DATE(date) as date'),
                 DB::raw('SUM((CASE WHEN document_type_id = 7 THEN -1 ELSE 1 END) * (CASE 
                     WHEN currency_type_id = 1 THEN total_costo_neto 
                     WHEN currency_type_id = 2 THEN total_costo_neto * parallel_rate 
@@ -109,24 +109,24 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
                     ELSE 0 
                 END)) as total_costs_in_dollars')
             )
-            ->groupBy('month')
+            ->groupBy('date')
             ->get()
-            ->keyBy('month');
+            ->keyBy('date');
 
-        // Combinar datos por mes
-        $months = $salesData->keys()->merge($purchasesData->keys())->merge($costsData->keys())->unique()->sort()->values();
+        // Combinar datos por día
+        $dates = $salesData->keys()->merge($purchasesData->keys())->merge($costsData->keys())->unique()->sort()->values();
 
-        $monthlyData = [];
-        foreach ($months as $month) {
-            $salesSoles = $salesData->get($month)->total_sales_in_soles ?? 0;
-            $salesDollars = $salesData->get($month)->total_sales_in_dollars ?? 0;
-            $purchasesSoles = $purchasesData->get($month)->total_purchases_in_soles ?? 0;
-            $purchasesDollars = $purchasesData->get($month)->total_purchases_in_dollars ?? 0;
-            $costsSoles = $costsData->get($month)->total_costs_in_soles ?? 0;
-            $costsDollars = $costsData->get($month)->total_costs_in_dollars ?? 0;
+        $dailyData = [];
+        foreach ($dates as $date) {
+            $salesSoles = $salesData->get($date)->total_sales_in_soles ?? 0;
+            $salesDollars = $salesData->get($date)->total_sales_in_dollars ?? 0;
+            $purchasesSoles = $purchasesData->get($date)->total_purchases_in_soles ?? 0;
+            $purchasesDollars = $purchasesData->get($date)->total_purchases_in_dollars ?? 0;
+            $costsSoles = $costsData->get($date)->total_costs_in_soles ?? 0;
+            $costsDollars = $costsData->get($date)->total_costs_in_dollars ?? 0;
 
-            $monthlyData[] = [
-                'month' => $month,
+            $dailyData[] = [
+                'date' => $date,
                 'total_sales_pen' => round($salesSoles, 2),
                 'total_purchases_pen' => round($purchasesSoles, 2),
                 'utility_pen' => round($salesSoles - $costsSoles, 2),
@@ -138,7 +138,7 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
             ];
         }
 
-        return $monthlyData;
+        return $dailyData;
     }
 
     public function getTopCustomers(int $company_id): array
@@ -166,7 +166,7 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
             ->toArray();
     }
     
-    public function getDetailByDocuments(int $company_id): array
+    public function getDetailByDocuments(int $company_id, string $start_date, string $end_date): array
     {
         $resultados = EloquentSale::selectRaw('
                 document_type_id,
@@ -184,11 +184,30 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
             ')
                 ->where('company_id', $company_id)
                 ->where('status', 1)
+                ->whereBetween('date', [$start_date, $end_date])
                 ->whereIn('document_type_id', [1, 3, 7, 8, 17])
                 ->groupBy('document_type_id')
                 ->get()
                 ->keyBy('document_type_id');
         
+            $total_soles = round(
+                ($resultados[1]->monto_soles ?? 0) + 
+                ($resultados[3]->monto_soles ?? 0) + 
+                -($resultados[7]->monto_soles ?? 0) + 
+                ($resultados[8]->monto_soles ?? 0) + 
+                ($resultados[17]->monto_soles ?? 0), 
+                2
+            );
+            
+            $total_dolares = round(
+                ($resultados[1]->monto_dolares ?? 0) + 
+                ($resultados[3]->monto_dolares ?? 0) + 
+                -($resultados[7]->monto_dolares ?? 0) + 
+                ($resultados[8]->monto_dolares ?? 0) + 
+                ($resultados[17]->monto_dolares ?? 0), 
+                2
+            );
+            
             return [
                 'monto_facturas_soles' => round($resultados[1]->monto_soles ?? 0, 2),
                 'monto_facturas_dolares' => round($resultados[1]->monto_dolares ?? 0, 2),
@@ -206,6 +225,8 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
                 'monto_notas_venta_dolares' => round($resultados[17]->monto_dolares ?? 0, 2),
                 'cantidad_notas_venta' => $resultados[17]->cantidad ?? 0,
                 'total_transacciones' => ($resultados[1]->cantidad ?? 0) + ($resultados[3]->cantidad ?? 0) + ($resultados[7]->cantidad ?? 0) + ($resultados[8]->cantidad ?? 0) + ($resultados[17]->cantidad ?? 0),
+                'total_ventas_soles' => $total_soles,
+                'total_ventas_dolares' => $total_dolares,
             ];
     }
     
@@ -225,6 +246,7 @@ class EloquentDashboardRepository implements DashboardRepositoryInterface
                 END) as monto_dolares
             ')
                 ->where('company_id', $company_id)
+                ->where('status', 1)
                 ->groupBy('payment_method_id')
                 ->get()
                 ->keyBy('payment_method_id');

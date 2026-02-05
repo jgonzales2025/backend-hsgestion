@@ -398,6 +398,17 @@
                                 nuestras cuentas.
                             </div>
                         </div>
+
+                        @if($sale->getDocumentType()->getId() == 16)
+                        <div
+                            style="background-color: #e7f3ff; border: 1px solid #2196F3; padding: 2px; margin-top: 2px; border-radius: 2px;">
+                            <div style="font-size: 5px; color: #0d47a1; line-height: 1.2;">
+                                <strong>*4% ADICIONAL PAGANDO CON T.DEBITO/CREDITO</strong><br>
+                                <strong>*AHORRE PAGANDO EFECTIVO, TRANSFERENCIA, DEPOSITO BANCARIO.</strong><br>
+                                <strong>*LOS PRECIOS Y STOCK PUEDEN VARIAR SIN PREVIO AVISO.</strong>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>

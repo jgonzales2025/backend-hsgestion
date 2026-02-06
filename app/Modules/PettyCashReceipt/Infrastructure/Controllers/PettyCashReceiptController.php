@@ -184,11 +184,26 @@ class PettyCashReceiptController extends Controller
             $validated['pserie'] ?? '',
             $validated['pcorrelativo'] ?? ''
         );
+        
+        $totales = $this->pettyCashReceiptRepository->totalesParteDiario(
+            $validated['cia'],
+            $validated['fecha'] ?? '',
+            $validated['fechaU'] ?? '',
+            $validated['nrocliente'],
+            $validated['pcodsuc'],
+            $validated['ptippag'],
+            $validated['pcodban'],
+            $validated['pnroope'],
+            $validated['ptipdoc'],
+            $validated['pserie'] ?? '',
+            $validated['pcorrelativo'] ?? ''
+        );
 
         $datos = $this->paginateStoredProcedure($data, 10);
 
         return response()->json([
             'data'           => $datos->items(),
+            'totales'        => $totales,
             'current_page'   => $datos->currentPage(),
             'per_page'       => $datos->perPage(),
             'total'          => $datos->total(),
@@ -382,4 +397,5 @@ class PettyCashReceiptController extends Controller
 
         $transactionLogs->execute($transactionDTO);
     }
+
 }

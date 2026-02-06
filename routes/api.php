@@ -322,7 +322,11 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/statistics/consulta-reporte-ventas-excel', [StatisticsController::class, 'consultaReporteVentasExcel']);
 
     // Ruta para envío sunat de venta
-    Route::post('/sale-sunat-send/{id}', [SaleSunatController::class, 'store']);
+    Route::post('/sale-sunat-send/factura/{id}', [SaleSunatController::class, 'storeFac']);
+    Route::post('/sale-sunat-send/boleta/{id}', [SaleSunatController::class, 'storeBol']);
+    Route::post('/sale-sunat-send/notacredito/{id}', [SaleSunatController::class, 'storeCreditNote']);
+    Route::post('/sale-sunat-send/notadebito/{id}', [SaleSunatController::class, 'storeDebitNote']);
+    
     Route::get('/roles', [RoleController::class, 'index']);
     Route::get('/roles-paginate-infinite', [RoleController::class, 'indexPaginateInfinite']);
     Route::get('/roles/{id}', [RoleController::class, 'show']);

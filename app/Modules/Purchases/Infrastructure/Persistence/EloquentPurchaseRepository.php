@@ -25,7 +25,7 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
         return $purchase?->correlative;
     }
 
-    public function findAll(?string $description, $num_doc, $id_proveedr, ?string $reference_correlative, ?string $reference_serie, ?int $status = null)
+    public function findAll(?string $description, $num_doc, $id_proveedr, ?string $reference_correlative, ?string $reference_serie, ?int $status = null, ?string $fecha_inicio, ?string $fecha_fin)
     {
         $eloquentpurchase = EloquentPurchase::with([
             'paymentType',
@@ -75,8 +75,20 @@ class EloquentPurchaseRepository implements PurchaseRepositoryInterface
                 fn($query) =>
                 $query->where('reference_serie', $reference_serie)
             )
+            ->when(
+                $fecha_inicio,
+                fn($query) =>
+                $query->where('date','>=',$fecha_inicio)
+            )
+            ->when(
+                $fecha_fin,
+                fn($query) =>
+                $query->where('date','<=',$fecha_fin)
+            )
             ->orderByDesc('id')
             ->paginate(10);
+
+
 
         $eloquentpurchase->getCollection()->transform(fn($purchase) => $purchase->toDomain());
 

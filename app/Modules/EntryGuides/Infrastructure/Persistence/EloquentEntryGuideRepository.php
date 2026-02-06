@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
 {
 
-    public function findAll(?string $description, ?int $status, ?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id): LengthAwarePaginator
+    public function findAll(?string $description, ?int $status, ?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id, ?string $fecha_inicio, ?string $fecha_fin): LengthAwarePaginator
     {
         $query = EloquentEntryGuide::with(['branch', 'customer', 'ingressReason', 'documentEntryGuides', 'currency', 'entryGuideArticles', 'payment_type'])
             ->when(
@@ -27,6 +27,9 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                         ->orWhere('second_lastname', 'like', "%{$description}%")
                         ->orWhere('company_name', 'like', "%{$description}%")
                 )
+            )
+            ->when(
+                $fecha_inicio
             )
             ->when($status !== null, fn($query) => $query->where('status', $status))
             ->when(
@@ -61,6 +64,15 @@ class EloquentEntryGuideRepository implements EntryGuideRepositoryInterface
                 fn($query) =>
                 $query->where('customer_id', $supplier_id)
             );
+
+        if ($fecha_inicio !== null) {
+            $query->where('date', '>=', $fecha_inicio);
+        }
+
+        if ($fecha_fin !== null) {
+            $query->where('date', '<=', $fecha_fin);
+        }
+        
         $paginator = $query->orderByDesc('id')->paginate(10);
 
         $paginator->getCollection()->transform(function ($entryGuide) {

@@ -91,9 +91,11 @@ class ControllerEntryGuide extends Controller
 
         $reference_document_id = $request->query('reference_document_id');
         $reference_serie = $request->query('reference_serie');
-        $reference_correlative = $request->query('reference_correlative');
-
+        $reference_correlative = $request->query('reference_correlative'); 
         $supplier_id = $request->query('supplier_id');
+
+        $fecha_inicio = $request->query('fecha_inicio');
+        $fecha_fin = $request->query('fecha_fin');
 
 
         $entryGuideUseCase = new FindAllEntryGuideUseCase($this->entryGuideRepositoryInterface);
@@ -104,6 +106,8 @@ class ControllerEntryGuide extends Controller
             $reference_serie,
             $reference_correlative,
             $supplier_id,
+            $fecha_inicio,
+            $fecha_fin
         );
 
         $result = [];

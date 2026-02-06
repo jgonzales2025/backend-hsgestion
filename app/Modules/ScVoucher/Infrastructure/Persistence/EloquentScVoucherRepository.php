@@ -63,7 +63,7 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
         );
     }
 
-    public function findAll(?string $search, ?int $status)
+    public function findAll(?string $search, ?int $status, ?string $fecha_inicio, ?string $fecha_fin)
     {
         $query = EloquentScVoucher::with([
             'customer',
@@ -85,6 +85,13 @@ class EloquentScVoucherRepository implements ScVoucherRepositoryInterface
         if ($status !== null) {
             $query->where('status', $status);
         }
+           if ($fecha_inicio !== null) {
+            $query->where('fecha', '>=', $fecha_inicio);
+        }
+           if ($fecha_fin !== null) {
+            $query->where('fecha', '<=', $fecha_fin);
+        }
+
 
         $eloquentScVouchers = $query->paginate(10);
 

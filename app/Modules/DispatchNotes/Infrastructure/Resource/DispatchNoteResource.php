@@ -112,6 +112,7 @@ class DispatchNoteResource extends JsonResource
             'created_at' => $this->resource->getCreatedFecha(),
             'estado_sunat' => $this->resource->getEstadoSunat(),
             'estado' => $this->statusDate(),
+            'P' => $this->resource->getDateReferencia(),
         ];
     }
 

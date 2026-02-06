@@ -53,7 +53,7 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
             branch: $eloquentPettyCashReceipt->branch?->toDomain($eloquentPettyCashReceipt->branch)
         );
     }
-    public function findAll(?string $filter, ?int $currency_type, ?int $is_active)
+    public function findAll(?string $filter, ?int $currency_type, ?int $is_active, ?string $fecha_inicio, ?string $fecha_fin)
     {
         $eloquentPettyCashReceipts = EloquentPettyCashReceipt::with(['reasonCode', 'documentType', 'branch', 'currency'])
             ->when(
@@ -70,6 +70,16 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
             ->when(isset($is_active), function ($query) use ($is_active) {
                 return $query->where('status', $is_active);
             })
+         ->when(
+                $fecha_inicio,
+                fn($query) =>
+                $query->where('date','>=', $fecha_inicio)
+            )
+            ->when(
+                $fecha_fin,
+                fn($query) =>
+                $query->where('date','<=' ,$fecha_fin)
+            )
             ->orderBy('id', 'desc')
             ->paginate(10);
 

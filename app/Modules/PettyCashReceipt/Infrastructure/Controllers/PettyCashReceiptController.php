@@ -54,9 +54,11 @@ class PettyCashReceiptController extends Controller
         $is_active = $request->query('is_active');
 
         $currency_type = $request->query('document_type');
+        $fecha_inicio = $request->query('fecha_inicio');
+        $fecha_fin = $request->query('fecha_fin');
 
         $pettyCashReceiptsUseCase = new FindAllPettyCashReceiptUseCase($this->pettyCashReceiptRepository);
-        $pettyCashReceipts = $pettyCashReceiptsUseCase->execute($filter, $currency_type, $is_active);
+        $pettyCashReceipts = $pettyCashReceiptsUseCase->execute($filter, $currency_type, $is_active, $fecha_inicio, $fecha_fin);
 
         // Return paginated response with navigation URLs
         return new JsonResponse([

@@ -58,8 +58,11 @@ class ScVoucherController extends Controller
         $search = $request->query('description');
         $status = $request->query('status');
 
+        $fecha_inicio = $request->query('fecha_inicio');
+        $fecha_fin = $request->query('fecha_fin');
+
         $findAllUseCase = new FindAllScVoucherUseCase($this->scVoucherRepository);
-        $scVouchers = $findAllUseCase->execute($search, $status);
+        $scVouchers = $findAllUseCase->execute($search, $status, $fecha_inicio, $fecha_fin);
 
         return new JsonResponse([
             'data' => ScVoucherResource::collection($scVouchers)->resolve(),

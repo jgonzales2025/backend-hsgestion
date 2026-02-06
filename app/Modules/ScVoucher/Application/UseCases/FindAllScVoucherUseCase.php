@@ -10,8 +10,8 @@ class FindAllScVoucherUseCase
         private ScVoucherRepositoryInterface $scVoucherRepository,
     ) {}
 
-    public function execute(?string $search, ?int $status)
+    public function execute(?string $search, ?int $status, ?string $fecha_inicio, ?string $fecha_fin)
     {
-        return $this->scVoucherRepository->findAll($search, $status);
+        return $this->scVoucherRepository->findAll($search, $status, $fecha_inicio, $fecha_fin);
     }
 }

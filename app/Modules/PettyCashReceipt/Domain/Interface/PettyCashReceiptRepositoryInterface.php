@@ -38,4 +38,17 @@ interface PettyCashReceiptRepositoryInterface
         $pserie,
         $pcorrelativo,
         ):array;
+  public function totalesParteDiario(
+        $cia,
+        $fecha,
+        $fechaU,
+        $nrocliente,
+        $pcodsuc,
+        $ptippag,
+        $pcodban,
+        $pnroope,
+        $ptipdoc,
+        $pserie,
+        $pcorrelativo
+    ): array;
 }

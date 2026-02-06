@@ -233,4 +233,37 @@ class EloquentPettyCashReceiptRepository implements PettyCashReceiptRepositoryIn
 
         return $resultado;
     }
+        public function totalesParteDiario(
+        $cia,
+        $fecha,
+        $fechaU,
+        $nrocliente,
+        $pcodsuc,
+        $ptippag,
+        $pcodban,
+        $pnroope,
+        $ptipdoc,
+        $pserie,
+        $pcorrelativo
+    ): array {
+
+        $resultado = DB::select(
+            'CALL sp_totales_parte_diario(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                (int) $cia,
+                $fecha,
+                $fechaU,
+                (int) $nrocliente,
+                (int) $pcodsuc,
+                (int) $ptippag,
+                (int) $pcodban,
+                $pnroope ?? '',
+                (int) $ptipdoc,
+                $pserie ?? '',
+                $pcorrelativo ?? ''
+            ]
+        );
+
+        return $resultado;
+    }
 }

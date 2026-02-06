@@ -196,7 +196,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/pettyCashReceipt/export-excel', [PettyCashReceiptController::class, 'exportExcel']);
     Route::post('/pettyCashReceipt/export-excel-cobranza-detalle', [PettyCashReceiptController::class, 'exportExcelCobranzaDetalle']);
     Route::post('/pettyCashReceipt/listartCobranzaDetalle', [PettyCashReceiptController::class, 'listartCobranzaDetalle']);
-    //PettyCashReceiptMotive
+     //PettyCashReceiptMotive
     Route::get('/pettyCashMotive', [PettyCashMotiveController::class, 'index']);
     Route::get('/pettyCashMotive-by-receipt-type-infinite/{id}', [PettyCashMotiveController::class, 'indexByReceiptTypeInfinite']);
     Route::post('/pettyCashMotive', [PettyCashMotiveController::class, 'store']);

@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 
 interface PurchaseRepositoryInterface
 {
-    public function findAll(?string $description, ?string $num_doc, ?int $id_proveedr, ?string $reference_correlative, ?string $reference_serie, ?int $status = null);
+    public function findAll(?string $description, ?string $num_doc, ?int $id_proveedr, ?string $reference_correlative, ?string $reference_serie, ?int $status = null, ?string $fecha_inicio, ?string $fecha_fin);
     public function findById(int $id): ?Purchase;
     public function save(Purchase $purchase): ?Purchase;
     public function update(Purchase $purchase): ?Purchase;

@@ -60,8 +60,11 @@ class PurchaseController extends Controller
         $reference_correlative = $request->query('reference_correlative');
         $reference_serie = $request->query('reference_serie');
 
+        $fecha_inicio = $request->query('fecha_inicio');
+        $fecha_fin = $request->query('fecha_fin');
+
         $useCase = new FindAllPurchaseUseCase($this->purchaseRepository);
-        $purchases = $useCase->execute($description, $num_doc, $id_proveedr, $reference_correlative, $reference_serie, 1);
+        $purchases = $useCase->execute($description, $num_doc, $id_proveedr, $reference_correlative, $reference_serie, 1, $fecha_inicio,$fecha_fin);
 
         $result = PurchaseResource::collection($purchases)->resolve();
 

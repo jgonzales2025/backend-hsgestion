@@ -48,6 +48,7 @@ use App\Modules\TransportCompany\Domain\Interfaces\TransportCompanyRepositoryInt
 use App\Modules\User\Application\UseCases\UpdateStatusUseCase;
 use App\Modules\User\Domain\Interfaces\UserRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
+use GuzzleHttp\Psr7\Query;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -86,8 +87,11 @@ class DispatchNotesController extends Controller
         $emissionReasonId = $request->query('emission_reason_id') !== null ? (int) $request->query('emission_reason_id') : null;
         $estadoSunat = $request->query('estado_sunat');
 
+        $fecha_inicio =$request->query('fecha_inicio');
+        $fecha_fin =$request->query('fecha_fin');
+
         $dispatchUseCase = new FindAllDispatchNotesUseCase($this->dispatchNoteRepository);
-        $dispatchNotes = $dispatchUseCase->execute($description, $status, $emissionReasonId, $estadoSunat);
+        $dispatchNotes = $dispatchUseCase->execute($description, $status, $emissionReasonId, $estadoSunat, $fecha_inicio, $fecha_fin);
 
         $result = [];
         foreach ($dispatchNotes as $articlesNote) {

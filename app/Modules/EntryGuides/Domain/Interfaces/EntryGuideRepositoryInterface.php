@@ -11,7 +11,7 @@ interface EntryGuideRepositoryInterface
 
       public function save(EntryGuide $entryGuide): ?EntryGuide;
       public function update(EntryGuide $entryGuide): ?EntryGuide;
-      public function findAll(?string $description, ?int $status,?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id): ?LengthAwarePaginator;
+      public function findAll(?string $description, ?int $status,?int $reference_document_id, ?string $reference_serie, ?string $reference_correlative, ?int $supplier_id, ?string $fecha_inicio,?string $fecha_fin): ?LengthAwarePaginator;
       public function findByCorrelative(?string $correlativo): ?EntryGuide;
       public function findById(int $id): ?EntryGuide;
       public function getLastDocumentNumber(string $serie): ?string;

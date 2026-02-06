@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 
 class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
 {
-    public function findAll(?string $description, ?int $status, ?int $emissionReasonId, ?string $estadoSunat = null): LengthAwarePaginator
+    public function findAll(?string $description, ?int $status, ?int $emissionReasonId, ?string $estadoSunat = null, ?string $fecha_inicio, ?string $fecha_fin): LengthAwarePaginator
     {
         $dispatchNotes = EloquentDispatchNote::with([
             'company',
@@ -46,6 +46,8 @@ class EloquentDIspatchNoteRepository implements DispatchNotesRepositoryInterface
             ->when($emissionReasonId, function ($query) use ($emissionReasonId) {
                 return $query->where('emission_reason_id', $emissionReasonId);
             })
+            ->when($fecha_inicio, fn($query) => $query->where('date_referencia', '>=', $fecha_inicio))
+            ->when($fecha_fin, fn($query) => $query->where('date_referencia', '<=', $fecha_fin))
             ->when($estadoSunat, fn($q) => $q->where('estado_sunat', $estadoSunat))
             ->paginate(10);
 

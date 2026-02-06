@@ -55,9 +55,7 @@ class RequestStore extends FormRequest
             'customer_id' => 'required|integer|exists:customers,id',
             'supplier_id' => 'nullable|integer|exists:customers,id',
             'address_supplier_id' => 'nullable|integer|exists:customers,id',
-            'payment_type_id' => 'required|integer|exists:payment_types,id',
-            'days' => 'required|integer',
-            'date_ven' => 'required|date'
+
         ];
     }
     public function messages(): array

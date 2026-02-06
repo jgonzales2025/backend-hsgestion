@@ -6,7 +6,7 @@ use App\Modules\PettyCashReceipt\Domain\Entities\PettyCashReceipt;
 
 interface PettyCashReceiptRepositoryInterface
 {
-  public function findAll(?string $filter, ?int $currency_type, ?int $is_active);
+  public function findAll(?string $filter, ?int $currency_type, ?int $is_active, ?string $fecha_inicio , ?string $fecha_fin);
   public function findById(int $id): ?PettyCashReceipt;
   public function save(PettyCashReceipt $pettyCashReceipt): ?PettyCashReceipt;
   public function update(PettyCashReceipt $pettyCashReceipt): ?PettyCashReceipt;
@@ -23,7 +23,8 @@ interface PettyCashReceiptRepositoryInterface
     $pnroope,
     $ptipdoc,
     $pserie,
-    $pcorrelativo
+    $pcorrelativo,
+
   ): array;
   public function cobranzaDetalle($cia,
         $fecha,
@@ -35,5 +36,6 @@ interface PettyCashReceiptRepositoryInterface
         $pnroope,
         $ptipdoc,
         $pserie,
-        $pcorrelativo):array;
+        $pcorrelativo,
+        ):array;
 }

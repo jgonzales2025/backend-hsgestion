@@ -19,6 +19,7 @@ use App\Modules\Statistics\Infrastructure\Persistence\ArticlePurchaseExport;
 use App\Modules\Statistics\Infrastructure\Persistence\CustomerConsumedItemsExport;
 use App\Modules\Statistics\Infrastructure\Persistence\ExcelListaPrecio;
 use App\Modules\Statistics\Infrastructure\Persistence\ListaPreciosHeaderExport;
+use App\Modules\Statistics\Infrastructure\Persistence\SalesReportExport;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -364,7 +365,7 @@ class StatisticsController
     }
     public function rankingAnualCliente(Request $request)
     {
-        $request->validate([ 
+        $request->validate([
             'branch_id' => 'nullable|integer',
             'customer_id' => 'required|integer',
             'annio' => 'required|integer',
@@ -425,12 +426,15 @@ class StatisticsController
             $request->input('currency_type_id'),
             $request->input('document_type_id')
         );
-        $data['companyName'] =  $request->input('company_id');
+        $company = $this->companyRepository->findById($request->input('company_id'));
+        $companyName = $company ? $company->getCompanyName() : '';
+
+        $data['companyName'] =  $companyName;
 
         $fileName = 'ranking_anual_cliente_' . now()->format('YmdHis') . '.xlsx';
 
         return Excel::download(
-            new ListaPreciosHeaderExport($data,  $request->input('company_id'), 'RANKING DE CLIENTES ANUAL'),
+            new ListaPreciosHeaderExport($data,  $companyName, 'RANKING DE CLIENTES ANUAL'),
             $fileName
         );
     }
@@ -513,10 +517,108 @@ class StatisticsController
             $request->p_status_id ?? 0
         );
 
+        $company = $this->companyRepository->findById($request->input('company_id'));
+        $companyName = $company ? $company->getCompanyName() : '';
+
         $fileName = 'consultas_ventas_' . now()->format('YmdHis') . '.xlsx';
 
         return Excel::download(
-            new ListaPreciosHeaderExport($data,  $request->input('company_id'), 'CONSULTAS DE VENTAS'),
+            new ListaPreciosHeaderExport($data,  $companyName, 'CONSULTAS DE VENTAS'),
+            $fileName
+        );
+    }
+
+    public function consultaReporteVentas(Request $request)
+    {
+        $request->validate([
+            'company_id' => 'nullable|integer',
+            'branch_id' => 'nullable|integer',
+            'cod_article' => 'nullable|integer',
+            'categoria' => 'nullable|integer',
+            'marca' => 'nullable|integer',
+            'is_igv' => 'nullable|string',
+            'cod_vendedor' => 'nullable|integer',
+            'fecha_inicio' => 'nullable|string',
+            'fecha_fin' => 'nullable|string',
+        ]);
+
+        $request['company_id'] =  request()->get('company_id');
+
+        // $startDate = $request->input('fecha_inicio') ?: now()->startOfMonth()->format('Y-m-d');
+        // $endDate = $request->input('fecha_fin') ?: now()->format('Y-m-d');
+
+        $data = $this->statisticsRepository->consultaReporteVentas(
+            $request->company_id,
+            $request->branch_id ?? 0,
+            $request->cod_article ?? 0,
+            $request->categoria ?? 0,
+            $request->marca ?? 0,
+            $request->is_igv === 'true' ? 1 : 0,
+            $request->cod_vendedor ?? 0,
+            $request->fecha_inicio ?? '',
+            $request->fecha_fin ?? '',
+        );
+        $page = $request->get('page', 1);
+        $perPage = $request->get('per_page', 10);
+        $items = collect($data);
+        $paginated = new LengthAwarePaginator(
+            $items->forPage($page, $perPage)->values(),
+            $items->count(),
+            $perPage,
+            $page,
+            ['path' => $request->url()]
+        );
+
+        return response()->json([
+            'data' => $paginated->items(),
+            'current_page' => $paginated->currentPage(),
+            'per_page' => $paginated->perPage(),
+            'total' => $paginated->total(),
+            'last_page' => $paginated->lastPage(),
+            'next_page_url' => $paginated->nextPageUrl(),
+            'prev_page_url' => $paginated->previousPageUrl(),
+            'first_page_url' => $paginated->url(1),
+            'last_page_url' => $paginated->url($paginated->lastPage()),
+        ]);
+    }
+    public function consultaReporteVentasExcel(Request $request)
+    {
+        $request->validate([
+            'company_id' => 'nullable|integer',
+            'branch_id' => 'nullable|integer',
+            'cod_article' => 'nullable|integer',
+            'categoria' => 'nullable|integer',
+            'marca' => 'nullable|integer',
+            'is_igv' => 'nullable|boolean',
+            'cod_vendedor' => 'nullable|integer',
+            'fecha_inicio' => 'nullable|string',
+            'fecha_fin' => 'nullable|string',
+        ]);
+
+        $request['company_id'] =  request()->get('company_id');
+
+        // $startDate = $request->input('fecha_inicio') ?: now()->startOfMonth()->format('Y-m-d');
+        // $endDate = $request->input('fecha_fin') ?: now()->format('Y-m-d');
+
+        $data = $this->statisticsRepository->consultaReporteVentas(
+            $request->company_id,
+            $request->branch_id ?? 0,
+            $request->cod_article ?? 0,
+            $request->categoria ?? 0,
+            $request->marca ?? 0,
+            $request->is_igv ?? false,
+            $request->cod_vendedor ?? 0,
+            $request->fecha_inicio ?? '',
+            $request->fecha_fin ?? '',
+        );
+
+        $company = $this->companyRepository->findById($request->input('company_id'));
+        $companyName = $company ? $company->getCompanyName() : '';
+
+        $fileName = 'reporte_ventas_' . now()->format('YmdHis') . '.xlsx';
+
+        return Excel::download(
+            new SalesReportExport($data->toArray(), $companyName, $request->fecha_inicio ?? '', $request->fecha_fin ?? '', $request->is_igv ?? false),
             $fileName
         );
     }

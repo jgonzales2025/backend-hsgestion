@@ -228,6 +228,7 @@ class ControllerEntryGuide extends Controller
                 $this->ingressReasonRepositoryInterface,
                 $this->documentNumberGeneratorService,
                 $this->currencyTypeRepositoryInterface,
+                $this->paymentTypeRepositoryInterface
             );
             $entryGuide = $entryGuideUseCase->execute($entryGuideDTO);
 
@@ -257,7 +258,7 @@ class ControllerEntryGuide extends Controller
                     'action' => $request->method(),
                     'company_id' => $purchase->getCompanyId(),
                     'branch_id' => $purchase->getBranch()->getId(),
-                    'document_type_id' => $purchase->getTypeDocumentId()->getId(),
+                    'document_type_id' => $purchase->getTypeDocumentId()?->getId(),
                     'serie' => $purchase->getSerie(),
                     'correlative' => $purchase->getCorrelative(),
                     'ip_address' => $request->ip(),
@@ -287,9 +288,9 @@ class ControllerEntryGuide extends Controller
     {
         return DB::transaction(function () use ($request, $id) {
             $entryGuideUseCase = new FindByIdEntryGuideUseCase($this->entryGuideRepositoryInterface);
-            $entryGuide = $entryGuideUseCase->execute($id);
+            $entryGuidefind = $this->entryGuideRepositoryInterface->findById($id);
 
-            if (!$entryGuide) {
+            if (!$entryGuidefind) {
                 return response()->json(['message' => 'Guia de ingreso no encontrada'], 404);
             }
 
@@ -301,6 +302,7 @@ class ControllerEntryGuide extends Controller
                 $this->customerRepositoryInterface,
                 $this->ingressReasonRepositoryInterface,
                 $this->currencyTypeRepositoryInterface,
+                $this->paymentTypeRepositoryInterface
             );
 
             $entryGuide = $entryGuideUseCase->execute($entryGuideDTO, $id);
@@ -608,6 +610,13 @@ class ControllerEntryGuide extends Controller
             'nc_document_id' => $entryGuide->getNcDocumentId(),
             'nc_reference_serie' => $entryGuide->getNcReferenceSerie(),
             'nc_reference_correlative' => $entryGuide->getNcReferenceCorrelative(),
+            'payment_type' => [
+                'id' => $entryGuide->getPaymentType()?->getId(),
+                'name' => $entryGuide->getPaymentType()?->getName(),
+                'status' => $entryGuide->getPaymentType()?->getStatus() == 1 ? 'activo' : 'inactivo',
+            ],
+            'days' => $entryGuide->getDays(),
+            'date_ven' => $entryGuide->getDateVen()
         ], 200);
     }
     public function downloadPdf($id)
@@ -695,11 +704,11 @@ class ControllerEntryGuide extends Controller
             'serie' => $serieNumber,
             'correlative' => '',
             'exchange_type' => null,
-            'payment_type_id' => 1,
+            'payment_type_id' => $entryGuide->getPaymentType()?->getId(),
             'currency_id' => $entryGuide->getCurrency()->getId(),
             'date' => $data['date'] ?? date('Y-m-d'),
-            'date_ven' => $data['date'] ?? date('Y-m-d'),
-            'days' => 0,
+            'date_ven' => $entryGuide->getDateVen(),
+            'days' => $entryGuide->getDays(),
             'observation' => $data['observations'] ?? '',
             'detraccion' => null,
             'fech_detraccion' => null,
@@ -801,10 +810,12 @@ class ControllerEntryGuide extends Controller
         $totalIgv = 0;
         $referenceSerie = '';
         $referenceCorrelative = '';
-        $currencyId = 1;
+        $currencyId = null;
+        $paymentTypeId = null;
+        $dateVen = null;
+        $days = null;
 
         foreach ($entryGuideIds as $egId) {
-            $docEntryGuide = $this->documentEntryGuideRepositoryInterface->findByIdObj($egId);
             $guide = $this->entryGuideRepositoryInterface->findById($egId);
 
             if ($egId == $data['id']) {
@@ -812,6 +823,9 @@ class ControllerEntryGuide extends Controller
                 $referenceSerie = $data['document_entry_guide']['reference_serie'] ?? '';
                 $referenceCorrelative = $data['document_entry_guide']['reference_correlative'] ?? '';
                 $currencyId = $guide->getCurrency()->getId();
+                $paymentTypeId = $guide->getPaymentType()?->getId();
+                $dateVen = $guide->getDateVen();
+                $days = $guide->getDays();
             } else {
             }
         }
@@ -830,12 +844,12 @@ class ControllerEntryGuide extends Controller
             'serie' => $purchase->getSerie(),
             'correlative' => $purchase->getCorrelative(),
             'exchange_type' => $purchase->getExchangeType(),
-            'payment_type_id' => $purchase->getPaymentType()->getId(),
-            'currency_id' => $purchase->getCurrency()->getId(),
-            'date' => $purchase->getDate(),
-            'date_ven' => $purchase->getDateVen(),
-            'days' => $purchase->getDays(),
-            'observation' => $purchase->getObservation(),
+            'payment_type_id' => $paymentTypeId ?: $purchase->getPaymentType()?->getId(),
+            'currency_id' => $currencyId ?: $purchase->getCurrency()->getId(),
+            'date' => $data['date'] ?? $purchase->getDate(),
+            'date_ven' => $dateVen ?: $purchase->getDateVen(),
+            'days' => $days ?: $purchase->getDays(),
+            'observation' => $data['observations'] ?? $purchase->getObservation(),
             'detraccion' => $purchase->getDetraccion(),
             'fech_detraccion' => $purchase->getFechDetraccion(),
             'amount_detraccion' => $purchase->getAmountDetraccion(),
@@ -846,7 +860,7 @@ class ControllerEntryGuide extends Controller
             'igv' => $totalIgv,
             'total' => $totalTotal,
             'is_igv' => $isIgv,
-            'reference_document_type_id' => $data['document_entry_guide']['reference_document_id'] ?? 1,
+            'reference_document_type_id' => $data['document_entry_guide']['reference_document_id'] ?? ($data['document_entry_guide']['reference_document']['id'] ?? ($data['document_entry_guide']['reference_document'] ?? 1)),
             'reference_serie' => $referenceSerie ?: $purchase->getReferenceSerie(),
             'reference_correlative' => $referenceCorrelative ?: $purchase->getReferenceCorrelative(),
             'det_compras_guia_ingreso' => array_values($consolidatedArticles),

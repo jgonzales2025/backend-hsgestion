@@ -39,6 +39,7 @@ class EloquentScVoucher extends Model
         'usradi',
         'fecadi',
         'usrmod',
+        'path_image',
     ];
     protected $hidden = ['updated_at', 'created_at'];
 
@@ -96,6 +97,7 @@ class EloquentScVoucher extends Model
             usradi: $this->usradi,
             fecadi: $this->fecadi,
             usrmod: $this->usrmod,
+            path_image: $this->path_image,
             details: $this->details->map(fn($d) => $d->toDomain())->toArray(),
             detailVoucherpurchase: $this->detailVoucherPurchase->map(fn($d) => $d->toDomain())->toArray(),
         );

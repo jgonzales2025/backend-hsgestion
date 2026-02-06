@@ -28,7 +28,6 @@ class CreateDispatchNoteUseCase
     private readonly DispatchNotesRepositoryInterface $dispatchNoteRepository,
     private readonly CompanyRepositoryInterface $companyRepositoryInterface,
     private readonly BranchRepositoryInterface $branchRepository,
-    private readonly SerieRepositoryInterface $serieRepositoryInterface,
     private readonly EmissionReasonRepositoryInterface $emissionReasonRepositoryInterface,
     private readonly TransportCompanyRepositoryInterface $transportCompany,
     private readonly DocumentTypeRepositoryInterface $documentTypeRepositoryInterface,
@@ -84,7 +83,8 @@ class CreateDispatchNoteUseCase
 
     $documentTypeUseCase = new FindByIdDocumentTypeUseCase($this->documentTypeRepositoryInterface);
     $referenceDocumentType = $data->reference_document_type_id ? $documentTypeUseCase->execute($data->reference_document_type_id) : null;
- 
+
+
 
 
     $dispatchNote = new DispatchNote(
@@ -108,7 +108,7 @@ class CreateDispatchNoteUseCase
       total_weight: $data->total_weight,
       transfer_type: $data->transfer_type,
       vehicle_type: $data->vehicle_type,
-      destination_branch_client:  $data->destination_branch_client,
+      destination_branch_client: $data->destination_branch_client,
       customer_id: $data->customer_id,
       supplier: $supplier,
       address_supplier: $supplierAddress,

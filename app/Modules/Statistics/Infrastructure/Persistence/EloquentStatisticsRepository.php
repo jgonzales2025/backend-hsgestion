@@ -2,6 +2,7 @@
 
 namespace App\Modules\Statistics\Infrastructure\Persistence;
 
+use App\Modules\Sale\Infrastructure\Models\EloquentSale;
 use App\Modules\Statistics\Domain\Interfaces\StatisticsRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 
@@ -190,10 +191,10 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
         }
 
         if ($description !== null && $description !== '') {
-            $query->where(function($q) use ($description) {
+            $query->where(function ($q) use ($description) {
                 $q->where('a.description', 'like', '%' . $description . '%')
-                  ->orWhere('a.id', 'like', '%' . $description . '%')
-                  ->orWhere('a.cod_fab', 'like', '%' . $description . '%');
+                    ->orWhere('a.id', 'like', '%' . $description . '%')
+                    ->orWhere('a.cod_fab', 'like', '%' . $description . '%');
             });
         }
 
@@ -310,7 +311,8 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
 
         return $query->paginate($perPage);
     }
-    public function getListaPrecio(int $p_codma,?int $p_codcategoria,?int $p_status,?int $p_moneda,?int $p_orden){
+    public function getListaPrecio(int $p_codma, ?int $p_codcategoria, ?int $p_status, ?int $p_moneda, ?int $p_orden)
+    {
         $resultado = DB::select(
             'CALL sp_lista_precios(?,?,?,?,?)',
             [$p_codma, $p_codcategoria, $p_status, $p_moneda, $p_orden]
@@ -319,21 +321,101 @@ class EloquentStatisticsRepository implements StatisticsRepositoryInterface
 
         return $resultado;
     }
-    public function rankingAnualCliente(int $p_company_id, ?int $p_branch_id, int $p_customer_id, int $p_annio, int $p_currency_type_id, int $p_document_type_id){
-         $resultado = DB::select(
+    public function rankingAnualCliente(int $p_company_id, ?int $p_branch_id, int $p_customer_id, int $p_annio, int $p_currency_type_id, int $p_document_type_id)
+    {
+        $resultado = DB::select(
             'CALL sp_ranking_anual_cliente(?,?,?,?,?,?)',
             [$p_company_id, $p_branch_id, $p_customer_id, $p_annio, $p_currency_type_id, $p_document_type_id]
         );
 
         return $resultado;
     }
-    public function consultas_ventas(int $p_compania_id, ?int $p_branch_id, ?int $p_document_type_id, ?string $p_serie, ?string $p_correlativo, ?string $p_fecha1, ?string $p_fecha2, ?int $p_customer_id, ?int $p_vendedor_id, ?int $p_status_id){
-	  
+    public function consultas_ventas(int $p_compania_id, ?int $p_branch_id, ?int $p_document_type_id, ?string $p_serie, ?string $p_correlativo, ?string $p_fecha1, ?string $p_fecha2, ?int $p_customer_id, ?int $p_vendedor_id, ?int $p_status_id)
+    {
+
         $resultado = DB::select(
             'CALL sp_consultas_ventas(?,?,?,?,?,?,?,?,?,?)',
             [$p_compania_id, $p_branch_id, $p_document_type_id, $p_serie, $p_correlativo, $p_fecha1, $p_fecha2, $p_customer_id, $p_vendedor_id, $p_status_id]
         );
 
         return $resultado;
+    }
+    public function consultaReporteVentas(int $company_id, int $branch_id, int $cod_article, int $categoria, int $marca, bool $is_igv, int $cod_vendedor, string $fecha_inicio, string $fecha_fin)
+    {
+        $query = DB::table('sales as s')
+            ->join('sale_article as sa', 's.id', '=', 'sa.sale_id')
+            ->join('articles as a', 'sa.article_id', '=', 'a.id')
+            ->join('branches as b', 's.branch_id', '=', 'b.id')
+            ->join('customers as c', 's.customer_id', '=', 'c.id')
+            ->leftJoin('categories as cat', 'a.category_id', '=', 'cat.id')
+            ->leftJoin('brands as br', 'a.brand_id', '=', 'br.id')
+            ->leftJoin('users as u', 's.user_sale_id', '=', 'u.id')
+            ->where('s.company_id', $company_id)
+            ->where('s.status', 1);
+
+        // Conditional filters
+        if ($branch_id !== 0) {
+            $query->where('s.branch_id', $branch_id);
+        }
+
+        if ($cod_article !== 0) {
+            $query->where('sa.article_id', $cod_article);
+        }
+
+        if ($categoria !== 0) {
+            $query->where('a.category_id', $categoria);
+        }
+
+        if ($marca !== 0) {
+            $query->where('a.brand_id', $marca);
+        }
+
+        if ($cod_vendedor !== 0) {
+            $query->where('s.user_sale_id', $cod_vendedor);
+        }
+
+        if ($fecha_inicio !== '' && $fecha_fin !== '') {
+            $query->whereBetween('s.date', [$fecha_inicio, $fecha_fin]);
+        }
+        if (empty($fecha_inicio) && empty($fecha_fin)) {
+            $query->where('s.date', '<=', date('Y-m-d'));
+        }
+        // if ($is_igv) {
+        //     $query->where('a.igv_applicable', 0);
+        // }
+        $query->leftJoin('note_reasons as nr', 's.note_reason_id', '=', 'nr.id')
+            ->whereNotIn('s.document_type_id', [8, 16]);
+
+        return $query->select(
+            'a.cod_fab as CODIGO',
+            'a.description as DESCRIPCION',
+            DB::raw('SUM(sa.quantity * CASE 
+                WHEN s.document_type_id = 7 AND nr.stock = 1 THEN -1 
+                WHEN s.document_type_id = 7 AND nr.stock = 2 THEN 0 
+                ELSE 1 
+            END) as CANTIDAD'),
+            'mu.abbreviation as UDM',
+            DB::raw('SUM(
+            CASE  
+               WHEN s.currency_type_id = 1 THEN
+            sa.subtotal / ' . ($is_igv ? 1 : '(1 + s.igv_percentage)') . '
+            * CASE WHEN s.document_type_id = 7 THEN -1 ELSE 1 END
+            ELSE 0
+            END
+            ) as "S/"'),
+
+            DB::raw('SUM(
+            CASE 
+            WHEN s.currency_type_id = 2 THEN
+            sa.subtotal / ' . ($is_igv ? 1 : '(1 + s.igv_percentage)') . '
+            * CASE WHEN s.document_type_id = 7 THEN -1 ELSE 1 END
+            ELSE 0
+            END
+            ) as "US$"')
+
+        )
+            ->join('measurement_units as mu', 'a.measurement_unit_id', '=', 'mu.id')
+            ->groupBy('s.company_id', 'sa.article_id', 'a.cod_fab', 'a.description', 'mu.abbreviation')
+            ->get();
     }
 }

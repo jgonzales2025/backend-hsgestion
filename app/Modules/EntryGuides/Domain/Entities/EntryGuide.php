@@ -7,6 +7,7 @@ use App\Modules\Company\Domain\Entities\Company;
 use App\Modules\CurrencyType\Domain\Entities\CurrencyType;
 use App\Modules\Customer\Domain\Entities\Customer;
 use App\Modules\IngressReason\Domain\Entities\IngressReason;
+use App\Modules\PaymentType\Domain\Entities\PaymentType;
 
 class EntryGuide
 {
@@ -34,6 +35,9 @@ class EntryGuide
     private ?int $nc_document_id;
     private ?string $nc_reference_serie;
     private ?string $nc_reference_correlative;
+    private ?PaymentType $payment_type;
+    private ?int $days;
+    private ?string $date_ven;
 
     public function __construct(
         ?int $id,
@@ -59,7 +63,10 @@ class EntryGuide
         float $saldo = 0,
         ?int $nc_document_id = null,
         ?string $nc_reference_serie = null,
-        ?string $nc_reference_correlative = null
+        ?string $nc_reference_correlative = null,
+        ?PaymentType $payment_type = null,
+        ?int $days = null,
+        ?string $date_ven = null
     ) {
         $this->id = $id;
         $this->cia = $cia;
@@ -85,6 +92,9 @@ class EntryGuide
         $this->nc_document_id = $nc_document_id;
         $this->nc_reference_serie = $nc_reference_serie;
         $this->nc_reference_correlative = $nc_reference_correlative;
+        $this->payment_type = $payment_type;
+        $this->days = $days;
+        $this->date_ven = $date_ven;
     }
     public function getId(): int|null
     {
@@ -193,5 +203,17 @@ class EntryGuide
     public function getSaldo(): float
     {
         return $this->saldo;
+    }
+    public function getPaymentType(): ?PaymentType
+    {
+        return $this->payment_type;
+    }
+    public function getDays(): ?int
+    {
+        return $this->days;
+    }
+    public function getDateVen(): ?string
+    {
+        return $this->date_ven;
     }
 }

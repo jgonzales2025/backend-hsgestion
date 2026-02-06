@@ -321,12 +321,9 @@ class PettyCashReceiptController extends Controller
 
         $validated['cia'] = $companyId;
 
-        // Obtener datos del procedimiento almacenado
-        $selectProcedureUseCase = new SelectProcedureUseCase(
-            $this->pettyCashReceiptRepository
-        );
 
-        $data = $selectProcedureUseCase->execute(
+
+        $data = $this->pettyCashReceiptRepository->cobranzaDetalle(
             $validated['cia'],
             $validated['fecha'] ?? null,
             $validated['fechaU'] ?? null,

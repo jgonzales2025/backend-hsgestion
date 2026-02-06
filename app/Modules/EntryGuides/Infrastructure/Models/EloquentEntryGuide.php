@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Modules\DocumentEntryGuide\Infrastructure\Models\EloquentDocumentEntryGuide;
 use App\Modules\EntryGuideArticle\Infrastructure\Models\EloquentEntryGuideArticle;
+use App\Modules\PaymentType\Infrastructure\Models\EloquentPaymentType;
 
 class EloquentEntryGuide extends Model
 {
@@ -45,6 +46,9 @@ class EloquentEntryGuide extends Model
         'nc_document_id',
         'nc_reference_serie',
         'nc_reference_correlative',
+        'payment_type_id',
+        'days',
+        'date_ven'
     ];
     protected $hidden = ['created_at', 'updated_at'];
 
@@ -78,6 +82,11 @@ class EloquentEntryGuide extends Model
         return $this->belongsTo(EloquentCurrencyType::class, 'currency_id');
     }
 
+    public function payment_type(): BelongsTo
+    {
+        return $this->belongsTo(EloquentPaymentType::class, 'payment_type_id');
+    }
+
     public function entryGuideArticles(): HasMany
     {
         return $this->hasMany(EloquentEntryGuideArticle::class, 'entry_guide_id');
@@ -109,6 +118,9 @@ class EloquentEntryGuide extends Model
             nc_document_id: $eloquentEntryGuide->nc_document_id,
             nc_reference_serie: $eloquentEntryGuide->nc_reference_serie,
             nc_reference_correlative: $eloquentEntryGuide->nc_reference_correlative,
+            payment_type: $eloquentEntryGuide->payment_type?->toDomain($eloquentEntryGuide->payment_type),
+            days: $eloquentEntryGuide->days,
+            date_ven: $eloquentEntryGuide->date_ven,
         );
     }
 }

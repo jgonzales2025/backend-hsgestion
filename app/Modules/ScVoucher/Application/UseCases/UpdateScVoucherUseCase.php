@@ -52,6 +52,7 @@ class UpdateScVoucherUseCase
             usradi: $scVoucherDTO->usradi,
             fecadi: $scVoucherDTO->fecadi,
             usrmod: $scVoucherDTO->usrmod,
+            path_image: $scVoucherDTO->path_image,
             details: $scVoucherDTO->detail_sc_voucher,
             detailVoucherpurchase: $scVoucherDTO->detail_voucher_purchase,
         );

@@ -229,7 +229,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::put('/sc-voucher-status/{id}', [ScVoucherController::class, 'updateStatus']);
     Route::get('/sc-voucher/{id}', [ScVoucherController::class, 'show']);
     Route::put('/sc-voucher/{id}', [ScVoucherController::class, 'update']);
+    Route::post('/sc-voucher-image/{id}', [ScVoucherController::class, 'uploadImage']);
     Route::get('/sc-voucher-det/{id}', [ScVoucherController::class, 'getdetVoucher']);
+    Route::get('/sc-voucher-image/{id}', [ScVoucherController::class, 'getImagePath']);
     //scvoucherdetalle 
     Route::get('/sc-voucherdetalle', [ScVoucherdetController::class, 'index']);
     Route::post('/sc-voucherdetalle', [ScVoucherdetController::class, 'store']);
@@ -270,6 +272,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/purchase-excel', [PurchaseController::class, 'exportExcel']);
     Route::post('/purchase-reporte', [PurchaseController::class, 'reporteVentasCompras']);
     Route::put('/purchase-status/{id}', [PurchaseController::class, 'updateStatus']);
+    Route::get('/purchases-detalle', [PurchaseController::class, 'listarComprasDetalle']);
+    Route::post('/purchase-detalle-excel', [PurchaseController::class, 'exportarComprasDetalleExcel']);
+
     // Advances - Anticipos
     Route::get('/advances', [AdvanceController::class, 'index']);
     Route::get('/advances/{customerId}', [AdvanceController::class, 'showAdvancesByCustomer']);
@@ -313,7 +318,9 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/statistics/ranking-anual-excel', [StatisticsController::class, 'rankingAnualClientePaginatedExcel']);
     Route::post('/statistics/consultas-ventas', [StatisticsController::class, 'consultasVentas']);
     Route::post('/statistics/consultas-ventas-excel', [StatisticsController::class, 'consultasVentasPaginatedExcel']);
-    
+    Route::get('/statistics/consulta-reporte-ventas', [StatisticsController::class, 'consultaReporteVentas']);
+    Route::post('/statistics/consulta-reporte-ventas-excel', [StatisticsController::class, 'consultaReporteVentasExcel']);
+
     // Ruta para envío sunat de venta
     Route::post('/sale-sunat-send/factura/{id}', [SaleSunatController::class, 'storeFac']);
     Route::post('/sale-sunat-send/boleta/{id}', [SaleSunatController::class, 'storeBol']);

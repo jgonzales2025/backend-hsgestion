@@ -15,6 +15,8 @@ use App\Modules\EntryGuides\Domain\Entities\EntryGuide;
 use App\Modules\EntryGuides\Domain\Interfaces\EntryGuideRepositoryInterface;
 use App\Modules\IngressReason\Application\UseCases\FindByIdIngressReasonUseCase;
 use App\Modules\IngressReason\Domain\Interfaces\IngressReasonRepositoryInterface;
+use App\Modules\PaymentType\Application\UseCases\FindByIdPaymentTypeUseCase;
+use App\Modules\PaymentType\Domain\Interfaces\PaymentTypeRepositoryInterface;
 use App\Services\DocumentNumberGeneratorService;
 
 class CreateEntryGuideUseCase
@@ -27,6 +29,7 @@ class CreateEntryGuideUseCase
         private readonly IngressReasonRepositoryInterface $ingressReasonRepositoryInterface,
         private readonly DocumentNumberGeneratorService $documentNumberGeneratorService,
         private readonly CurrencyTypeRepositoryInterface $currencyTypeRepositoryInterface,
+        private readonly PaymentTypeRepositoryInterface $paymentTypeRepositoryInterface,
     ) {}
 
     public function execute(EntryGuideDTO $entryGuideDTO): ?EntryGuide
@@ -48,6 +51,9 @@ class CreateEntryGuideUseCase
 
         $currencyUseCase = new FindByIdCurrencyTypeUseCase($this->currencyTypeRepositoryInterface);
         $currency = $currencyUseCase->execute($entryGuideDTO->currency_id);
+
+        $paymentTypeUseCase = new FindByIdPaymentTypeUseCase($this->paymentTypeRepositoryInterface);
+        $paymentType = $entryGuideDTO->payment_type_id ? $paymentTypeUseCase->execute($entryGuideDTO->payment_type_id) : null;
 
         $entryGuide = new EntryGuide(
             id: null,
@@ -73,6 +79,9 @@ class CreateEntryGuideUseCase
             nc_document_id: $entryGuideDTO->nc_document_id,
             nc_reference_serie: $entryGuideDTO->nc_reference_serie,
             nc_reference_correlative: $entryGuideDTO->nc_reference_correlative,
+            payment_type: $paymentType,
+            days: $entryGuideDTO->days,
+            date_ven: $entryGuideDTO->date_ven,
         );
 
         return $this->entryGuideRepositoryInterface->save($entryGuide);

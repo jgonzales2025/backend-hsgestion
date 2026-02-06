@@ -5,6 +5,7 @@ namespace App\Modules\ScVoucher\Infrastructure\Resource;
 use App\Modules\DetVoucherPurchase\Infrastructure\Resource\DetVoucherPurchaseResource;
 use App\Modules\ScVoucherdet\Infrastructure\Resource\ScVoucherdetResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 
 class ScVoucherResource extends JsonResource
@@ -40,7 +41,7 @@ class ScVoucherResource extends JsonResource
             ],
             'tipopago' => [
                 'id' => $this->resource->getTipopago()?->getId(),
-                 'name' => $this->resource->getTipopago()?->getDescription(),
+                'name' => $this->resource->getTipopago()?->getDescription(),
             ],
             'status' => $this->resource->getStatus(),
             'usradi' => $this->resource->getUsradi(),
@@ -49,7 +50,8 @@ class ScVoucherResource extends JsonResource
             'total_soles' => $this->resource->getTipmon()?->getName() === 'DOLARES' ? (float)number_format($this->resource->getTotal() * $this->resource->getTipcam(), 4) : $this->resource->getTotal(),
             'total_dolares' => $this->resource->getTipmon()?->getName() === 'SOLES' ? (float)number_format($this->resource->getTotal() / $this->resource->getTipcam(), 4) : $this->resource->getTotal(),
             'detail_sc_voucher' => ScVoucherdetResource::collection($this->resource->getDetails()),
-            'detail_voucher_purchase'=>DetVoucherPurchaseResource::collection($this->resource->getDetailVoucherpurchase()),
+            'detail_voucher_purchase' => DetVoucherPurchaseResource::collection($this->resource->getDetailVoucherpurchase()),
+            'url_image' => $this->resource->getPathImage() ? url(Storage::url($this->resource->getPathImage())) : null,
             'estado' => $this->statusDate(),
         ];
     }

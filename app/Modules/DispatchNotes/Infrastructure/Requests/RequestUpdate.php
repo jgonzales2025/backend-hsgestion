@@ -46,6 +46,9 @@ class RequestUpdate extends FormRequest
             'customer_id' => 'required|integer|exists:customers,id',
             'address_supplier_id' => 'nullable|integer|exists:customers,id',
             'supplier_id' => 'nullable|integer|exists:customers,id',
+            'payment_type_id' => 'nullable|integer|exists:payment_types,id',
+            'days' => 'nullable|integer',
+            'date_ven' => 'nullable|date'
         ];
     }
     public function messages(): array

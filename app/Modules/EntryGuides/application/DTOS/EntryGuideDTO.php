@@ -25,6 +25,9 @@ class EntryGuideDTO
     public ?int $nc_document_id;
     public ?string $nc_reference_serie;
     public ?string $nc_reference_correlative;
+    public ?int $payment_type_id;
+    public ?int $days;
+    public ?string $date_ven;
 
 
 
@@ -51,5 +54,8 @@ class EntryGuideDTO
         $this->nc_document_id = $array['nc_document_id'] ?? null;
         $this->nc_reference_serie = $array['nc_reference_serie'] ?? null;
         $this->nc_reference_correlative = $array['nc_reference_correlative'] ?? null;
+        $this->payment_type_id = $array['payment_type_id'] ?? null;
+        $this->days = $array['days'] ?? null;
+        $this->date_ven = $array['date_ven'] ?? null;
     }
 }

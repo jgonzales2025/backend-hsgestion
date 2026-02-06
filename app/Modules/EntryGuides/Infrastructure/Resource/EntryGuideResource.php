@@ -56,6 +56,14 @@ class EntryGuideResource extends JsonResource
             'nc_document_id' => $this->resource?->getNcDocumentId(),
             'nc_reference_serie' => $this->resource?->getNcReferenceSerie(),
             'nc_reference_correlative' => $this->resource?->getNcReferenceCorrelative(),
+            'payment_type' => [
+                'id' => $this->resource->getPaymentType()?->getId(),
+                'status' => $this->resource->getPaymentType()?->getStatus() == 1 ? 'Activo' : 'Inactivo',
+                'name' => $this->resource->getPaymentType()?->getName(),
+            ],
+            'days' => $this->resource->getDays(),
+            'date_ven' => Carbon::parse($this->resource->getDateVen())
+                ->format('d/m/Y'),
             'estado' => $this->statusDate(),
         ];
     }

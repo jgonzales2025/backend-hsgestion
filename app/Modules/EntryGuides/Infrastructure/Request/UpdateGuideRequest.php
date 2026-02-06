@@ -46,6 +46,9 @@ class UpdateGuideRequest extends FormRequest
             'nc_document_id' => 'nullable|integer',
             'nc_reference_serie' => 'nullable|string',
             'nc_reference_correlative' => 'nullable|string',
+            'payment_type_id' => 'nullable|integer|exists:payment_types,id',
+            'days' => 'nullable|integer',
+            'date_ven' => 'nullable|string',
             // 'order_purchase_id.*.entry_guide_id' => 'required|integer',
 
             'document_entry_guide' => 'required|array',

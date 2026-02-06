@@ -634,8 +634,8 @@ class SalesSunatService
             ],
             "destinatario" => [
                 "tipoDoc" => (string) $customer->getCustomerDocumentType()->getCodSunat(),
-                "numDoc" => $customer->getDocumentNumber(),
-                "rznSocial" => $customer->getCustomerDocumentType()->getId() == 6 ? $customer->getCompanyName() : $customer->getName() . ' ' . $customer->getLastName() . ' ' . $customer->getSecondLastname()
+                "numDoc" => $dispatchNote->getEmissionReason()->getId() == 4 ? "20000000001" : $customer->getDocumentNumber(),
+                "rznSocial" => $customer->getCustomerDocumentType()->getCodSunat() == 6 ? $customer->getCompanyName() : $customer->getName() . ' ' . $customer->getLastName() . ' ' . $customer->getSecondLastname()
             ],
             "envio" => [
                 "codTraslado" => (string) '0' . $dispatchNote->getEmissionReason()->getId(),
@@ -644,12 +644,16 @@ class SalesSunatService
                 "pesoTotal" => $dispatchNote->getTotalWeight(),
                 "undPesoTotal" => "KGM",
                 "llegada" => [
+                    "ruc" => $dispatchNote->getEmissionReason()->getId() == 4 ? "20000000001" : null,
                     "ubigueo" => $ubigeoCustomer ?? $dispatchNote->getDestinationBranch()->getUbigeo(),
-                    "direccion" => $customerAddress->address ?? $dispatchNote->getDestinationBranch()->getAddress()
+                    "direccion" => $customerAddress->address ?? $dispatchNote->getDestinationBranch()->getAddress(),
+                    "codLocal" => "0000"
                 ],
                 "partida" => [
+                    "ruc" => $dispatchNote->getEmissionReason()->getId() == 4 ? "20000000001" : null,
                     "ubigueo" => $ubigeo,
-                    "direccion" => $dispatchNote->getCompany()->getAddress()
+                    "direccion" => $dispatchNote->getCompany()->getAddress(),
+                    "codLocal" => "0000"
                 ],
                 "numBultos" => (int) $quantityTotal
             ],

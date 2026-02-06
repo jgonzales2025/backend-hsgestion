@@ -8,6 +8,7 @@ class Branch{
     private ?int $cia_id;
     private string $name;
     private string $address;
+    private string $ubigeo;
     private ?string $email;
     private string $start_date;
     private string $serie;
@@ -19,12 +20,13 @@ class Branch{
     private ?array $phones;
 
     public function __construct(?int $id, ?int $cia_id,
-    string $name,string $address,?string $email,string $start_date,
+    string $name,string $address, string $ubigeo, ?string $email,string $start_date,
     string $serie,?int $status, ?array $phones = [], ?int $st_sales = null, ?int $st_dispatch_notes = null, ?int $st_petty_cash = null, ?int $st_warranties = null){
        $this->id = $id;
        $this->cia_id = $cia_id;
        $this->name = $name;
        $this->address = $address;
+       $this->ubigeo = $ubigeo;
        $this->email = $email;
        $this->start_date = $start_date;
        $this->serie = $serie;
@@ -47,6 +49,9 @@ class Branch{
     }
     public function getAddress():string{
         return $this->address;
+    }
+    public function getUbigeo():string{
+        return $this->ubigeo;
     }
     public function getEmail(): ?string{
         return $this->email;

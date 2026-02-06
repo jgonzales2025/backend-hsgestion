@@ -22,6 +22,7 @@ class UpdateBranchUseCase{
             cia_id:$branchDTO->cia_id,
             name:$branchDTO->name,
             address:$branchDTO->address,
+            ubigeo:$branchDTO->ubigeo,
             email:$branchDTO->email,
             start_date:$branchDTO->start_date,
             serie:$branchDTO->serie,

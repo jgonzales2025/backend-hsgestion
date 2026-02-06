@@ -604,15 +604,23 @@ class SalesSunatService
         $customerUseCase = new FindByIdCustomerUseCase($this->customerRepository);
         $customer = $customerUseCase->execute($dispatchNote->getCustomerId());
         
-        $customerAddress = EloquentCustomerAddress::find($dispatchNote->getdestination_branch_client());
-        $departmentCustomer = strlen((string) $customerAddress->department_id) == 1 ? '0' . $customerAddress->department_id : $customerAddress->department_id;
-        $provinceCustomer = strlen((string) $customerAddress->province_id) == 1 ? '0' . $customerAddress->province_id : $customerAddress->province_id;
-        $districtCustomer = strlen((string) $customerAddress->district_id) == 1 ? '0' . $customerAddress->district_id : $customerAddress->district_id;
-        $ubigeoCustomer = $departmentCustomer . $provinceCustomer . $districtCustomer;
+        if ($dispatchNote->getEmissionReason()->getId() != 4)
+        {
+            $customerAddress = EloquentCustomerAddress::find($dispatchNote->getdestination_branch_client());
+            $departmentCustomer = strlen((string) $customerAddress->department_id) == 1 ? '0' . $customerAddress->department_id : $customerAddress->department_id;
+            $provinceCustomer = strlen((string) $customerAddress->province_id) == 1 ? '0' . $customerAddress->province_id : $customerAddress->province_id;
+            $districtCustomer = strlen((string) $customerAddress->district_id) == 1 ? '0' . $customerAddress->district_id : $customerAddress->district_id;
+            $ubigeoCustomer = $departmentCustomer . $provinceCustomer . $districtCustomer;
+        }
+        
+        $quantityTotal = array_sum(array_map(function($article) {
+            return $article->getQuantity();
+        }, $dispatchNoteArticles));
+
     
         $data = [
             "company" => [
-                "ruc" => $dispatchNote->getCompany()->getRuc(),
+                "ruc" => "20000000001",
                 "razonSocial" => $dispatchNote->getCompany()->getCompanyName(),
                 "nombreComercial" => $dispatchNote->getCompany()->getCompanyName(),
                 "address" => [
@@ -630,44 +638,60 @@ class SalesSunatService
                 "rznSocial" => $customer->getCustomerDocumentType()->getId() == 6 ? $customer->getCompanyName() : $customer->getName() . ' ' . $customer->getLastName() . ' ' . $customer->getSecondLastname()
             ],
             "envio" => [
-                "codTraslado" => (string) $dispatchNote->getEmissionReason()->getId(),
-                "modTraslado" => (string) $dispatchNote->getTransferType(),
-                "fechTraslado" => $eloquentDispatchNote->created_at->format('Y-m-d'),
+                "codTraslado" => (string) '0' . $dispatchNote->getEmissionReason()->getId(),
+                "modTraslado" => (string) '0' . $dispatchNote->getTransferType(),
+                "fechTraslado" => $eloquentDispatchNote->created_at->format('Y-m-d'), //CONSULTAR
                 "pesoTotal" => $dispatchNote->getTotalWeight(),
                 "undPesoTotal" => "KGM",
                 "llegada" => [
-                    "ubigueo" => $ubigeoCustomer,
-                    "direccion" => $customerAddress->address
+                    "ubigueo" => $ubigeoCustomer ?? $dispatchNote->getDestinationBranch()->getUbigeo(),
+                    "direccion" => $customerAddress->address ?? $dispatchNote->getDestinationBranch()->getAddress()
                 ],
                 "partida" => [
                     "ubigueo" => $ubigeo,
                     "direccion" => $dispatchNote->getCompany()->getAddress()
                 ],
-                "numBultos" => 4
+                "numBultos" => (int) $quantityTotal
             ],
+            "despatch" => [
+                "tipDoc" => "09",
+                "serie" => $dispatchNote->getSerie(),
+                "correlativo" => $dispatchNote->getCorrelativo(),
+                "fechaEmision" => $eloquentDispatchNote->created_at->format('Y-m-d') //CONSULTAR
+            ],
+            "transportist" => $dispatchNote->getTransferType() == 1 ?
+                [
+                    "tipDoc" => "6",
+                    "numDoc" => $dispatchNote->getTransport()->getRuc(),
+                    "rznSocial" => $dispatchNote->getTransport()->getCompanyName(),
+                    //"nroMtc" => empty($dispatchNote->getTransport()->getNroRegMtc()) ? null : $dispatchNote->getTransport()->getNroRegMtc()
+                ] : null,
+            "driver" => $dispatchNote->getTransferType() == 2 ? [
+                "tipDoc" => "1",
+                "numDoc" => $dispatchNote->getConductor()->getDocNumber(),
+                "licence" => $dispatchNote->getConductor()->getLicense(),
+                "name" => $dispatchNote->getConductor()->getName(),
+                "lastname" => $dispatchNote->getConductor()->getPatSurname() . ' ' . $dispatchNote->getConductor()->getMatSurname()
+            ] : null,
+            "vehicle" => ($dispatchNote->getVehicleType() == 1 || $dispatchNote->getConductor()?->getDocNumber()) ? [
+                "placa" => $dispatchNote->getLicensePlate()
+            ] : null,
             "details" => array_map(function ($article) use ($dispatchNote) {
-    
                 return [
-                    "codProducto" => (string) $article->getArticle()->getId(),
-                    "unidad" => "NIU",
+                    "codigo" => (string) $article->getArticleID(),
                     "cantidad" => $article->getQuantity(),
-                    "descripcion" => $article->getArticle()->getDescription(),
-                    "mtoBaseIgv" => round($article->getSubtotal() / 1.18, 2),
-                    "porcentajeIgv" => 18,
-                    "igv" => round($article->getSubTotal() - ($article->getSubTotal() / 1.18), 2),
-                    "tipAfeIgv" => "10",
-                    "totalImpuestos" => round($article->getSubTotal() - ($article->getSubTotal() / 1.18), 2),
-                    "mtoValorVenta" => round($article->getSubtotal() / 1.18, 2),
-                    "mtoValorUnitario" => round($article->getUnitPrice() / 1.18, 2),
-                    "mtoPrecioUnitario" => $article->getUnitPrice()
+                    "unidad" => "NIU",
+                    "descripcion" => $article->getName()
                 ];
             }, $dispatchNoteArticles)
         ];
+        
+        //Log::info($data);
     
         $response = Http::withHeaders([
             'Authorization' => "Bearer $this->token",
             'Accept' => 'application/json'
-        ])->post("{$this->baseUrl}/notadebito/send", $data);
+        ])->post("{$this->baseUrl}/guiaderemision/send", $data);
     
         return $response->json();
     }

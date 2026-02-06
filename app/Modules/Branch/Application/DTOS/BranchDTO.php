@@ -5,6 +5,7 @@ class BranchDTO {
     public $cia_id;
     public $name;
     public $address;
+    public $ubigeo;
     public $email;
     public $start_date;
     public $serie;
@@ -18,6 +19,7 @@ class BranchDTO {
         $this->cia_id = $data['cia_id'] ?? null;
         $this->name = $data['name'] ?? '';
         $this->address = $data['address'] ?? null;
+        $this->ubigeo = $data['department_id'] . $data['province_id'] . $data['district_id'];
         $this->email = $data['email'] ?? null;
         $this->start_date = $data['start_date'] ?? null;
         $this->serie = $data['serie'] ?? null;

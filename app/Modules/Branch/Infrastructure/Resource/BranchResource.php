@@ -24,9 +24,9 @@ class BranchResource extends JsonResource
             'serie' => $this->resource->getSerie(),
             'start_date' => $this->resource->getStart_date(),
             'address' => $this->resource->getAddress(),
-            'department_id' => substr($ubigeo, 0, 2),
-            'province_id' => substr($ubigeo, 2, 2),
-            'district_id' => substr($ubigeo, 4, 2),
+            'department_id' => (int) substr($ubigeo, 0, 2),
+            'province_id' => (int) substr($ubigeo, 2, 2),
+            'district_id' => (int) substr($ubigeo, 4, 2),
             'status' => ($this->resource->getStatus()) == 1 ? 'Activo' : 'Inactivo',
             'phones'   => $this->resource->getPhones() ?? [],
         ];

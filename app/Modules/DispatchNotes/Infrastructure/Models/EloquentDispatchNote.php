@@ -51,7 +51,8 @@ class EloquentDispatchNote extends Model
         'pdf',
         'transfer_date',
         'arrival_date',
-        'estado_sunat'
+        'estado_sunat',
+        'created_at'
     ];
     public $timestamps = true;
 

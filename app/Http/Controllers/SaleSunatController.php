@@ -18,7 +18,7 @@ class SaleSunatController extends Controller
         private readonly SaleArticleRepositoryInterface $saleArticleRepository,
     ) {
     }
-    public function store(int $id)
+    public function storeFac(int $id)
     {
         $sale = new FindByIdSaleUseCase($this->saleInterfaceRepository);
         $sale = $sale->execute($id);
@@ -37,8 +37,6 @@ class SaleSunatController extends Controller
         if ($sale->getStretencion() !== null) {
             $response = $this->salesSunatService->saleRetencion($sale, $saleArticles);
         }
-        
-        Log::info($response);
 
         if (!isset($response['estado'])) {
             return response()->json($response);
@@ -51,6 +49,95 @@ class SaleSunatController extends Controller
             'respuesta_sunat' => $response['descripcion']
         ]);
 
-        return response()->json($response);
+        return response()->json([
+            'status' => $response['estado'],
+            'message' => $response['descripcion']
+        ]);
     }
+    
+    public function storeBol(int $id)
+    {
+        $sale = new FindByIdSaleUseCase($this->saleInterfaceRepository);
+        $sale = $sale->execute($id);
+
+        $saleArticles = new FindBySaleIdUseCase($this->saleArticleRepository);
+        $saleArticles = $saleArticles->execute($id);
+
+        $response = $this->salesSunatService->saleBol($sale, $saleArticles);
+
+        if (!isset($response['estado'])) {
+            return response()->json($response);
+        }
+
+        $saleEloquent = EloquentSale::find($id);
+        $saleEloquent->update([
+            'estado_sunat' => $response['estado'],
+            'fecha_aceptacion' => $response['sunat_response']['fecha'] . ' ' . $response['sunat_response']['hora'],
+            'respuesta_sunat' => $response['descripcion']
+        ]);
+
+        return response()->json([
+            'status' => $response['estado'],
+            'message' => $response['descripcion']
+        ]);
+    }
+    
+    public function storeCreditNote(int $id)
+    {
+        $sale = new FindByIdSaleUseCase($this->saleInterfaceRepository);
+        $sale = $sale->execute($id);
+
+        $saleArticles = new FindBySaleIdUseCase($this->saleArticleRepository);
+        $saleArticles = $saleArticles->execute($id);
+
+        $response = $this->salesSunatService->sendCreditNote($sale, $saleArticles);
+
+        Log::error($response);
+
+        if (!isset($response['estado'])) {
+            return response()->json($response);
+        }
+
+        $saleEloquent = EloquentSale::find($id);
+        $saleEloquent->update([
+            'estado_sunat' => $response['estado'],
+            'fecha_aceptacion' => $response['sunat_response']['fecha'] . ' ' . $response['sunat_response']['hora'],
+            'respuesta_sunat' => $response['descripcion']
+        ]);
+
+        return response()->json([
+            'status' => $response['estado'],
+            'message' => $response['descripcion']
+        ]);
+    }
+    
+    public function storeDebitNote(int $id)
+    {
+        $sale = new FindByIdSaleUseCase($this->saleInterfaceRepository);
+        $sale = $sale->execute($id);
+
+        $saleArticles = new FindBySaleIdUseCase($this->saleArticleRepository);
+        $saleArticles = $saleArticles->execute($id);
+
+        $response = $this->salesSunatService->sendDebitNote($sale, $saleArticles);
+
+        Log::error($response);
+
+        if (!isset($response['estado'])) {
+            return response()->json($response);
+        }
+
+        $saleEloquent = EloquentSale::find($id);
+        $saleEloquent->update([
+            'estado_sunat' => $response['estado'],
+            'fecha_aceptacion' => $response['sunat_response']['fecha'] . ' ' . $response['sunat_response']['hora'],
+            'respuesta_sunat' => $response['descripcion']
+        ]);
+
+        return response()->json([
+            'status' => $response['estado'],
+            'message' => $response['descripcion']
+        ]);
+    }
+    
 }

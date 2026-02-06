@@ -13,6 +13,7 @@ use App\Modules\Menu\Domain\Services\UserMenuService;
 use App\Modules\User\Domain\Entities\User;
 use App\Modules\User\Infrastructure\Model\EloquentUser;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -128,7 +129,7 @@ class AuthController extends Controller
         // Login exitoso: resetear intentos fallidos
         $eloquentUser->update(['failed_attempts' => 0]);
         // Verificar roles del usuario
-        $userRoles = \DB::table('model_has_roles')
+        $userRoles = DB::table('model_has_roles')
             ->where('model_type', get_class($eloquentUser))
             ->where('model_id', $eloquentUser->id)
             ->get();
@@ -190,7 +191,7 @@ class AuthController extends Controller
 
         // Verificar si ya se actualizó el tipo de cambio hoy
         $today = now()->format('Y-m-d');
-        $exchangeRateExists = \DB::table('exchange_rates')
+        $exchangeRateExists = DB::table('exchange_rates')
             ->where('date', $today)
             ->exists();
 
@@ -250,7 +251,7 @@ class AuthController extends Controller
 
         // Verificar si ya se actualizó el tipo de cambio hoy
         $today = now()->format('Y-m-d');
-        $exchangeRateExists = \DB::table('exchange_rates')
+        $exchangeRateExists = DB::table('exchange_rates')
             ->where('date', $today)
             ->exists();
 
@@ -318,7 +319,7 @@ class AuthController extends Controller
         // Obtener permisos del rol base
         $roleMenuIds = [];
         if ($selectedRole) {
-            $roleMenuIds = \DB::table('menu_role')
+            $roleMenuIds = DB::table('menu_role')
                 ->where('role_id', $roleId)
                 ->pluck('menu_id')
                 ->toArray();
@@ -353,7 +354,7 @@ class AuthController extends Controller
         );
 
         // Obtener permisos personalizados
-        $userMenuPermissions = \DB::table('user_menu_permissions')
+        $userMenuPermissions = DB::table('user_menu_permissions')
             ->where('user_id', $eloquentUser->id)
             ->where('role_id', $roleId)
             ->get();
@@ -515,46 +516,4 @@ class AuthController extends Controller
         return $this->buildTokenResponse($token, $eloquentUser, $cia_id, $roleId);
     }
 
-    private function decryptFrontendPassword($encryptedPassword)
-    {
-        try {
-            // La clave secreta debe ser configurada en .env como APP_FRONTEND_DECRYPTION_KEY (o similar)
-            // Por defecto usaremos una cadena vacía, lo que hará fallar la desencriptación si no se configura
-            $passphrase = config('app.frontend_decryption_key');
-
-            if (empty($passphrase)) {
-                return $encryptedPassword;
-            }
-
-            $jsondata = base64_decode($encryptedPassword);
-
-            // Verificar "Salted__"
-            if (substr($jsondata, 0, 8) !== "Salted__") {
-                return $encryptedPassword;
-            }
-
-            $salt = substr($jsondata, 8, 8);
-            $ct = substr($jsondata, 16);
-
-            // Derivación de clave e IV compatible con OpenSSL (EVP_BytesToKey)
-            // Necesitamos 32 bytes para Key + 16 bytes para IV = 48 bytes
-            $previousBlock = '';
-            $finalKey = '';
-
-            while (strlen($finalKey) < 48) {
-                $previousBlock = md5($previousBlock . $passphrase . $salt, true);
-                $finalKey .= $previousBlock;
-            }
-
-            $key = substr($finalKey, 0, 32);
-            $iv = substr($finalKey, 32, 16);
-
-            $decrypted = openssl_decrypt($ct, 'aes-256-cbc', $key, true, $iv);
-
-            return $decrypted !== false ? $decrypted : $encryptedPassword;
-
-        } catch (\Exception $e) {
-            return $encryptedPassword;
-        }
-    }
 }

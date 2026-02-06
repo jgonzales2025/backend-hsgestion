@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Modules\DispatchArticle\Application\UseCase\FindByIdDispatchArticle;
+use App\Modules\DispatchArticle\Domain\Interface\DispatchArticleRepositoryInterface;
+use App\Modules\DispatchNotes\Application\UseCases\FindByIdDispatchNoteUseCase;
+use App\Modules\DispatchNotes\Domain\Interfaces\DispatchNotesRepositoryInterface;
+use App\Modules\DispatchNotes\Infrastructure\Models\EloquentDispatchNote;
 use App\Modules\Sale\Application\UseCases\FindByIdSaleUseCase;
 use App\Modules\Sale\Domain\Interfaces\SaleRepositoryInterface;
 use App\Modules\Sale\Infrastructure\Models\EloquentSale;
@@ -16,6 +21,8 @@ class SaleSunatController extends Controller
         private readonly SaleRepositoryInterface $saleInterfaceRepository,
         private readonly SalesSunatService $salesSunatService,
         private readonly SaleArticleRepositoryInterface $saleArticleRepository,
+        private readonly DispatchNotesRepositoryInterface $dispatchNoteRepository,
+        private readonly DispatchArticleRepositoryInterface $dispatchArticleRepository
     ) {
     }
     public function storeFac(int $id)
@@ -131,6 +138,35 @@ class SaleSunatController extends Controller
         $saleEloquent->update([
             'estado_sunat' => $response['estado'],
             'fecha_aceptacion' => $response['sunat_response']['fecha'] . ' ' . $response['sunat_response']['hora'],
+            'respuesta_sunat' => $response['descripcion']
+        ]);
+
+        return response()->json([
+            'status' => $response['estado'],
+            'message' => $response['descripcion']
+        ]);
+    }
+    
+    public function storeDispatchNote(int $id)
+    {
+        $dispatchNote = new FindByIdDispatchNoteUseCase($this->dispatchNoteRepository);
+        $dispatchNote = $dispatchNote->execute($id);
+
+        $dispatchNoteArticles = new FindByIdDispatchArticle($this->dispatchArticleRepository);
+        $dispatchNoteArticles = $dispatchNoteArticles->execute($id);
+
+        $response = $this->salesSunatService->sendDispatchNote($dispatchNote, $dispatchNoteArticles);
+
+        //Log::error($response);
+
+        if (!isset($response['estado'])) {
+            return response()->json($response);
+        }
+
+        $dispatchNoteEloquent = EloquentDispatchNote::find($id);
+        $dispatchNoteEloquent->update([
+            'estado_sunat' => $response['estado'],
+            //'fecha_aceptacion' => $response['sunat_response']['fecha'] . ' ' . $response['sunat_response']['hora'],
             'respuesta_sunat' => $response['descripcion']
         ]);
 

@@ -18,6 +18,9 @@ class UpdateBranchRequest extends FormRequest
         'cia_id'     => 'sometimes|integer|exists:companies,id',
         'name'       => 'sometimes|string|max:30',
         'address'    => 'sometimes|string|max:100',
+        'department_id' => 'required',
+        'province_id' => 'required',
+        'district_id' => 'required',
         'email'      => 'nullable|email|max:150',
         'start_date' => 'sometimes|string|max:10',
         'serie'      => 'sometimes|string|max:10',
@@ -39,6 +42,10 @@ class UpdateBranchRequest extends FormRequest
             
             'address.string'      => 'La dirección debe ser un texto válido.',
             'address.max'         => 'La dirección no puede exceder 100 caracteres.',
+                        
+            'department_id.required' => 'El departamento es obligatorio.',
+            'province_id.required' => 'La provincia es obligatoria.',
+            'district_id.required' => 'El distrito es obligatorio.',
             
             'email.email'         => 'El formato del correo electrónico no es válido.',
             'email.max'           => 'El correo electrónico no puede exceder 150 caracteres.',

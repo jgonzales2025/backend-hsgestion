@@ -319,6 +319,7 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::post('/sale-sunat-send/boleta/{id}', [SaleSunatController::class, 'storeBol']);
     Route::post('/sale-sunat-send/notacredito/{id}', [SaleSunatController::class, 'storeCreditNote']);
     Route::post('/sale-sunat-send/notadebito/{id}', [SaleSunatController::class, 'storeDebitNote']);
+    Route::post('/sale-sunat-send/guiaremision/{id}', [SaleSunatController::class, 'storeDispatchNote']);
     
     Route::get('/roles', [RoleController::class, 'index']);
     Route::get('/roles-paginate-infinite', [RoleController::class, 'indexPaginateInfinite']);

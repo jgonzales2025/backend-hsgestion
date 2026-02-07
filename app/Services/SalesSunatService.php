@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\ProcessSunatVoidedTicket;
 use App\Modules\Company\Domain\Entities\Company;
 use App\Modules\Customer\Application\UseCases\FindByIdCustomerUseCase;
 use App\Modules\Customer\Domain\Interfaces\CustomerRepositoryInterface;
@@ -321,14 +322,46 @@ class SalesSunatService
             "motivo_baja" => "ERROR EN EL DOCUMENTO",
             "fecha_emision" => "2026-01-03"
         ];
-        /* Log::info($data);
-        $responseTicket = Http::withToken($this->token)->post("{$this->baseUrl}/voided/send", $data);
-        Log::info($responseTicket->json());
-        $ticket = $responseTicket->json('ticket'); */
         
-        $response = Http::withToken($this->token)->get("{$this->baseUrl}/voided/check/2026010600384437991/{$sale->getCompany()->getRuc()}");
-        //dd($response->json());
-        return $response->json();
+        //Log::info($data);
+        $responseTicket = Http::withToken($this->token)->post("{$this->baseUrl}/voided/send", $data);
+        //Log::info($responseTicket->json());
+        
+        $ticket = $responseTicket->json('ticket');
+        
+        if (!$ticket) {
+            return [
+                'success' => false,
+                'message' => 'No se pudo obtener el ticket de SUNAT',
+                'response' => $responseTicket->json()
+            ];
+        }
+        
+        // Actualizar la venta con estado de procesamiento usando el modelo Eloquent
+        $saleEloquent = EloquentSale::find($sale->getId());
+        if ($saleEloquent) {
+            $saleEloquent->sunat_status = 'PROCESANDO_ANULACION';
+            $saleEloquent->sunat_ticket = $ticket;
+            $saleEloquent->save();
+        }
+        
+        Log::info("Estoy aqui");
+        // Despachar el Job para procesar el ticket de forma asíncrona
+        ProcessSunatVoidedTicket::dispatch(
+            $sale->getId(),
+            $ticket,
+            $sale->getCompany()->getRuc(),
+            $this->token,
+            $this->baseUrl
+        )->delay(now()->addSeconds(1)); // Esperar 30 segundos antes de consultar
+        
+        // Retornar respuesta inmediata al cliente
+        return [
+            'success' => true,
+            'message' => 'Solicitud de anulación enviada a SUNAT. El proceso continuará en segundo plano.',
+            'ticket' => $ticket,
+            'status' => 'PROCESANDO_ANULACION'
+        ];
     }
     
     public function saleBol(Sale $sale, array $saleArticles)

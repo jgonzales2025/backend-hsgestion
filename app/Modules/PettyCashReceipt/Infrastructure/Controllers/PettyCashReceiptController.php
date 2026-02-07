@@ -184,7 +184,7 @@ class PettyCashReceiptController extends Controller
             $validated['pserie'] ?? '',
             $validated['pcorrelativo'] ?? ''
         );
-        
+
         $totales = $this->pettyCashReceiptRepository->totalesParteDiario(
             $validated['cia'],
             $validated['fecha'] ?? '',
@@ -254,9 +254,23 @@ class PettyCashReceiptController extends Controller
             $validated['pcorrelativo']
         );
 
+      
+        $companyName = '';
+        if ($validated['cia']) {
+            $company = $this->companyRepository->findById($validated['cia']);
+            if ($company) {
+                $companyName = $company->getCompanyName();
+            }
+        }
+
         // Stream directo XLSX para evitar cualquier mezcla de salida y asegurar binario correcto
         $fileName = 'parte_caja_' . now()->format('Y-m-d_His') . '.xlsx';
-        $export = new PersistencePettyCashProcedureExport($data);
+        $export = new PersistencePettyCashProcedureExport(
+            $data,
+            $companyName,
+            $validated['fecha'] ?? null,
+            $validated['fechaU'] ?? null
+        );
         return Excel::download($export, $fileName, MaatwebsiteExcel::XLSX);
     }
 
@@ -280,11 +294,8 @@ class PettyCashReceiptController extends Controller
         $validated['cia'] = $companyId;
 
         // Obtener datos del procedimiento almacenado
-        $selectProcedureUseCase = new SelectProcedureUseCase(
-            $this->pettyCashReceiptRepository
-        );
 
-        $data = $selectProcedureUseCase->execute(
+        $data = $this->pettyCashReceiptRepository->cobranzaDetalle(
             $validated['cia'],
             $validated['fecha'] ?? '',
             $validated['fechaU'] ?? '',
@@ -397,5 +408,4 @@ class PettyCashReceiptController extends Controller
 
         $transactionLogs->execute($transactionDTO);
     }
-
 }

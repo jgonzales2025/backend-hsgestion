@@ -17,7 +17,12 @@ use Illuminate\Support\Collection;
 class PettyCashProcedureExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithEvents, ShouldAutoSize
 {
     private array $columns = [];
-    public function __construct(private array $data) {
+    public function __construct(
+        private array $data,
+        private string $companyName = '',
+        private ?string $startDate = null,
+        private ?string $endDate = null
+    ) {
         $this->columns = $this->buildColumns($data);
     }
 
@@ -72,7 +77,15 @@ class PettyCashProcedureExport implements FromCollection, WithHeadings, WithMapp
 
     public function headings(): array
     {
-        return $this->columns;
+        $dateRange = 'FECHA EMISIÓN: ' . now()->format('d/m/Y') . '   RANGO: ' . ($this->startDate ? date('d/m/Y', strtotime($this->startDate)) : '') . ' - ' . ($this->endDate ? date('d/m/Y', strtotime($this->endDate)) : '');
+
+        return [
+            [$this->companyName],
+            ['REPORTE DE PARTE DE CAJA'],
+            [$dateRange],
+            [''], // Espacio
+            $this->columns // Cabecera de la tabla
+        ];
     }
 
     public function map($row): array
@@ -102,7 +115,10 @@ class PettyCashProcedureExport implements FromCollection, WithHeadings, WithMapp
     public function styles(Worksheet $sheet)
     {
         return [
-            1 => ['font' => ['bold' => true]],
+            1 => ['font' => ['bold' => true, 'size' => 16, 'color' => ['argb' => 'FF4472C4']]], // Compañía (Azul)
+            2 => ['font' => ['bold' => true, 'size' => 14]], // Reporte Nombre
+            3 => ['font' => ['bold' => true, 'size' => 12, 'italic' => true]], // Fecha
+            5 => ['font' => ['bold' => true]],               // Cabecera tabla
         ];
     }
 
@@ -111,27 +127,37 @@ class PettyCashProcedureExport implements FromCollection, WithHeadings, WithMapp
         return [
             AfterSheet::class => function (AfterSheet $event) {
                 $sheet = $event->sheet->getDelegate();
-
-                // Congelar la fila de cabecera
-                $sheet->freezePane('A2');
-
-                // Aplicar autofiltro desde la cabecera hasta la última fila
-                $highestRow = $sheet->getHighestRow();
                 $highestColumn = $sheet->getHighestColumn();
-                $sheet->setAutoFilter("A1:{$highestColumn}{$highestRow}");
+                $highestRow = $sheet->getHighestRow();
 
-                // Estilo de cabecera: fondo y alineación
-                $headerRange = "A1:{$highestColumn}1";
+                // Merge para los títulos
+                $sheet->mergeCells("A1:{$highestColumn}1");
+                $sheet->mergeCells("A2:{$highestColumn}2");
+                $sheet->mergeCells("A3:{$highestColumn}3");
+
+                // Alineación izquierda para títulos
+                $sheet->getStyle("A1:A3")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_LEFT);
+
+                // Congelar paneles desde fila 6
+                $sheet->freezePane('A6');
+
+                // Autofiltro para la tabla principal (fila 5 en adelante)
+                if ($highestRow >= 5) {
+                    $sheet->setAutoFilter("A5:{$highestColumn}{$highestRow}");
+                }
+
+                // Estilo para la cabecera de la tabla (A5)
+                $headerRange = "A5:{$highestColumn}5";
                 $sheet->getStyle($headerRange)
                     ->getFill()
                     ->setFillType(Fill::FILL_SOLID)
                     ->getStartColor()
-                    ->setARGB('FF4472C4'); // azul
+                    ->setARGB('FF4472C4'); // Azul
 
                 $sheet->getStyle($headerRange)
                     ->getFont()
                     ->getColor()
-                    ->setARGB('FFFFFFFF'); // texto blanco
+                    ->setARGB('FFFFFFFF'); // Blanco
 
                 $sheet->getStyle($headerRange)
                     ->getAlignment()

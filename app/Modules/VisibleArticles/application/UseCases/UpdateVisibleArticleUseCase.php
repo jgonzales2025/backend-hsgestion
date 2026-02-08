@@ -16,10 +16,10 @@ class UpdateVisibleArticleUseCase
 
       $existeType = new VisibleArticle(
          id: $id,
-         company_id: null,
-         branch_id: null,
-         article_id: null,
-         user_id: null,
+         company_id: $visibleArticle->company_id,
+         branch_id: $visibleArticle->branch_id,
+         article_id: $visibleArticle->article_id,
+         user_id: $visibleArticle->user_id,
          status: $visibleArticle->status
       );
       $this->visibleArticle->update($existeType);

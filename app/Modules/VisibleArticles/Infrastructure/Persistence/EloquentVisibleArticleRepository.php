@@ -27,6 +27,17 @@ class EloquentVisibleArticleRepository implements VisibleArticleRepositoryInterf
     }
     public function update(VisibleArticle $visibleArticle): void
     {
+        if ($visibleArticle->getId() == 0) {
+            EloquentVisibleArticle::create([
+                'company_id' => $visibleArticle->getCompany_id(),
+                'branch_id' => $visibleArticle->getBranch_id(),
+                'article_id' => $visibleArticle->getArticle_id(),
+                'user_id' => $visibleArticle->getUser_id(),
+                'status' => $visibleArticle->getStatus()
+            ]);
+            return;
+        }
+
         $visible = EloquentVisibleArticle::find($visibleArticle->getId());
 
         $visible->update([

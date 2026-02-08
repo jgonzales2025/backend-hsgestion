@@ -924,32 +924,5 @@ class SaleController extends Controller
         });
         
     }
-    
-    /**
-     * Consultar el estado de anulación en SUNAT
-     */
-    public function checkSunatVoidedStatus(int $id)
-    {
-        $saleEloquent = EloquentSale::find($id);
-        
-        if (!$saleEloquent) {
-            return response()->json([
-                'message' => 'Venta no encontrada',
-                'status' => false
-            ], 404);
-        }
-        
-        return response()->json([
-            'status' => true,
-            'sale_id' => $id,
-            'sunat_status' => $saleEloquent->sunat_status,
-            'sunat_ticket' => $saleEloquent->sunat_ticket,
-            'sunat_response' => $saleEloquent->sunat_response ? json_decode($saleEloquent->sunat_response, true) : null,
-            'sunat_voided_at' => $saleEloquent->sunat_voided_at,
-            'estado_sunat' => $saleEloquent->estado_sunat,
-            'fecha_baja_sunat' => $saleEloquent->fecha_baja_sunat,
-            'hora_baja_sunat' => $saleEloquent->hora_baja_sunat
-        ]);
-    }
 
 }

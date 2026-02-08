@@ -12,7 +12,7 @@ class VisibleArticle
   private bool $status;
 
   public function __construct(
-    int $id,
+    ?int $id,
     ?int $company_id,
     ?int $branch_id,
     ?int $article_id,

@@ -38,20 +38,28 @@ class EloquentVisibleArticleRepository implements VisibleArticleRepositoryInterf
     {
         $companyId = request()->get('company_id');
         
+        // Obtener todas las sucursales de la compañía
+        $allBranches = \App\Modules\Branch\Infrastructure\Models\EloquentBranch::where('cia_id', $companyId)
+            ->where('status', 1)
+            ->get();
+        
+        // Obtener los artículos visibles existentes para este artículo
         $visibleArticles = EloquentVisibleArticle::where('article_id', $id)
             ->where('company_id', $companyId)
-            ->get();
-       if($visibleArticles->isEmpty()){
-            return [];
-       }
-        return $visibleArticles->map(function ($visible) {
+            ->get()
+            ->keyBy('branch_id');
+        
+        // Crear un registro para cada sucursal, indicando si está visible o no
+        return $allBranches->map(function ($branch) use ($visibleArticles, $id, $companyId) {
+            $visible = $visibleArticles->get($branch->id);
+            
             return new VisibleArticle(
-                id: $visible->id,
-                company_id: $visible->company_id,
-                branch_id: $visible->branch_id,
-                article_id: $visible->article_id,
-                user_id: $visible->user_id,
-                status: $visible->status
+                id: $visible ? $visible->id : null,
+                company_id: $companyId,
+                branch_id: $branch->id,
+                article_id: $id,
+                user_id: $visible ? $visible->user_id : null,
+                status: $visible ? $visible->status : false
             );
         })->toArray();
     }

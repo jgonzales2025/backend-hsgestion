@@ -840,68 +840,89 @@ class SaleController extends Controller
 
     public function updateStatus(Request $request, int $id)
     {
-        $result = DB::select('CALL sp_comunicacion_anulacion_baja(?)', [$id]);
-
-        $estado = $result[0]->estado;
-        $msg = $result[0]->msg;
-
-        if ($estado == 0) {
-            return response()->json([
-                'message' => $msg,
-                'status' => false
-            ], 200);
-        }
+        return DB::transaction(function () use ($request, $id){
+            $result = DB::select('CALL sp_comunicacion_anulacion_baja(?)', [$id]);
+    
+            $estado = $result[0]->estado;
+            $msg = $result[0]->msg;
+    
+            if ($estado == 0) {
+                return response()->json([
+                    'message' => $msg,
+                    'status' => false
+                ], 200);
+            }
+                
+            $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
+            $sale = $saleUseCase->execute($id);
             
-        $saleUseCase = new FindByIdSaleUseCase($this->saleRepository);
-        $sale = $saleUseCase->execute($id);
+            if ($sale->getSaldo() != $sale->getTotal())
+            {
+                return response()->json(['message' => 'La venta no se puede anular porque ya tiene pagos registrados.', 'status' => false], 200);
+            }
+            
+            $documentReferenceUseCase = new FindByDocumentReferenceUseCase($this->saleRepository);
+            $documentReference = $documentReferenceUseCase->execute($sale->getDocumentType()->getId(), $sale->getSerie(), $sale->getDocumentNumber());
+    
+            if ($documentReference) {
+                return response()->json(['message' => 'La venta no se puede anular porque ya tiene notas de crédito', 'status' => false], 200);
+            }
+            
+            $roleName = request()->get('role');
+            
+            if ($roleName !== 'Gerencia') {
+                return response()->json(['message' => 'No tiene permisos para anular la venta', 'status' => false], 403);
+            }
+            
+            $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
+            $serials = array_merge(...array_values($serialsByArticle));
+            
+            // Actualizando el estado de las series para que estén habilitadas nuevamente para la venta.
+            $entryItemSerialUseCase = new UpdateStatusBySerialUseCase($this->entryItemSerialRepository);
+            foreach ($serials as $serial) {
+                $entryItemSerialUseCase->execute($serial, 1);
+            }
+            
+            $statusUseCase = new UpdateStatusSalesUseCase($this->saleRepository);
+            $statusUseCase->execute($id, 0);
+            
+            // Si es factura (tipo 1), procesamos la anulación en SUNAT con colas
+            if ($sale->getDocumentType()->getId() == 1) {
+                $response = $this->salesSunatService->saleInvoiceAnulacion($sale);
+                \Log::info($response);
+                // Verificar si la respuesta es asíncrona (con colas)
+                if (isset($response['ticket']) && isset($response['status'])) {
+                    $this->logTransaction($request, $sale, 'Anulación de documento (en proceso en SUNAT).');
+                    
+                    return response()->json([
+                        'message' => $response['message'],
+                        'status' => true,
+                        'ticket' => $response['ticket'],
+                        'sunat_status' => $response['status'],
+                        'async' => true,
+                        'info' => 'La anulación se está procesando en segundo plano. Puede consultar el estado más tarde.'
+                    ], 200);
+                }
+                
+                // Si es respuesta síncrona (legacy), procesamos como antes
+                if (isset($response['fecha_respuesta']) && isset($response['hora_respuesta'])) {
+                    $saleEloquent = EloquentSale::find($id);
+                    $saleEloquent->update([
+                        'estado_sunat' => 'ANULADA',
+                        'fecha_baja_sunat' => $response['fecha_respuesta'],
+                        'hora_baja_sunat' => $response['hora_respuesta']
+                    ]);
+                }
+            }
+    
+            $this->logTransaction($request, $sale, 'Anulación de documento.');
+            
+            return response()->json([
+                'message' => 'Documento anulado correctamente',
+                'status' => true
+            ], 200);
+        });
         
-        if ($sale->getSaldo() != $sale->getTotal())
-        {
-            return response()->json(['message' => 'La venta no se puede anular porque ya tiene pagos registrados.', 'status' => false], 200);
-        }
-        
-        $documentReferenceUseCase = new FindByDocumentReferenceUseCase($this->saleRepository);
-        $documentReference = $documentReferenceUseCase->execute($sale->getDocumentType()->getId(), $sale->getSerie(), $sale->getDocumentNumber());
-
-        if ($documentReference) {
-            return response()->json(['message' => 'La venta no se puede anular porque ya tiene notas de crédito', 'status' => false], 200);
-        }
-        
-        $roleName = request()->get('role');
-        
-        if ($roleName !== 'Gerencia') {
-            return response()->json(['message' => 'No tiene permisos para anular la venta', 'status' => false], 403);
-        }
-        
-        $serialsByArticle = $this->saleItemSerialRepository->findSerialsBySaleId($sale->getId());
-        $serials = array_merge(...array_values($serialsByArticle));
-        
-        // Actualizando el estado de las series para que estén habilitadas nuevamente para la venta.
-        $entryItemSerialUseCase = new UpdateStatusBySerialUseCase($this->entryItemSerialRepository);
-        foreach ($serials as $serial) {
-            $entryItemSerialUseCase->execute($serial, 1);
-        }
-        
-        $statusUseCase = new UpdateStatusSalesUseCase($this->saleRepository);
-        $statusUseCase->execute($id, 0);
-
-        $this->logTransaction($request, $sale, 'Anulación de documento.');
-        
-        return response()->json([
-            'message' => 'Documento anulado correctamente',
-            'status' => true
-        ], 200);
-        
-        /*if ($sale->getDocumentType()->getId() == 1) {
-            $response = $this->salesSunatService->saleInvoiceAnulacion($sale);
-        }
-
-        $saleEloquent = EloquentSale::find($id);
-        $saleEloquent->update([
-            'estado_sunat' => 'ANULADA',
-            'fecha_baja_sunat' => $response['fecha_respuesta'],
-            'hora_baja_sunat' => $response['hora_respuesta']
-        ]);*/
     }
 
 }

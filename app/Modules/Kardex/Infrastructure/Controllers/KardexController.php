@@ -165,41 +165,44 @@ public function consultaSaldoPorArticulo(Request $request)
         'last_page_url'  => $datos->url($datos->lastPage()),
     ]);
 }
-    public function consultaSaldoPorArticuloExcel(Request $request)
-    {
-        $request->validate([
-            'sucursal'  => 'required|integer',
-            'fecha'     => 'required|date_format:Y-m-d',
-            'fecha1'    => 'required|date_format:Y-m-d|after_or_equal:fecha',
-            'categoria' => 'sometimes|integer',
-            'marca'     => 'sometimes|integer',
-            'status'    => 'nullable|integer',
-        ]);
+  public function consultaSaldoPorArticuloExcel(Request $request)
+{
+    $request->validate([
+        'sucursal'  => 'required|integer',
+        'fecha'     => 'required|date_format:Y-m-d',
+        'fecha1'    => 'required|date_format:Y-m-d|after_or_equal:fecha',
+        'categoria' => 'sometimes|integer',
+        'marca'     => 'sometimes|integer',
+        'status'    => 'nullable|integer',
+    ]);
 
-        $companyId = request()->get('company_id', 1);
-        $company = $this->companyRepository->findById($companyId);
-        $companyName = $company ? $company->getCompanyName() : 'CYBERHOUSE TEC S.A.C.';
+    $companyId   = request()->get('company_id', 1);
+    $company     = $this->companyRepository->findById($companyId);
+    $companyName = $company ? $company->getCompanyName() : 'CYBERHOUSE TEC S.A.C.';
 
-        $export = new SaldoArticuloExport(
-            companyId: $companyId,
-            branchId: (int) $request->input('sucursal'),
-            fecha: $request->input('fecha'),
-            fecha1: $request->input('fecha1'),
-            categoria: (int) $request->input('categoria', 0),
-            marca: (int) $request->input('marca', 0),
-            status: (int) $request->input('status'),
-            companyName: $companyName
-        );
+    // -- CAMBIO AQUI: no castear a int para que null llegue como null
+    $status = $request->has('status') ? (int) $request->input('status') : null;
 
-        if ($export->isEmpty()) {
-            return response()->json([
-                'message' => 'No se encontró información',
-            ], 404);
-        }
+    $export = new SaldoArticuloExport(
+        companyId:   $companyId,
+        branchId:    (int) $request->input('sucursal'),
+        fecha:       $request->input('fecha'),
+        fecha1:      $request->input('fecha1'),
+        categoria:   (int) $request->input('categoria', 0),
+        marca:       (int) $request->input('marca', 0),
+        status:      $status,   // <-- null si no se envía
+        companyName: $companyName
+    );
 
-        $fileName = 'saldo_articulos_' . date('YmdHis') . '.xlsx';
-        return Excel::download($export, $fileName);
+    if ($export->isEmpty()) {
+        return response()->json([
+            'message' => 'No se encontró información',
+        ], 404);
     }
+
+    $fileName = 'saldo_articulos_' . date('YmdHis') . '.xlsx';
+    return Excel::download($export, $fileName);
+}
 
     public function generateExcel(Request $request)
     {

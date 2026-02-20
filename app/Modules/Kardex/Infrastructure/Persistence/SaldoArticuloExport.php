@@ -26,7 +26,7 @@ class SaldoArticuloExport implements FromArray, WithHeadings, WithEvents, Should
         private readonly string $fecha1,
         private readonly int $categoria,
         private readonly int $marca,
-        private readonly int $status,
+        private readonly ?int $status,
         private readonly string $title = 'CONSULTA DE SALDO POR ARTÍCULO',
         private readonly string $companyName = ''
     ) {
@@ -47,6 +47,7 @@ class SaldoArticuloExport implements FromArray, WithHeadings, WithEvents, Should
             if (isset($rowArray['estado'])) {
                 $rowArray['estado'] = $rowArray['estado'] == 1 ? 'ACTIVO' : 'INACTIVO';
             }
+            unset($rowArray['saldo_inicial'], $rowArray['movimiento_rango']);
             return $rowArray;
         }, $results);
         $this->keys = empty($this->rows) ? [] : array_keys($this->rows[0]);

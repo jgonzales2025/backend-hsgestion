@@ -484,4 +484,28 @@ class ArticleController extends Controller
 
     return $data;
   }
+
+    public function indexgenerico(Request $request): array|JsonResponse
+  {
+    $name = $request->query("name");
+    $branchId = $request->query("branch_id");
+    $brand_id = $request->query("brand_id");
+    $category_id = $request->query("category_id");
+    $medida = $request->query('medida');
+    $status = $request->query('status') !== null ? (int) $request->query('status') : null;
+
+    $articles = $this->articleRepository->findAllArticlegenerico($name, $branchId, $brand_id, $category_id, $status, $medida);
+
+    return new JsonResponse([
+      'data'  => ArticleResource::collection($articles->items())->resolve(),
+      'current_page' => $articles->currentPage(),
+      'per_page' => $articles->perPage(),
+      'total' => $articles->total(),
+      'last_page' => $articles->lastPage(),
+      'next_page_url' => $articles->nextPageUrl(),
+      'prev_page_url' => $articles->previousPageUrl(),
+      'first_page_url' => $articles->url(1),
+      'last_page_url' => $articles->url($articles->lastPage()),
+    ]);
+  }
 }

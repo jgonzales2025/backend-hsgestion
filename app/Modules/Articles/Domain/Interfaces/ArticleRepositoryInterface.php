@@ -20,4 +20,5 @@ interface ArticleRepositoryInterface
   public function updateStatus(int $articleId, int $status): void;
   public function findAllCombos(?string $name): array;
   public function findArticlesByPlacaMadre(?string $description, int $branchId);
+  public function findAllArticlegenerico(?string $description, ?int $branchId, ?int $brand_id, ?int $category_id, ?int $status, ?string $medida);
 }

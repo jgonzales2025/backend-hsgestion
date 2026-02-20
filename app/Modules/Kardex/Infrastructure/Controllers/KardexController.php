@@ -3,6 +3,7 @@
 namespace App\Modules\Kardex\Infrastructure\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Articles\Infrastructure\Models\EloquentArticle;
 use App\Modules\Branch\Domain\Interface\BranchRepositoryInterface;
 use App\Modules\Company\Domain\Interfaces\CompanyRepositoryInterface;
 use App\Modules\Kardex\Application\DTOS\KardexDTO;
@@ -15,10 +16,12 @@ use App\Modules\Kardex\Infrastructure\Request\StoreKardexRequest;
 use App\Modules\Kardex\Infrastructure\Request\UpdateKardexRequest;
 use App\Modules\Kardex\Infrastructure\Resource\KardexResource;
 use App\Modules\Kardex\Infrastructure\Persistence\GenerateExcel;
+use App\Modules\Kardex\Infrastructure\Persistence\SaldoArticuloExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class KardexController extends Controller
 {
@@ -118,6 +121,86 @@ class KardexController extends Controller
             'data' => $kardex
         ]);
     }
+
+public function consultaSaldoPorArticulo(Request $request)
+{
+    $request->validate([
+        'sucursal'  => 'required|integer',
+        'fecha'     => 'required|date_format:Y-m-d',
+        'fecha1'    => 'required|date_format:Y-m-d|after_or_equal:fecha',
+        'categoria' => 'sometimes|integer',
+        'marca'     => 'sometimes|integer',
+        'status'    => 'nullable|integer',
+    ]);
+
+    $companyId = request()->get('company_id', 1);
+
+    $resultado = DB::select('CALL backend_hsgestion_test.sp_lista_articulos_saldo(?, ?, ?, ?, ?, ?, ?)', [
+        $companyId,
+        $request->input('sucursal'),
+        $request->input('fecha'),
+        $request->input('fecha1'),
+        $request->input('categoria', 0),
+        $request->input('marca',     0),
+        $request->input('status'),
+    ]);
+
+    foreach ($resultado as $item) {
+        $item->estado = $item->estado == 1 ? 'ACTIVO' : 'INACTIVO';
+    }
+
+    $perPage = $request->input('per_page', 10);
+    $datos   = $this->paginateResult($resultado, $perPage);
+
+    return response()->json([
+        'success'        => true,
+        'data'           => $datos->items(),
+        'current_page'   => $datos->currentPage(),
+        'per_page'       => $datos->perPage(),
+        'total'          => $datos->total(),
+        'last_page'      => $datos->lastPage(),
+        'next_page_url'  => $datos->nextPageUrl(),
+        'prev_page_url'  => $datos->previousPageUrl(),
+        'first_page_url' => $datos->url(1),
+        'last_page_url'  => $datos->url($datos->lastPage()),
+    ]);
+}
+    public function consultaSaldoPorArticuloExcel(Request $request)
+    {
+        $request->validate([
+            'sucursal'  => 'required|integer',
+            'fecha'     => 'required|date_format:Y-m-d',
+            'fecha1'    => 'required|date_format:Y-m-d|after_or_equal:fecha',
+            'categoria' => 'sometimes|integer',
+            'marca'     => 'sometimes|integer',
+            'status'    => 'nullable|integer',
+        ]);
+
+        $companyId = request()->get('company_id', 1);
+        $company = $this->companyRepository->findById($companyId);
+        $companyName = $company ? $company->getCompanyName() : 'CYBERHOUSE TEC S.A.C.';
+
+        $export = new SaldoArticuloExport(
+            companyId: $companyId,
+            branchId: (int) $request->input('sucursal'),
+            fecha: $request->input('fecha'),
+            fecha1: $request->input('fecha1'),
+            categoria: (int) $request->input('categoria', 0),
+            marca: (int) $request->input('marca', 0),
+            status: (int) $request->input('status'),
+            companyName: $companyName
+        );
+
+        if ($export->isEmpty()) {
+            return response()->json([
+                'message' => 'No se encontró información',
+            ], 404);
+        }
+
+        $fileName = 'saldo_articulos_' . date('YmdHis') . '.xlsx';
+        return Excel::download($export, $fileName);
+    }
+
     public function generateExcel(Request $request)
     {
         $validated = $request->validate([
@@ -166,5 +249,21 @@ class KardexController extends Controller
 
         $fileName = 'kardex_' . ($productId ?? 'general') . '_' . date('YmdHis') . '.xlsx';
         return Excel::download($export, $fileName);
+    }
+
+    private function paginateResult(array $items, $perPage = 10): LengthAwarePaginator
+    {
+        $page = request()->get('page', 1);
+        $itemsCollection = collect($items);
+
+        $pagedItems = $itemsCollection->slice(($page - 1) * $perPage, $perPage)->values();
+
+        return new LengthAwarePaginator(
+            $pagedItems,
+            $itemsCollection->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
     }
 }

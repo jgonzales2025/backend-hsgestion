@@ -462,7 +462,18 @@ class EloquentArticleRepository implements ArticleRepositoryInterface
             ->orderBy('id', 'asc')
             ->cursorPaginate(10);
     }
+    public function findAllArticlegenerico(?string $description, ?int $branchId, ?int $brand_id, ?int $category_id, ?int $status, ?string $medida)
+    {
 
+        $articles = EloquentArticle::all()->paginate(10);
+
+        // Transform the items in the paginator
+        $articles->getCollection()->transform(function ($article) {
+            return $this->mapToDomain($article);
+        });
+
+        return $articles;
+    }
 
     private function mapToArray(Article $article): array
     {

@@ -75,6 +75,7 @@ use App\Modules\PaymentMethodsSunat\Infrastructure\Controllers\PaymentMethodSuna
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/users-name/{userName}', [UserController::class, 'FindByUserName']);
+Route::get('indexgenerico', [ArticleController::class, 'index']);
 
 Route::middleware(['auth:api', 'auth.custom'])->group(function () {
 
@@ -223,6 +224,8 @@ Route::middleware(['auth:api', 'auth.custom'])->group(function () {
     Route::get('/kardex/{id}', [KardexController::class, 'show']);
     Route::post('/kardex/by-product', [KardexController::class, 'getKardexByProduct']);
     Route::post('/kardex/excel', [KardexController::class, 'generateExcel']);
+    Route::post('/kardex/saldo-por-articulo', [KardexController::class, 'consultaSaldoPorArticulo']);
+    Route::post('/kardex/saldo-por-articulo-excel', [KardexController::class, 'consultaSaldoPorArticuloExcel']);
     //SCvaucher
     Route::get('/sc-voucher', [ScVoucherController::class, 'index']);
     Route::post('/sc-voucher', [ScVoucherController::class, 'store']);
